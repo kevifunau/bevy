@@ -1,0 +1,99 @@
+{
+  "version": "2.0",
+  "scene_name": "MainHUD",
+  "root": {
+    "id": "hud_container",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "flex_direction": "column",
+      "justify_content": "space_between",
+      "padding": "20px"
+    },
+    "visuals": {
+      "background_color": "transparent"
+    },
+    "children": [
+      {
+        "id": "top_status_bar",
+        "type": "Node",
+        "styles": {
+          "width": "100%",
+          "height": "60px",
+          "flex_direction": "row",
+          "justify_content": "flex_start",
+          "align_items": "center",
+          "padding": "0px 15px"
+        },
+        "visuals": {
+          "background_color": "#1A1A1A80",
+          "border_radius": "8px"
+        },
+        "children": [
+          {
+            "id": "player_hp_text",
+            "type": "Text",
+            "styles": {
+              "margin_right": "20px"
+            },
+            "text_config": {
+              "content": "HP: 100/100",
+              "font_size": 24,
+              "font_color": "#FF3333",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      },
+      {
+        "id": "equip_start_button",
+        "type": "Button",
+        "custom_tags": [
+          "Sound_Click_Heavy",
+          "Highlight_Pulse"
+        ],
+        "styles": {
+          "width": "240px",
+          "height": "80px",
+          "flex_direction": "row",
+          "justify_content": "center",
+          "align_items": "center",
+          "margin_bottom": "50px",
+          "align_self": "center"
+        },
+        "visuals": {
+          "background_color": "#4CAF50",
+          "border_color": "#FFFFFF",
+          "border_width": "2px",
+          "border_radius": "12px",
+          "material_shader": "shaders/ui_glow_effect.wgsl"
+        },
+        "children": [
+          {
+            "id": "btn_icon",
+            "type": "Image",
+            "styles": {
+              "width": "32px",
+              "height": "32px",
+              "margin_right": "10px"
+            },
+            "image_config": {
+              "texture_path": "branding/icon.png"
+            }
+          },
+          {
+            "id": "btn_label",
+            "type": "Text",
+            "text_config": {
+              "content": "START BATTLE",
+              "font_size": 28,
+              "font_color": "#FFFFFF",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bevy.org/schemas/bui.schema.json",
+  "title": "Bevy UI JSON Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "scene_name", "root"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "2.0"
+    },
+    "scene_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "root": {
+      "$ref": "#/$defs/rootNode"
+    }
+  },
+  "$defs": {
+    "valString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(auto|-?\\d+(?:\\.\\d+)?(?:px|%)?)$"
+    },
+    "colorString": {
+      "type": "string",
+      "pattern": "^(transparent|#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))$"
+    },
+    "styles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "type": "string",
+          "enum": ["flex", "grid", "block", "none"]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["inherited", "visible", "hidden"]
+        },
+        "width": { "$ref": "#/$defs/valString" },
+        "height": { "$ref": "#/$defs/valString" },
+        "aspect_ratio": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "min_width": { "$ref": "#/$defs/valString" },
+        "min_height": { "$ref": "#/$defs/valString" },
+        "max_width": { "$ref": "#/$defs/valString" },
+        "max_height": { "$ref": "#/$defs/valString" },
+        "left": { "$ref": "#/$defs/valString" },
+        "right": { "$ref": "#/$defs/valString" },
+        "top": { "$ref": "#/$defs/valString" },
+        "bottom": { "$ref": "#/$defs/valString" },
+        "overflow": {
+          "type": "string",
+          "enum": ["visible", "clip", "clip_x", "clip_y", "hidden", "hidden_x", "hidden_y", "scroll", "scroll_x", "scroll_y"]
+        },
+        "overflow_clip_margin": {
+          "type": "string",
+          "pattern": "^(border_box|padding_box|content_box)(\\(-?\\d+(?:\\.\\d+)?\\))?$"
+        },
+        "margin": { "type": "string", "minLength": 1 },
+        "margin_left": { "$ref": "#/$defs/valString" },
+        "margin_right": { "$ref": "#/$defs/valString" },
+        "margin_top": { "$ref": "#/$defs/valString" },
+        "margin_bottom": { "$ref": "#/$defs/valString" },
+        "padding": { "type": "string", "minLength": 1 },
+        "padding_left": { "$ref": "#/$defs/valString" },
+        "padding_right": { "$ref": "#/$defs/valString" },
+        "padding_top": { "$ref": "#/$defs/valString" },
+        "padding_bottom": { "$ref": "#/$defs/valString" },
+        "flex_direction": {
+          "type": "string",
+          "enum": ["row", "row_reverse", "column", "column_reverse"]
+        },
+        "flex_wrap": {
+          "type": "string",
+          "enum": ["no_wrap", "nowrap", "wrap", "wrap_reverse"]
+        },
+        "flex_grow": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "flex_shrink": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "flex_basis": { "$ref": "#/$defs/valString" },
+        "row_gap": { "$ref": "#/$defs/valString" },
+        "column_gap": { "$ref": "#/$defs/valString" },
+        "justify_content": {
+          "type": "string",
+          "enum": ["flex_start", "start", "flex_end", "end", "center", "space_between", "space_around", "space_evenly"]
+        },
+        "justify_items": {
+          "type": "string",
+          "enum": ["default", "start", "end", "center", "baseline", "stretch"]
+        },
+        "align_content": {
+          "type": "string",
+          "enum": ["default", "flex_start", "start", "flex_end", "end", "center", "stretch", "space_between", "space_around", "space_evenly"]
+        },
+        "align_items": {
+          "type": "string",
+          "enum": ["default", "flex_start", "start", "flex_end", "end", "center", "baseline", "stretch"]
+        },
+        "align_self": {
+          "type": "string",
+          "enum": ["auto", "flex_start", "start", "flex_end", "end", "center", "baseline", "stretch"]
+        },
+        "justify_self": {
+          "type": "string",
+          "enum": ["auto", "start", "end", "center", "baseline", "stretch"]
+        },
+        "ui_translation": {
+          "type": "string",
+          "pattern": "^\\S+\\s+\\S+$"
+        },
+        "ui_scale": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?(?:\\s+-?\\d+(?:\\.\\d+)?)?$"
+        },
+        "ui_rotation": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?(?:deg|rad)?$"
+        },
+        "tab_group": {
+          "type": "string",
+          "pattern": "^(modal|-?\\d+)$"
+        },
+        "tab_index": {
+          "type": "string",
+          "pattern": "^-?\\d+$"
+        },
+        "auto_focus": {
+          "type": "boolean"
+        },
+        "relative_cursor_position": {
+          "type": "boolean"
+        },
+        "ui_target_camera": {
+          "type": "string",
+          "minLength": 1
+        },
+        "position_type": {
+          "type": "string",
+          "enum": ["relative", "absolute"]
+        },
+        "fixed_node": {
+          "type": "boolean"
+        },
+        "z_index": {
+          "type": "string",
+          "pattern": "^-?\\d+$"
+        },
+        "global_z_index": {
+          "type": "string",
+          "pattern": "^-?\\d+$"
+        },
+        "grid_template_columns": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grid_template_rows": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grid_column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grid_row": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "visuals": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background_color": { "$ref": "#/$defs/colorString" },
+        "border_color": { "$ref": "#/$defs/colorString" },
+        "border_width": { "type": "string", "minLength": 1 },
+        "border_radius": { "$ref": "#/$defs/valString" },
+        "material_shader": { "type": "string", "minLength": 1 }
+      }
+    },
+    "textConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content", "font_size", "font_color"],
+      "properties": {
+        "content": { "type": "string" },
+        "placeholder": {
+          "type": "string",
+          "minLength": 1
+        },
+        "font_size": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "font_color": { "$ref": "#/$defs/colorString" },
+        "font_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text_shadow": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "offset_x": {
+              "type": "number"
+            },
+            "offset_y": {
+              "type": "number"
+            },
+            "color": { "$ref": "#/$defs/colorString" }
+          }
+        },
+        "linebreak": {
+          "type": "string",
+          "enum": ["word_boundary", "any_character", "word_or_character", "no_wrap"]
+        },
+        "visible_width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "allow_newlines": {
+          "type": "boolean"
+        }
+      }
+    },
+    "imageConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["texture_path"],
+      "properties": {
+        "texture_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image_mode": {
+          "type": "string",
+          "enum": ["auto", "stretch", "sliced"]
+        },
+        "atlas": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tile_width", "tile_height", "columns", "rows"],
+          "properties": {
+            "tile_width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tile_height": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "columns": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rows": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "padding_x": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "padding_y": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "slicer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["border"],
+          "properties": {
+            "border": {
+              "type": "number",
+              "minimum": 0
+            },
+            "center_scale_mode": {
+              "type": "string",
+              "enum": ["stretch", "tile"]
+            },
+            "sides_scale_mode": {
+              "type": "string",
+              "enum": ["stretch", "tile"]
+            },
+            "stretch_value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_corner_scale": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "flip_x": {
+          "type": "boolean"
+        },
+        "flip_y": {
+          "type": "boolean"
+        }
+      }
+    },
+    "actionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event", "emit"],
+      "properties": {
+        "event": {
+          "type": "string",
+          "minLength": 1,
+          "enum": ["press", "pressed", "hover_enter", "hovered", "hover_exit", "unhovered"]
+        },
+        "emit": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "source"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "stateVisual": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visuals": { "$ref": "#/$defs/visuals" },
+        "text_color": { "$ref": "#/$defs/colorString" }
+      }
+    },
+    "nodeBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["Node", "Text", "TextInput", "Toggle", "Button", "Image"]
+        },
+        "custom_tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/actionBinding" }
+        },
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/binding" }
+        },
+        "tab_group_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tab_binding_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tab_value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "progress_binding_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "progress_fill": {
+          "type": "boolean"
+        },
+        "list_binding_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state_visuals": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": { "$ref": "#/$defs/stateVisual" }
+        },
+        "styles": { "$ref": "#/$defs/styles" },
+        "visuals": { "$ref": "#/$defs/visuals" },
+        "text_config": { "$ref": "#/$defs/textConfig" },
+        "image_config": { "$ref": "#/$defs/imageConfig" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        }
+      }
+    },
+    "containerNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "enum": ["Node", "Button", "Toggle"] }
+          }
+        }
+      ]
+    },
+    "textNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "required": ["text_config"],
+          "properties": {
+            "type": { "const": "Text" },
+            "text_config": {
+              "allOf": [
+                { "$ref": "#/$defs/textConfig" },
+                {
+                  "not": {
+                    "required": ["placeholder"]
+                  }
+                }
+              ]
+            },
+            "children": { "maxItems": 0 }
+          },
+          "not": {
+            "required": ["image_config"]
+          }
+        }
+      ]
+    },
+    "textInputNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "required": ["text_config"],
+          "properties": {
+            "type": { "const": "TextInput" },
+            "children": { "maxItems": 0 }
+          },
+          "not": {
+            "required": ["image_config"]
+          }
+        }
+      ]
+    },
+    "imageNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "required": ["image_config"],
+          "properties": {
+            "type": { "const": "Image" },
+            "children": { "maxItems": 0 }
+          },
+          "not": {
+            "required": ["text_config"]
+          }
+        }
+      ]
+    },
+    "node": {
+      "oneOf": [
+        { "$ref": "#/$defs/containerNode" },
+        { "$ref": "#/$defs/textNode" },
+        { "$ref": "#/$defs/textInputNode" },
+        { "$ref": "#/$defs/imageNode" }
+      ]
+    },
+    "rootNode": {
+      "allOf": [
+        { "$ref": "#/$defs/containerNode" },
+        {
+          "properties": {
+            "type": { "const": "Node" }
+          }
+        }
+      ]
+    }
+  }
+}

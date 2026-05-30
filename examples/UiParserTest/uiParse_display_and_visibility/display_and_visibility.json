@@ -1,0 +1,518 @@
+{
+  "version": "2.0",
+  "scene_name": "DisplayAndVisibility",
+  "root": {
+    "id": "display_visibility_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "flex_direction": "column",
+      "align_items": "center",
+      "justify_content": "space_evenly"
+    },
+    "visuals": {
+      "background_color": "#000000"
+    },
+    "children": [
+      {
+        "id": "display_visibility_intro",
+        "type": "Text",
+        "styles": {
+          "margin_bottom": "10px"
+        },
+        "text_config": {
+          "content": "Use the panel on the right to change the Display and Visibility properties for the respective nodes of the panel on the left",
+          "font_size": 18,
+          "font_color": "#FFFFFF",
+          "font_path": "fonts/FiraSans-Bold.ttf"
+        }
+      },
+      {
+        "id": "display_visibility_body",
+        "type": "Node",
+        "styles": {
+          "width": "100%"
+        },
+        "children": [
+          {
+            "id": "left_panel_host",
+            "type": "Node",
+            "styles": {
+              "width": "50%",
+              "height": "520px",
+              "justify_content": "center"
+            },
+            "children": [
+              {
+                "id": "left_panel_frame",
+                "type": "Node",
+                "styles": {
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "left_panel_backdrop",
+                    "type": "Node",
+                    "visuals": {
+                      "background_color": "#000000"
+                    },
+                    "children": [
+                      {
+                        "id": "target_outer",
+                        "type": "Node",
+                        "styles": {
+                          "align_items": "flex_end",
+                          "justify_content": "flex_end",
+                          "visibility": "inherited"
+                        },
+                        "visuals": {
+                          "background_color": "#27496D",
+                          "border_width": "4px",
+                          "border_color": "#008B8B"
+                        },
+                        "children": [
+                          {
+                            "id": "outer_spacer",
+                            "type": "Node",
+                            "styles": {
+                              "width": "100px",
+                              "height": "500px"
+                            }
+                          },
+                          {
+                            "id": "target_mid_large",
+                            "type": "Node",
+                            "styles": {
+                              "height": "400px",
+                              "align_items": "flex_end",
+                              "justify_content": "flex_end",
+                              "visibility": "inherited"
+                            },
+                            "visuals": {
+                              "background_color": "#466B7A"
+                            },
+                            "children": [
+                              {
+                                "id": "mid_large_spacer",
+                                "type": "Node",
+                                "styles": {
+                                  "width": "100px",
+                                  "height": "400px"
+                                }
+                              },
+                              {
+                                "id": "target_mid_small",
+                                "type": "Node",
+                                "styles": {
+                                  "height": "300px",
+                                  "align_items": "flex_end",
+                                  "justify_content": "flex_end",
+                                  "visibility": "inherited"
+                                },
+                                "visuals": {
+                                  "background_color": "#669DB3"
+                                },
+                                "children": [
+                                  {
+                                    "id": "mid_small_spacer",
+                                    "type": "Node",
+                                    "styles": {
+                                      "width": "100px",
+                                      "height": "300px"
+                                    }
+                                  },
+                                  {
+                                    "id": "target_inner",
+                                    "type": "Node",
+                                    "styles": {
+                                      "width": "200px",
+                                      "height": "200px",
+                                      "visibility": "inherited"
+                                    },
+                                    "visuals": {
+                                      "background_color": "#ADCBE3"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "right_panel_host",
+            "type": "Node",
+            "styles": {
+              "width": "50%",
+              "justify_content": "center"
+            },
+            "children": [
+              {
+                "id": "right_panel_frame",
+                "type": "Node",
+                "styles": {
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "control_outer",
+                    "type": "Node",
+                    "styles": {
+                      "width": "500px",
+                      "height": "500px",
+                      "flex_direction": "column",
+                      "align_items": "flex_end",
+                      "justify_content": "space_between",
+                      "padding_left": "5px",
+                      "padding_top": "5px"
+                    },
+                    "visuals": {
+                      "background_color": "#27496D",
+                      "border_width": "4px",
+                      "border_color": "#008B8B"
+                    },
+                    "children": [
+                      {
+                        "id": "outer_button_display",
+                        "type": "Button",
+                        "custom_tags": [
+                          "Action_Toggle_Display",
+                          "Target_target_outer"
+                        ],
+                        "styles": {
+                          "align_self": "flex_start",
+                          "padding": "1px 5px"
+                        },
+                        "visuals": {
+                          "background_color": "#00000080"
+                        },
+                        "children": [
+                          {
+                            "id": "outer_button_display_text",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "Display::Flex",
+                              "font_size": 16,
+                              "font_color": "#FFFFFF",
+                              "font_path": "fonts/FiraSans-Bold.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "outer_button_visibility",
+                        "type": "Button",
+                        "custom_tags": [
+                          "Action_Toggle_Visibility",
+                          "Target_target_outer"
+                        ],
+                        "styles": {
+                          "align_self": "flex_start",
+                          "padding": "1px 5px"
+                        },
+                        "visuals": {
+                          "background_color": "#00000080"
+                        },
+                        "children": [
+                          {
+                            "id": "outer_button_visibility_text",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "Visibility::Inherited",
+                              "font_size": 16,
+                              "font_color": "#FFFFFF",
+                              "font_path": "fonts/FiraSans-Bold.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "control_mid_large",
+                        "type": "Node",
+                        "styles": {
+                          "width": "400px",
+                          "height": "400px",
+                          "flex_direction": "column",
+                          "align_items": "flex_end",
+                          "justify_content": "space_between",
+                          "padding_left": "5px",
+                          "padding_top": "5px"
+                        },
+                        "visuals": {
+                          "background_color": "#466B7A"
+                        },
+                        "children": [
+                          {
+                            "id": "mid_large_button_display",
+                            "type": "Button",
+                            "custom_tags": [
+                              "Action_Toggle_Display",
+                              "Target_target_mid_large"
+                            ],
+                            "styles": {
+                              "align_self": "flex_start",
+                              "padding": "1px 5px"
+                            },
+                            "visuals": {
+                              "background_color": "#00000080"
+                            },
+                            "children": [
+                              {
+                                "id": "mid_large_button_display_text",
+                                "type": "Text",
+                                "text_config": {
+                                  "content": "Display::Flex",
+                                  "font_size": 16,
+                                  "font_color": "#FFFFFF",
+                                  "font_path": "fonts/FiraSans-Bold.ttf"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "mid_large_button_visibility",
+                            "type": "Button",
+                            "custom_tags": [
+                              "Action_Toggle_Visibility",
+                              "Target_target_mid_large"
+                            ],
+                            "styles": {
+                              "align_self": "flex_start",
+                              "padding": "1px 5px"
+                            },
+                            "visuals": {
+                              "background_color": "#00000080"
+                            },
+                            "children": [
+                              {
+                                "id": "mid_large_button_visibility_text",
+                                "type": "Text",
+                                "text_config": {
+                                  "content": "Visibility::Inherited",
+                                  "font_size": 16,
+                                  "font_color": "#FFFFFF",
+                                  "font_path": "fonts/FiraSans-Bold.ttf"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "control_mid_small",
+                            "type": "Node",
+                            "styles": {
+                              "width": "300px",
+                              "height": "300px",
+                              "flex_direction": "column",
+                              "align_items": "flex_end",
+                              "justify_content": "space_between",
+                              "padding_left": "5px",
+                              "padding_top": "5px"
+                            },
+                            "visuals": {
+                              "background_color": "#669DB3"
+                            },
+                            "children": [
+                              {
+                                "id": "mid_small_button_display",
+                                "type": "Button",
+                                "custom_tags": [
+                                  "Action_Toggle_Display",
+                                  "Target_target_mid_small"
+                                ],
+                                "styles": {
+                                  "align_self": "flex_start",
+                                  "padding": "1px 5px"
+                                },
+                                "visuals": {
+                                  "background_color": "#00000080"
+                                },
+                                "children": [
+                                  {
+                                    "id": "mid_small_button_display_text",
+                                    "type": "Text",
+                                    "text_config": {
+                                      "content": "Display::Flex",
+                                      "font_size": 16,
+                                      "font_color": "#FFFFFF",
+                                      "font_path": "fonts/FiraSans-Bold.ttf"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "mid_small_button_visibility",
+                                "type": "Button",
+                                "custom_tags": [
+                                  "Action_Toggle_Visibility",
+                                  "Target_target_mid_small"
+                                ],
+                                "styles": {
+                                  "align_self": "flex_start",
+                                  "padding": "1px 5px"
+                                },
+                                "visuals": {
+                                  "background_color": "#00000080"
+                                },
+                                "children": [
+                                  {
+                                    "id": "mid_small_button_visibility_text",
+                                    "type": "Text",
+                                    "text_config": {
+                                      "content": "Visibility::Inherited",
+                                      "font_size": 16,
+                                      "font_color": "#FFFFFF",
+                                      "font_path": "fonts/FiraSans-Bold.ttf"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "control_inner",
+                                "type": "Node",
+                                "styles": {
+                                  "width": "200px",
+                                  "height": "200px",
+                                  "align_items": "flex_start",
+                                  "justify_content": "space_between",
+                                  "flex_direction": "column",
+                                  "padding_left": "5px",
+                                  "padding_top": "5px"
+                                },
+                                "visuals": {
+                                  "background_color": "#ADCBE3"
+                                },
+                                "children": [
+                                  {
+                                    "id": "inner_button_display",
+                                    "type": "Button",
+                                    "custom_tags": [
+                                      "Action_Toggle_Display",
+                                      "Target_target_inner"
+                                    ],
+                                    "styles": {
+                                      "align_self": "flex_start",
+                                      "padding": "1px 5px"
+                                    },
+                                    "visuals": {
+                                      "background_color": "#00000080"
+                                    },
+                                    "children": [
+                                      {
+                                        "id": "inner_button_display_text",
+                                        "type": "Text",
+                                        "text_config": {
+                                          "content": "Display::Flex",
+                                          "font_size": 16,
+                                          "font_color": "#FFFFFF",
+                                          "font_path": "fonts/FiraSans-Bold.ttf"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "inner_button_visibility",
+                                    "type": "Button",
+                                    "custom_tags": [
+                                      "Action_Toggle_Visibility",
+                                      "Target_target_inner"
+                                    ],
+                                    "styles": {
+                                      "align_self": "flex_start",
+                                      "padding": "1px 5px"
+                                    },
+                                    "visuals": {
+                                      "background_color": "#00000080"
+                                    },
+                                    "children": [
+                                      {
+                                        "id": "inner_button_visibility_text",
+                                        "type": "Text",
+                                        "text_config": {
+                                          "content": "Visibility::Inherited",
+                                          "font_size": 16,
+                                          "font_color": "#FFFFFF",
+                                          "font_path": "fonts/FiraSans-Bold.ttf"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "inner_spacer",
+                                    "type": "Node",
+                                    "styles": {
+                                      "width": "100px",
+                                      "height": "100px"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "display_visibility_footer",
+        "type": "Node",
+        "styles": {
+          "flex_direction": "row",
+          "align_items": "flex_start",
+          "justify_content": "flex_start",
+          "column_gap": "10px"
+        },
+        "children": [
+          {
+            "id": "footer_terms",
+            "type": "Text",
+            "text_config": {
+              "content": "Display::None\nVisibility::Hidden\nVisibility::Inherited",
+              "font_size": 14,
+              "font_color": "#FFB3B3",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          },
+          {
+            "id": "footer_separator",
+            "type": "Text",
+            "text_config": {
+              "content": "-\n-\n-",
+              "font_size": 14,
+              "font_color": "#A9A9A9",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          },
+          {
+            "id": "footer_explanation",
+            "type": "Text",
+            "text_config": {
+              "content": "The UI Node and its descendants will not be visible and will not be allotted any space in the UI layout.\nThe UI Node will not be visible but will still occupy space in the UI layout.\nThe UI node will inherit the visibility property of its parent. If it has no parent it will be visible.",
+              "font_size": 14,
+              "font_color": "#FFFFFF",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

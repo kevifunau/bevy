@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "scene_name": "UnsupportedTextInputNavigation",
+  "root": {
+    "id": "text_input_root",
+    "type": "Node",
+    "styles": {
+      "align_items": "center",
+      "flex_direction": "column",
+      "padding": "20px",
+      "row_gap": "16px",
+      "margin": "auto"
+    },
+    "children": [
+      {
+        "id": "input_container",
+        "type": "Node",
+        "styles": {
+          "column_gap": "16px"
+        },
+        "custom_tags": ["AutoFocus", "TabGroup_0"],
+        "children": [
+          {
+            "id": "left_input",
+            "type": "TextInput",
+            "styles": {
+              "tab_index": "0"
+            },
+            "text_config": {
+              "content": "",
+              "font_size": 24,
+              "font_color": "#FFFFFF"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

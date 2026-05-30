@@ -1,0 +1,35 @@
+{
+  "version": "2.0",
+  "scene_name": "UnsupportedEditableTextFilter",
+  "root": {
+    "id": "editable_text_filter_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "justify_content": "center",
+      "align_items": "center"
+    },
+    "children": [
+      {
+        "id": "hex_input",
+        "type": "TextInput",
+        "styles": {
+          "width": "240px",
+          "padding": "8px",
+          "auto_focus": true
+        },
+        "text_config": {
+          "content": "",
+          "font_size": 32,
+          "font_color": "#FFFFFF",
+          "editable_text_filter": "ascii_hexdigit"
+        },
+        "visuals": {
+          "border_color": "#CBD5E1",
+          "border_width": "2px"
+        }
+      }
+    ]
+  }
+}

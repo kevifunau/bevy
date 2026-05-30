@@ -1,0 +1,305 @@
+{
+  "version": "2.0",
+  "scene_name": "UiTransform",
+  "root": {
+    "id": "ui_transform_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "align_items": "center",
+      "justify_content": "center"
+    },
+    "visuals": {
+      "background_color": "#000000"
+    },
+    "children": [
+      {
+        "id": "control_row",
+        "type": "Node",
+        "styles": {
+          "align_items": "center",
+          "justify_content": "space_evenly",
+          "column_gap": "25px",
+          "row_gap": "25px"
+        },
+        "visuals": {
+          "background_color": "#000000"
+        },
+        "children": [
+          {
+            "id": "left_controls",
+            "type": "Node",
+            "styles": {
+              "flex_direction": "column",
+              "justify_content": "center",
+              "row_gap": "10px",
+              "column_gap": "10px",
+              "padding": "10px"
+            },
+            "visuals": {
+              "background_color": "#000000"
+            },
+            "children": [
+              {
+                "id": "rotate_left_button",
+                "type": "Button",
+                "custom_tags": ["Rotate_Neg22_5"],
+                "styles": {
+                  "height": "50px",
+                  "width": "50px",
+                  "align_items": "center",
+                  "justify_content": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "rotate_left_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "<--",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "scale_down_button",
+                "type": "Button",
+                "custom_tags": ["Scale_Neg0_25"],
+                "styles": {
+                  "height": "50px",
+                  "width": "50px",
+                  "align_items": "center",
+                  "justify_content": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "scale_down_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "-",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "target_panel",
+            "type": "Node",
+            "styles": {
+              "flex_direction": "column",
+              "justify_content": "space_between",
+              "align_items": "center",
+              "width": "300px",
+              "height": "300px",
+              "ui_translation": "0px 0px"
+            },
+            "visuals": {
+              "background_color": "#A9A9A9"
+            },
+            "children": [
+              {
+                "id": "target_top_button",
+                "type": "Button",
+                "styles": {
+                  "width": "80px",
+                  "height": "80px",
+                  "align_items": "center",
+                  "justify_content": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "target_top_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "Top",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "target_middle_row",
+                "type": "Node",
+                "styles": {
+                  "align_self": "stretch",
+                  "justify_content": "space_between",
+                  "align_items": "center"
+                },
+                "children": [
+                  {
+                    "id": "target_left_button",
+                    "type": "Button",
+                    "styles": {
+                      "width": "80px",
+                      "height": "80px",
+                      "align_items": "center",
+                      "justify_content": "center",
+                      "ui_rotation": "-90deg"
+                    },
+                    "visuals": {
+                      "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                      {
+                        "id": "target_left_text",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "Left",
+                          "font_size": 16,
+                          "font_color": "#000000"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "target_center_image",
+                    "type": "Image",
+                    "styles": {
+                      "width": "100px",
+                      "height": "100px"
+                    },
+                    "image_config": {
+                      "texture_path": "branding/icon.png",
+                      "image_mode": "stretch"
+                    }
+                  },
+                  {
+                    "id": "target_right_button",
+                    "type": "Button",
+                    "styles": {
+                      "width": "80px",
+                      "height": "80px",
+                      "align_items": "center",
+                      "justify_content": "center",
+                      "ui_rotation": "90deg"
+                    },
+                    "visuals": {
+                      "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                      {
+                        "id": "target_right_text",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "Right",
+                          "font_size": 16,
+                          "font_color": "#000000"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "target_bottom_button",
+                "type": "Button",
+                "styles": {
+                  "width": "80px",
+                  "height": "80px",
+                  "align_items": "center",
+                  "justify_content": "center",
+                  "ui_rotation": "180deg"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "target_bottom_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "Bottom",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "right_controls",
+            "type": "Node",
+            "styles": {
+              "flex_direction": "column",
+              "justify_content": "center",
+              "row_gap": "10px",
+              "column_gap": "10px",
+              "padding": "10px"
+            },
+            "visuals": {
+              "background_color": "#000000"
+            },
+            "children": [
+              {
+                "id": "rotate_right_button",
+                "type": "Button",
+                "custom_tags": ["Rotate_Pos22_5"],
+                "styles": {
+                  "height": "50px",
+                  "width": "50px",
+                  "align_items": "center",
+                  "justify_content": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "rotate_right_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "-->",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "scale_up_button",
+                "type": "Button",
+                "custom_tags": ["Scale_Pos0_25"],
+                "styles": {
+                  "height": "50px",
+                  "width": "50px",
+                  "align_items": "center",
+                  "justify_content": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "scale_up_text",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "+",
+                      "font_size": 16,
+                      "font_color": "#000000"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

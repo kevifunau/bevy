@@ -1,0 +1,539 @@
+{
+  "version": "2.0",
+  "scene_name": "TabNavigation",
+  "root": {
+    "id": "tab_navigation_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "display": "flex",
+      "flex_direction": "column",
+      "align_items": "center",
+      "justify_content": "center",
+      "row_gap": "6px"
+    },
+    "children": [
+      {
+        "id": "label_group_0",
+        "type": "Text",
+        "text_config": {
+          "content": "TabGroup 0",
+          "font_size": 16,
+          "font_color": "#FFFFFF"
+        }
+      },
+      {
+        "id": "group_0",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "row",
+          "column_gap": "6px",
+          "margin_bottom": "10px",
+          "tab_group": "0"
+        },
+        "children": [
+          {
+            "id": "group_0_button_0",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_0_button_0_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_0_button_1",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_0_button_1_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_0_button_2",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_0_button_2_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_0_button_3",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_0_button_3_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "label_group_2",
+        "type": "Text",
+        "text_config": {
+          "content": "TabGroup 2",
+          "font_size": 16,
+          "font_color": "#FFFFFF"
+        }
+      },
+      {
+        "id": "group_2",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "row",
+          "column_gap": "6px",
+          "margin_bottom": "10px",
+          "tab_group": "2"
+        },
+        "children": [
+          {
+            "id": "group_2_button_3",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "3"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_2_button_3_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 3",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_2_button_2",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "2"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_2_button_2_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 2",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_2_button_1",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "1"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_2_button_1_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 1",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_2_button_0",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_2_button_0_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "label_group_1",
+        "type": "Text",
+        "text_config": {
+          "content": "TabGroup 1",
+          "font_size": 16,
+          "font_color": "#FFFFFF"
+        }
+      },
+      {
+        "id": "group_1",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "row",
+          "column_gap": "6px",
+          "margin_bottom": "10px",
+          "tab_group": "1"
+        },
+        "children": [
+          {
+            "id": "group_1_button_0",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_1_button_0_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_1_button_1",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "1"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_1_button_1_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 1",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_1_button_2",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "2"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_1_button_2_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 2",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_1_button_3",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "3"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_1_button_3_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 3",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "label_group_modal",
+        "type": "Text",
+        "text_config": {
+          "content": "Modal TabGroup",
+          "font_size": 16,
+          "font_color": "#FFFFFF"
+        }
+      },
+      {
+        "id": "group_modal",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "row",
+          "column_gap": "6px",
+          "margin_bottom": "10px",
+          "tab_group": "modal"
+        },
+        "children": [
+          {
+            "id": "group_modal_button_0",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "0"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_modal_button_0_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 0",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_modal_button_3",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "3"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_modal_button_3_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 3",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_modal_button_1",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "1"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_modal_button_1_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 1",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          },
+          {
+            "id": "group_modal_button_2",
+            "type": "Button",
+            "styles": {
+              "width": "200px",
+              "height": "65px",
+              "justify_content": "center",
+              "align_items": "center",
+              "tab_index": "2"
+            },
+            "visuals": {
+              "border_color": "#000000",
+              "border_width": "5px",
+              "background_color": "#262626"
+            },
+            "children": [
+              {
+                "id": "group_modal_button_2_text",
+                "type": "Text",
+                "text_config": {
+                  "content": "TabIndex 2",
+                  "font_size": 20,
+                  "font_color": "#E6E6E6"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

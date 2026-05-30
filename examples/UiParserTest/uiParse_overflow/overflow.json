@@ -1,0 +1,283 @@
+{
+  "version": "2.0",
+  "scene_name": "Overflow",
+  "root": {
+    "id": "overflow_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "align_items": "center",
+      "justify_content": "center"
+    },
+    "visuals": {
+      "background_color": "#FAEBD7"
+    },
+    "children": [
+      {
+        "id": "overflow_visible_column",
+        "type": "Node",
+        "styles": {
+          "flex_direction": "column",
+          "align_items": "center",
+          "margin": "0px 25px"
+        },
+        "children": [
+          {
+            "id": "overflow_visible_label_box",
+            "type": "Node",
+            "styles": {
+              "padding": "10px",
+              "margin_bottom": "25px"
+            },
+            "visuals": {
+              "background_color": "#404040"
+            },
+            "children": [
+              {
+                "id": "overflow_visible_label",
+                "type": "Text",
+                "text_config": {
+                  "content": "Overflow {\n    x: Visible,\n    y: Visible,\n}",
+                  "font_size": 16,
+                  "font_color": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "overflow_visible_box",
+            "type": "Node",
+            "styles": {
+              "width": "100px",
+              "height": "100px",
+              "padding_left": "25px",
+              "padding_top": "25px",
+              "overflow": "visible"
+            },
+            "visuals": {
+              "background_color": "#808080",
+              "border_color": "#000000",
+              "border_width": "5px"
+            },
+            "children": [
+              {
+                "id": "overflow_visible_image",
+                "type": "Image",
+                "styles": {
+                  "min_width": "100px",
+                  "min_height": "100px"
+                },
+                "visuals": {
+                  "border_color": "transparent",
+                  "border_width": "2px"
+                },
+                "image_config": {
+                  "texture_path": "branding/icon.png"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overflow_clip_x_column",
+        "type": "Node",
+        "styles": {
+          "flex_direction": "column",
+          "align_items": "center",
+          "margin": "0px 25px"
+        },
+        "children": [
+          {
+            "id": "overflow_clip_x_label_box",
+            "type": "Node",
+            "styles": {
+              "padding": "10px",
+              "margin_bottom": "25px"
+            },
+            "visuals": {
+              "background_color": "#404040"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_x_label",
+                "type": "Text",
+                "text_config": {
+                  "content": "Overflow {\n    x: Clip,\n    y: Visible,\n}",
+                  "font_size": 16,
+                  "font_color": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "overflow_clip_x_box",
+            "type": "Node",
+            "styles": {
+              "width": "100px",
+              "height": "100px",
+              "padding_left": "25px",
+              "padding_top": "25px",
+              "overflow": "clip_x"
+            },
+            "visuals": {
+              "background_color": "#808080",
+              "border_color": "#000000",
+              "border_width": "5px"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_x_image",
+                "type": "Image",
+                "styles": {
+                  "min_width": "100px",
+                  "min_height": "100px"
+                },
+                "visuals": {
+                  "border_color": "transparent",
+                  "border_width": "2px"
+                },
+                "image_config": {
+                  "texture_path": "branding/icon.png"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overflow_clip_y_column",
+        "type": "Node",
+        "styles": {
+          "flex_direction": "column",
+          "align_items": "center",
+          "margin": "0px 25px"
+        },
+        "children": [
+          {
+            "id": "overflow_clip_y_label_box",
+            "type": "Node",
+            "styles": {
+              "padding": "10px",
+              "margin_bottom": "25px"
+            },
+            "visuals": {
+              "background_color": "#404040"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_y_label",
+                "type": "Text",
+                "text_config": {
+                  "content": "Overflow {\n    x: Visible,\n    y: Clip,\n}",
+                  "font_size": 16,
+                  "font_color": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "overflow_clip_y_box",
+            "type": "Node",
+            "styles": {
+              "width": "100px",
+              "height": "100px",
+              "padding_left": "25px",
+              "padding_top": "25px",
+              "overflow": "clip_y"
+            },
+            "visuals": {
+              "background_color": "#808080",
+              "border_color": "#000000",
+              "border_width": "5px"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_y_image",
+                "type": "Image",
+                "styles": {
+                  "min_width": "100px",
+                  "min_height": "100px"
+                },
+                "visuals": {
+                  "border_color": "transparent",
+                  "border_width": "2px"
+                },
+                "image_config": {
+                  "texture_path": "branding/icon.png"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overflow_clip_column",
+        "type": "Node",
+        "styles": {
+          "flex_direction": "column",
+          "align_items": "center",
+          "margin": "0px 25px"
+        },
+        "children": [
+          {
+            "id": "overflow_clip_label_box",
+            "type": "Node",
+            "styles": {
+              "padding": "10px",
+              "margin_bottom": "25px"
+            },
+            "visuals": {
+              "background_color": "#404040"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_label",
+                "type": "Text",
+                "text_config": {
+                  "content": "Overflow {\n    x: Clip,\n    y: Clip,\n}",
+                  "font_size": 16,
+                  "font_color": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "overflow_clip_box",
+            "type": "Node",
+            "styles": {
+              "width": "100px",
+              "height": "100px",
+              "padding_left": "25px",
+              "padding_top": "25px",
+              "overflow": "clip"
+            },
+            "visuals": {
+              "background_color": "#808080",
+              "border_color": "#000000",
+              "border_width": "5px"
+            },
+            "children": [
+              {
+                "id": "overflow_clip_image",
+                "type": "Image",
+                "styles": {
+                  "min_width": "100px",
+                  "min_height": "100px"
+                },
+                "visuals": {
+                  "border_color": "transparent",
+                  "border_width": "2px"
+                },
+                "image_config": {
+                  "texture_path": "branding/icon.png"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

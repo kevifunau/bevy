@@ -748,6 +748,7 @@ flate2 = "1.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.140"
 bytemuck = "1"
+bevy_ai_ui_parser = { path = "crates/bevy_ai_ui_parser", version = "0.1.0" }
 # The following explicit dependencies are needed for proc macros to work inside of examples as they are part of the bevy crate itself.
 bevy_animation = { path = "crates/bevy_animation", version = "0.19.0-dev", default-features = false }
 bevy_asset = { path = "crates/bevy_asset", version = "0.19.0-dev", default-features = false }
@@ -3779,6 +3780,314 @@ name = "Button"
 description = "Illustrates creating and updating a button"
 category = "UI (User Interface)"
 wasm = true
+
+[[example]]
+name = "ui_parser_test"
+path = "examples/UiParserTest/ui_parser_test/ui_parser_test.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.ui_parser_test]
+name = "UI Parser Test"
+description = "Parses BUI JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "login_ui_parser_test"
+path = "examples/UiParserTest/login_ui_parser_test/login_ui_parser_test.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.login_ui_parser_test]
+name = "Login UI Parser Test"
+description = "Parses the login screen BUI JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "validate_bui_json"
+path = "examples/UiParserTest/validate_bui_json.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.validate_bui_json]
+name = "Validate BUI JSON"
+description = "Validates a BUI JSON file against the Bevy UI parser contract"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "ultraman_ui"
+path = "examples/UiParserTest/diy/ultraman_ui.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.ultraman_ui]
+name = "Ultraman UI"
+description = "Parses the DIY Ultraman character BUI JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_image_node"
+path = "examples/UiParserTest/uiParse_image_node/uiParse_image_node.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_image_node]
+name = "UI Parse Image Node"
+description = "Parses the official image_node UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_image_node_resizing"
+path = "examples/UiParserTest/uiParse_image_node_resizing/uiParse_image_node_resizing.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_image_node_resizing]
+name = "UI Parse Image Node Resizing"
+description = "Parses the official image_node_resizing UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_texture_atlas"
+path = "examples/UiParserTest/uiParse_ui_texture_atlas/uiParse_ui_texture_atlas.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_texture_atlas]
+name = "UI Parse UI Texture Atlas"
+description = "Parses the official ui_texture_atlas UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_texture_atlas_slice"
+path = "examples/UiParserTest/uiParse_ui_texture_atlas_slice/uiParse_ui_texture_atlas_slice.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_texture_atlas_slice]
+name = "UI Parse UI Texture Atlas Slice"
+description = "Parses the official ui_texture_atlas_slice UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_texture_slice"
+path = "examples/UiParserTest/uiParse_ui_texture_slice/uiParse_ui_texture_slice.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_texture_slice]
+name = "UI Parse UI Texture Slice"
+description = "Parses the official ui_texture_slice UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_texture_slice_flip_and_tile"
+path = "examples/UiParserTest/uiParse_ui_texture_slice_flip_and_tile/uiParse_ui_texture_slice_flip_and_tile.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_texture_slice_flip_and_tile]
+name = "UI Parse UI Texture Slice Flip And Tile"
+description = "Parses the official ui_texture_slice_flip_and_tile UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_anchor_layout"
+path = "examples/UiParserTest/uiParse_anchor_layout/uiParse_anchor_layout.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_anchor_layout]
+name = "UI Parse Anchor Layout"
+description = "Parses the official anchor_layout UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_flex_layout"
+path = "examples/UiParserTest/uiParse_flex_layout/uiParse_flex_layout.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_flex_layout]
+name = "UI Parse Flex Layout"
+description = "Parses the official flex_layout UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_display_and_visibility"
+path = "examples/UiParserTest/uiParse_display_and_visibility/uiParse_display_and_visibility.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_display_and_visibility]
+name = "UI Parse Display And Visibility"
+description = "Parses the official display_and_visibility UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_z_index"
+path = "examples/UiParserTest/uiParse_z_index/uiParse_z_index.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_z_index]
+name = "UI Parse Z Index"
+description = "Parses the official z_index UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_grid"
+path = "examples/UiParserTest/uiParse_grid/uiParse_grid.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_grid]
+name = "UI Parse Grid"
+description = "Parses the official grid UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_size_constraints"
+path = "examples/UiParserTest/uiParse_size_constraints/uiParse_size_constraints.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_size_constraints]
+name = "UI Parse Size Constraints"
+description = "Parses the official size_constraints UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_fixed_node"
+path = "examples/UiParserTest/uiParse_fixed_node/uiParse_fixed_node.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_fixed_node]
+name = "UI Parse Fixed Node"
+description = "Parses the official fixed_node UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_transparency_ui"
+path = "examples/UiParserTest/uiParse_transparency_ui/uiParse_transparency_ui.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_transparency_ui]
+name = "UI Parse Transparency UI"
+description = "Parses the official transparency_ui UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_window_fallthrough"
+path = "examples/UiParserTest/uiParse_window_fallthrough/uiParse_window_fallthrough.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_window_fallthrough]
+name = "UI Parse Window Fallthrough"
+description = "Parses the official window_fallthrough UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_relative_cursor_position"
+path = "examples/UiParserTest/uiParse_relative_cursor_position/uiParse_relative_cursor_position.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_relative_cursor_position]
+name = "UI Parse Relative Cursor Position"
+description = "Parses the official relative_cursor_position UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_scaling"
+path = "examples/UiParserTest/uiParse_ui_scaling/uiParse_ui_scaling.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_scaling]
+name = "UI Parse UI Scaling"
+description = "Parses the official ui_scaling UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_transform"
+path = "examples/UiParserTest/uiParse_ui_transform/uiParse_ui_transform.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_transform]
+name = "UI Parse UI Transform"
+description = "Parses the official ui_transform UI example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_button"
+path = "examples/UiParserTest/uiParse_button/uiParse_button.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_button]
+name = "UI Parse Button"
+description = "Parses the official button widget example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_ui_target_camera"
+path = "examples/UiParserTest/uiParse_ui_target_camera/uiParse_ui_target_camera.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_ui_target_camera]
+name = "UI Parse UI Target Camera"
+description = "Parses the official ui_target_camera example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_overflow"
+path = "examples/UiParserTest/uiParse_overflow/uiParse_overflow.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_overflow]
+name = "UI Parse Overflow"
+description = "Parses the official overflow example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_overflow_clip_margin"
+path = "examples/UiParserTest/uiParse_overflow_clip_margin/uiParse_overflow_clip_margin.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_overflow_clip_margin]
+name = "UI Parse Overflow Clip Margin"
+description = "Parses the official overflow_clip_margin example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_tab_navigation"
+path = "examples/UiParserTest/uiParse_tab_navigation/uiParse_tab_navigation.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_tab_navigation]
+name = "UI Parse Tab Navigation"
+description = "Parses the official tab_navigation example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_text_input"
+path = "examples/UiParserTest/uiParse_text_input/uiParse_text_input.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_text_input]
+name = "UI Parse Text Input"
+description = "Parses the official text_input example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
 
 [[example]]
 name = "ui_drag_and_drop"

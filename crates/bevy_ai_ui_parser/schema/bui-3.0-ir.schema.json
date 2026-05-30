@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bevy.org/schemas/bui-3.0-ir.schema.json",
+  "title": "Bevy UI IR Contract 3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "scene_name", "root"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "3.0-ir"
+    },
+    "scene_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imports": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "state_model": {
+      "$ref": "#/$defs/stateModel"
+    },
+    "resources": {
+      "$ref": "#/$defs/resources"
+    },
+    "root": {
+      "$ref": "#/$defs/node"
+    }
+  },
+  "$defs": {
+    "colorString": {
+      "type": "string",
+      "pattern": "^(transparent|#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))$"
+    },
+    "valString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(auto|-?\\d+(?:\\.\\d+)?(?:px|%)?)$"
+    },
+    "eventName": {
+      "type": "string",
+      "enum": ["press", "hover_enter", "hover_exit"]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event", "emit"],
+      "properties": {
+        "event": { "$ref": "#/$defs/eventName" },
+        "emit": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "source"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "stateVisual": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background_color": { "$ref": "#/$defs/colorString" },
+        "border_color": { "$ref": "#/$defs/colorString" },
+        "text_color": { "$ref": "#/$defs/colorString" }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "translation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rotation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scale": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "width": { "$ref": "#/$defs/valString" },
+        "height": { "$ref": "#/$defs/valString" },
+        "min_width": { "$ref": "#/$defs/valString" },
+        "min_height": { "$ref": "#/$defs/valString" },
+        "max_width": { "$ref": "#/$defs/valString" },
+        "max_height": { "$ref": "#/$defs/valString" },
+        "position_type": {
+          "type": "string",
+          "enum": ["relative", "absolute"]
+        },
+        "left": { "$ref": "#/$defs/valString" },
+        "right": { "$ref": "#/$defs/valString" },
+        "top": { "$ref": "#/$defs/valString" },
+        "bottom": { "$ref": "#/$defs/valString" },
+        "margin": { "type": "string", "minLength": 1 },
+        "padding": { "type": "string", "minLength": 1 },
+        "display": {
+          "type": "string",
+          "enum": ["flex", "grid", "none", "block"]
+        },
+        "flex_direction": {
+          "type": "string",
+          "enum": ["row", "row_reverse", "column", "column_reverse"]
+        },
+        "justify_content": {
+          "type": "string",
+          "enum": ["flex_start", "start", "flex_end", "end", "center", "space_between", "space_around", "space_evenly"]
+        },
+        "align_items": {
+          "type": "string",
+          "enum": ["default", "flex_start", "start", "flex_end", "end", "center", "baseline", "stretch"]
+        },
+        "row_gap": { "$ref": "#/$defs/valString" },
+        "column_gap": { "$ref": "#/$defs/valString" },
+        "overflow": {
+          "type": "string",
+          "enum": ["visible", "clip", "clip_x", "clip_y", "hidden", "hidden_x", "hidden_y", "scroll", "scroll_x", "scroll_y"]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["inherited", "visible", "hidden"]
+        },
+        "z_index": {
+          "type": "string",
+          "pattern": "^-?\\d+$"
+        },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "backgroundStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": { "$ref": "#/$defs/colorString" }
+      }
+    },
+    "borderStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": { "$ref": "#/$defs/colorString" },
+        "width": { "type": "string", "minLength": 1 },
+        "radius": { "$ref": "#/$defs/valString" }
+      }
+    },
+    "textShadowStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "offset_x": { "type": "number" },
+        "offset_y": { "type": "number" },
+        "color": { "$ref": "#/$defs/colorString" }
+      }
+    },
+    "textStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": { "$ref": "#/$defs/colorString" },
+        "font_path": { "type": "string", "minLength": 1 },
+        "font_size": { "type": "number", "exclusiveMinimum": 0 },
+        "line_height": { "type": "number", "exclusiveMinimum": 0 },
+        "letter_spacing": { "type": "number" },
+        "justify": {
+          "type": "string",
+          "enum": ["left", "center", "right", "justified", "start", "end"]
+        },
+        "shadow": { "$ref": "#/$defs/textShadowStyle" }
+      }
+    },
+    "imageStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tint": { "$ref": "#/$defs/colorString" }
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": { "$ref": "#/$defs/backgroundStyle" },
+        "border": { "$ref": "#/$defs/borderStyle" },
+        "text": { "$ref": "#/$defs/textStyle" },
+        "image": { "$ref": "#/$defs/imageStyle" }
+      }
+    },
+    "textContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" },
+        "placeholder": { "type": "string" },
+        "bounds_width": { "type": "number", "exclusiveMinimum": 0 },
+        "bounds_height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "imageContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "texture_path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": { "$ref": "#/$defs/textContent" },
+        "image": { "$ref": "#/$defs/imageContent" }
+      }
+    },
+    "tabSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "group_name": { "type": "string", "minLength": 1 },
+        "binding_source": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "progressSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "binding_source": { "type": "string", "minLength": 1 },
+        "fill": { "type": "boolean" }
+      }
+    },
+    "listSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "binding_source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tab": { "$ref": "#/$defs/tabSemantics" },
+        "progress": { "$ref": "#/$defs/progressSemantics" },
+        "list": { "$ref": "#/$defs/listSemantics" }
+      }
+    },
+    "stateValue": {
+      "type": ["string", "number", "boolean", "array", "object", "null"]
+    },
+    "stateModel": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/stateValue"
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fonts": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "images": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/colorString" }
+        },
+        "materials": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "node",
+            "button",
+            "toggle",
+            "text",
+            "text_input",
+            "image",
+            "tab_group",
+            "tab_item",
+            "progress",
+            "list",
+            "template_instance"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "markers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/action" }
+        },
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/binding" }
+        },
+        "layout": { "$ref": "#/$defs/layout" },
+        "style": { "$ref": "#/$defs/style" },
+        "state_visuals": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": { "$ref": "#/$defs/stateVisual" }
+        },
+        "semantics": { "$ref": "#/$defs/semantics" },
+        "content": { "$ref": "#/$defs/content" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "version": "2.0",
+  "scene_name": "UiTextureSlice",
+  "root": {
+    "id": "ui_texture_slice_root",
+    "type": "Node",
+    "styles": {
+      "width": "100%",
+      "height": "100%",
+      "align_items": "center",
+      "justify_content": "center"
+    },
+    "children": [
+      {
+        "id": "slice_button_150_150",
+        "type": "Button",
+        "styles": {
+          "width": "150px",
+          "height": "150px",
+          "justify_content": "center",
+          "align_items": "center",
+          "margin": "20px"
+        },
+        "image_config": {
+          "texture_path": "textures/fantasy_ui_borders/panel-border-010.png",
+          "image_mode": "sliced",
+          "slicer": {
+            "border": 22,
+            "max_corner_scale": 1
+          }
+        },
+        "children": [
+          {
+            "id": "slice_button_150_150_text",
+            "type": "Text",
+            "text_config": {
+              "content": "Button",
+              "font_size": 33,
+              "font_color": "#E6E6E6",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      },
+      {
+        "id": "slice_button_300_150",
+        "type": "Button",
+        "styles": {
+          "width": "300px",
+          "height": "150px",
+          "justify_content": "center",
+          "align_items": "center",
+          "margin": "20px"
+        },
+        "image_config": {
+          "texture_path": "textures/fantasy_ui_borders/panel-border-010.png",
+          "image_mode": "sliced",
+          "slicer": {
+            "border": 22,
+            "max_corner_scale": 1
+          }
+        },
+        "children": [
+          {
+            "id": "slice_button_300_150_text",
+            "type": "Text",
+            "text_config": {
+              "content": "Button",
+              "font_size": 33,
+              "font_color": "#E6E6E6",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      },
+      {
+        "id": "slice_button_150_300",
+        "type": "Button",
+        "styles": {
+          "width": "150px",
+          "height": "300px",
+          "justify_content": "center",
+          "align_items": "center",
+          "margin": "20px"
+        },
+        "image_config": {
+          "texture_path": "textures/fantasy_ui_borders/panel-border-010.png",
+          "image_mode": "sliced",
+          "slicer": {
+            "border": 22,
+            "max_corner_scale": 1
+          }
+        },
+        "children": [
+          {
+            "id": "slice_button_150_300_text",
+            "type": "Text",
+            "text_config": {
+              "content": "Button",
+              "font_size": 33,
+              "font_color": "#E6E6E6",
+              "font_path": "fonts/FiraSans-Bold.ttf"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

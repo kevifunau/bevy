@@ -1,0 +1,2140 @@
+{
+  "version": "2.0",
+  "scene_name": "UltramanHeroAmplifierScreen",
+  "root": {
+    "id": "game_viewport_root",
+    "type": "Node",
+    "styles": {
+      "display": "flex",
+      "width": "100%",
+      "height": "100%",
+      "justify_content": "space_between",
+      "align_items": "stretch",
+      "padding_left": "24px",
+      "padding_right": "24px",
+      "padding_top": "20px",
+      "padding_bottom": "20px"
+    },
+    "visuals": {
+      "background_color": "#d7e6f5FF"
+    },
+    "children": [
+      {
+        "id": "left_container",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "column",
+          "width": "180px",
+          "height": "100%"
+        },
+        "children": [
+          {
+            "id": "top_nav_group",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "row",
+              "column_gap": "10px",
+              "margin_bottom": "20px"
+            },
+            "children": [
+              {
+                "id": "btn_back",
+                "type": "Button",
+                "custom_tags": ["Audio_Click", "Action_Back"],
+                "actions": [{ "event": "press", "emit": "ui.nav.back" }],
+                "styles": {
+                  "width": "34px",
+                  "height": "32px",
+                  "justify_content": "center",
+                  "align_items": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "txt_back_icon",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "<",
+                      "font_size": 16,
+                      "font_color": "#3a4d5cFF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "btn_home",
+                "type": "Button",
+                "custom_tags": ["Audio_Click", "Action_Home"],
+                "actions": [{ "event": "press", "emit": "ui.nav.home" }],
+                "styles": {
+                  "width": "34px",
+                  "height": "32px",
+                  "justify_content": "center",
+                  "align_items": "center"
+                },
+                "visuals": {
+                  "background_color": "#FFFFFFFF"
+                },
+                "children": [
+                  {
+                    "id": "txt_home_icon",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "^",
+                      "font_size": 14,
+                      "font_color": "#3a4d5cFF"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "sidebar_group",
+            "tab_group_name": "hero_left_tabs",
+            "tab_binding_source": "ui.selected_tab",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "column",
+              "row_gap": "10px",
+              "margin_top": "2px"
+            },
+            "children": [
+              {
+                "id": "menu_item_attr",
+                "type": "Button",
+                "tab_group_name": "hero_left_tabs",
+                "tab_value": "attribute",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "align_items": "center",
+                  "width": "130px",
+                  "height": "38px"
+                },
+                "visuals": {
+                  "background_color": "#00000000"
+                },
+                "children": [
+                  {
+                    "id": "circle_attr",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5b6773FF",
+                          "border_color": "#ff3434FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "34px",
+                      "height": "34px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#4f5f70FF",
+                      "border_color": "#8fa2b5FF",
+                      "border_width": "2px",
+                      "border_radius": "50%"
+                    },
+                    "children": [
+                      {
+                        "id": "badge_attr",
+                        "type": "Node",
+                        "styles": {
+                          "position_type": "absolute",
+                          "left": "-3px",
+                          "top": "-3px",
+                          "width": "12px",
+                          "height": "12px",
+                          "justify_content": "center",
+                          "align_items": "center"
+                        },
+                        "visuals": {
+                          "background_color": "#1b1d20FF",
+                          "border_radius": "50%"
+                        },
+                        "children": [
+                          {
+                            "id": "badge_attr_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "1",
+                              "font_size": 7,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "circle_attr_txt",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "G",
+                          "font_size": 13,
+                          "font_color": "#FFFFFFFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_attr",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5a0909FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "84px",
+                      "height": "34px",
+                      "margin_left": "10px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#eef4fbFF"
+                    },
+                    "children": [
+                      {
+                        "id": "tab_attr_cap",
+                        "type": "Node",
+                        "state_visuals": {
+                          "selected": {
+                            "visuals": {
+                              "background_color": "#5a0909FF"
+                            }
+                          }
+                        },
+                        "styles": {
+                          "position_type": "absolute",
+                          "right": "-7px",
+                          "top": "0px",
+                          "width": "14px",
+                          "height": "34px",
+                          "ui_rotation": "-18deg"
+                        },
+                        "visuals": {
+                          "background_color": "#eef4fbFF"
+                        }
+                      },
+                      {
+                        "id": "txt_tab_attr",
+                        "type": "Text",
+                        "state_visuals": {
+                          "selected": {
+                            "text_color": "#FFFFFFFF"
+                          }
+                        },
+                        "text_config": {
+                          "content": "属性",
+                          "font_size": 12,
+                          "font_color": "#20313dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "menu_item_skill",
+                "type": "Button",
+                "tab_group_name": "hero_left_tabs",
+                "tab_value": "skill",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "align_items": "center",
+                  "width": "130px",
+                  "height": "38px"
+                },
+                "visuals": {
+                  "background_color": "#00000000"
+                },
+                "children": [
+                  {
+                    "id": "circle_skill",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5b6773FF",
+                          "border_color": "#ff3434FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "34px",
+                      "height": "34px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#4f5f70FF",
+                      "border_color": "#8fa2b5FF",
+                      "border_width": "2px",
+                      "border_radius": "50%"
+                    },
+                    "children": [
+                      {
+                        "id": "badge_skill",
+                        "type": "Node",
+                        "styles": {
+                          "position_type": "absolute",
+                          "left": "-3px",
+                          "top": "-3px",
+                          "width": "12px",
+                          "height": "12px",
+                          "justify_content": "center",
+                          "align_items": "center"
+                        },
+                        "visuals": {
+                          "background_color": "#1b1d20FF",
+                          "border_radius": "50%"
+                        },
+                        "children": [
+                          {
+                            "id": "badge_skill_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "2",
+                              "font_size": 7,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "circle_skill_txt",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "O",
+                          "font_size": 13,
+                          "font_color": "#FFFFFFFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_skill",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5a0909FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "84px",
+                      "height": "34px",
+                      "margin_left": "10px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#eef4fbFF"
+                    },
+                    "children": [
+                      {
+                        "id": "tab_skill_cap",
+                        "type": "Node",
+                        "state_visuals": {
+                          "selected": {
+                            "visuals": {
+                              "background_color": "#5a0909FF"
+                            }
+                          }
+                        },
+                        "styles": {
+                          "position_type": "absolute",
+                          "right": "-7px",
+                          "top": "0px",
+                          "width": "14px",
+                          "height": "34px",
+                          "ui_rotation": "-18deg"
+                        },
+                        "visuals": {
+                          "background_color": "#eef4fbFF"
+                        }
+                      },
+                      {
+                        "id": "txt_tab_skill",
+                        "type": "Text",
+                        "state_visuals": {
+                          "selected": {
+                            "text_color": "#FFFFFFFF"
+                          }
+                        },
+                        "text_config": {
+                          "content": "技能",
+                          "font_size": 12,
+                          "font_color": "#20313dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "menu_item_unique",
+                "type": "Button",
+                "tab_group_name": "hero_left_tabs",
+                "tab_value": "unique",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "align_items": "center",
+                  "width": "130px",
+                  "height": "38px"
+                },
+                "visuals": {
+                  "background_color": "#00000000"
+                },
+                "children": [
+                  {
+                    "id": "circle_unique",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5b6773FF",
+                          "border_color": "#ff3434FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "34px",
+                      "height": "34px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#4f5f70FF",
+                      "border_color": "#8fa2b5FF",
+                      "border_width": "2px",
+                      "border_radius": "50%"
+                    },
+                    "children": [
+                      {
+                        "id": "badge_unique",
+                        "type": "Node",
+                        "styles": {
+                          "position_type": "absolute",
+                          "left": "-3px",
+                          "top": "-3px",
+                          "width": "12px",
+                          "height": "12px",
+                          "justify_content": "center",
+                          "align_items": "center"
+                        },
+                        "visuals": {
+                          "background_color": "#1b1d20FF",
+                          "border_radius": "50%"
+                        },
+                        "children": [
+                          {
+                            "id": "badge_unique_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "3",
+                              "font_size": 7,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "circle_unique_txt",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "Z",
+                          "font_size": 13,
+                          "font_color": "#FFFFFFFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_unique",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5a0909FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "84px",
+                      "height": "34px",
+                      "margin_left": "10px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#eef4fbFF"
+                    },
+                    "children": [
+                      {
+                        "id": "tab_unique_cap",
+                        "type": "Node",
+                        "state_visuals": {
+                          "selected": {
+                            "visuals": {
+                              "background_color": "#5a0909FF"
+                            }
+                          }
+                        },
+                        "styles": {
+                          "position_type": "absolute",
+                          "right": "-7px",
+                          "top": "0px",
+                          "width": "14px",
+                          "height": "34px",
+                          "ui_rotation": "-18deg"
+                        },
+                        "visuals": {
+                          "background_color": "#eef4fbFF"
+                        }
+                      },
+                      {
+                        "id": "txt_tab_unique",
+                        "type": "Text",
+                        "state_visuals": {
+                          "selected": {
+                            "text_color": "#FFFFFFFF"
+                          }
+                        },
+                        "text_config": {
+                          "content": "专属",
+                          "font_size": 12,
+                          "font_color": "#20313dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "menu_item_core",
+                "type": "Button",
+                "tab_group_name": "hero_left_tabs",
+                "tab_value": "core",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "align_items": "center",
+                  "width": "130px",
+                  "height": "38px"
+                },
+                "visuals": {
+                  "background_color": "#00000000"
+                },
+                "children": [
+                  {
+                    "id": "circle_core",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5b6773FF",
+                          "border_color": "#ff3434FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "34px",
+                      "height": "34px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#4f5f70FF",
+                      "border_color": "#8fa2b5FF",
+                      "border_width": "2px",
+                      "border_radius": "50%"
+                    },
+                    "children": [
+                      {
+                        "id": "badge_core",
+                        "type": "Node",
+                        "styles": {
+                          "position_type": "absolute",
+                          "left": "-3px",
+                          "top": "-3px",
+                          "width": "12px",
+                          "height": "12px",
+                          "justify_content": "center",
+                          "align_items": "center"
+                        },
+                        "visuals": {
+                          "background_color": "#1b1d20FF",
+                          "border_radius": "50%"
+                        },
+                        "children": [
+                          {
+                            "id": "badge_core_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "4",
+                              "font_size": 7,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "circle_core_txt",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "4",
+                          "font_size": 13,
+                          "font_color": "#FFFFFFFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_core",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5a0909FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "84px",
+                      "height": "34px",
+                      "margin_left": "10px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#eef4fbFF"
+                    },
+                    "children": [
+                      {
+                        "id": "tab_core_cap",
+                        "type": "Node",
+                        "state_visuals": {
+                          "selected": {
+                            "visuals": {
+                              "background_color": "#5a0909FF"
+                            }
+                          }
+                        },
+                        "styles": {
+                          "position_type": "absolute",
+                          "right": "-7px",
+                          "top": "0px",
+                          "width": "14px",
+                          "height": "34px",
+                          "ui_rotation": "-18deg"
+                        },
+                        "visuals": {
+                          "background_color": "#eef4fbFF"
+                        }
+                      },
+                      {
+                        "id": "txt_tab_core",
+                        "type": "Text",
+                        "state_visuals": {
+                          "selected": {
+                            "text_color": "#FFFFFFFF"
+                          }
+                        },
+                        "text_config": {
+                          "content": "核心",
+                          "font_size": 12,
+                          "font_color": "#20313dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "menu_item_amp",
+                "type": "Button",
+                "custom_tags": ["State_Checked"],
+                "tab_group_name": "hero_left_tabs",
+                "tab_value": "amplifier",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "align_items": "center",
+                  "width": "130px",
+                  "height": "38px"
+                },
+                "visuals": {
+                  "background_color": "#00000000"
+                },
+                "children": [
+                  {
+                    "id": "circle_amp",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5b6773FF",
+                          "border_color": "#ff3434FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "34px",
+                      "height": "34px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#4f5f70FF",
+                      "border_color": "#8fa2b5FF",
+                      "border_width": "2px",
+                      "border_radius": "50%"
+                    },
+                    "children": [
+                      {
+                        "id": "badge_amp",
+                        "type": "Node",
+                        "styles": {
+                          "position_type": "absolute",
+                          "left": "-3px",
+                          "top": "-3px",
+                          "width": "12px",
+                          "height": "12px",
+                          "justify_content": "center",
+                          "align_items": "center"
+                        },
+                        "visuals": {
+                          "background_color": "#1b1d20FF",
+                          "border_radius": "50%"
+                        },
+                        "children": [
+                          {
+                            "id": "badge_amp_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "5",
+                              "font_size": 7,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "circle_amp_txt",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "5",
+                          "font_size": 13,
+                          "font_color": "#FFFFFFFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_amp",
+                    "type": "Node",
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#5a0909FF"
+                        }
+                      }
+                    },
+                    "styles": {
+                      "width": "84px",
+                      "height": "34px",
+                      "margin_left": "10px",
+                      "justify_content": "center",
+                      "align_items": "center"
+                    },
+                    "visuals": {
+                      "background_color": "#eef4fbFF"
+                    },
+                    "children": [
+                      {
+                        "id": "tab_amp_cap",
+                        "type": "Node",
+                        "state_visuals": {
+                          "selected": {
+                            "visuals": {
+                              "background_color": "#5a0909FF"
+                            }
+                          }
+                        },
+                        "styles": {
+                          "position_type": "absolute",
+                          "right": "-7px",
+                          "top": "0px",
+                          "width": "14px",
+                          "height": "34px",
+                          "ui_rotation": "-18deg"
+                        },
+                        "visuals": {
+                          "background_color": "#eef4fbFF"
+                        }
+                      },
+                      {
+                        "id": "txt_tab_amp",
+                        "type": "Text",
+                        "state_visuals": {
+                          "selected": {
+                            "text_color": "#FFFFFFFF"
+                          }
+                        },
+                        "text_config": {
+                          "content": "增幅器",
+                          "font_size": 12,
+                          "font_color": "#20313dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "btn_recruit",
+            "type": "Button",
+            "custom_tags": ["Action_Gacha_Jump", "State_Disabled"],
+            "actions": [{ "event": "press", "emit": "ui.jump.recruit" }],
+            "state_visuals": {
+              "disabled": {
+                "visuals": {
+                  "background_color": "#9c8f8fFF",
+                  "border_color": "#b7aaaaFF"
+                }
+              }
+            },
+            "styles": {
+              "width": "84px",
+              "height": "34px",
+              "margin_top": "auto",
+              "justify_content": "center",
+              "align_items": "center"
+            },
+            "visuals": {
+              "background_color": "#c90404FF",
+              "border_color": "#de7c7cFF",
+              "border_width": "1px"
+            },
+            "children": [
+              {
+                "id": "btn_recruit_cap",
+                "type": "Node",
+                "styles": {
+                  "position_type": "absolute",
+                  "right": "-7px",
+                  "top": "0px",
+                  "width": "14px",
+                  "height": "34px",
+                  "ui_rotation": "-18deg"
+                },
+                "visuals": {
+                  "background_color": "#c90404FF"
+                }
+              },
+              {
+                "id": "txt_recruit",
+                "type": "Text",
+                "text_config": {
+                  "content": "前往招募",
+                  "font_size": 11,
+                  "font_color": "#FFFFFFFF",
+                  "font_path": "fonts/simhei.ttf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "center_power_container",
+        "type": "Node",
+        "bindings": [
+          { "target": "ui_translation", "source": "ui.power_translation" },
+          { "target": "ui_rotation", "source": "ui.power_rotation" },
+          { "target": "ui_scale", "source": "ui.power_scale" }
+        ],
+        "styles": {
+          "position_type": "absolute",
+          "bottom": "20px",
+          "left": "430px",
+          "ui_rotation": "-13deg"
+        },
+        "children": [
+          {
+            "id": "power_shell",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "row",
+              "align_items": "center",
+              "column_gap": "10px",
+              "padding_left": "28px",
+              "padding_right": "28px",
+              "padding_top": "6px",
+              "padding_bottom": "6px"
+            },
+            "visuals": {
+              "background_color": "#6b0909FF",
+              "border_color": "#f0a38eFF",
+              "border_width": "1px"
+            },
+            "children": [
+              {
+                "id": "power_shell_cap_left",
+                "type": "Node",
+                "styles": {
+                  "position_type": "absolute",
+                  "left": "-9px",
+                  "top": "0px",
+                  "width": "18px",
+                  "height": "40px",
+                  "ui_rotation": "-18deg"
+                },
+                "visuals": {
+                  "background_color": "#6b0909FF"
+                }
+              },
+              {
+                "id": "power_shell_cap_right",
+                "type": "Node",
+                "styles": {
+                  "position_type": "absolute",
+                  "right": "-9px",
+                  "top": "0px",
+                  "width": "18px",
+                  "height": "40px",
+                  "ui_rotation": "-18deg"
+                },
+                "visuals": {
+                  "background_color": "#6b0909FF"
+                }
+              },
+              {
+                "id": "txt_power_icon",
+                "type": "Text",
+                "text_config": {
+                  "content": "⚡",
+                  "font_size": 13,
+                  "font_color": "#ffbf4dFF",
+                  "font_path": "fonts/simhei.ttf"
+                }
+              },
+              {
+                "id": "txt_power_value",
+                "type": "Text",
+                "bindings": [{ "target": "text.content", "source": "hero.power_value" }],
+                "text_config": {
+                  "content": "10006325",
+                  "font_size": 24,
+                  "font_color": "#FFFFFFFF",
+                  "font_path": "fonts/simhei.ttf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "right_panel_container",
+        "type": "Node",
+        "styles": {
+          "display": "flex",
+          "flex_direction": "column",
+          "width": "330px",
+          "height": "100%"
+        },
+        "children": [
+          {
+                "id": "btn_follow",
+                "type": "Button",
+                "custom_tags": ["Action_Follow_Hero"],
+                "actions": [{ "event": "press", "emit": "ui.hero.follow_toggle" }],
+                "bindings": [
+                  { "target": "background_color", "source": "hero.follow_bg" },
+                  { "target": "border_width", "source": "hero.follow_border_width" }
+                ],
+                "state_visuals": {
+                  "normal": {
+                    "visuals": {
+                      "border_color": "#AFC0D0FF"
+                    }
+                  },
+                  "hovered": {
+                    "visuals": {
+                      "border_color": "#D6E6F4FF"
+                    }
+                  },
+                  "pressed": {
+                    "visuals": {
+                      "border_color": "#F6FBFFFF"
+                    }
+                  },
+                  "followed": {
+                    "visuals": {
+                      "background_color": "#4a92e3F2",
+                      "border_color": "#D6E6F4FF"
+                    }
+                  },
+                  "followed_hovered": {
+                    "visuals": {
+                      "background_color": "#67A8EDF2",
+                      "border_color": "#F7FBFFFF"
+                    }
+                  }
+                },
+                "styles": {
+                  "align_self": "flex_end",
+                  "padding_left": "12px",
+                  "padding_right": "12px",
+                  "padding_top": "4px",
+                  "padding_bottom": "4px"
+                },
+                "visuals": {
+                  "background_color": "#8e9aa6CC",
+                  "border_color": "#AFC0D0FF",
+                  "border_width": "1px",
+                  "border_radius": "14px"
+                },
+                "children": [
+                  {
+                    "id": "txt_follow",
+                    "type": "Text",
+                    "bindings": [{ "target": "text.content", "source": "hero.follow_label" }],
+                    "state_visuals": {
+                      "followed": {
+                        "text_color": "#FFFFFFFF"
+                      }
+                    },
+                    "text_config": {
+                      "content": "♥关注",
+                      "font_size": 10,
+                      "font_color": "#FFFFFFFF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+              }
+            ]
+          },
+          {
+            "id": "toggle_share_note",
+            "type": "Toggle",
+            "custom_tags": ["State_Checked"],
+            "state_visuals": {
+              "normal": {
+                "visuals": {
+                  "background_color": "#E2EAF4FF",
+                  "border_color": "#B5C4D3FF"
+                }
+              },
+              "hovered": {
+                "visuals": {
+                  "background_color": "#ECF3FBFF",
+                  "border_color": "#C3D4E3FF"
+                }
+              },
+              "pressed": {
+                "visuals": {
+                  "background_color": "#D3E0EEFF",
+                  "border_color": "#9BB1C8FF"
+                }
+              },
+              "checked": {
+                "visuals": {
+                  "background_color": "#DFF1FFFF",
+                  "border_color": "#47A5E3FF"
+                }
+              }
+            },
+            "styles": {
+              "align_self": "flex_end",
+              "width": "92px",
+              "height": "24px",
+              "margin_top": "8px",
+              "justify_content": "center",
+              "align_items": "center"
+            },
+            "visuals": {
+              "background_color": "#E2EAF4FF",
+              "border_color": "#B5C4D3FF",
+              "border_width": "1px",
+              "border_radius": "12px"
+            },
+            "children": [
+              {
+                "id": "txt_toggle_share_note",
+                "type": "Text",
+                "text_config": {
+                  "content": "共享说明",
+                  "font_size": 9,
+                  "font_color": "#35506CFF",
+                  "font_path": "fonts/simhei.ttf"
+                }
+              }
+            ]
+          },
+          {
+            "id": "char_header_meta",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "row",
+              "column_gap": "10px",
+              "margin_top": "18px",
+              "margin_bottom": "18px",
+              "align_items": "center"
+            },
+            "children": [
+              {
+                "id": "rank_badge_box",
+                "type": "Node",
+                "styles": {
+                  "width": "34px",
+                  "height": "56px",
+                  "justify_content": "center",
+                  "align_items": "center"
+                },
+                "visuals": {
+                  "background_color": "#08212dFF"
+                },
+                "children": [
+                  {
+                    "id": "txt_rank",
+                    "type": "Text",
+                    "bindings": [
+                      { "target": "justify", "source": "hero.rank_justify" },
+                      { "target": "text_bounds.width", "source": "hero.rank_bounds_width" },
+                      { "target": "text_bounds.height", "source": "hero.rank_bounds_height" }
+                    ],
+                    "text_config": {
+                      "content": "宗师\n29级",
+                      "font_size": 10,
+                      "font_color": "#32ffd7FF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "char_title_names",
+                "type": "Node",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "column",
+                  "row_gap": "2px"
+                },
+                "children": [
+                  {
+                    "id": "char_name_row",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "align_items": "center",
+                      "column_gap": "8px"
+                    },
+                    "children": [
+                      {
+                        "id": "hero_form_icon",
+                        "type": "Image",
+                        "bindings": [{ "target": "image.tint", "source": "hero.form_icon_tint" }],
+                        "styles": {
+                          "width": "18px",
+                          "height": "18px"
+                        },
+                        "image_config": {
+                          "texture_path": "branding/icon.png"
+                        }
+                      },
+                      {
+                        "id": "txt_main_name",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "银河维克特利",
+                          "font_size": 18,
+                          "font_color": "#182633FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "name_tip_badge",
+                        "type": "Node",
+                        "bindings": [{ "target": "visibility", "source": "ui.shared_note_visible" }],
+                        "styles": {
+                          "padding_left": "4px",
+                          "padding_right": "4px",
+                          "padding_top": "2px",
+                          "padding_bottom": "2px"
+                        },
+                        "visuals": {
+                          "background_color": "#2e7fffFF"
+                        },
+                        "children": [
+                          {
+                            "id": "name_tip_txt",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "共享说明",
+                              "font_size": 9,
+                              "font_color": "#FFFFFFFF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "txt_sub_form",
+                    "type": "Text",
+                    "bindings": [
+                      { "target": "text.content", "source": "hero.subtitle" },
+                      { "target": "text.color", "source": "hero.subtitle_color" },
+                      { "target": "font_size", "source": "hero.subtitle_size" },
+                      { "target": "line_height", "source": "hero.subtitle_line_height" },
+                      { "target": "letter_spacing", "source": "hero.subtitle_letter_spacing" },
+                      { "target": "text_shadow.offset_x", "source": "hero.subtitle_shadow_offset_x" },
+                      { "target": "text_shadow.offset_y", "source": "hero.subtitle_shadow_offset_y" },
+                      { "target": "text_shadow.color", "source": "hero.subtitle_shadow_color" }
+                    ],
+                    "text_config": {
+                      "content": "光辉赛罗",
+                      "font_size": 19,
+                      "font_color": "#efaa18FF",
+                      "font_path": "fonts/simhei.ttf",
+                      "text_shadow": {
+                        "offset_x": 2,
+                        "offset_y": 2,
+                        "color": "#7A3C00AA"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "stats_panel_box",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "column",
+              "padding_left": "12px",
+              "padding_right": "12px",
+              "padding_top": "10px",
+              "padding_bottom": "10px"
+            },
+            "visuals": {
+              "background_color": "#eef4fbCC",
+              "border_color": "#f8fbffFF",
+              "border_width": "1px",
+              "border_radius": "4px"
+            },
+            "children": [
+              {
+                "id": "exp_sub_container",
+                "type": "Node",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "column",
+                  "margin_bottom": "8px"
+                },
+                "children": [
+                  {
+                    "id": "exp_text_row",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_exp",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "当前经验",
+                          "font_size": 10,
+                          "font_color": "#6d8194FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_exp",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "0/1000000",
+                          "font_size": 10,
+                          "font_color": "#415a70FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "exp_bar_bg",
+                    "progress_binding_source": "hero.exp_progress_ratio",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "4px",
+                      "margin_top": "6px"
+                    },
+                    "visuals": {
+                      "background_color": "#afbfceFF"
+                    },
+                    "children": [
+                      {
+                        "id": "exp_bar_fill",
+                        "progress_fill": true,
+                        "type": "Node",
+                        "styles": {
+                          "width": "0%",
+                          "height": "100%"
+                        },
+                        "visuals": {
+                          "background_color": "#2361dbFF"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "stats_vertical_list",
+                "type": "Node",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "column"
+                },
+                "children": [
+                  {
+                    "id": "row_stat_strength",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_strength",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 力量",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_strength",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "568",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_strength",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_skill",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_skill",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 技巧",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_skill",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "23456",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_skill",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_body",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_body",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 体魄",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_body",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "87",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_body",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_spirit",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_spirit",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 精神",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_spirit",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "208",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_spirit",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_life",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_life",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 生命",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_life",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "87",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_life",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_energy",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_energy",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 能量",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_energy",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "208",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_energy",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_atk",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_atk",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 攻击",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_atk",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "226",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sep_atk",
+                    "type": "Node",
+                    "styles": {
+                      "width": "100%",
+                      "height": "1px"
+                    },
+                    "visuals": {
+                      "background_color": "#d7e1ebFF"
+                    }
+                  },
+                  {
+                    "id": "row_stat_def",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "row",
+                      "justify_content": "space_between",
+                      "padding_top": "8px",
+                      "padding_bottom": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "lbl_def",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆ 防御",
+                          "font_size": 12,
+                          "font_color": "#30424fFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "val_def",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "66",
+                          "font_size": 13,
+                          "font_color": "#0b1820FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "btn_detail",
+            "type": "Button",
+            "custom_tags": ["Action_Open_Detail_Modal"],
+            "actions": [{ "event": "press", "emit": "ui.panel.detail" }],
+            "state_visuals": {
+              "normal": {
+                "visuals": {
+                  "background_color": "#8da4bcFF"
+                }
+              },
+              "hovered": {
+                "visuals": {
+                  "background_color": "#9db2c8FF"
+                }
+              },
+              "pressed": {
+                "visuals": {
+                  "background_color": "#7f95adFF"
+                }
+              },
+              "focused": {
+                "visuals": {
+                  "background_color": "#7693b4FF",
+                  "border_color": "#F7FBFFFF"
+                }
+              }
+            },
+            "styles": {
+              "width": "100%",
+              "height": "30px",
+              "margin_top": "8px",
+              "auto_focus": true,
+              "justify_content": "center",
+              "align_items": "center"
+            },
+            "visuals": {
+              "background_color": "#8da4bcFF",
+              "border_color": "#D4E1ECFF",
+              "border_width": "1px"
+            },
+            "children": [
+              {
+                "id": "btn_detail_cap_left",
+                "type": "Node",
+                "styles": {
+                  "position_type": "absolute",
+                  "left": "-7px",
+                  "top": "0px",
+                  "width": "14px",
+                  "height": "30px",
+                  "ui_rotation": "18deg"
+                },
+                "visuals": {
+                  "background_color": "#8da4bcFF"
+                }
+              },
+              {
+                "id": "btn_detail_cap_right",
+                "type": "Node",
+                "styles": {
+                  "position_type": "absolute",
+                  "right": "-7px",
+                  "top": "0px",
+                  "width": "14px",
+                  "height": "30px",
+                  "ui_rotation": "-18deg"
+                },
+                "visuals": {
+                  "background_color": "#8da4bcFF"
+                }
+              },
+              {
+                "id": "txt_detail",
+                "type": "Text",
+                "bindings": [{ "target": "text.content", "source": "ui.detail_title" }],
+                "text_config": {
+                  "content": "属性详情",
+                  "font_size": 12,
+                  "font_color": "#FFFFFFFF",
+                  "font_path": "fonts/simhei.ttf"
+                }
+              }
+            ]
+          },
+          {
+            "id": "tab_content_stack",
+            "type": "Node",
+            "styles": {
+              "display": "flex",
+              "flex_direction": "column",
+              "margin_top": "10px"
+            },
+            "children": [
+              {
+                "id": "panel_attribute",
+                "type": "Node",
+                "bindings": [{ "target": "display", "source": "ui.panel.attribute_display" }],
+                "styles": {
+                  "display": "none",
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#f0f5fbB8",
+                  "border_color": "#d3dde8FF",
+                  "border_width": "1px"
+                },
+                "children": [
+                  {
+                    "id": "txt_panel_attribute",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "属性面板内容",
+                      "font_size": 12,
+                      "font_color": "#30424fFF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "panel_skill",
+                "type": "Node",
+                "bindings": [{ "target": "display", "source": "ui.panel.skill_display" }],
+                "styles": {
+                  "display": "none",
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#edf4ffB8",
+                  "border_color": "#c3d8fbFF",
+                  "border_width": "1px"
+                },
+                "children": [
+                  {
+                    "id": "txt_panel_skill",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "技能面板内容",
+                      "font_size": 12,
+                      "font_color": "#35588fFF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "panel_unique",
+                "type": "Node",
+                "bindings": [{ "target": "display", "source": "ui.panel.unique_display" }],
+                "styles": {
+                  "display": "none",
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#f3ecffB8",
+                  "border_color": "#d2c1f2FF",
+                  "border_width": "1px"
+                },
+                "children": [
+                  {
+                    "id": "txt_panel_unique",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "专属面板内容",
+                      "font_size": 12,
+                      "font_color": "#6e4fa1FF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "panel_core",
+                "type": "Node",
+                "bindings": [{ "target": "display", "source": "ui.panel.core_display" }],
+                "styles": {
+                  "display": "none",
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#ebfaf4B8",
+                  "border_color": "#b9dfcfFF",
+                  "border_width": "1px"
+                },
+                "children": [
+                  {
+                    "id": "txt_panel_core",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "核心面板内容",
+                      "font_size": 12,
+                      "font_color": "#2f7d67FF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "panel_amplifier",
+                "type": "Node",
+                "bindings": [{ "target": "display", "source": "ui.panel.amplifier_display" }],
+                "styles": {
+                  "display": "flex",
+                  "padding": "10px"
+                },
+                "visuals": {
+                  "background_color": "#fff4e7B8",
+                  "border_color": "#f2d4a5FF",
+                  "border_width": "1px"
+                },
+                "children": [
+                  {
+                    "id": "amplifier_module_list",
+                    "type": "Node",
+                    "list_binding_source": "hero.amplifier_modules",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "column",
+                      "row_gap": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "amplifier_module_item",
+                        "type": "Node",
+                        "styles": {
+                          "display": "flex",
+                          "flex_direction": "column",
+                          "row_gap": "2px",
+                          "padding_left": "8px",
+                          "padding_right": "8px",
+                          "padding_top": "6px",
+                          "padding_bottom": "6px"
+                        },
+                        "visuals": {
+                          "background_color": "#FFF7ECFF",
+                          "border_color": "#E8CCA0FF",
+                          "border_width": "1px"
+                        },
+                        "children": [
+                          {
+                            "id": "txt_amplifier_module_title",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "{{title}}",
+                              "font_size": 12,
+                              "font_color": "#9b6a16FF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          },
+                          {
+                            "id": "txt_amplifier_module_desc",
+                            "type": "Text",
+                            "text_config": {
+                              "content": "{{desc}}",
+                              "font_size": 10,
+                              "font_color": "#7C6750FF",
+                              "font_path": "fonts/simhei.ttf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "upgrade_section_group",
+            "type": "Node",
+            "styles": {
+              "margin_top": "auto",
+              "display": "flex",
+              "flex_direction": "column",
+              "row_gap": "14px"
+            },
+            "children": [
+              {
+                "id": "rank_transfer_card",
+                "type": "Node",
+                "styles": {
+                  "display": "flex",
+                  "flex_direction": "row",
+                  "justify_content": "center",
+                  "align_items": "center",
+                  "column_gap": "26px",
+                  "padding_top": "10px",
+                  "padding_bottom": "10px",
+                  "padding_left": "12px",
+                  "padding_right": "12px"
+                },
+                "visuals": {
+                  "background_color": "#e4edf7B8",
+                  "border_radius": "4px"
+                },
+                "children": [
+                  {
+                    "id": "rank_transfer_left",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "column",
+                      "align_items": "center",
+                      "row_gap": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "rank_transfer_left_icon",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆",
+                          "font_size": 24,
+                          "font_color": "#2f78b8FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "txt_rank_src",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "宗师2级",
+                          "font_size": 11,
+                          "font_color": "#42586dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "txt_arrow",
+                    "type": "Text",
+                    "text_config": {
+                      "content": ">",
+                      "font_size": 12,
+                      "font_color": "#7a93aaFF"
+                    }
+                  },
+                  {
+                    "id": "rank_transfer_right",
+                    "type": "Node",
+                    "styles": {
+                      "display": "flex",
+                      "flex_direction": "column",
+                      "align_items": "center",
+                      "row_gap": "6px"
+                    },
+                    "children": [
+                      {
+                        "id": "rank_transfer_right_icon",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "◆",
+                          "font_size": 24,
+                          "font_color": "#2f78b8FF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      },
+                      {
+                        "id": "txt_rank_dst",
+                        "type": "Text",
+                        "text_config": {
+                          "content": "传说2级",
+                          "font_size": 11,
+                          "font_color": "#42586dFF",
+                          "font_path": "fonts/simhei.ttf"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "btn_upgrade",
+                "type": "Button",
+                "custom_tags": ["Action_Execute_Upgrade"],
+                "actions": [{ "event": "press", "emit": "ui.hero.upgrade" }],
+                "state_visuals": {
+                  "normal": {
+                    "visuals": {
+                      "background_color": "#d10202FF"
+                    }
+                  },
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#e11111FF"
+                    }
+                  },
+                  "pressed": {
+                    "visuals": {
+                      "background_color": "#b40000FF"
+                    }
+                  }
+                },
+                "styles": {
+                  "width": "100%",
+                  "height": "44px",
+                  "justify_content": "center",
+                  "align_items": "center"
+                },
+                "visuals": {
+                  "background_color": "#d10202FF"
+                },
+                "children": [
+                  {
+                    "id": "btn_upgrade_cap_left",
+                    "type": "Node",
+                    "styles": {
+                      "position_type": "absolute",
+                      "left": "-7px",
+                      "top": "0px",
+                      "width": "14px",
+                      "height": "44px",
+                      "ui_rotation": "18deg"
+                    },
+                    "visuals": {
+                      "background_color": "#d10202FF"
+                    }
+                  },
+                  {
+                    "id": "btn_upgrade_cap_right",
+                    "type": "Node",
+                    "styles": {
+                      "position_type": "absolute",
+                      "right": "-7px",
+                      "top": "0px",
+                      "width": "14px",
+                      "height": "44px",
+                      "ui_rotation": "-18deg"
+                    },
+                    "visuals": {
+                      "background_color": "#d10202FF"
+                    }
+                  },
+                  {
+                    "id": "txt_upgrade",
+                    "type": "Text",
+                    "text_config": {
+                      "content": "晋  级",
+                      "font_size": 17,
+                      "font_color": "#FFFFFFFF",
+                      "font_path": "fonts/simhei.ttf"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
