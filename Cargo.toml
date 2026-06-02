@@ -26,6 +26,8 @@ members = [
   "crates/bevy_reflect/compile_fail",
   # Examples of compiling Bevy for mobile platforms.
   "examples/mobile",
+  # FMV Common UI interactive test example.
+  "examples/fmv_common_ui",
   # Examples of using Bevy on no_std platforms.
   "examples/no_std/*",
   # Examples of compiling Bevy with automatic reflect type registration for platforms without `inventory` support.
@@ -3797,9 +3799,20 @@ name = "login_ui_parser_test"
 path = "examples/UiParserTest/login_ui_parser_test/login_ui_parser_test.rs"
 doc-scrape-examples = true
 
+[[example]]
+name = "village_shop_overlay"
+path = "examples/UiParserTest/opendesignTest/village_shop_overlay/village_shop_overlay.rs"
+doc-scrape-examples = true
+
 [package.metadata.example.login_ui_parser_test]
 name = "Login UI Parser Test"
 description = "Parses the login screen BUI JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.village_shop_overlay]
+name = "Village Shop Overlay"
+description = "Parses the village shop overlay BUI JSON (from OpenDesign HTML) into a native Bevy UI ECS tree"
 category = "UI (User Interface)"
 wasm = false
 

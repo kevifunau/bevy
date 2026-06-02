@@ -1403,6 +1403,14 @@ fn load_font(asset_server: &AssetServer, font_path: Option<&str>) -> FontSource 
         return FontSource::from(asset_server.load(windows_font));
     }
 
+    if let Some(macos_font) = macos_font_asset_path(font_path) {
+        info!(
+            "BUI font path '{}' does not exist under the Bevy asset root. Loading '{}' from an optional macOS font asset source.",
+            font_path, macos_font
+        );
+        return FontSource::from(asset_server.load(macos_font));
+    }
+
     warn!(
         "BUI font path '{}' does not exist under the Bevy asset root. Falling back to the default font.",
         font_path
@@ -1421,6 +1429,25 @@ fn windows_font_asset_path(asset_path: &str) -> Option<AssetPath<'static>> {
     windows_font.exists().then(|| {
         AssetPath::from_path_buf(PathBuf::from(file_name))
             .with_source(AssetSourceId::from("windows_fonts"))
+    })
+}
+
+fn macos_font_asset_path(asset_path: &str) -> Option<AssetPath<'static>> {
+    let file_name = Path::new(asset_path).file_name()?.to_owned();
+
+    let macos_font = Path::new("/System/Library/Fonts").join(&file_name);
+    if macos_font.exists() {
+        return Some(
+            AssetPath::from_path_buf(PathBuf::from(file_name))
+                .with_source(AssetSourceId::from("macos_fonts")),
+        );
+    }
+
+    let file_name = Path::new(asset_path).file_name()?.to_owned();
+    let supplemental_font = Path::new("/System/Library/Fonts/Supplemental").join(&file_name);
+    supplemental_font.exists().then(|| {
+        AssetPath::from_path_buf(PathBuf::from(file_name))
+            .with_source(AssetSourceId::from("macos_supplemental_fonts"))
     })
 }
 

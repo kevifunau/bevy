@@ -1,0 +1,13 @@
+[package]
+name = "fmv_common_ui"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+bevy = { path = "../../", features = ["bevy_ui_widgets"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+
+[lints]
+workspace = true

@@ -2,6 +2,8 @@ use std::path::{Path, PathBuf};
 
 use bevy::app::AppExit;
 use bevy::input_focus::InputFocus;
+use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::picking::hover::HoverMap;
 use bevy::render::view::screenshot::{save_to_disk, Screenshot, ScreenshotCaptured};
 use bevy::text::EditableText;
 use bevy::{asset::io::AssetSourceBuilder, prelude::*};
@@ -23,6 +25,7 @@ pub fn run_with_json_without_button_feedback(file_name: &str) {
 
 pub fn configure_app_with_json(app: &mut App, file_name: &str, button_feedback_enabled: bool) {
     register_optional_windows_fonts_source(app);
+    register_optional_macos_fonts_source(app);
     register_optional_auto_screenshot(app);
 
     app.add_plugins(DefaultPlugins)
@@ -36,12 +39,15 @@ pub fn configure_app_with_json(app: &mut App, file_name: &str, button_feedback_e
     app.add_systems(
         Update,
         (
+            send_scroll_events_system,
             log_bui_root_system,
             log_text_input_focus_system,
             log_text_input_value_system,
             auto_capture_screenshot_system,
         ),
     );
+
+    app.add_observer(on_scroll_handler);
 }
 
 fn register_optional_windows_fonts_source(app: &mut App) {
@@ -52,6 +58,27 @@ fn register_optional_windows_fonts_source(app: &mut App) {
         app.register_asset_source(
             "windows_fonts",
             AssetSourceBuilder::platform_default(WINDOWS_FONTS, None),
+        );
+    }
+}
+
+fn register_optional_macos_fonts_source(app: &mut App) {
+    const MACOS_FONTS: &str = "/System/Library/Fonts";
+    const MACOS_SUPPLEMENTAL_FONTS: &str = "/System/Library/Fonts/Supplemental";
+
+    let macos_fonts = Path::new(MACOS_FONTS);
+    if macos_fonts.exists() {
+        app.register_asset_source(
+            "macos_fonts",
+            AssetSourceBuilder::platform_default(MACOS_FONTS, None),
+        );
+    }
+
+    let macos_supplemental_fonts = Path::new(MACOS_SUPPLEMENTAL_FONTS);
+    if macos_supplemental_fonts.exists() {
+        app.register_asset_source(
+            "macos_supplemental_fonts",
+            AssetSourceBuilder::platform_default(MACOS_SUPPLEMENTAL_FONTS, None),
         );
     }
 }
@@ -93,6 +120,82 @@ fn log_bui_root_system(root: Option<Res<BuiRootEntity>>, mut logged: Local<bool>
 
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2d);
+}
+
+const SCROLL_LINE_HEIGHT: f32 = 21.0;
+
+#[derive(EntityEvent, Debug)]
+#[entity_event(propagate, auto_propagate)]
+struct BuiScroll {
+    entity: Entity,
+    delta: Vec2,
+}
+
+fn send_scroll_events_system(
+    mut mouse_wheel_reader: MessageReader<MouseWheel>,
+    hover_map: Res<HoverMap>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut commands: Commands,
+) {
+    for mouse_wheel in mouse_wheel_reader.read() {
+        let mut delta = -Vec2::new(mouse_wheel.x, mouse_wheel.y);
+
+        if mouse_wheel.unit == MouseScrollUnit::Line {
+            delta *= SCROLL_LINE_HEIGHT;
+        }
+
+        if keyboard_input.any_pressed([KeyCode::ControlLeft, KeyCode::ControlRight]) {
+            std::mem::swap(&mut delta.x, &mut delta.y);
+        }
+
+        for pointer_map in hover_map.values() {
+            for entity in pointer_map.keys().copied() {
+                commands.trigger(BuiScroll { entity, delta });
+            }
+        }
+    }
+}
+
+fn on_scroll_handler(
+    mut scroll: On<BuiScroll>,
+    mut query: Query<(&mut ScrollPosition, &Node, &ComputedNode)>,
+) {
+    let Ok((mut scroll_position, node, computed)) = query.get_mut(scroll.entity) else {
+        return;
+    };
+
+    let max_offset = (computed.content_size() - computed.size()) * computed.inverse_scale_factor();
+
+    let delta = &mut scroll.delta;
+    if node.overflow.x == OverflowAxis::Scroll && delta.x != 0.0 {
+        let at_limit = if delta.x > 0.0 {
+            scroll_position.x >= max_offset.x
+        } else {
+            scroll_position.x <= 0.0
+        };
+
+        if !at_limit {
+            scroll_position.x = (scroll_position.x + delta.x).clamp(0.0, max_offset.x);
+            delta.x = 0.0;
+        }
+    }
+
+    if node.overflow.y == OverflowAxis::Scroll && delta.y != 0.0 {
+        let at_limit = if delta.y > 0.0 {
+            scroll_position.y >= max_offset.y
+        } else {
+            scroll_position.y <= 0.0
+        };
+
+        if !at_limit {
+            scroll_position.y = (scroll_position.y + delta.y).clamp(0.0, max_offset.y);
+            delta.y = 0.0;
+        }
+    }
+
+    if *delta == Vec2::ZERO {
+        scroll.propagate(false);
+    }
 }
 
 #[derive(Resource)]
@@ -179,7 +282,7 @@ fn auto_capture_screenshot_system(
     }
 
     state.frames_after_root += 1;
-    if state.frames_after_root < 3 {
+    if state.frames_after_root < 12 {
         return;
     }
 

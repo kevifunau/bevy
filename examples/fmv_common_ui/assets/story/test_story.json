@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "node_id": "node_001",
+      "node_title": "第1章：初入宫廷",
+      "asset_manifest": {
+        "video_uri": "videos/ch1_intro.mp4",
+        "thumbnail_uri": "textures/ch1_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_STOP",
+      "interaction": {
+        "type": "SELECTION",
+        "trigger_time": -1,
+        "timeout": -1,
+        "components": [
+          {
+            "component_id": "ch1_choice_a",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "帮助太子登基" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_002",
+              "mutations": ["player.reputation += 10"]
+            }
+          },
+          {
+            "component_id": "ch1_choice_b",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "暗中观望" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_003",
+              "mutations": ["player.gold += 50"]
+            }
+          },
+          {
+            "component_id": "ch1_choice_c",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "投靠皇后" },
+            "behavior": {
+              "condition": "player.gold >= 100",
+              "on_click_target": "node_004",
+              "mutations": ["player.gold -= 100", "npc.empress_favor += 20"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node_id": "node_002",
+      "node_title": "第1章续：太子之路",
+      "asset_manifest": {
+        "video_uri": "videos/ch1_prince.mp4",
+        "thumbnail_uri": "textures/ch1_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_STOP",
+      "interaction": {
+        "type": "SELECTION",
+        "trigger_time": -1,
+        "timeout": -1,
+        "components": [
+          {
+            "component_id": "ch2_choice_a",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "继续前行" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_005",
+              "mutations": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node_id": "node_003",
+      "node_title": "第1章续：暗中观望",
+      "asset_manifest": {
+        "video_uri": "videos/ch1_watch.mp4",
+        "thumbnail_uri": "textures/ch1_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_STOP",
+      "interaction": {
+        "type": "SELECTION",
+        "trigger_time": -1,
+        "timeout": -1,
+        "components": [
+          {
+            "component_id": "ch2_choice_b",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "返回主路" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_005",
+              "mutations": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node_id": "node_004",
+      "node_title": "第1章续：皇后之路",
+      "asset_manifest": {
+        "video_uri": "videos/ch1_empress.mp4",
+        "thumbnail_uri": "textures/ch1_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_STOP",
+      "interaction": {
+        "type": "SELECTION",
+        "trigger_time": -1,
+        "timeout": -1,
+        "components": [
+          {
+            "component_id": "ch2_choice_c",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "继续效忠皇后" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_005",
+              "mutations": ["npc.empress_favor += 10"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node_id": "node_005",
+      "node_title": "第2章：女帝选秀",
+      "asset_manifest": {
+        "video_uri": "videos/ch2_selection.mp4",
+        "thumbnail_uri": "textures/ch2_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_STOP",
+      "interaction": {
+        "type": "SELECTION",
+        "trigger_time": -1,
+        "timeout": 10,
+        "timeout_target_node": "node_006",
+        "components": [
+          {
+            "component_id": "ch2_qte_a",
+            "visual_style": "PRIMARY_CAPSULE",
+            "content": { "text": "展示才艺" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_006",
+              "mutations": ["player.reputation += 5"]
+            }
+          },
+          {
+            "component_id": "ch2_qte_b",
+            "visual_style": "GHOST_LINE",
+            "content": { "text": "低调回避" },
+            "behavior": {
+              "condition": null,
+              "on_click_target": "node_006",
+              "mutations": ["player.gold += 20"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node_id": "node_006",
+      "node_title": "第3章：深宫谍影",
+      "asset_manifest": {
+        "video_uri": "videos/ch3_spy.mp4",
+        "thumbnail_uri": "textures/ch3_thumb.png"
+      },
+      "playback_mode": "ONCE_AND_LOOP",
+      "interaction": {
+        "type": "NONE",
+        "trigger_time": -1,
+        "timeout": -1,
+        "components": []
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "id": "chapter_1",
+      "title": "初入宫廷",
+      "start_node": "node_001",
+      "status": "completed",
+      "progress": 100,
+      "thumbnail_uri": "textures/ch1_thumb.png"
+    },
+    {
+      "id": "chapter_2",
+      "title": "女帝选秀",
+      "start_node": "node_005",
+      "status": "in_progress",
+      "progress": 30,
+      "thumbnail_uri": "textures/ch2_thumb.png"
+    },
+    {
+      "id": "chapter_3",
+      "title": "深宫谍影",
+      "start_node": "node_006",
+      "status": "locked",
+      "progress": 0,
+      "thumbnail_uri": "textures/ch3_thumb.png"
+    }
+  ],
+  "initial_blackboard": {
+    "player": {
+      "gold": 100,
+      "reputation": 5
+    },
+    "npc": {
+      "empress_favor": 0
+    }
+  }
+}
