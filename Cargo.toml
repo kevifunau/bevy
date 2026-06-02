@@ -3804,6 +3804,46 @@ name = "village_shop_overlay"
 path = "examples/UiParserTest/opendesignTest/village_shop_overlay/village_shop_overlay.rs"
 doc-scrape-examples = true
 
+[[example]]
+name = "village_shop_overlay_html"
+path = "examples/UiParserTest/opendesignTest/village_shop_overlay/village_shop_overlay_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "village_shop_overlay_json"
+path = "examples/UiParserTest/opendesignTest/village_shop_overlay/village_shop_overlay_json.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "quest_notice_overlay"
+path = "examples/UiParserTest/opendesignTest/quest_notice_overlay/quest_notice_overlay.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "quest_notice_overlay_html"
+path = "examples/UiParserTest/opendesignTest/quest_notice_overlay/quest_notice_overlay_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "quest_notice_overlay_json"
+path = "examples/UiParserTest/opendesignTest/quest_notice_overlay/quest_notice_overlay_json.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "hero_game_ui"
+path = "examples/UiParserTest/opendesignTest/hero_game_ui/hero_game_ui.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "hero_game_ui_html"
+path = "examples/UiParserTest/opendesignTest/hero_game_ui/hero_game_ui_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "hero_game_ui_json"
+path = "examples/UiParserTest/opendesignTest/hero_game_ui/hero_game_ui_json.rs"
+doc-scrape-examples = true
+
 [package.metadata.example.login_ui_parser_test]
 name = "Login UI Parser Test"
 description = "Parses the login screen BUI JSON into a native Bevy UI ECS tree"
@@ -3812,7 +3852,55 @@ wasm = false
 
 [package.metadata.example.village_shop_overlay]
 name = "Village Shop Overlay"
-description = "Parses the village shop overlay BUI JSON (from OpenDesign HTML) into a native Bevy UI ECS tree"
+description = "Parses the village shop overlay BUI 3.0-ir fixture into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.village_shop_overlay_html]
+name = "Village Shop Overlay HTML"
+description = "Compiles the village shop overlay OpenDesign HTML at runtime into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.village_shop_overlay_json]
+name = "Village Shop Overlay JSON"
+description = "Parses the village shop overlay BUI 2.x compatibility JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.quest_notice_overlay]
+name = "Quest Notice Overlay"
+description = "Parses the quest notice overlay BUI 3.0-ir fixture into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.quest_notice_overlay_html]
+name = "Quest Notice Overlay HTML"
+description = "Compiles the quest notice overlay OpenDesign HTML at runtime into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.quest_notice_overlay_json]
+name = "Quest Notice Overlay JSON"
+description = "Parses the quest notice overlay BUI 2.x compatibility JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.hero_game_ui]
+name = "Hero Game UI"
+description = "Parses the hero game UI BUI 3.0-ir fixture into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.hero_game_ui_html]
+name = "Hero Game UI HTML"
+description = "Compiles the hero game UI OpenDesign HTML at runtime into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.hero_game_ui_json]
+name = "Hero Game UI JSON"
+description = "Parses the hero game UI BUI 2.x compatibility JSON into a native Bevy UI ECS tree"
 category = "UI (User Interface)"
 wasm = false
 
@@ -3821,9 +3909,42 @@ name = "validate_bui_json"
 path = "examples/UiParserTest/validate_bui_json.rs"
 doc-scrape-examples = true
 
+[[example]]
+name = "validate_bui_ir_json"
+path = "examples/UiParserTest/validate_bui_ir_json.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "compile_opendesign_html"
+path = "examples/UiParserTest/compile_opendesign_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "compile_opendesign_ir"
+path = "examples/UiParserTest/compile_opendesign_ir.rs"
+doc-scrape-examples = true
+
 [package.metadata.example.validate_bui_json]
 name = "Validate BUI JSON"
 description = "Validates a BUI JSON file against the Bevy UI parser contract"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.validate_bui_ir_json]
+name = "Validate BUI IR JSON"
+description = "Validates a BUI 3.0-ir JSON file against the Bevy UI parser contract"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.compile_opendesign_html]
+name = "Compile OpenDesign HTML"
+description = "Compiles an OpenDesign HTML artifact into BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.compile_opendesign_ir]
+name = "Compile OpenDesign IR"
+description = "Compiles an OpenDesign HTML artifact into BUI IR JSON"
 category = "UI (User Interface)"
 wasm = false
 

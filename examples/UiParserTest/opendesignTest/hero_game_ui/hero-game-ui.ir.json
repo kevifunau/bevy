@@ -1,0 +1,1647 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "markers": [
+      "class:game-stage"
+    ],
+    "layout": {
+      "styles": {
+        "width": "1280px",
+        "height": "100%",
+        "min_height": "780px",
+        "overflow": "clip",
+        "justify_content": "center",
+        "align_items": "center",
+        "position_type": "relative"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#362E36",
+        "border_width": "1px",
+        "border_radius": "6px"
+      }
+    },
+    "children": [
+      {
+        "id": "image_layer",
+        "kind": "node",
+        "markers": [
+          "class:image-layer"
+        ],
+        "layout": {
+          "styles": {
+            "position_type": "absolute"
+          }
+        },
+        "children": [
+          {
+            "id": "image_layer_pseudo_before",
+            "kind": "node",
+            "markers": [
+              "pseudo:before"
+            ],
+            "layout": {
+              "styles": {
+                "position_type": "absolute"
+              }
+            }
+          },
+          {
+            "id": "image_layer_pseudo_after",
+            "kind": "node",
+            "markers": [
+              "pseudo:after"
+            ],
+            "layout": {
+              "styles": {
+                "position_type": "absolute"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "crest",
+        "kind": "node",
+        "markers": [
+          "class:crest"
+        ],
+        "layout": {
+          "styles": {
+            "width": "320px",
+            "left": "0",
+            "top": "0",
+            "position_type": "absolute"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_radius": "50%"
+          }
+        }
+      },
+      {
+        "id": "topbar",
+        "kind": "node",
+        "markers": [
+          "class:topbar"
+        ],
+        "layout": {
+          "styles": {
+            "display": "flex",
+            "left": "42.24px",
+            "right": "42.24px",
+            "top": "26.88px",
+            "row_gap": "24px",
+            "column_gap": "24px",
+            "justify_content": "space-between",
+            "align_items": "flex-start",
+            "position_type": "absolute"
+          }
+        },
+        "children": [
+          {
+            "id": "title_cluster",
+            "kind": "node",
+            "markers": [
+              "class:title-cluster"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "align_items": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "backbutton",
+                "kind": "button",
+                "markers": [
+                  "class:round-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "width": "58.88px",
+                    "height": "58.88px",
+                    "justify_content": "center",
+                    "justify_items": "center",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "0",
+                    "border_radius": "999px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "svg",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "width": "62%",
+                        "height": "62%"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "path",
+                        "kind": "node"
+                      },
+                      {
+                        "id": "path_2",
+                        "kind": "node"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "page_title",
+                "kind": "node",
+                "markers": [
+                  "class:page-title"
+                ],
+                "layout": {
+                  "styles": {
+                    "margin": "0"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "page_title_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "英雄",
+                        "font_size": 92.0,
+                        "font_color": "#CCB6A2",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "resource_card",
+            "kind": "node",
+            "markers": [
+              "class:resource-card"
+            ],
+            "layout": {
+              "styles": {
+                "display": "grid",
+                "min_width": "345.6px",
+                "row_gap": "8px",
+                "column_gap": "8px"
+              }
+            },
+            "children": [
+              {
+                "id": "level_row",
+                "kind": "node",
+                "markers": [
+                  "class:level-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "row_gap": "18px",
+                    "column_gap": "18px",
+                    "align_items": "center",
+                    "grid_template_columns": "auto flex(1)"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "level",
+                    "kind": "node",
+                    "markers": [
+                      "class:level"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "row_gap": "8px",
+                        "column_gap": "8px",
+                        "align_items": "baseline"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "small",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "small_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Lv.",
+                                "font_size": 40.0,
+                                "font_color": "#3B2818",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "levelvalue",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "levelvalue_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "20",
+                                "font_size": 92.0,
+                                "font_color": "#3B2818",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "bars",
+                    "kind": "node",
+                    "markers": [
+                      "class:bars"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "row_gap": "8px",
+                        "column_gap": "8px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "bar_line",
+                        "kind": "node",
+                        "markers": [
+                          "class:bar-line"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "height": "29.44px",
+                            "row_gap": "8px",
+                            "column_gap": "8px",
+                            "align_items": "center",
+                            "grid_template_columns": "px(38) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "bar_icon",
+                            "kind": "node",
+                            "markers": [
+                              "class:bar-icon"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "grid",
+                                "justify_content": "center",
+                                "justify_items": "center",
+                                "align_items": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "svg_2",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "30px",
+                                    "height": "30px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "path_3",
+                                    "kind": "node"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "meter",
+                            "kind": "node",
+                            "markers": [
+                              "class:meter"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "height": "100%",
+                                "overflow": "clip",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_radius": "2px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "xpfill",
+                                "kind": "node",
+                                "markers": [
+                                  "class:meter-fill"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "position_type": "absolute"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_radius": "2px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "b",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "position_type": "absolute"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "xptext",
+                                    "kind": "node",
+                                    "children": [
+                                      {
+                                        "id": "xptext_text_1",
+                                        "kind": "text",
+                                        "content": {
+                                          "text": {
+                                            "content": "1634824",
+                                            "font_size": 16.0,
+                                            "font_color": "#3B2818",
+                                            "font_path": "Hiragino Sans GB.ttc"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "b_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "/ 6218543",
+                                        "font_size": 26.0,
+                                        "font_color": "#CAFAFF",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "bar_line_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:bar-line"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "height": "29.44px",
+                            "row_gap": "8px",
+                            "column_gap": "8px",
+                            "align_items": "center",
+                            "grid_template_columns": "px(38) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "bar_icon_2",
+                            "kind": "node",
+                            "markers": [
+                              "class:bar-icon"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "grid",
+                                "justify_content": "center",
+                                "justify_items": "center",
+                                "align_items": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "svg_3",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "30px",
+                                    "height": "30px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "path_4",
+                                    "kind": "node"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "meter_2",
+                            "kind": "node",
+                            "markers": [
+                              "class:meter"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "height": "100%",
+                                "overflow": "clip",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_radius": "2px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "energyfill",
+                                "kind": "node",
+                                "markers": [
+                                  "class:meter-fill"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "position_type": "absolute"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_radius": "2px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "b_2",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "position_type": "absolute"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "energytext",
+                                    "kind": "node",
+                                    "children": [
+                                      {
+                                        "id": "energytext_text_1",
+                                        "kind": "text",
+                                        "content": {
+                                          "text": {
+                                            "content": "58",
+                                            "font_size": 16.0,
+                                            "font_color": "#3B2818",
+                                            "font_path": "Hiragino Sans GB.ttc"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "b_2_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "/ 120",
+                                        "font_size": 26.0,
+                                        "font_color": "#CAFAFF",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "hero_zone",
+        "kind": "node",
+        "markers": [
+          "class:hero-zone"
+        ],
+        "layout": {
+          "styles": {
+            "width": "58%",
+            "height": "86%",
+            "left": "3.8%",
+            "bottom": "3%",
+            "position_type": "absolute"
+          }
+        },
+        "children": [
+          {
+            "id": "hero_glow",
+            "kind": "node",
+            "markers": [
+              "class:hero-glow"
+            ],
+            "layout": {
+              "styles": {
+                "width": "76%",
+                "height": "38%",
+                "left": "1%",
+                "bottom": "0",
+                "position_type": "absolute"
+              }
+            }
+          },
+          {
+            "id": "hero_cutout",
+            "kind": "node",
+            "markers": [
+              "class:hero-cutout"
+            ],
+            "layout": {
+              "styles": {
+                "width": "55%",
+                "max_height": "100%",
+                "left": "13%",
+                "bottom": "-1.5%",
+                "position_type": "absolute"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "name_card",
+        "kind": "node",
+        "markers": [
+          "class:name-card"
+        ],
+        "layout": {
+          "styles": {
+            "display": "grid",
+            "left": "6.2%",
+            "bottom": "16.8%",
+            "row_gap": "12px",
+            "column_gap": "12px",
+            "position_type": "absolute"
+          }
+        },
+        "children": [
+          {
+            "id": "hero_name",
+            "kind": "node",
+            "markers": [
+              "class:hero-name"
+            ],
+            "children": [
+              {
+                "id": "hero_name_text_1",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "Olympia",
+                    "font_size": 124.0,
+                    "font_color": "#CDF9FF",
+                    "font_path": "Hiragino Sans GB.ttc"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "stars",
+            "kind": "node",
+            "markers": [
+              "class:stars"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex"
+              }
+            },
+            "children": [
+              {
+                "id": "star",
+                "kind": "node",
+                "markers": [
+                  "class:star"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "39.68px",
+                    "height": "39.68px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "path_5",
+                    "kind": "node"
+                  }
+                ]
+              },
+              {
+                "id": "star_2",
+                "kind": "node",
+                "markers": [
+                  "class:star"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "39.68px",
+                    "height": "39.68px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "path_6",
+                    "kind": "node"
+                  }
+                ]
+              },
+              {
+                "id": "star_3",
+                "kind": "node",
+                "markers": [
+                  "class:star"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "39.68px",
+                    "height": "39.68px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "path_7",
+                    "kind": "node"
+                  }
+                ]
+              },
+              {
+                "id": "star_4",
+                "kind": "node",
+                "markers": [
+                  "class:star"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "39.68px",
+                    "height": "39.68px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "path_8",
+                    "kind": "node"
+                  }
+                ]
+              },
+              {
+                "id": "star_5",
+                "kind": "node",
+                "markers": [
+                  "class:star"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "39.68px",
+                    "height": "39.68px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "path_9",
+                    "kind": "node"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "skill_row",
+            "kind": "node",
+            "markers": [
+              "class:skill-row"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex"
+              }
+            },
+            "children": [
+              {
+                "id": "skill_button",
+                "kind": "button",
+                "markers": [
+                  "class:skill-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "width": "64px",
+                    "height": "64px",
+                    "justify_content": "center",
+                    "justify_items": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "2px",
+                    "border_radius": "999px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "svg_4",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "width": "58%",
+                        "height": "58%"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "path_10",
+                        "kind": "node"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "cooldown",
+                    "kind": "node",
+                    "markers": [
+                      "class:cooldown"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "none",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "absolute"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "skill_button_2",
+                "kind": "button",
+                "markers": [
+                  "class:skill-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "width": "64px",
+                    "height": "64px",
+                    "justify_content": "center",
+                    "justify_items": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "2px",
+                    "border_radius": "999px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "svg_5",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "width": "58%",
+                        "height": "58%"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "path_11",
+                        "kind": "node"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "cooldown_2",
+                    "kind": "node",
+                    "markers": [
+                      "class:cooldown"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "none",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "absolute"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "skill_button_3",
+                "kind": "button",
+                "markers": [
+                  "class:skill-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "width": "64px",
+                    "height": "64px",
+                    "justify_content": "center",
+                    "justify_items": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "2px",
+                    "border_radius": "999px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "svg_6",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "width": "58%",
+                        "height": "58%"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "path_12",
+                        "kind": "node"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "cooldown_3",
+                    "kind": "node",
+                    "markers": [
+                      "class:cooldown"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "none",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "absolute"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "info_panel",
+        "kind": "node",
+        "markers": [
+          "class:info-panel"
+        ],
+        "layout": {
+          "styles": {
+            "display": "grid",
+            "width": "460.8px",
+            "right": "5.4%",
+            "top": "25.4%",
+            "bottom": "7.5%",
+            "position_type": "absolute",
+            "grid_template_rows": "auto auto flex(1) auto"
+          }
+        },
+        "children": [
+          {
+            "id": "panel_section",
+            "kind": "node",
+            "markers": [
+              "class:panel-section"
+            ],
+            "layout": {
+              "styles": {
+                "min_width": "0"
+              }
+            },
+            "children": [
+              {
+                "id": "section_title",
+                "kind": "node",
+                "markers": [
+                  "class:section-title"
+                ],
+                "layout": {
+                  "styles": {
+                    "margin": "0 0 18px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "section_title_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "武装",
+                        "font_size": 44.0,
+                        "font_color": "#4D3033",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "equipment_grid",
+                "kind": "node",
+                "markers": [
+                  "class:equipment-grid"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "equip_slot",
+                    "kind": "button",
+                    "markers": [
+                      "class:equip-slot",
+                      "class:selected"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_width": "0",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_color": "#CCB6A2",
+                        "border_width": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "svg_7",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "width": "62%",
+                            "height": "62%"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "path_13",
+                            "kind": "node"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "equip_slot_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_width": "1px"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "equip_slot_2",
+                    "kind": "button",
+                    "markers": [
+                      "class:equip-slot"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_width": "0",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "svg_8",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "width": "62%",
+                            "height": "62%"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "path_14",
+                            "kind": "node"
+                          },
+                          {
+                            "id": "path_15",
+                            "kind": "node"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "equip_slot_3",
+                    "kind": "button",
+                    "markers": [
+                      "class:equip-slot"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_width": "0",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "svg_9",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "width": "62%",
+                            "height": "62%"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "path_16",
+                            "kind": "node"
+                          },
+                          {
+                            "id": "path_17",
+                            "kind": "node"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "equip_slot_4",
+                    "kind": "button",
+                    "markers": [
+                      "class:equip-slot"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_width": "0",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "svg_10",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "width": "62%",
+                            "height": "62%"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "path_18",
+                            "kind": "node"
+                          },
+                          {
+                            "id": "path_19",
+                            "kind": "node"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "equip_slot_5",
+                    "kind": "button",
+                    "markers": [
+                      "class:equip-slot"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_width": "0",
+                        "justify_content": "center",
+                        "justify_items": "center",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "svg_11",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "width": "62%",
+                            "height": "62%"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "circle",
+                            "kind": "node"
+                          },
+                          {
+                            "id": "path_20",
+                            "kind": "node"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "panel_section_2",
+            "kind": "node",
+            "markers": [
+              "class:panel-section"
+            ],
+            "layout": {
+              "styles": {
+                "min_width": "0"
+              }
+            },
+            "children": [
+              {
+                "id": "section_title_2",
+                "kind": "node",
+                "markers": [
+                  "class:section-title"
+                ],
+                "layout": {
+                  "styles": {
+                    "margin": "0 0 18px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "section_title_2_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "基础信息",
+                        "font_size": 44.0,
+                        "font_color": "#4D3033",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "tabs",
+                "kind": "node",
+                "markers": [
+                  "class:tabs"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "margin": "-4px 0 14px",
+                    "row_gap": "8px",
+                    "column_gap": "8px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_button",
+                    "kind": "button",
+                    "markers": [
+                      "class:tab-button",
+                      "class:active"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "min_height": "38px",
+                        "padding": "0 14px"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "1px",
+                        "border_radius": "3px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "tab_button_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "基础",
+                            "font_size": 16.0,
+                            "font_color": "#2D1A1D",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_button_2",
+                    "kind": "button",
+                    "markers": [
+                      "class:tab-button"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "min_height": "38px",
+                        "padding": "0 14px"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "1px",
+                        "border_radius": "3px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "tab_button_2_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "战斗",
+                            "font_size": 16.0,
+                            "font_color": "#4B383F",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_button_3",
+                    "kind": "button",
+                    "markers": [
+                      "class:tab-button"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "min_height": "38px",
+                        "padding": "0 14px"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "1px",
+                        "border_radius": "3px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "tab_button_3_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "行军",
+                            "font_size": 16.0,
+                            "font_color": "#4B383F",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "statslist",
+                "kind": "node",
+                "markers": [
+                  "class:stats"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "min_height": "0",
+                    "row_gap": "6px",
+                    "column_gap": "6px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "action_strip",
+            "kind": "node",
+            "markers": [
+              "class:action-strip"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "row_gap": "12px",
+                "column_gap": "12px",
+                "justify_content": "flex-end",
+                "align_items": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "detailsbutton",
+                "kind": "button",
+                "markers": [
+                  "class:ghost-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "min_height": "48px",
+                    "padding": "0 22px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "1px",
+                    "border_radius": "3px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "detailsbutton_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "查看词条",
+                        "font_size": 16.0,
+                        "font_color": "#CCF6FF",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "upgradebutton",
+                "kind": "button",
+                "markers": [
+                  "class:gold-button"
+                ],
+                "layout": {
+                  "styles": {
+                    "min_height": "48px",
+                    "padding": "0 22px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#D7E7EC",
+                    "border_width": "1px",
+                    "border_radius": "3px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "upgradebutton_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "升级",
+                        "font_size": 16.0,
+                        "font_color": "#2B1719",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "paneltoggle",
+        "kind": "button",
+        "markers": [
+          "class:mobile-panel-toggle"
+        ],
+        "layout": {
+          "styles": {
+            "display": "none",
+            "min_height": "48px",
+            "right": "16px",
+            "bottom": "16px",
+            "padding": "0 18px",
+            "position_type": "absolute",
+            "fixed_node": true
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#DAEBF0",
+            "border_width": "1px",
+            "border_radius": "999px"
+          }
+        },
+        "children": [
+          {
+            "id": "paneltoggle_text_1",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "属性 / 武装",
+                "font_size": 16.0,
+                "font_color": "#2E1D20",
+                "font_path": "Hiragino Sans GB.ttc"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "popover",
+        "kind": "node",
+        "markers": [
+          "class:popover"
+        ],
+        "layout": {
+          "styles": {
+            "width": "350px",
+            "right": "7%",
+            "top": "52%",
+            "padding": "18px",
+            "position_type": "absolute"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_width": "1px"
+          }
+        },
+        "children": [
+          {
+            "id": "popovertitle",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "margin": "0 0 8px"
+              }
+            },
+            "children": [
+              {
+                "id": "popovertitle_text_1",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "远征长弓",
+                    "font_size": 29.0,
+                    "font_color": "#44292B",
+                    "font_path": "Hiragino Sans GB.ttc"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "popovertext",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "margin": "0"
+              }
+            },
+            "children": [
+              {
+                "id": "popovertext_text_1",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "远程武装。当前选中后提高武力与先手压制，适合在回合开始时削弱敌方前排。",
+                    "font_size": 16.0,
+                    "font_color": "#40343E",
+                    "font_path": "Hiragino Sans GB.ttc"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "toast",
+        "kind": "node",
+        "markers": [
+          "class:toast"
+        ],
+        "layout": {
+          "styles": {
+            "min_width": "460px",
+            "left": "50%",
+            "bottom": "5.8%",
+            "padding": "14px 20px",
+            "position_type": "absolute"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_width": "1px"
+          }
+        }
+      }
+    ]
+  }
+}

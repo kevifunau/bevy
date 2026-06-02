@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Olympia 英雄游戏 UI 原型</title>
+  <style>
+    :root {
+      --bg: oklch(31% 0.038 58);
+      --surface: oklch(71% 0.056 68 / 0.74);
+      --surface-strong: oklch(43% 0.052 55 / 0.82);
+      --fg: oklch(95% 0.036 85);
+      --ink: oklch(29% 0.06 53);
+      --muted: oklch(68% 0.036 75);
+      --border: oklch(68% 0.11 74 / 0.74);
+      --accent: oklch(78% 0.16 83);
+      --accent-dark: oklch(48% 0.12 58);
+      --success: oklch(77% 0.16 128);
+      --warning: oklch(78% 0.14 72);
+      --danger: oklch(62% 0.18 31);
+      --bluewash: oklch(84% 0.072 235 / 0.72);
+      --font-display: "Palatino Linotype", "Iowan Old Style", Georgia, serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SFMono-Regular", ui-monospace, Menlo, monospace;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 24% 16%, oklch(86% 0.08 232 / 0.2), transparent 32%),
+        linear-gradient(135deg, oklch(37% 0.04 63), oklch(19% 0.034 49));
+      color: var(--fg);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 2vw, 24px);
+    }
+
+    button {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .game-stage {
+      width: min(100%, 1680px);
+      min-height: min(780px, calc(100dvh - 24px));
+      aspect-ratio: 2318 / 1084;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid oklch(84% 0.09 78 / 0.44);
+      border-radius: 6px;
+      box-shadow: 0 30px 110px oklch(12% 0.042 48 / 0.68);
+      background: var(--bg);
+    }
+
+    .image-layer {
+      position: absolute;
+      inset: 0;
+      z-index: -4;
+      background-image: url("mpwbzglm-image.png");
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.04) contrast(1.02);
+      transform: scale(1.002);
+    }
+
+    .image-layer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 12%, var(--bluewash), transparent 25%),
+        linear-gradient(90deg, oklch(86% 0.064 230 / 0.16) 0 48%, transparent 59%),
+        linear-gradient(90deg, transparent 0 54%, oklch(37% 0.042 53 / 0.24) 64%, oklch(28% 0.032 47 / 0.64) 100%);
+      mix-blend-mode: multiply;
+    }
+
+    .image-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 36% 88%, oklch(78% 0.12 76 / 0.28), transparent 30%),
+        linear-gradient(180deg, transparent 0 72%, oklch(18% 0.035 45 / 0.2) 100%);
+      pointer-events: none;
+    }
+
+    .crest {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: min(25vw, 360px);
+      aspect-ratio: 1;
+      opacity: 0.22;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, transparent 33%, oklch(38% 0.04 215 / 0.55) 34% 36%, transparent 37%),
+        conic-gradient(from 10deg, transparent 0 12%, oklch(40% 0.04 215 / 0.54) 12% 16%, transparent 16% 28%, oklch(40% 0.04 215 / 0.48) 28% 32%, transparent 32%);
+      transform: translate(-34%, -36%) rotate(12deg);
+      pointer-events: none;
+    }
+
+    .topbar {
+      position: absolute;
+      top: clamp(16px, 2.1vw, 38px);
+      left: clamp(18px, 3.3vw, 72px);
+      right: clamp(18px, 3.3vw, 72px);
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      pointer-events: none;
+    }
+
+    .title-cluster,
+    .resource-card {
+      pointer-events: auto;
+    }
+
+    .title-cluster {
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 1.8vw, 28px);
+    }
+
+    .round-button {
+      width: clamp(50px, 4.6vw, 78px);
+      height: clamp(50px, 4.6vw, 78px);
+      border: 0;
+      border-radius: 999px;
+      color: var(--accent);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 34% 26%, oklch(99% 0.08 87 / 0.46), transparent 29%),
+        oklch(38% 0.038 62 / 0.36);
+      box-shadow:
+        inset 0 0 0 3px oklch(80% 0.12 82 / 0.28),
+        inset 0 -8px 14px oklch(18% 0.03 46 / 0.24),
+        0 6px 16px oklch(14% 0.04 46 / 0.24);
+      transition: transform 160ms var(--ease), filter 160ms var(--ease);
+    }
+
+    .round-button svg {
+      width: 62%;
+      height: 62%;
+      filter: drop-shadow(0 2px 0 oklch(25% 0.06 52 / 0.62));
+    }
+
+    .page-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(44px, 5.1vw, 92px);
+      line-height: 0.9;
+      color: var(--accent);
+      text-shadow:
+        0 4px 0 var(--accent-dark),
+        0 0 22px oklch(96% 0.12 92 / 0.22);
+      letter-spacing: 0;
+    }
+
+    .resource-card {
+      min-width: clamp(310px, 27vw, 450px);
+      display: grid;
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .level-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .level {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--font-display);
+      color: var(--accent);
+      text-shadow: 0 3px 0 oklch(19% 0.036 48 / 0.72);
+      white-space: nowrap;
+    }
+
+    .level small {
+      font-size: clamp(26px, 2.2vw, 40px);
+      font-weight: 700;
+    }
+
+    .level strong {
+      font-size: clamp(62px, 5vw, 92px);
+      line-height: 0.8;
+    }
+
+    .bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar-line {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      align-items: center;
+      gap: 8px;
+      height: clamp(28px, 2.3vw, 38px);
+    }
+
+    .bar-icon {
+      color: oklch(96% 0.08 90);
+      display: grid;
+      place-items: center;
+      filter: drop-shadow(0 2px 0 oklch(20% 0.03 48 / 0.56));
+    }
+
+    .bar-icon svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .meter {
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      background: linear-gradient(90deg, oklch(35% 0.034 53 / 0.74), oklch(28% 0.03 49 / 0.62));
+      box-shadow: inset 0 0 0 1px oklch(90% 0.05 82 / 0.18);
+    }
+
+    .meter-fill {
+      position: absolute;
+      inset: 4px auto 4px 4px;
+      width: var(--value);
+      border-radius: 2px;
+      background:
+        linear-gradient(110deg, transparent 0 16%, oklch(100% 0 0 / 0.3) 16% 21%, transparent 21% 36%, oklch(100% 0 0 / 0.2) 36% 41%, transparent 41%),
+        linear-gradient(90deg, var(--from), var(--to));
+      transition: width 260ms var(--ease);
+    }
+
+    .meter b {
+      position: absolute;
+      inset: 0 12px 0 auto;
+      display: grid;
+      place-items: center end;
+      font-family: var(--font-display);
+      font-size: clamp(17px, 1.5vw, 26px);
+      color: oklch(97% 0.032 86);
+      text-shadow: 0 2px 0 oklch(15% 0.035 45 / 0.76);
+      white-space: nowrap;
+    }
+
+    .hero-zone {
+      position: absolute;
+      left: 3.8%;
+      bottom: 3%;
+      width: 58%;
+      height: 86%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-glow {
+      position: absolute;
+      left: 1%;
+      bottom: 0;
+      width: 76%;
+      height: 38%;
+      background: radial-gradient(ellipse, oklch(86% 0.12 82 / 0.3), transparent 68%);
+      filter: blur(8px);
+    }
+
+    .hero-cutout {
+      position: absolute;
+      left: 13%;
+      bottom: -1.5%;
+      width: 55%;
+      max-height: 100%;
+      aspect-ratio: 0.58;
+      background-image: url("mpwbzglm-image.png");
+      background-size: 421% 198%;
+      background-position: 28.4% 45.8%;
+      clip-path: polygon(35% 0, 68% 4%, 81% 18%, 90% 38%, 80% 64%, 86% 100%, 24% 100%, 31% 70%, 13% 55%, 20% 31%);
+      filter:
+        drop-shadow(24px 24px 0 oklch(29% 0.055 245 / 0.23))
+        drop-shadow(0 24px 20px oklch(17% 0.032 45 / 0.3));
+    }
+
+    .name-card {
+      position: absolute;
+      left: 6.2%;
+      bottom: 16.8%;
+      z-index: 3;
+      display: grid;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(58px, 6.5vw, 124px);
+      line-height: 0.86;
+      color: oklch(97% 0.034 82);
+      text-shadow:
+        0 4px 0 oklch(29% 0.04 50 / 0.58),
+        0 10px 24px oklch(15% 0.035 45 / 0.4);
+    }
+
+    .stars {
+      display: flex;
+      gap: clamp(4px, 0.48vw, 8px);
+      padding-left: 10px;
+    }
+
+    .star {
+      width: clamp(30px, 3.1vw, 53px);
+      height: clamp(30px, 3.1vw, 53px);
+      color: oklch(84% 0.17 86);
+      filter: drop-shadow(0 3px 0 oklch(26% 0.055 53 / 0.56));
+    }
+
+    .skill-row {
+      display: flex;
+      gap: clamp(14px, 1.8vw, 26px);
+      margin-top: clamp(8px, 1vw, 14px);
+    }
+
+    .skill-button {
+      width: clamp(58px, 5vw, 84px);
+      height: clamp(58px, 5vw, 84px);
+      border-radius: 999px;
+      border: 2px solid oklch(86% 0.055 77 / 0.72);
+      color: oklch(92% 0.044 80);
+      background:
+        radial-gradient(circle at 35% 26%, oklch(100% 0 0 / 0.28), transparent 24%),
+        radial-gradient(circle at center, oklch(45% 0.038 63 / 0.95), oklch(20% 0.034 47 / 0.96));
+      box-shadow:
+        inset 0 0 0 5px oklch(20% 0.03 45 / 0.56),
+        0 8px 18px oklch(14% 0.04 50 / 0.3);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), filter 160ms var(--ease);
+    }
+
+    .skill-button svg {
+      width: 58%;
+      height: 58%;
+    }
+
+    .skill-button.active {
+      box-shadow:
+        inset 0 0 0 5px oklch(34% 0.05 62 / 0.6),
+        0 0 0 4px oklch(82% 0.15 83 / 0.36),
+        0 12px 24px oklch(14% 0.04 48 / 0.36);
+    }
+
+    .cooldown {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      display: none;
+      place-items: center;
+      background: oklch(13% 0.02 48 / 0.62);
+      color: var(--fg);
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .skill-button.cooling .cooldown { display: grid; }
+
+    .info-panel {
+      position: absolute;
+      top: 25.4%;
+      right: 5.4%;
+      bottom: 7.5%;
+      width: min(36%, 560px);
+      z-index: 3;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: clamp(18px, 2vw, 34px);
+      padding: clamp(20px, 2.4vw, 40px) clamp(18px, 2.8vw, 46px);
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, transparent 0, oklch(74% 0.055 66 / 0.6) 13%, oklch(64% 0.05 60 / 0.66) 100%),
+        radial-gradient(circle at 100% 0, oklch(91% 0.08 82 / 0.18), transparent 34%);
+      mask-image: linear-gradient(90deg, transparent 0, black 11%, black 100%);
+    }
+
+    .panel-section {
+      min-width: 0;
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid oklch(38% 0.04 58 / 0.24);
+      color: oklch(34% 0.075 55);
+      font-size: clamp(28px, 2.6vw, 44px);
+      line-height: 1;
+      font-weight: 850;
+      text-shadow: 0 1px 0 oklch(100% 0 0 / 0.24);
+    }
+
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(48px, 1fr));
+      gap: clamp(8px, 0.75vw, 14px);
+    }
+
+    .equip-slot {
+      aspect-ratio: 1;
+      min-width: 0;
+      border: 2px solid var(--border);
+      color: oklch(92% 0.036 86);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background:
+        linear-gradient(135deg, oklch(25% 0.03 48 / 0.44), transparent 54%),
+        radial-gradient(circle at 34% 32%, oklch(96% 0.04 84 / 0.22), transparent 30%),
+        oklch(42% 0.042 57 / 0.58);
+      box-shadow:
+        inset 0 0 0 2px oklch(13% 0.02 45 / 0.28),
+        0 3px 0 oklch(31% 0.055 55 / 0.5);
+      transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), border-color 160ms var(--ease), filter 160ms var(--ease);
+    }
+
+    .equip-slot svg {
+      width: 62%;
+      height: 62%;
+      filter: drop-shadow(0 2px 0 oklch(14% 0.02 45 / 0.45));
+    }
+
+    .equip-slot.selected {
+      border-color: var(--accent);
+      box-shadow:
+        inset 0 0 0 2px oklch(100% 0 0 / 0.2),
+        0 0 0 4px oklch(82% 0.15 83 / 0.25),
+        0 5px 0 oklch(31% 0.055 55 / 0.5);
+    }
+
+    .equip-slot.selected::after {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border: 1px solid oklch(96% 0.08 86 / 0.48);
+      pointer-events: none;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: -4px 0 14px;
+    }
+
+    .tab-button {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid oklch(39% 0.04 56 / 0.22);
+      border-radius: 3px;
+      color: oklch(36% 0.058 55);
+      background: oklch(82% 0.05 74 / 0.2);
+      cursor: pointer;
+      font-weight: 850;
+      transition: background 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .tab-button.active {
+      color: oklch(24% 0.052 53);
+      background: linear-gradient(180deg, oklch(90% 0.1 88 / 0.72), oklch(68% 0.1 70 / 0.64));
+      box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.32);
+    }
+
+    .stats {
+      display: grid;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .stat-row {
+      min-height: clamp(36px, 3.1vw, 48px);
+      display: grid;
+      grid-template-columns: minmax(132px, 1fr) auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 0 8px;
+      color: oklch(95% 0.04 82 / 0.8);
+      background: linear-gradient(90deg, transparent, oklch(44% 0.035 54 / 0.2));
+    }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      font-size: clamp(18px, 1.66vw, 28px);
+      font-weight: 700;
+      text-shadow: 0 1px 0 oklch(19% 0.04 50 / 0.36);
+    }
+
+    .stat-label svg {
+      width: clamp(23px, 2vw, 34px);
+      height: clamp(23px, 2vw, 34px);
+      flex: 0 0 auto;
+    }
+
+    .stat-base,
+    .stat-bonus {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 1.85vw, 31px);
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 2px 0 oklch(18% 0.04 50 / 0.42);
+      white-space: nowrap;
+    }
+
+    .stat-base { color: oklch(97% 0.034 82); }
+    .stat-bonus { color: var(--success); }
+
+    .action-strip {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gold-button,
+    .ghost-button {
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform 160ms var(--ease), filter 160ms var(--ease);
+    }
+
+    .gold-button {
+      border: 1px solid oklch(89% 0.12 84 / 0.74);
+      color: oklch(23% 0.054 54);
+      background: linear-gradient(180deg, oklch(91% 0.12 90), oklch(66% 0.14 72));
+      box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.46), 0 5px 0 var(--accent-dark);
+    }
+
+    .ghost-button {
+      border: 1px solid oklch(90% 0.06 86 / 0.42);
+      color: oklch(96% 0.04 84);
+      background: oklch(30% 0.04 54 / 0.44);
+      box-shadow: inset 0 0 0 1px oklch(20% 0.02 40 / 0.2);
+    }
+
+    .round-button:hover,
+    .skill-button:hover,
+    .equip-slot:hover,
+    .gold-button:hover,
+    .ghost-button:hover,
+    .tab-button:hover {
+      filter: brightness(1.08);
+    }
+
+    .round-button:active,
+    .skill-button:active,
+    .equip-slot:active,
+    .gold-button:active,
+    .ghost-button:active,
+    .tab-button:active {
+      transform: translateY(2px) scale(0.98);
+    }
+
+    .popover {
+      position: absolute;
+      right: 7%;
+      top: 52%;
+      z-index: 12;
+      width: min(350px, 84vw);
+      padding: 18px;
+      border: 1px solid oklch(87% 0.1 80 / 0.56);
+      color: var(--ink);
+      background: linear-gradient(180deg, oklch(84% 0.06 78 / 0.94), oklch(61% 0.056 64 / 0.92));
+      box-shadow: 0 18px 46px oklch(16% 0.04 47 / 0.36);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(14px);
+      transition: opacity 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .popover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .popover h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-display);
+      font-size: 29px;
+      line-height: 1.05;
+      color: oklch(31% 0.07 55);
+    }
+
+    .popover p {
+      margin: 0;
+      color: oklch(34% 0.045 55);
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 5.8%;
+      z-index: 14;
+      min-width: min(460px, calc(100% - 36px));
+      padding: 14px 20px;
+      border: 1px solid oklch(91% 0.12 84 / 0.5);
+      color: oklch(96% 0.04 84);
+      background: linear-gradient(90deg, oklch(27% 0.035 48 / 0.92), oklch(40% 0.055 60 / 0.9));
+      box-shadow: 0 18px 46px oklch(14% 0.04 48 / 0.38);
+      text-align: center;
+      font-weight: 900;
+      opacity: 0;
+      transform: translate(-50%, 18px);
+      pointer-events: none;
+      transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .mobile-panel-toggle {
+      display: none;
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 20;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 1px solid oklch(89% 0.11 84 / 0.68);
+      border-radius: 999px;
+      color: oklch(25% 0.05 55);
+      background: linear-gradient(180deg, oklch(92% 0.12 90), oklch(70% 0.14 74));
+      box-shadow: 0 8px 24px oklch(12% 0.04 48 / 0.35);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1060px) {
+      body {
+        display: block;
+        padding: 0;
+        background: oklch(24% 0.04 52);
+      }
+
+      .game-stage {
+        width: 100%;
+        min-height: 100dvh;
+        aspect-ratio: auto;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .image-layer {
+        background-size: auto 100%;
+        background-position: 39% center;
+      }
+
+      .image-layer::before {
+        background:
+          linear-gradient(180deg, oklch(24% 0.04 55 / 0.08), transparent 25%, oklch(18% 0.035 48 / 0.76) 73%),
+          linear-gradient(90deg, transparent, oklch(27% 0.04 50 / 0.72));
+      }
+
+      .topbar {
+        top: 12px;
+        left: 14px;
+        right: 14px;
+      }
+
+      .title-cluster { gap: 10px; }
+
+      .page-title { font-size: clamp(32px, 9vw, 54px); }
+
+      .resource-card {
+        min-width: 190px;
+        width: 42vw;
+      }
+
+      .level-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .level { justify-content: flex-end; }
+      .level small { font-size: 20px; }
+      .level strong { font-size: 42px; }
+
+      .bar-line {
+        height: 24px;
+        grid-template-columns: 28px 1fr;
+      }
+
+      .bar-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .meter b { font-size: 13px; }
+
+      .hero-zone {
+        left: -7%;
+        top: 16%;
+        bottom: auto;
+        width: 100%;
+        height: 55%;
+      }
+
+      .hero-cutout {
+        left: 22%;
+        width: min(52vw, 300px);
+      }
+
+      .name-card {
+        left: 18px;
+        right: 18px;
+        bottom: 138px;
+      }
+
+      .hero-name {
+        font-size: clamp(48px, 17vw, 82px);
+      }
+
+      .skill-row {
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .skill-button {
+        width: 60px;
+        height: 60px;
+      }
+
+      .info-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: auto;
+        max-height: 65dvh;
+        transform: translateY(calc(100% - 86px));
+        padding: 18px 18px 76px;
+        overflow: auto;
+        gap: 18px;
+        border-top: 1px solid oklch(84% 0.1 80 / 0.5);
+        background: linear-gradient(180deg, oklch(78% 0.065 72 / 0.94), oklch(43% 0.05 56 / 0.96));
+        mask-image: none;
+        transition: transform 220ms var(--ease);
+      }
+
+      .game-stage.panel-open .info-panel {
+        transform: translateY(0);
+      }
+
+      .section-title {
+        font-size: 26px;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+
+      .equipment-grid {
+        grid-template-columns: repeat(5, minmax(48px, 72px));
+      }
+
+      .stat-row {
+        min-height: 42px;
+        grid-template-columns: minmax(118px, 1fr) auto auto;
+      }
+
+      .stat-label,
+      .stat-base,
+      .stat-bonus {
+        font-size: 19px;
+      }
+
+      .action-strip { justify-content: space-between; }
+
+      .mobile-panel-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .popover {
+        right: 16px;
+        top: auto;
+        bottom: 98px;
+      }
+
+      .toast { bottom: 104px; }
+    }
+
+    @media (max-width: 560px) {
+      .round-button {
+        width: 46px;
+        height: 46px;
+      }
+
+      .resource-card {
+        width: 48vw;
+        min-width: 168px;
+      }
+
+      .page-title { font-size: 34px; }
+
+      .hero-zone {
+        top: 18%;
+        left: -19%;
+      }
+
+      .hero-cutout {
+        left: 30%;
+        width: min(62vw, 260px);
+      }
+
+      .name-card { bottom: 130px; }
+      .hero-name { font-size: 54px; }
+      .stars { padding-left: 3px; }
+
+      .star {
+        width: 30px;
+        height: 30px;
+      }
+
+      .skill-button {
+        width: 56px;
+        height: 56px;
+      }
+
+      .equipment-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .tabs { overflow-x: auto; }
+
+      .action-strip {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .gold-button,
+      .ghost-button {
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-stage" id="gameStage" aria-label="Olympia 英雄详情游戏界面">
+    <div class="image-layer" aria-hidden="true"></div>
+    <div class="crest" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="title-cluster">
+        <button class="round-button" id="backButton" aria-label="返回英雄列表">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M38 13 19 32l19 19" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M23 32h28" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+          </svg>
+        </button>
+        <h1 class="page-title">英雄</h1>
+      </div>
+
+      <section class="resource-card" aria-label="英雄等级与资源">
+        <div class="level-row">
+          <div class="level" aria-label="等级 20">
+            <small>Lv.</small>
+            <strong id="levelValue">20</strong>
+          </div>
+          <div class="bars">
+            <div class="bar-line">
+              <span class="bar-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><path d="M16 2 20 11l10 1-7.5 6.5L24.5 29 16 23.5 7.5 29l2-10.5L2 12l10-1Z" fill="currentColor"/></svg>
+              </span>
+              <div class="meter" aria-label="经验值 1634824 / 6218543">
+                <span class="meter-fill" id="xpFill" style="--value: 26%; --from: oklch(73% 0.17 132); --to: oklch(86% 0.12 118);"></span>
+                <b><span id="xpText">1634824</span> / 6218543</b>
+              </div>
+            </div>
+            <div class="bar-line">
+              <span class="bar-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><path d="M9 4h8l2 7 6 2-5 5 1 9-8-4-8 4 2-10-5-5 7-1Z" fill="currentColor"/></svg>
+              </span>
+              <div class="meter" aria-label="体力 58 / 120">
+                <span class="meter-fill" id="energyFill" style="--value: 48%; --from: oklch(76% 0.15 75); --to: oklch(86% 0.12 91);"></span>
+                <b><span id="energyText">58</span> / 120</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <section class="hero-zone" aria-hidden="true">
+      <div class="hero-glow"></div>
+      <div class="hero-cutout"></div>
+    </section>
+
+    <section class="name-card" aria-label="英雄摘要">
+      <div class="hero-name">Olympia</div>
+      <div class="stars" aria-label="五星英雄">
+        <svg class="star" viewBox="0 0 32 32"><path d="M16 2.2 20.2 11l9.6 1.3-7 6.7 1.7 9.5-8.5-4.7-8.5 4.7L9.2 19l-7-6.7 9.6-1.3Z" fill="currentColor"/></svg>
+        <svg class="star" viewBox="0 0 32 32"><path d="M16 2.2 20.2 11l9.6 1.3-7 6.7 1.7 9.5-8.5-4.7-8.5 4.7L9.2 19l-7-6.7 9.6-1.3Z" fill="currentColor"/></svg>
+        <svg class="star" viewBox="0 0 32 32"><path d="M16 2.2 20.2 11l9.6 1.3-7 6.7 1.7 9.5-8.5-4.7-8.5 4.7L9.2 19l-7-6.7 9.6-1.3Z" fill="currentColor"/></svg>
+        <svg class="star" viewBox="0 0 32 32"><path d="M16 2.2 20.2 11l9.6 1.3-7 6.7 1.7 9.5-8.5-4.7-8.5 4.7L9.2 19l-7-6.7 9.6-1.3Z" fill="currentColor"/></svg>
+        <svg class="star" viewBox="0 0 32 32"><path d="M16 2.2 20.2 11l9.6 1.3-7 6.7 1.7 9.5-8.5-4.7-8.5 4.7L9.2 19l-7-6.7 9.6-1.3Z" fill="currentColor"/></svg>
+      </div>
+      <div class="skill-row" aria-label="英雄技能">
+        <button class="skill-button" data-skill="王权震击" aria-label="释放王权震击">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><path d="M20 4 7 20h8l-3 12 16-18h-9Z" fill="currentColor"/></svg>
+          <span class="cooldown"></span>
+        </button>
+        <button class="skill-button" data-skill="军团号令" aria-label="释放军团号令">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 4c5 0 9 4 9 9v6l4 6H5l4-6v-6c0-5 4-9 9-9Zm-4 24h8a4 4 0 0 1-8 0Z" fill="currentColor"/></svg>
+          <span class="cooldown"></span>
+        </button>
+        <button class="skill-button" data-skill="圣卷战策" aria-label="释放圣卷战策">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><path d="M8 6h17c2 0 4 2 4 4v20H11c-2 0-4-2-4-4V7c0-.6.4-1 1-1Zm5 6v3h11v-3Zm0 6v3h9v-3Z" fill="currentColor"/></svg>
+          <span class="cooldown"></span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="info-panel" aria-label="英雄属性与装备">
+      <section class="panel-section">
+        <h2 class="section-title">武装</h2>
+        <div class="equipment-grid" role="list" aria-label="武装槽位">
+          <button class="equip-slot selected" data-equip="远征长弓" aria-label="选择远征长弓">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M28 4c-10 7-14 18-9 32M12 7l19 19M20 18l-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </button>
+          <button class="equip-slot" data-equip="城邦圆盾" aria-label="选择城邦圆盾">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 32 9v9c0 8-5 14-12 18C13 32 8 26 8 18V9Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 14h12M14 20h12" stroke="currentColor" stroke-width="3"/></svg>
+          </button>
+          <button class="equip-slot" data-equip="青铜短矛" aria-label="选择青铜短矛">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M28 3 36 12 18 29 11 22Z" fill="currentColor"/><path d="M5 35 18 22" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          </button>
+          <button class="equip-slot" data-equip="王室坐骑" aria-label="选择王室坐骑">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 25c7-12 15-13 28-8-6 1-8 5-10 11-3-4-8-5-18-3Z" fill="currentColor"/><path d="M20 15 26 7l2 8" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          </button>
+          <button class="equip-slot" data-equip="鹰眼徽章" aria-label="选择鹰眼徽章">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 8v24M8 20h24M15 20a5 5 0 0 0 10 0 5 5 0 0 0-10 0Z" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2 class="section-title">基础信息</h2>
+        <div class="tabs" role="tablist" aria-label="属性类别">
+          <button class="tab-button active" type="button" data-tab="base" role="tab" aria-selected="true">基础</button>
+          <button class="tab-button" type="button" data-tab="battle" role="tab" aria-selected="false">战斗</button>
+          <button class="tab-button" type="button" data-tab="march" role="tab" aria-selected="false">行军</button>
+        </div>
+        <div class="stats" id="statsList" aria-live="polite"></div>
+      </section>
+
+      <div class="action-strip" aria-label="英雄操作">
+        <button class="ghost-button" id="detailsButton">查看词条</button>
+        <button class="gold-button" id="upgradeButton">升级</button>
+      </div>
+    </aside>
+
+    <button class="mobile-panel-toggle" id="panelToggle" aria-expanded="false" aria-controls="gameStage">属性 / 武装</button>
+
+    <div class="popover" id="popover" role="dialog" aria-label="英雄词条">
+      <h3 id="popoverTitle">远征长弓</h3>
+      <p id="popoverText">远程武装。当前选中后提高武力与先手压制，适合在回合开始时削弱敌方前排。</p>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const stage = document.getElementById("gameStage");
+    const toast = document.getElementById("toast");
+    const popover = document.getElementById("popover");
+    const popoverTitle = document.getElementById("popoverTitle");
+    const popoverText = document.getElementById("popoverText");
+    const panelToggle = document.getElementById("panelToggle");
+    const levelValue = document.getElementById("levelValue");
+    const xpText = document.getElementById("xpText");
+    const xpFill = document.getElementById("xpFill");
+    const energyText = document.getElementById("energyText");
+    const energyFill = document.getElementById("energyFill");
+    const statsList = document.getElementById("statsList");
+
+    const equipment = {
+      "远征长弓": "远程武装。当前选中后提高武力与先手压制，适合在回合开始时削弱敌方前排。",
+      "城邦圆盾": "防御武装。提高统帅与承伤稳定性，可在守城战中减少第一轮损耗。",
+      "青铜短矛": "突击武装。提升速度与爆发，适合抢占行动顺序后打出追击。",
+      "王室坐骑": "机动武装。提高移动与战术撤离能力，适合长线远征编队。",
+      "鹰眼徽章": "侦察武装。增强命中与视野，适合针对高闪避敌军。"
+    };
+
+    const statSets = {
+      base: [
+        ["武力", "136.28", 18, "sword"],
+        ["统帅", "136.2", 186, "horse"],
+        ["智谋", "136.3", 86, "brain"],
+        ["速度", "28.66", 210, "bolt"],
+        ["政务", "206.2", 186, "temple"]
+      ],
+      battle: [
+        ["破甲", "42.8", 28, "sword"],
+        ["格挡", "31.4", 96, "shield"],
+        ["暴击", "18.2", 36, "bolt"],
+        ["命中", "94.6", 24, "target"],
+        ["韧性", "57.0", 68, "temple"]
+      ],
+      march: [
+        ["行军", "72.5", 44, "horse"],
+        ["补给", "118.0", 62, "temple"],
+        ["侦察", "88.6", 32, "target"],
+        ["士气", "74.2", 58, "bolt"],
+        ["耐久", "160.4", 70, "shield"]
+      ]
+    };
+
+    const iconPaths = {
+      sword: '<path d="M7 25 25 7M20 5l7 7M5 20l7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+      horse: '<path d="M5 19c5-11 16-13 22-9-7 1-10 6-12 16-2-4-5-6-10-7Z" fill="currentColor"/>',
+      brain: '<path d="M11 8a5 5 0 0 1 10 0c3 1 5 4 5 8 0 6-5 10-10 10S6 22 6 16c0-4 2-7 5-8Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 17h8" stroke="currentColor" stroke-width="3"/>',
+      bolt: '<path d="M18 2 8 18h8l-2 12 10-17h-8Z" fill="currentColor"/>',
+      temple: '<path d="M4 13 16 5l12 8H4Zm3 2h18v10h3v3H4v-3h3Z" fill="currentColor"/>',
+      shield: '<path d="M16 4 27 9v8c0 7-4.5 12-11 15C9.5 29 5 24 5 17V9Z" fill="none" stroke="currentColor" stroke-width="3"/>',
+      target: '<circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 5v22M5 16h22" stroke="currentColor" stroke-width="3"/>'
+    };
+
+    let level = 20;
+    let xp = 1634824;
+    let energy = 58;
+    let activeTab = "base";
+    let toastTimer = null;
+
+    function showToast(message) {
+      window.clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function openPopover(title, text) {
+      popoverTitle.textContent = title;
+      popoverText.textContent = text;
+      popover.classList.add("open");
+    }
+
+    function renderStats() {
+      statsList.innerHTML = statSets[activeTab].map(([label, base, bonus, icon]) => `
+        <div class="stat-row">
+          <span class="stat-label">
+            <svg viewBox="0 0 32 32" aria-hidden="true">${iconPaths[icon]}</svg>
+            ${label}
+          </span>
+          <span class="stat-base">${base}</span>
+          <span class="stat-bonus" data-bonus="${bonus}">+${bonus}</span>
+        </div>
+      `).join("");
+    }
+
+    document.querySelectorAll(".equip-slot").forEach((slot) => {
+      slot.addEventListener("click", () => {
+        document.querySelectorAll(".equip-slot").forEach((item) => item.classList.remove("selected"));
+        slot.classList.add("selected");
+        const name = slot.dataset.equip;
+        openPopover(name, equipment[name]);
+        showToast(`已装备：${name}`);
+      });
+    });
+
+    document.querySelectorAll(".skill-button").forEach((skill) => {
+      skill.addEventListener("click", () => {
+        if (skill.classList.contains("cooling")) return;
+        const name = skill.dataset.skill;
+        skill.classList.add("active", "cooling");
+        energy = Math.max(0, energy - 8);
+        energyText.textContent = String(energy);
+        energyFill.style.setProperty("--value", `${Math.max(0, Math.round((energy / 120) * 100))}%`);
+        showToast(`${name} 已释放，体力 -8`);
+
+        let remaining = 3;
+        const cooldown = skill.querySelector(".cooldown");
+        cooldown.textContent = remaining;
+        const timer = window.setInterval(() => {
+          remaining -= 1;
+          cooldown.textContent = remaining;
+          if (remaining <= 0) {
+            window.clearInterval(timer);
+            skill.classList.remove("cooling", "active");
+            cooldown.textContent = "";
+          }
+        }, 700);
+      });
+    });
+
+    document.querySelectorAll(".tab-button").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        activeTab = tab.dataset.tab;
+        document.querySelectorAll(".tab-button").forEach((item) => {
+          const selected = item === tab;
+          item.classList.toggle("active", selected);
+          item.setAttribute("aria-selected", String(selected));
+        });
+        renderStats();
+        showToast(`已切换到${tab.textContent}属性`);
+      });
+    });
+
+    document.getElementById("upgradeButton").addEventListener("click", () => {
+      level += 1;
+      xp = Math.min(6218543, xp + 245000);
+      levelValue.textContent = String(level);
+      xpText.textContent = String(xp);
+      xpFill.style.setProperty("--value", `${Math.round((xp / 6218543) * 100)}%`);
+      document.querySelectorAll(".stat-bonus").forEach((bonus, index) => {
+        const next = Number(bonus.dataset.bonus) + [6, 12, 7, 9, 10][index % 5];
+        bonus.dataset.bonus = String(next);
+        bonus.textContent = `+${next}`;
+      });
+      showToast(`Olympia 升至 Lv.${level}`);
+    });
+
+    document.getElementById("detailsButton").addEventListener("click", () => {
+      const selected = document.querySelector(".equip-slot.selected");
+      const name = selected ? selected.dataset.equip : "英雄词条";
+      openPopover(name, equipment[name] || "选择一个武装后查看对应词条。");
+    });
+
+    document.getElementById("backButton").addEventListener("click", () => {
+      showToast("返回英雄列表：当前为可点击原型");
+    });
+
+    panelToggle.addEventListener("click", () => {
+      const open = stage.classList.toggle("panel-open");
+      panelToggle.setAttribute("aria-expanded", String(open));
+      panelToggle.textContent = open ? "收起属性" : "属性 / 武装";
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        popover.classList.remove("open");
+        stage.classList.remove("panel-open");
+        panelToggle.setAttribute("aria-expanded", "false");
+        panelToggle.textContent = "属性 / 武装";
+      }
+    });
+
+    renderStats();
+  </script>
+</body>
+</html>

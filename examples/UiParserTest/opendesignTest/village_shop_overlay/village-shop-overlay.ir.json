@@ -1,0 +1,2068 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "display": "flex",
+        "width": "100%",
+        "height": "100%",
+        "padding": "16px 16px",
+        "justify_content": "center",
+        "align_items": "center",
+        "position_type": "absolute",
+        "fixed_node": true
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#00000099"
+      }
+    },
+    "children": [
+      {
+        "id": "panel",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "width": "720px",
+            "height": "90%",
+            "max_width": "720px",
+            "max_height": "648px",
+            "overflow": "clip",
+            "padding": "0px",
+            "flex_direction": "column",
+            "position_type": "relative"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#f8ecd0",
+            "border_color": "#8b5f33",
+            "border_width": "4px",
+            "border_radius": "28px"
+          }
+        },
+        "children": [
+          {
+            "id": "panel_header",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "padding": "28px 64px 18px",
+                "flex_direction": "row",
+                "justify_content": "center",
+                "align_items": "center",
+                "position_type": "relative"
+              }
+            },
+            "children": [
+              {
+                "id": "title_board",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "min_width": "220px",
+                    "padding": "14px 32px 16px",
+                    "justify_content": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#8b5f33",
+                    "border_color": "#3b2818",
+                    "border_width": "3px",
+                    "border_radius": "18px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "title_text",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "村庄商店",
+                        "font_size": 36.0,
+                        "font_color": "#ffffff",
+                        "font_path": "STHeiti Medium.ttc"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "close_btn",
+                "kind": "button",
+                "markers": [
+                  "Action_Close_Shop"
+                ],
+                "actions": [
+                  {
+                    "event": "press",
+                    "emit": "close_shop_overlay"
+                  }
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "grid",
+                    "width": "48px",
+                    "height": "48px",
+                    "right": "18px",
+                    "top": "18px",
+                    "justify_content": "center",
+                    "justify_items": "center",
+                    "align_items": "center",
+                    "position_type": "absolute"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#cc4d3f",
+                    "border_color": "transparent",
+                    "border_width": "0",
+                    "border_radius": "999px"
+                  }
+                },
+                "state_visuals": {
+                  "pressed": {
+                    "styles": {
+                      "ui_scale": "0.95 0.95"
+                    }
+                  },
+                  "normal": {
+                    "styles": {
+                      "ui_scale": "1 1"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "id": "close_btn_text",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "X",
+                        "font_size": 22.0,
+                        "font_color": "#FFFFFF",
+                        "font_path": "STHeiti Medium.ttc"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "shop_body",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "padding": "0 16px 18px",
+                "flex_direction": "column",
+                "flex_grow": "1"
+              }
+            },
+            "children": [
+              {
+                "id": "shop_scroll",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "max_height": "475.2px",
+                    "overflow": "scroll_y",
+                    "padding": "8px 6px 8px 2px",
+                    "flex_direction": "column",
+                    "row_gap": "14px",
+                    "column_gap": "14px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "shop_card_hut",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "padding": "14px",
+                        "row_gap": "14px",
+                        "column_gap": "14px",
+                        "align_items": "stretch",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) px(140)"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f8ecd0",
+                        "border_color": "#8b5f33",
+                        "border_width": "2px",
+                        "border_radius": "20px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "item_main_hut",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "min_width": "0",
+                            "flex_grow": "1",
+                            "row_gap": "14px",
+                            "column_gap": "14px",
+                            "grid_template_columns": "px(104) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "asset_stack_hut",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "92px",
+                                "flex_direction": "column",
+                                "row_gap": "10px",
+                                "column_gap": "10px",
+                                "align_items": "stretch"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "asset_slot_hut",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "92px",
+                                    "padding": "10px",
+                                    "justify_content": "center",
+                                    "justify_items": "center",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#f8ecd0",
+                                    "border_color": "#8b5f33",
+                                    "border_width": "2px",
+                                    "border_radius": "18px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "asset_slot_hut_text",
+                                    "kind": "text",
+                                    "layout": {
+                                      "styles": {
+                                        "width": "72px"
+                                      }
+                                    },
+                                    "content": {
+                                      "text": {
+                                        "content": "Hut Asset Slot",
+                                        "font_size": 12.0,
+                                        "font_color": "#79614b",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "linebreak": "word_or_character"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "stars_hut",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "24px",
+                                    "padding": "0 2px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "justify_content": "space_evenly",
+                                    "grid_template_columns": "flex(4, 1)"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "star_hut_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#D89A1F",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_hut_2",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_hut_3",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_hut_4",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "item_copy_hut",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "min_width": "0",
+                                "flex_direction": "column",
+                                "flex_grow": "1",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "justify_content": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "item_name_hut",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "谷仓小屋",
+                                    "font_size": 24.0,
+                                    "font_color": "#3b2818",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_meta_hut",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "提升谷物储量，解锁晨间补货动画与木门升级细节。",
+                                    "font_size": 13.0,
+                                    "font_color": "#79614b",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_bonus_hut",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "flex",
+                                    "padding": "6px 10px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#D89A1F2E",
+                                    "border_radius": "999px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "item_bonus_hut_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Lv.1 已点亮",
+                                        "font_size": 12.0,
+                                        "font_color": "#3b2818",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "purchase_node_hut",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "140px",
+                            "min_width": "120px",
+                            "flex_direction": "column",
+                            "row_gap": "12px",
+                            "column_gap": "12px",
+                            "justify_content": "space-between",
+                            "align_items": "flex-end"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "price_tag_hut",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "padding": "8px 12px",
+                                "flex_direction": "row",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "align_items": "center"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f8ecd0",
+                                "border_color": "#8b5f33",
+                                "border_width": "2px",
+                                "border_radius": "14px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "price_coin_hut",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "16px",
+                                    "height": "16px"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#d89a1f",
+                                    "border_color": "#3b2818",
+                                    "border_width": "1px",
+                                    "border_radius": "999px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "price_hut_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "72,000",
+                                    "font_size": 30.0,
+                                    "font_color": "#d89a1f",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "buy_btn_hut",
+                            "kind": "button",
+                            "markers": [
+                              "Sound_Click",
+                              "Action_Buy_Hut"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "buy_item_hut"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "min_width": "112px",
+                                "min_height": "48px",
+                                "padding": "0 20px",
+                                "justify_content": "center",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#3fb45a",
+                                "border_color": "transparent",
+                                "border_width": "0",
+                                "border_radius": "18px"
+                              }
+                            },
+                            "state_visuals": {
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              },
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "buy_btn_hut_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "购买",
+                                    "font_size": 20.0,
+                                    "font_color": "#ffffff",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "shop_card_statue",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "padding": "14px",
+                        "row_gap": "14px",
+                        "column_gap": "14px",
+                        "align_items": "stretch",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) px(140)"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f8ecd0",
+                        "border_color": "#8b5f33",
+                        "border_width": "2px",
+                        "border_radius": "20px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "item_main_statue",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "min_width": "0",
+                            "flex_grow": "1",
+                            "row_gap": "14px",
+                            "column_gap": "14px",
+                            "grid_template_columns": "px(104) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "asset_stack_statue",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "92px",
+                                "flex_direction": "column",
+                                "row_gap": "10px",
+                                "column_gap": "10px",
+                                "align_items": "stretch"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "asset_slot_statue",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "92px",
+                                    "padding": "10px",
+                                    "justify_content": "center",
+                                    "justify_items": "center",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#f8ecd0",
+                                    "border_color": "#8b5f33",
+                                    "border_width": "2px",
+                                    "border_radius": "18px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "asset_slot_statue_text",
+                                    "kind": "text",
+                                    "layout": {
+                                      "styles": {
+                                        "width": "72px"
+                                      }
+                                    },
+                                    "content": {
+                                      "text": {
+                                        "content": "Statue Asset Slot",
+                                        "font_size": 12.0,
+                                        "font_color": "#79614b",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "linebreak": "word_or_character"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "stars_statue",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "24px",
+                                    "padding": "0 2px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "justify_content": "space_evenly",
+                                    "grid_template_columns": "flex(4, 1)"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "star_statue_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#D89A1F",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_statue_2",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_statue_3",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_statue_4",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "item_copy_statue",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "min_width": "0",
+                                "flex_direction": "column",
+                                "flex_grow": "1",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "justify_content": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "item_name_statue",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "丰收雕像",
+                                    "font_size": 24.0,
+                                    "font_color": "#3b2818",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_meta_statue",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "为广场增加金色祝福效果，访客停留时长额外加成。",
+                                    "font_size": 13.0,
+                                    "font_color": "#79614b",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_bonus_statue",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "flex",
+                                    "padding": "6px 10px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#D89A1F2E",
+                                    "border_radius": "999px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "item_bonus_statue_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "村庄人气 +8%",
+                                        "font_size": 12.0,
+                                        "font_color": "#3b2818",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "purchase_node_statue",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "140px",
+                            "min_width": "120px",
+                            "flex_direction": "column",
+                            "row_gap": "12px",
+                            "column_gap": "12px",
+                            "justify_content": "space-between",
+                            "align_items": "flex-end"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "price_tag_statue",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "padding": "8px 12px",
+                                "flex_direction": "row",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "align_items": "center"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f8ecd0",
+                                "border_color": "#8b5f33",
+                                "border_width": "2px",
+                                "border_radius": "14px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "price_coin_statue",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "16px",
+                                    "height": "16px"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#d89a1f",
+                                    "border_color": "#3b2818",
+                                    "border_width": "1px",
+                                    "border_radius": "999px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "price_statue_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "80,000",
+                                    "font_size": 30.0,
+                                    "font_color": "#d89a1f",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "buy_btn_statue",
+                            "kind": "button",
+                            "markers": [
+                              "Sound_Click",
+                              "Action_Buy_Statue"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "buy_item_statue"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "min_width": "112px",
+                                "min_height": "48px",
+                                "padding": "0 20px",
+                                "justify_content": "center",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#3fb45a",
+                                "border_color": "transparent",
+                                "border_width": "0",
+                                "border_radius": "18px"
+                              }
+                            },
+                            "state_visuals": {
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              },
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "buy_btn_statue_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "购买",
+                                    "font_size": 20.0,
+                                    "font_color": "#ffffff",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "shop_card_cart",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "padding": "14px",
+                        "row_gap": "14px",
+                        "column_gap": "14px",
+                        "align_items": "stretch",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) px(140)"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f8ecd0",
+                        "border_color": "#8b5f33",
+                        "border_width": "2px",
+                        "border_radius": "20px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "item_main_cart",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "min_width": "0",
+                            "flex_grow": "1",
+                            "row_gap": "14px",
+                            "column_gap": "14px",
+                            "grid_template_columns": "px(104) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "asset_stack_cart",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "92px",
+                                "flex_direction": "column",
+                                "row_gap": "10px",
+                                "column_gap": "10px",
+                                "align_items": "stretch"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "asset_slot_cart",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "92px",
+                                    "padding": "10px",
+                                    "justify_content": "center",
+                                    "justify_items": "center",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#f8ecd0",
+                                    "border_color": "#8b5f33",
+                                    "border_width": "2px",
+                                    "border_radius": "18px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "asset_slot_cart_text",
+                                    "kind": "text",
+                                    "layout": {
+                                      "styles": {
+                                        "width": "72px"
+                                      }
+                                    },
+                                    "content": {
+                                      "text": {
+                                        "content": "Cart Asset Slot",
+                                        "font_size": 12.0,
+                                        "font_color": "#79614b",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "linebreak": "word_or_character"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "stars_cart",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "24px",
+                                    "padding": "0 2px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "justify_content": "space_evenly",
+                                    "grid_template_columns": "flex(4, 1)"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "star_cart_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#D89A1F",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_cart_2",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_cart_3",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_cart_4",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "item_copy_cart",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "min_width": "0",
+                                "flex_direction": "column",
+                                "flex_grow": "1",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "justify_content": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "item_name_cart",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "流动货车",
+                                    "font_size": 24.0,
+                                    "font_color": "#3b2818",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_meta_cart",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "加快村口售卖节奏，让稀有货物在高峰时段提前刷新。",
+                                    "font_size": 13.0,
+                                    "font_color": "#79614b",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_bonus_cart",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "flex",
+                                    "padding": "6px 10px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#D89A1F2E",
+                                    "border_radius": "999px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "item_bonus_cart_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "补货速度 +12%",
+                                        "font_size": 12.0,
+                                        "font_color": "#3b2818",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "purchase_node_cart",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "140px",
+                            "min_width": "120px",
+                            "flex_direction": "column",
+                            "row_gap": "12px",
+                            "column_gap": "12px",
+                            "justify_content": "space-between",
+                            "align_items": "flex-end"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "price_tag_cart",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "padding": "8px 12px",
+                                "flex_direction": "row",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "align_items": "center"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f8ecd0",
+                                "border_color": "#8b5f33",
+                                "border_width": "2px",
+                                "border_radius": "14px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "price_coin_cart",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "16px",
+                                    "height": "16px"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#d89a1f",
+                                    "border_color": "#3b2818",
+                                    "border_width": "1px",
+                                    "border_radius": "999px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "price_cart_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "66,000",
+                                    "font_size": 30.0,
+                                    "font_color": "#d89a1f",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "buy_btn_cart",
+                            "kind": "button",
+                            "markers": [
+                              "Sound_Click",
+                              "Action_Buy_Cart"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "buy_item_cart"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "min_width": "112px",
+                                "min_height": "48px",
+                                "padding": "0 20px",
+                                "justify_content": "center",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#3fb45a",
+                                "border_color": "transparent",
+                                "border_width": "0",
+                                "border_radius": "18px"
+                              }
+                            },
+                            "state_visuals": {
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
+                                }
+                              },
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "buy_btn_cart_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "购买",
+                                    "font_size": 20.0,
+                                    "font_color": "#ffffff",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "shop_card_lantern",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "padding": "14px",
+                        "row_gap": "14px",
+                        "column_gap": "14px",
+                        "align_items": "stretch",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) px(140)"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f8ecd0",
+                        "border_color": "#8b5f33",
+                        "border_width": "2px",
+                        "border_radius": "20px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "item_main_lantern",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "min_width": "0",
+                            "flex_grow": "1",
+                            "row_gap": "14px",
+                            "column_gap": "14px",
+                            "grid_template_columns": "px(104) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "asset_stack_lantern",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "92px",
+                                "flex_direction": "column",
+                                "row_gap": "10px",
+                                "column_gap": "10px",
+                                "align_items": "stretch"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "asset_slot_lantern",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "92px",
+                                    "padding": "10px",
+                                    "justify_content": "center",
+                                    "justify_items": "center",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#f8ecd0",
+                                    "border_color": "#8b5f33",
+                                    "border_width": "2px",
+                                    "border_radius": "18px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "asset_slot_lantern_text",
+                                    "kind": "text",
+                                    "layout": {
+                                      "styles": {
+                                        "width": "72px"
+                                      }
+                                    },
+                                    "content": {
+                                      "text": {
+                                        "content": "Lantern Asset Slot",
+                                        "font_size": 12.0,
+                                        "font_color": "#79614b",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "linebreak": "word_or_character"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "stars_lantern",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "24px",
+                                    "padding": "0 2px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "justify_content": "space_evenly",
+                                    "grid_template_columns": "flex(4, 1)"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "star_lantern_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#D89A1F",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_lantern_2",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_lantern_3",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_lantern_4",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "item_copy_lantern",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "min_width": "0",
+                                "flex_direction": "column",
+                                "flex_grow": "1",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "justify_content": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "item_name_lantern",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "庆典灯串",
+                                    "font_size": 24.0,
+                                    "font_color": "#3b2818",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_meta_lantern",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "夜晚模式下点亮街道，吸引更多行脚商靠近你的摊位。",
+                                    "font_size": 13.0,
+                                    "font_color": "#79614b",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_bonus_lantern",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "flex",
+                                    "padding": "6px 10px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#D89A1F2E",
+                                    "border_radius": "999px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "item_bonus_lantern_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "夜市收益 +5%",
+                                        "font_size": 12.0,
+                                        "font_color": "#3b2818",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "purchase_node_lantern",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "140px",
+                            "min_width": "120px",
+                            "flex_direction": "column",
+                            "row_gap": "12px",
+                            "column_gap": "12px",
+                            "justify_content": "space-between",
+                            "align_items": "flex-end"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "price_tag_lantern",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "padding": "8px 12px",
+                                "flex_direction": "row",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "align_items": "center"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f8ecd0",
+                                "border_color": "#8b5f33",
+                                "border_width": "2px",
+                                "border_radius": "14px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "price_coin_lantern",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "16px",
+                                    "height": "16px"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#d89a1f",
+                                    "border_color": "#3b2818",
+                                    "border_width": "1px",
+                                    "border_radius": "999px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "price_lantern_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "54,000",
+                                    "font_size": 30.0,
+                                    "font_color": "#d89a1f",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "buy_btn_lantern",
+                            "kind": "button",
+                            "markers": [
+                              "Sound_Click",
+                              "Action_Buy_Lantern"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "buy_item_lantern"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "min_width": "112px",
+                                "min_height": "48px",
+                                "padding": "0 20px",
+                                "justify_content": "center",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#3fb45a",
+                                "border_color": "transparent",
+                                "border_width": "0",
+                                "border_radius": "18px"
+                              }
+                            },
+                            "state_visuals": {
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
+                                }
+                              },
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "buy_btn_lantern_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "购买",
+                                    "font_size": 20.0,
+                                    "font_color": "#ffffff",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "shop_card_fountain",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "padding": "14px",
+                        "row_gap": "14px",
+                        "column_gap": "14px",
+                        "align_items": "stretch",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) px(140)"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f8ecd0",
+                        "border_color": "#8b5f33",
+                        "border_width": "2px",
+                        "border_radius": "20px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "item_main_fountain",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "grid",
+                            "min_width": "0",
+                            "flex_grow": "1",
+                            "row_gap": "14px",
+                            "column_gap": "14px",
+                            "grid_template_columns": "px(104) flex(1)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "asset_stack_fountain",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "92px",
+                                "flex_direction": "column",
+                                "row_gap": "10px",
+                                "column_gap": "10px",
+                                "align_items": "stretch"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "asset_slot_fountain",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "92px",
+                                    "padding": "10px",
+                                    "justify_content": "center",
+                                    "justify_items": "center",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#f8ecd0",
+                                    "border_color": "#8b5f33",
+                                    "border_width": "2px",
+                                    "border_radius": "18px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "asset_slot_fountain_text",
+                                    "kind": "text",
+                                    "layout": {
+                                      "styles": {
+                                        "width": "72px"
+                                      }
+                                    },
+                                    "content": {
+                                      "text": {
+                                        "content": "Fountain Asset Slot",
+                                        "font_size": 12.0,
+                                        "font_color": "#79614b",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "linebreak": "word_or_character"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "stars_fountain",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "grid",
+                                    "min_height": "24px",
+                                    "padding": "0 2px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "justify_content": "space_evenly",
+                                    "grid_template_columns": "flex(4, 1)"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "star_fountain_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#D89A1F",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_fountain_2",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_fountain_3",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "star_fountain_4",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "★",
+                                        "font_size": 18.0,
+                                        "font_color": "#79614BCC",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "item_copy_fountain",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "min_width": "0",
+                                "flex_direction": "column",
+                                "flex_grow": "1",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "justify_content": "center"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "item_name_fountain",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "中央喷泉",
+                                    "font_size": 24.0,
+                                    "font_color": "#3b2818",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_meta_fountain",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "作为高阶装饰核心，解锁喷泉粒子与访客集合中心路径。",
+                                    "font_size": 13.0,
+                                    "font_color": "#79614b",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "item_bonus_fountain",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "display": "flex",
+                                    "padding": "6px 10px",
+                                    "flex_direction": "row",
+                                    "row_gap": "6px",
+                                    "column_gap": "6px",
+                                    "align_items": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#D89A1F2E",
+                                    "border_radius": "999px"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "item_bonus_fountain_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "豪华度 +15",
+                                        "font_size": 12.0,
+                                        "font_color": "#3b2818",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "purchase_node_fountain",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "140px",
+                            "min_width": "120px",
+                            "flex_direction": "column",
+                            "row_gap": "12px",
+                            "column_gap": "12px",
+                            "justify_content": "space-between",
+                            "align_items": "flex-end"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "price_tag_fountain",
+                            "kind": "node",
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "padding": "8px 12px",
+                                "flex_direction": "row",
+                                "row_gap": "6px",
+                                "column_gap": "6px",
+                                "align_items": "center"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f8ecd0",
+                                "border_color": "#8b5f33",
+                                "border_width": "2px",
+                                "border_radius": "14px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "price_coin_fountain",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "16px",
+                                    "height": "16px"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#d89a1f",
+                                    "border_color": "#3b2818",
+                                    "border_width": "1px",
+                                    "border_radius": "999px"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "price_fountain_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "96,000",
+                                    "font_size": 30.0,
+                                    "font_color": "#d89a1f",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "buy_btn_fountain",
+                            "kind": "button",
+                            "markers": [
+                              "Sound_Click",
+                              "Action_Buy_Fountain"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "buy_item_fountain"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "min_width": "112px",
+                                "min_height": "48px",
+                                "padding": "0 20px",
+                                "justify_content": "center",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#3fb45a",
+                                "border_color": "transparent",
+                                "border_width": "0",
+                                "border_radius": "18px"
+                              }
+                            },
+                            "state_visuals": {
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
+                                }
+                              },
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "buy_btn_fountain_text",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "购买",
+                                    "font_size": 20.0,
+                                    "font_color": "#ffffff",
+                                    "font_path": "STHeiti Medium.ttc"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "foot_hint",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "padding": "6px 18px 18px",
+                "justify_content": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "foot_hint_text",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "点击购买可直接接到后端商店 API；关闭按钮会隐藏整个弹窗层。",
+                    "font_size": 12.0,
+                    "font_color": "#79614b",
+                    "font_path": "Hiragino Sans GB.ttc"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

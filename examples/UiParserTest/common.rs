@@ -1,8 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use bevy::app::AppExit;
-use bevy::input_focus::InputFocus;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::input_focus::InputFocus;
 use bevy::picking::hover::HoverMap;
 use bevy::render::view::screenshot::{save_to_disk, Screenshot, ScreenshotCaptured};
 use bevy::text::EditableText;
@@ -12,24 +12,62 @@ use bevy_ai_ui_parser::{AiUiPlugin, BuiId, BuiLogicTags, BuiRootEntity, BuiTextI
 #[allow(dead_code)]
 pub fn run_with_json(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_json(&mut app, file_name, true);
+    configure_app_with_plugin(&mut app, AiUiPlugin::from_path(bui_path(file_name)), true);
     app.run();
 }
 
 #[allow(dead_code)]
 pub fn run_with_json_without_button_feedback(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_json(&mut app, file_name, false);
+    configure_app_with_plugin(&mut app, AiUiPlugin::from_path(bui_path(file_name)), false);
     app.run();
 }
 
+#[allow(dead_code)]
+pub fn run_with_bui_file_without_button_feedback(file_name: &str) {
+    let mut app = App::new();
+    configure_app_with_plugin(&mut app, AiUiPlugin::from_path(bui_path(file_name)), false);
+    app.run();
+}
+
+#[allow(dead_code)]
+pub fn run_with_html(file_name: &str) {
+    let mut app = App::new();
+    configure_app_with_plugin(
+        &mut app,
+        AiUiPlugin::from_html_path(bui_path(file_name)),
+        true,
+    );
+    app.run();
+}
+
+#[allow(dead_code)]
+pub fn run_with_html_without_button_feedback(file_name: &str) {
+    let mut app = App::new();
+    configure_app_with_plugin(
+        &mut app,
+        AiUiPlugin::from_html_path(bui_path(file_name)),
+        false,
+    );
+    app.run();
+}
+
+#[allow(dead_code)]
 pub fn configure_app_with_json(app: &mut App, file_name: &str, button_feedback_enabled: bool) {
+    configure_app_with_plugin(
+        app,
+        AiUiPlugin::from_path(bui_path(file_name)),
+        button_feedback_enabled,
+    );
+}
+
+fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_enabled: bool) {
     register_optional_windows_fonts_source(app);
     register_optional_macos_fonts_source(app);
     register_optional_auto_screenshot(app);
 
     app.add_plugins(DefaultPlugins)
-        .add_plugins(AiUiPlugin::from_path(bui_json_path(file_name)))
+        .add_plugins(plugin)
         .add_systems(Startup, setup_camera);
 
     if button_feedback_enabled {
@@ -91,7 +129,7 @@ fn register_optional_auto_screenshot(app: &mut App) {
     }
 }
 
-fn bui_json_path(file_name: &str) -> PathBuf {
+fn bui_path(file_name: &str) -> PathBuf {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("examples")
         .join("UiParserTest");

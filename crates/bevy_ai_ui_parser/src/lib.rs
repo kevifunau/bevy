@@ -26,9 +26,11 @@ use bevy_text::{
 use bevy_ui::{
     prelude::*, widget::TextShadow, Checkable, Checked, FocusPolicy, RelativeCursorPosition,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 const EXPECTED_VERSION: &str = "2.0";
+const OPENDESIGN_DEFAULT_VIEWPORT_WIDTH: f32 = 1280.0;
+const OPENDESIGN_DEFAULT_VIEWPORT_HEIGHT: f32 = 720.0;
 
 /// Plugin that parses BUI JSON and spawns a native Bevy UI tree.
 pub struct AiUiPlugin {
@@ -49,6 +51,20 @@ impl AiUiPlugin {
             source: BuiSource::Inline(json.into()),
         }
     }
+
+    /// Load an OpenDesign HTML artifact from a file path and compile it into BUI IR.
+    pub fn from_html_path(path: impl Into<PathBuf>) -> Self {
+        Self {
+            source: BuiSource::HtmlPath(path.into()),
+        }
+    }
+
+    /// Load an OpenDesign HTML artifact from an in-memory string and compile it into BUI IR.
+    pub fn from_html(html: impl Into<String>) -> Self {
+        Self {
+            source: BuiSource::HtmlInline(html.into()),
+        }
+    }
 }
 
 /// Validate a BUI JSON string against the parser contract without spawning UI.
@@ -63,6 +79,65 @@ pub fn validate_bui_json_file(path: impl AsRef<Path>) -> Result<(), String> {
         .map_err(|error| format!("Failed to read BUI JSON '{}': {error}", path.display()))?;
 
     validate_bui_json_str(&raw).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Validate a BUI 3.0-ir JSON string against the parser contract without spawning UI.
+pub fn validate_bui_ir_json_str(json: &str) -> Result<(), String> {
+    parse_bui_ir_document(json).and_then(|document| {
+        let compat = document.into_compat_document()?;
+        validate_bui_document(&compat)
+    })
+}
+
+/// Validate a BUI 3.0-ir JSON file against the parser contract without spawning UI.
+pub fn validate_bui_ir_json_file(path: impl AsRef<Path>) -> Result<(), String> {
+    let path = path.as_ref();
+    let raw = fs::read_to_string(path)
+        .map_err(|error| format!("Failed to read BUI IR JSON '{}': {error}", path.display()))?;
+
+    validate_bui_ir_json_str(&raw).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Compile an OpenDesign HTML artifact into formatted BUI JSON.
+pub fn opendesign_html_to_bui_json_str(html: &str) -> Result<String, String> {
+    let document = opendesign_html_to_bui_document(html)?;
+    serde_json::to_string_pretty(&document)
+        .map_err(|error| format!("Failed to serialize generated BUI JSON: {error}"))
+}
+
+/// Compile an OpenDesign HTML artifact into formatted BUI IR JSON.
+pub fn opendesign_html_to_bui_ir_json_str(html: &str) -> Result<String, String> {
+    let document = opendesign_html_to_bui_document(html)?;
+    let ir_document = BuiIrDocument::from_compat_document(&document);
+    serde_json::to_string_pretty(&ir_document)
+        .map_err(|error| format!("Failed to serialize generated BUI IR JSON: {error}"))
+}
+
+/// Compile an OpenDesign HTML artifact file into formatted BUI JSON.
+pub fn opendesign_html_file_to_bui_json(path: impl AsRef<Path>) -> Result<String, String> {
+    let path = path.as_ref();
+    let raw = fs::read_to_string(path).map_err(|error| {
+        format!(
+            "Failed to read OpenDesign HTML '{}': {error}",
+            path.display()
+        )
+    })?;
+
+    opendesign_html_to_bui_json_str(&raw).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Compile an OpenDesign HTML artifact file into formatted BUI IR JSON.
+pub fn opendesign_html_file_to_bui_ir_json(path: impl AsRef<Path>) -> Result<String, String> {
+    let path = path.as_ref();
+    let raw = fs::read_to_string(path).map_err(|error| {
+        format!(
+            "Failed to read OpenDesign HTML '{}': {error}",
+            path.display()
+        )
+    })?;
+
+    opendesign_html_to_bui_ir_json_str(&raw)
+        .map_err(|error| format!("{}: {error}", path.display()))
 }
 
 impl Plugin for AiUiPlugin {
@@ -102,6 +177,8 @@ struct AiUiSource(BuiSource);
 enum BuiSource {
     Path(PathBuf),
     Inline(String),
+    HtmlPath(PathBuf),
+    HtmlInline(String),
 }
 
 /// Stable id copied from the BUI node's `id` field.
@@ -243,7 +320,7 @@ struct PendingUiTargetCamera {
 #[derive(Resource, Debug, Clone)]
 pub struct BuiRootEntity(pub Entity);
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiDocument {
     version: String,
@@ -251,45 +328,283 @@ struct BuiDocument {
     root: BuiNode,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrDocument {
+    version: String,
+    scene_name: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    imports: Vec<String>,
+    #[serde(default, skip_serializing_if = "BuiIrStateModel::is_empty")]
+    state_model: BuiIrStateModel,
+    #[serde(default, skip_serializing_if = "BuiIrResources::is_empty")]
+    resources: BuiIrResources,
+    root: BuiIrNode,
+}
+
+impl BuiIrDocument {
+    fn from_compat_document(document: &BuiDocument) -> Self {
+        Self {
+            version: "3.0-ir".to_string(),
+            scene_name: document.scene_name.clone(),
+            imports: Vec::new(),
+            state_model: BuiIrStateModel::default(),
+            resources: BuiIrResources::default(),
+            root: BuiIrNode::from_compat_node(&document.root),
+        }
+    }
+
+    fn into_compat_document(self) -> Result<BuiDocument, String> {
+        if self.version != "3.0-ir" {
+            return Err(format!(
+                "Unsupported BUI IR version '{}'. This parser expects version 3.0-ir.",
+                self.version
+            ));
+        }
+
+        Ok(BuiDocument {
+            version: EXPECTED_VERSION.to_string(),
+            scene_name: self.scene_name,
+            root: self.root.into_compat_node()?,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrStateModel {
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    values: HashMap<String, String>,
+}
+
+impl BuiIrStateModel {
+    fn is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrResources {
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    values: HashMap<String, String>,
+}
+
+impl BuiIrResources {
+    fn is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrNode {
+    id: String,
+    kind: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    markers: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    classes: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    actions: Vec<BuiActionBinding>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    bindings: Vec<BuiBinding>,
+    #[serde(default, skip_serializing_if = "BuiIrLayout::is_empty")]
+    layout: BuiIrLayout,
+    #[serde(default, skip_serializing_if = "BuiIrStyle::is_empty")]
+    style: BuiIrStyle,
+    #[serde(default, skip_serializing_if = "BuiIrContent::is_empty")]
+    content: BuiIrContent,
+    #[serde(default, skip_serializing_if = "BuiIrSemantics::is_empty")]
+    semantics: BuiIrSemantics,
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    state_visuals: HashMap<String, BuiStateVisual>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    children: Vec<BuiIrNode>,
+}
+
+impl BuiIrNode {
+    fn from_compat_node(node: &BuiNode) -> Self {
+        Self {
+            id: node.id.clone(),
+            kind: node_type_to_kind(&node.node_type).to_string(),
+            markers: node.custom_tags.clone(),
+            classes: Vec::new(),
+            actions: node.actions.clone(),
+            bindings: node.bindings.clone(),
+            layout: BuiIrLayout {
+                styles: node.styles.clone(),
+            },
+            style: BuiIrStyle {
+                visuals: node.visuals.clone(),
+            },
+            content: BuiIrContent::from_compat_node(node),
+            semantics: BuiIrSemantics::from_compat_node(node),
+            state_visuals: node.state_visuals.clone(),
+            children: node
+                .children
+                .iter()
+                .map(BuiIrNode::from_compat_node)
+                .collect(),
+        }
+    }
+
+    fn into_compat_node(self) -> Result<BuiNode, String> {
+        let mut custom_tags = self.markers;
+        custom_tags.extend(self.classes.into_iter().map(|class| format!("class:{class}")));
+
+        Ok(BuiNode {
+            id: self.id,
+            node_type: kind_to_node_type(&self.kind)?,
+            custom_tags,
+            actions: self.actions,
+            bindings: self.bindings,
+            tab_group_name: self.semantics.tab_group_name,
+            tab_binding_source: self.semantics.tab_binding_source,
+            tab_value: self.semantics.tab_value,
+            progress_binding_source: self.semantics.progress_binding_source,
+            progress_fill: self.semantics.progress_fill,
+            list_binding_source: self.semantics.list_binding_source,
+            state_visuals: self.state_visuals,
+            styles: self.layout.styles,
+            visuals: self.style.visuals,
+            text_config: self.content.text,
+            image_config: self.content.image,
+            children: self
+                .children
+                .into_iter()
+                .map(BuiIrNode::into_compat_node)
+                .collect::<Result<Vec<_>, _>>()?,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrLayout {
+    #[serde(default, skip_serializing_if = "BuiStyles::is_empty")]
+    styles: BuiStyles,
+}
+
+impl BuiIrLayout {
+    fn is_empty(&self) -> bool {
+        self.styles.is_empty()
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrStyle {
+    #[serde(default, skip_serializing_if = "BuiVisuals::is_empty")]
+    visuals: BuiVisuals,
+}
+
+impl BuiIrStyle {
+    fn is_empty(&self) -> bool {
+        self.visuals.is_empty()
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrContent {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    text: Option<BuiTextConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    image: Option<BuiImageConfig>,
+}
+
+impl BuiIrContent {
+    fn from_compat_node(node: &BuiNode) -> Self {
+        Self {
+            text: node.text_config.clone(),
+            image: node.image_config.clone(),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.text.is_none() && self.image.is_none()
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiIrSemantics {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    tab_group_name: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    tab_binding_source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    tab_value: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    progress_binding_source: Option<String>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    progress_fill: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    list_binding_source: Option<String>,
+}
+
+impl BuiIrSemantics {
+    fn from_compat_node(node: &BuiNode) -> Self {
+        Self {
+            tab_group_name: node.tab_group_name.clone(),
+            tab_binding_source: node.tab_binding_source.clone(),
+            tab_value: node.tab_value.clone(),
+            progress_binding_source: node.progress_binding_source.clone(),
+            progress_fill: node.progress_fill,
+            list_binding_source: node.list_binding_source.clone(),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.tab_group_name.is_none()
+            && self.tab_binding_source.is_none()
+            && self.tab_value.is_none()
+            && self.progress_binding_source.is_none()
+            && !self.progress_fill
+            && self.list_binding_source.is_none()
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiNode {
     id: String,
     #[serde(rename = "type")]
     node_type: BuiNodeType,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     custom_tags: Vec<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     actions: Vec<BuiActionBinding>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     bindings: Vec<BuiBinding>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     tab_group_name: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     tab_binding_source: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     tab_value: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     progress_binding_source: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "is_false")]
     progress_fill: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     list_binding_source: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     state_visuals: HashMap<String, BuiStateVisual>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "BuiStyles::is_empty")]
     styles: BuiStyles,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "BuiVisuals::is_empty")]
     visuals: BuiVisuals,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     text_config: Option<BuiTextConfig>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     image_config: Option<BuiImageConfig>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     children: Vec<BuiNode>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 enum BuiNodeType {
     Node,
     Text,
@@ -299,7 +614,7 @@ enum BuiNodeType {
     Image,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 /// Declarative action binding parsed from a BUI node.
 pub struct BuiActionBinding {
@@ -307,7 +622,7 @@ pub struct BuiActionBinding {
     emit: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 /// Declarative binding parsed from a BUI node.
 pub struct BuiBinding {
@@ -330,158 +645,302 @@ pub struct BuiVisualState(pub String);
 #[derive(Component, Debug, Clone, Copy)]
 pub struct BuiDisabled;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiStateVisual {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "BuiStyles::is_empty")]
+    styles: BuiStyles,
+    #[serde(default, skip_serializing_if = "BuiVisuals::is_empty")]
     visuals: BuiVisuals,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     text_color: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Deserialize)]
+impl BuiStateVisual {
+    fn is_empty(&self) -> bool {
+        self.styles.is_empty() && self.visuals.is_empty() && self.text_color.is_none()
+    }
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiStyles {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     display: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     visibility: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     width: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     height: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     aspect_ratio: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     min_width: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     min_height: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     max_width: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     max_height: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     left: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     right: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     top: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     bottom: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     overflow: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     overflow_clip_margin: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     margin: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     margin_left: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     margin_right: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     margin_top: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     margin_bottom: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_left: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_right: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_top: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_bottom: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     flex_direction: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     flex_wrap: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     flex_grow: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     flex_shrink: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     flex_basis: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     row_gap: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     column_gap: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     justify_content: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     justify_items: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     align_content: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     align_items: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     align_self: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     justify_self: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     ui_translation: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     ui_scale: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     ui_rotation: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     tab_group: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     tab_index: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     auto_focus: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     relative_cursor_position: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     ui_target_camera: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     position_type: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     fixed_node: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     z_index: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     global_z_index: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     grid_template_columns: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     grid_template_rows: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     grid_column: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     grid_row: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Deserialize)]
+impl BuiStyles {
+    fn is_empty(&self) -> bool {
+        self.display.is_none()
+            && self.visibility.is_none()
+            && self.width.is_none()
+            && self.height.is_none()
+            && self.aspect_ratio.is_none()
+            && self.min_width.is_none()
+            && self.min_height.is_none()
+            && self.max_width.is_none()
+            && self.max_height.is_none()
+            && self.left.is_none()
+            && self.right.is_none()
+            && self.top.is_none()
+            && self.bottom.is_none()
+            && self.overflow.is_none()
+            && self.overflow_clip_margin.is_none()
+            && self.margin.is_none()
+            && self.margin_left.is_none()
+            && self.margin_right.is_none()
+            && self.margin_top.is_none()
+            && self.margin_bottom.is_none()
+            && self.padding.is_none()
+            && self.padding_left.is_none()
+            && self.padding_right.is_none()
+            && self.padding_top.is_none()
+            && self.padding_bottom.is_none()
+            && self.flex_direction.is_none()
+            && self.flex_wrap.is_none()
+            && self.flex_grow.is_none()
+            && self.flex_shrink.is_none()
+            && self.flex_basis.is_none()
+            && self.row_gap.is_none()
+            && self.column_gap.is_none()
+            && self.justify_content.is_none()
+            && self.justify_items.is_none()
+            && self.align_content.is_none()
+            && self.align_items.is_none()
+            && self.align_self.is_none()
+            && self.justify_self.is_none()
+            && self.ui_translation.is_none()
+            && self.ui_scale.is_none()
+            && self.ui_rotation.is_none()
+            && self.tab_group.is_none()
+            && self.tab_index.is_none()
+            && self.auto_focus.is_none()
+            && self.relative_cursor_position.is_none()
+            && self.ui_target_camera.is_none()
+            && self.position_type.is_none()
+            && self.fixed_node.is_none()
+            && self.z_index.is_none()
+            && self.global_z_index.is_none()
+            && self.grid_template_columns.is_none()
+            && self.grid_template_rows.is_none()
+            && self.grid_column.is_none()
+            && self.grid_row.is_none()
+    }
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiVisuals {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     background_color: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     border_color: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     border_width: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     border_radius: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     material_shader: Option<String>,
 }
 
-#[derive(Component, Debug, Clone, Deserialize)]
+impl BuiVisuals {
+    fn is_empty(&self) -> bool {
+        self.background_color.is_none()
+            && self.border_color.is_none()
+            && self.border_width.is_none()
+            && self.border_radius.is_none()
+            && self.material_shader.is_none()
+    }
+}
+
+#[derive(Component, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiTextConfig {
     content: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     placeholder: Option<String>,
     font_size: f32,
     font_color: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     font_path: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     text_shadow: Option<BuiTextShadowConfig>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     linebreak: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     visible_width: Option<f32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     allow_newlines: Option<bool>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiTextShadowConfig {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     offset_x: Option<f32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     offset_y: Option<f32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     color: Option<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiImageConfig {
     texture_path: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     image_mode: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     atlas: Option<BuiTextureAtlasConfig>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     slicer: Option<BuiTextureSlicerConfig>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "is_false")]
     flip_x: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "is_false")]
     flip_y: bool,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiTextureAtlasConfig {
     tile_width: u32,
     tile_height: u32,
     columns: u32,
     rows: u32,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_x: Option<u32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     padding_y: Option<u32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "is_zero")]
     index: usize,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct BuiTextureSlicerConfig {
     border: f32,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     center_scale_mode: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     sides_scale_mode: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     stretch_value: Option<f32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     max_corner_scale: Option<f32>,
+}
+
+fn is_false(value: &bool) -> bool {
+    !*value
+}
+
+fn is_zero(value: &usize) -> bool {
+    *value == 0
 }
 
 fn spawn_bui_scene(
@@ -516,22 +975,2196 @@ fn spawn_bui_scene(
 }
 
 fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, String> {
-    let raw = match source {
-        BuiSource::Path(path) => fs::read_to_string(path)
-            .map_err(|error| format!("Failed to read BUI JSON '{}': {error}", path.display()))?,
-        BuiSource::Inline(json) => json.clone(),
-    };
-
-    parse_bui_document(&raw)
+    match source {
+        BuiSource::Path(path) => {
+            let raw = fs::read_to_string(path).map_err(|error| {
+                format!("Failed to read BUI JSON '{}': {error}", path.display())
+            })?;
+            parse_bui_document(&raw)
+        }
+        BuiSource::Inline(json) => parse_bui_document(json),
+        BuiSource::HtmlPath(path) => {
+            let raw = fs::read_to_string(path).map_err(|error| {
+                format!(
+                    "Failed to read OpenDesign HTML '{}': {error}",
+                    path.display()
+                )
+            })?;
+            opendesign_html_to_bui_document(&raw)
+        }
+        BuiSource::HtmlInline(html) => opendesign_html_to_bui_document(html),
+    }
 }
 
 fn parse_bui_document(raw: &str) -> Result<BuiDocument, String> {
-    let document: BuiDocument =
-        serde_json::from_str(raw).map_err(|error| format!("Invalid BUI JSON: {error}"))?;
+    let version = detect_bui_version(raw)?;
+    let document = if version == "3.0-ir" {
+        parse_bui_ir_document(raw)?.into_compat_document()?
+    } else {
+        serde_json::from_str(raw).map_err(|error| format!("Invalid BUI JSON: {error}"))?
+    };
 
     validate_bui_document(&document)?;
 
     Ok(document)
+}
+
+fn parse_bui_ir_document(raw: &str) -> Result<BuiIrDocument, String> {
+    serde_json::from_str(raw).map_err(|error| format!("Invalid BUI IR JSON: {error}"))
+}
+
+fn detect_bui_version(raw: &str) -> Result<String, String> {
+    #[derive(Deserialize)]
+    struct VersionProbe {
+        version: String,
+    }
+
+    let probe: VersionProbe =
+        serde_json::from_str(raw).map_err(|error| format!("Invalid BUI JSON: {error}"))?;
+    Ok(probe.version)
+}
+
+fn opendesign_html_to_bui_document(html: &str) -> Result<BuiDocument, String> {
+    let stylesheet = OpenDesignStylesheet::parse(html);
+    let fragment = extract_opendesign_fragment(html)?;
+    let wrapped = format!("<bui_root>{fragment}</bui_root>");
+    let parsed = roxmltree::Document::parse(&wrapped)
+        .map_err(|error| format!("Failed to parse OpenDesign HTML fragment: {error}"))?;
+
+    let overlay = parsed
+        .descendants()
+        .find(|node| has_class(*node, "overlay"));
+
+    let root_node = overlay.or_else(|| {
+        parsed
+            .descendants()
+            .find(|node| has_class(*node, "game-stage"))
+    });
+
+    let root_node = root_node
+        .ok_or_else(|| "OpenDesign HTML is missing a recognized root container (.overlay or .game-stage).".to_string())?;
+
+    if overlay.is_none() {
+        return opendesign_html_to_generic_bui_document(&stylesheet, root_node);
+    }
+
+    let overlay = root_node;
+    let panel_source = overlay
+        .descendants()
+        .find(|node| has_class(*node, "panel"))
+        .ok_or_else(|| "OpenDesign HTML is missing a .panel node.".to_string())?;
+    let panel_header_source = panel_source
+        .descendants()
+        .find(|node| has_class(*node, "panel-header"));
+    let title_board_source = panel_header_source.and_then(|panel_header_source| {
+        panel_header_source
+            .descendants()
+            .find(|node| has_class(*node, "title-board"))
+    });
+    let title_text_source = title_board_source.and_then(|title_board_source| {
+        title_board_source
+            .descendants()
+            .find(|node| has_class(*node, "title-text"))
+    });
+    let close_button_source = panel_header_source.and_then(|panel_header_source| {
+        panel_header_source
+            .descendants()
+            .find(|node| has_class(*node, "close-btn"))
+    });
+    let title_board_source = panel_header_source
+        .and(title_board_source);
+    let title_text_source = title_board_source.and(title_text_source);
+    let shop_body_source = panel_source
+        .descendants()
+        .find(|node| has_class(*node, "shop-body"));
+    let shop_scroll_source = shop_body_source.and_then(|shop_body_source| {
+        shop_body_source
+            .descendants()
+            .find(|node| has_class(*node, "shop-scroll"))
+    });
+    let foot_hint_source = panel_source
+        .descendants()
+        .find(|node| has_class(*node, "foot-hint"));
+
+    let (
+        Some(panel_header_source),
+        Some(title_board_source),
+        Some(title_text_source),
+        Some(close_button_source),
+        Some(shop_body_source),
+        Some(shop_scroll_source),
+    ) = (
+        panel_header_source,
+        title_board_source,
+        title_text_source,
+        close_button_source,
+        shop_body_source,
+        shop_scroll_source,
+    )
+    else {
+        return opendesign_html_to_generic_bui_document(&stylesheet, overlay);
+    };
+
+    let title = first_text_by_class(overlay, "title-text").unwrap_or_else(|| "UI".to_string());
+    let footer = first_text_by_class(overlay, "foot-hint").unwrap_or_default();
+
+    let mut root = bui_node("overlay_root", BuiNodeType::Node);
+    apply_opendesign_preset(&mut root, OpenDesignPreset::OverlayRoot);
+    apply_opendesign_styles(&stylesheet, &mut root, overlay);
+
+    let mut panel = bui_node("panel", BuiNodeType::Node);
+    apply_opendesign_preset(&mut panel, OpenDesignPreset::Panel);
+    apply_opendesign_styles(&stylesheet, &mut panel, panel_source);
+
+    let mut panel_header = bui_node("panel_header", BuiNodeType::Node);
+    apply_opendesign_preset(&mut panel_header, OpenDesignPreset::PanelHeader);
+    apply_opendesign_styles(&stylesheet, &mut panel_header, panel_header_source);
+
+    let mut title_board = bui_node("title_board", BuiNodeType::Node);
+    apply_opendesign_preset(&mut title_board, OpenDesignPreset::TitleBoard);
+    apply_opendesign_styles(&stylesheet, &mut title_board, title_board_source);
+    let mut title_text = text_node(
+        "title_text",
+        title,
+        36.0,
+        "#FFFFFF",
+        Some("STHeiti Medium.ttc"),
+    );
+    apply_opendesign_styles(&stylesheet, &mut title_text, title_text_source);
+    title_board.children.push(title_text);
+
+    let mut close_btn = bui_node("close_btn", BuiNodeType::Button);
+    close_btn.custom_tags.push("Action_Close_Shop".to_string());
+    close_btn.actions.push(BuiActionBinding {
+        event: "press".to_string(),
+        emit: "close_shop_overlay".to_string(),
+    });
+    apply_opendesign_preset(&mut close_btn, OpenDesignPreset::CloseButton);
+    apply_opendesign_styles(&stylesheet, &mut close_btn, close_button_source);
+    close_btn.children.push(text_node(
+        "close_btn_text",
+        "X",
+        22.0,
+        "#FFFFFF",
+        Some("STHeiti Medium.ttc"),
+    ));
+
+    panel_header.children.push(title_board);
+    panel_header.children.push(close_btn);
+
+    let mut shop_body = bui_node("shop_body", BuiNodeType::Node);
+    apply_opendesign_preset(&mut shop_body, OpenDesignPreset::ShopBody);
+    apply_opendesign_styles(&stylesheet, &mut shop_body, shop_body_source);
+
+    let mut shop_scroll = bui_node("shop_scroll", BuiNodeType::Node);
+    apply_opendesign_preset(&mut shop_scroll, OpenDesignPreset::ShopScroll);
+    apply_opendesign_styles(&stylesheet, &mut shop_scroll, shop_scroll_source);
+
+    for article in overlay
+        .descendants()
+        .filter(|node| has_class(*node, "shop-card"))
+    {
+        shop_scroll.children.push(shop_card_node(article, &stylesheet)?);
+    }
+
+    shop_body.children.push(shop_scroll);
+
+    let mut foot_hint = bui_node("foot_hint", BuiNodeType::Node);
+    apply_opendesign_preset(&mut foot_hint, OpenDesignPreset::FootHint);
+    if let Some(foot_hint_source) = foot_hint_source {
+        apply_opendesign_styles(&stylesheet, &mut foot_hint, foot_hint_source);
+    }
+    let mut foot_hint_text = text_node(
+        "foot_hint_text",
+        footer,
+        12.0,
+        "#79614B",
+        Some("Hiragino Sans GB.ttc"),
+    );
+    if let Some(foot_hint_source) = foot_hint_source {
+        apply_opendesign_styles(&stylesheet, &mut foot_hint_text, foot_hint_source);
+    }
+    foot_hint.children.push(foot_hint_text);
+
+    panel.children.push(panel_header);
+    panel.children.push(shop_body);
+    panel.children.push(foot_hint);
+    root.children.push(panel);
+
+    let document = BuiDocument {
+        version: EXPECTED_VERSION.to_string(),
+        scene_name: "OpenDesignHtmlScene".to_string(),
+        root,
+    };
+    validate_bui_document(&document)?;
+    Ok(document)
+}
+
+fn opendesign_html_to_generic_bui_document(
+    stylesheet: &OpenDesignStylesheet,
+    overlay: roxmltree::Node<'_, '_>,
+) -> Result<BuiDocument, String> {
+    let mut id_counts = HashMap::new();
+    let mut root = generic_element_node("overlay_root", BuiNodeType::Node, stylesheet, overlay);
+    apply_opendesign_preset(&mut root, OpenDesignPreset::OverlayRoot);
+    apply_opendesign_styles(stylesheet, &mut root, overlay);
+    generic_append_children(&mut root, overlay, stylesheet, &mut id_counts);
+
+    let document = BuiDocument {
+        version: EXPECTED_VERSION.to_string(),
+        scene_name: "OpenDesignHtmlScene".to_string(),
+        root,
+    };
+    validate_bui_document(&document)?;
+    Ok(document)
+}
+
+fn generic_append_children(
+    parent: &mut BuiNode,
+    dom_node: roxmltree::Node<'_, '_>,
+    stylesheet: &OpenDesignStylesheet,
+    id_counts: &mut HashMap<String, usize>,
+) {
+    let before_decls = stylesheet.matching_pseudo_declarations(dom_node, "before");
+    if !before_decls.is_empty() {
+        let mut pseudo_node = bui_node(&format!("{}_pseudo_before", parent.id), BuiNodeType::Node);
+        pseudo_node.custom_tags.push("pseudo:before".to_string());
+        for (name, value) in &before_decls {
+            let value = stylesheet.resolve_value(value);
+            apply_opendesign_declaration(&mut pseudo_node, name, &value);
+        }
+        parent.children.push(pseudo_node);
+    }
+
+    let mut direct_text_index = 0;
+
+    for child in dom_node.children() {
+        if child.is_element() {
+            let id = generic_dom_id(child, id_counts);
+            let node_type = generic_node_type(child);
+            let mut child_node = generic_element_node(&id, node_type, stylesheet, child);
+            generic_append_children(&mut child_node, child, stylesheet, id_counts);
+            parent.children.push(child_node);
+        } else if let Some(text) = child.text().map(str::trim).filter(|text| !text.is_empty()) {
+            direct_text_index += 1;
+            let mut text_child = text_node(
+                &format!("{}_text_{}", parent.id, direct_text_index),
+                text,
+                16.0,
+                "#3B2818",
+                Some("Hiragino Sans GB.ttc"),
+            );
+            apply_opendesign_styles(stylesheet, &mut text_child, dom_node);
+            parent.children.push(text_child);
+        }
+    }
+
+    let after_decls = stylesheet.matching_pseudo_declarations(dom_node, "after");
+    if !after_decls.is_empty() {
+        let mut pseudo_node = bui_node(&format!("{}_pseudo_after", parent.id), BuiNodeType::Node);
+        pseudo_node.custom_tags.push("pseudo:after".to_string());
+        for (name, value) in &after_decls {
+            let value = stylesheet.resolve_value(value);
+            apply_opendesign_declaration(&mut pseudo_node, name, &value);
+        }
+        parent.children.push(pseudo_node);
+    }
+}
+
+fn generic_element_node(
+    id: &str,
+    node_type: BuiNodeType,
+    stylesheet: &OpenDesignStylesheet,
+    dom_node: roxmltree::Node<'_, '_>,
+) -> BuiNode {
+    let mut node = bui_node(id, node_type);
+
+    if let Some(classes) = dom_node.attribute("class") {
+        node.custom_tags.extend(
+            classes
+                .split_whitespace()
+                .filter(|class| !class.is_empty())
+                .map(|class| format!("class:{class}")),
+        );
+    }
+
+    if let Some(action) = dom_node.attribute("data-action") {
+        node.actions.push(BuiActionBinding {
+            event: "press".to_string(),
+            emit: action.to_string(),
+        });
+    }
+
+    apply_opendesign_styles(stylesheet, &mut node, dom_node);
+    node
+}
+
+fn generic_node_type(dom_node: roxmltree::Node<'_, '_>) -> BuiNodeType {
+    let tag = dom_node.tag_name().name();
+    if tag == "button"
+        || dom_node.attribute("role") == Some("button")
+        || dom_node
+            .attribute("class")
+            .is_some_and(|classes| classes.split_whitespace().any(is_button_like_class))
+    {
+        return BuiNodeType::Button;
+    }
+
+    BuiNodeType::Node
+}
+
+fn is_button_like_class(class_name: &str) -> bool {
+    class_name == "btn" || class_name.ends_with("-btn") || class_name.ends_with("-button")
+}
+
+fn generic_dom_id(
+    dom_node: roxmltree::Node<'_, '_>,
+    id_counts: &mut HashMap<String, usize>,
+) -> String {
+    let base = dom_node
+        .attribute("id")
+        .map(sanitize_id)
+        .filter(|id| !id.is_empty())
+        .or_else(|| {
+            dom_node
+                .attribute("class")
+                .and_then(|classes| classes.split_whitespace().next())
+                .map(sanitize_id)
+                .filter(|id| !id.is_empty())
+        })
+        .unwrap_or_else(|| sanitize_id(dom_node.tag_name().name()));
+
+    let count = id_counts.entry(base.clone()).or_default();
+    *count += 1;
+
+    if *count == 1 {
+        base
+    } else {
+        format!("{base}_{}", *count)
+    }
+}
+
+fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
+    let overlay_start = html.find("<div class=\"overlay");
+    let main_start = html.find("<main class=\"game-stage");
+
+    let start = overlay_start
+        .or(main_start)
+        .ok_or_else(|| "OpenDesign HTML does not contain a recognized root container ('<div class=\"overlay' or '<main class=\"game-stage').".to_string())?;
+
+    let visually_hidden_end = html[start..]
+        .find("<p class=\"visually-hidden\"")
+        .map(|offset| start + offset);
+
+    let closing_main_end = html[start..]
+        .find("</main>")
+        .map(|offset| start + offset + "</main>".len());
+
+    let end = visually_hidden_end
+        .or(closing_main_end)
+        .ok_or_else(|| {
+            "OpenDesign HTML does not contain the expected closing marker after the root container."
+                .to_string()
+        })?;
+
+    Ok(html[start..end].trim())
+}
+
+fn shop_card_node(
+    article: roxmltree::Node<'_, '_>,
+    stylesheet: &OpenDesignStylesheet,
+) -> Result<BuiNode, String> {
+    let item_id = article.attribute("data-item-id").unwrap_or("item");
+    let id = sanitize_id(item_id);
+    let asset_text = first_text_by_class(article, "asset-slot").unwrap_or_default();
+    let item_name = first_text_by_class(article, "item-name").unwrap_or_default();
+    let item_meta = first_text_by_class(article, "item-meta").unwrap_or_default();
+    let item_bonus = first_text_by_class(article, "item-bonus").unwrap_or_default();
+    let price = first_text_by_class(article, "price-tag")
+        .or_else(|| article.attribute("data-price").map(format_price))
+        .unwrap_or_default();
+
+    let mut card = bui_node(&format!("shop_card_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut card, OpenDesignPreset::ShopCard);
+    apply_opendesign_styles(stylesheet, &mut card, article);
+
+    let mut item_main = bui_node(&format!("item_main_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut item_main, OpenDesignPreset::ItemMain);
+    let item_main_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-main"));
+    if let Some(source) = item_main_source {
+        apply_opendesign_styles(stylesheet, &mut item_main, source);
+    }
+
+    let mut asset_stack = bui_node(&format!("asset_stack_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut asset_stack, OpenDesignPreset::AssetStack);
+    let asset_stack_source = article
+        .descendants()
+        .find(|node| has_class(*node, "asset-stack"));
+    if let Some(source) = asset_stack_source {
+        apply_opendesign_styles(stylesheet, &mut asset_stack, source);
+    }
+
+    let mut asset_slot = bui_node(&format!("asset_slot_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut asset_slot, OpenDesignPreset::AssetSlot);
+    let asset_slot_source = article
+        .descendants()
+        .find(|node| has_class(*node, "asset-slot"));
+    if let Some(source) = asset_slot_source {
+        apply_opendesign_styles(stylesheet, &mut asset_slot, source);
+    }
+    let mut asset_label = text_node(
+        &format!("asset_slot_{id}_text"),
+        asset_text,
+        12.0,
+        "#79614B",
+        Some("Hiragino Sans GB.ttc"),
+    );
+    asset_label.styles.width = Some("72px".to_string());
+    if let Some(text_config) = &mut asset_label.text_config {
+        text_config.font_size = 11.0;
+        text_config.linebreak = Some("word_or_character".to_string());
+    }
+    if let Some(source) = asset_slot_source {
+        apply_opendesign_styles(stylesheet, &mut asset_label, source);
+    }
+    asset_slot.children.push(asset_label);
+
+    let mut stars = bui_node(&format!("stars_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut stars, OpenDesignPreset::Stars);
+    let stars_source = article.descendants().find(|node| has_class(*node, "stars"));
+    if let Some(source) = stars_source {
+        apply_opendesign_styles(stylesheet, &mut stars, source);
+    }
+    for index in 1..=4 {
+        stars.children.push(text_node(
+            &format!("star_{id}_{index}"),
+            "★",
+            18.0,
+            if index == 1 { "#D89A1F" } else { "#79614BCC" },
+            Some("Hiragino Sans GB.ttc"),
+        ));
+    }
+    asset_stack.children.push(asset_slot);
+    asset_stack.children.push(stars);
+
+    let mut item_copy = bui_node(&format!("item_copy_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut item_copy, OpenDesignPreset::ItemCopy);
+    let item_copy_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-copy"));
+    if let Some(source) = item_copy_source {
+        apply_opendesign_styles(stylesheet, &mut item_copy, source);
+    }
+    let item_name_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-name"));
+    let mut item_name_node = text_node(
+        &format!("item_name_{id}"),
+        item_name,
+        24.0,
+        "#3B2818",
+        Some("STHeiti Medium.ttc"),
+    );
+    if let Some(source) = item_name_source {
+        apply_opendesign_styles(stylesheet, &mut item_name_node, source);
+    }
+    item_copy.children.push(item_name_node);
+    let item_meta_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-meta"));
+    let mut item_meta_node = text_node(
+        &format!("item_meta_{id}"),
+        item_meta,
+        13.0,
+        "#79614B",
+        Some("Hiragino Sans GB.ttc"),
+    );
+    if let Some(source) = item_meta_source {
+        apply_opendesign_styles(stylesheet, &mut item_meta_node, source);
+    }
+    item_copy.children.push(item_meta_node);
+    let mut bonus = bui_node(&format!("item_bonus_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut bonus, OpenDesignPreset::ItemBonus);
+    let item_bonus_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-bonus"));
+    if let Some(source) = item_bonus_source {
+        apply_opendesign_styles(stylesheet, &mut bonus, source);
+    }
+    let mut item_bonus_text = text_node(
+        &format!("item_bonus_{id}_text"),
+        item_bonus,
+        12.0,
+        "#8B5F3356",
+        Some("Hiragino Sans GB.ttc"),
+    );
+    if let Some(source) = item_bonus_source {
+        apply_opendesign_styles(stylesheet, &mut item_bonus_text, source);
+    }
+    bonus.children.push(item_bonus_text);
+    item_copy.children.push(bonus);
+
+    item_main.children.push(asset_stack);
+    item_main.children.push(item_copy);
+
+    let mut purchase = bui_node(&format!("purchase_node_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut purchase, OpenDesignPreset::Purchase);
+    let purchase_source = article
+        .descendants()
+        .find(|node| has_class(*node, "purchase-node"));
+    if let Some(source) = purchase_source {
+        apply_opendesign_styles(stylesheet, &mut purchase, source);
+    }
+
+    let mut price_tag = bui_node(&format!("price_tag_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut price_tag, OpenDesignPreset::PriceTag);
+    let price_tag_source = article
+        .descendants()
+        .find(|node| has_class(*node, "price-tag"));
+    if let Some(source) = price_tag_source {
+        apply_opendesign_styles(stylesheet, &mut price_tag, source);
+    }
+
+    let mut coin = bui_node(&format!("price_coin_{id}"), BuiNodeType::Node);
+    apply_opendesign_preset(&mut coin, OpenDesignPreset::PriceCoin);
+    if let Some(source) = article
+        .descendants()
+        .find(|node| has_class(*node, "price-coin"))
+    {
+        apply_opendesign_styles(stylesheet, &mut coin, source);
+    }
+    price_tag.children.push(coin);
+    let mut price_text = text_node(
+        &format!("price_{id}_text"),
+        price,
+        30.0,
+        "#D89A1F",
+        Some("STHeiti Medium.ttc"),
+    );
+    if let Some(source) = price_tag_source {
+        apply_opendesign_styles(stylesheet, &mut price_text, source);
+    }
+    price_tag.children.push(price_text);
+
+    let mut buy = bui_node(&format!("buy_btn_{id}"), BuiNodeType::Button);
+    buy.custom_tags.push("Sound_Click".to_string());
+    buy.custom_tags
+        .push(format!("Action_Buy_{}", pascal_case(&id)));
+    buy.actions.push(BuiActionBinding {
+        event: "press".to_string(),
+        emit: format!("buy_item_{id}"),
+    });
+    apply_opendesign_preset(&mut buy, OpenDesignPreset::BuyButton);
+    let buy_source = article.descendants().find(|node| has_class(*node, "buy-btn"));
+    if let Some(source) = buy_source {
+        apply_opendesign_styles(stylesheet, &mut buy, source);
+    }
+    let mut buy_text = text_node(
+        &format!("buy_btn_{id}_text"),
+        "购买",
+        20.0,
+        "#FFFFFF",
+        Some("STHeiti Medium.ttc"),
+    );
+    if let Some(source) = buy_source {
+        apply_opendesign_styles(stylesheet, &mut buy_text, source);
+    }
+    buy.children.push(buy_text);
+
+    purchase.children.push(price_tag);
+    purchase.children.push(buy);
+    card.children.push(item_main);
+    card.children.push(purchase);
+
+    Ok(card)
+}
+
+fn bui_node(id: &str, node_type: BuiNodeType) -> BuiNode {
+    BuiNode {
+        id: id.to_string(),
+        node_type,
+        custom_tags: Vec::new(),
+        actions: Vec::new(),
+        bindings: Vec::new(),
+        tab_group_name: None,
+        tab_binding_source: None,
+        tab_value: None,
+        progress_binding_source: None,
+        progress_fill: false,
+        list_binding_source: None,
+        state_visuals: HashMap::new(),
+        styles: BuiStyles::default(),
+        visuals: BuiVisuals::default(),
+        text_config: None,
+        image_config: None,
+        children: Vec::new(),
+    }
+}
+
+fn text_node(
+    id: &str,
+    content: impl Into<String>,
+    font_size: f32,
+    font_color: &str,
+    font_path: Option<&str>,
+) -> BuiNode {
+    let mut node = bui_node(id, BuiNodeType::Text);
+    node.text_config = Some(BuiTextConfig {
+        content: content.into(),
+        placeholder: None,
+        font_size,
+        font_color: font_color.to_string(),
+        font_path: font_path.map(str::to_string),
+        text_shadow: None,
+        linebreak: None,
+        visible_width: None,
+        allow_newlines: None,
+    });
+    node
+}
+
+fn node_type_to_kind(node_type: &BuiNodeType) -> &'static str {
+    match node_type {
+        BuiNodeType::Node => "node",
+        BuiNodeType::Text => "text",
+        BuiNodeType::TextInput => "text_input",
+        BuiNodeType::Toggle => "toggle",
+        BuiNodeType::Button => "button",
+        BuiNodeType::Image => "image",
+    }
+}
+
+fn kind_to_node_type(kind: &str) -> Result<BuiNodeType, String> {
+    match kind {
+        "node" => Ok(BuiNodeType::Node),
+        "text" => Ok(BuiNodeType::Text),
+        "text_input" => Ok(BuiNodeType::TextInput),
+        "toggle" => Ok(BuiNodeType::Toggle),
+        "button" => Ok(BuiNodeType::Button),
+        "image" => Ok(BuiNodeType::Image),
+        other => Err(format!("Unsupported BUI IR kind '{other}'.")),
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum OpenDesignPreset {
+    OverlayRoot,
+    Panel,
+    PanelHeader,
+    TitleBoard,
+    CloseButton,
+    ShopBody,
+    ShopScroll,
+    ShopCard,
+    ItemMain,
+    AssetStack,
+    AssetSlot,
+    Stars,
+    ItemCopy,
+    ItemBonus,
+    Purchase,
+    PriceTag,
+    PriceCoin,
+    BuyButton,
+    FootHint,
+}
+
+fn apply_opendesign_preset(node: &mut BuiNode, preset: OpenDesignPreset) {
+    match preset {
+        OpenDesignPreset::OverlayRoot => {
+            node.styles.width = Some("100%".to_string());
+            node.styles.height = Some("100%".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.visuals.background_color = Some("#3B281862".to_string());
+        }
+        OpenDesignPreset::Panel => {
+            node.styles.width = Some("92%".to_string());
+            node.styles.height = Some("90%".to_string());
+            node.styles.max_width = Some("720px".to_string());
+            node.styles.max_height = Some("860px".to_string());
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.padding = Some("0px".to_string());
+            node.visuals.background_color = Some("#F8ECD0".to_string());
+            node.visuals.border_color = Some("#8B5F33".to_string());
+            node.visuals.border_width = Some("4px".to_string());
+            node.visuals.border_radius = Some("28px".to_string());
+        }
+        OpenDesignPreset::PanelHeader => {
+            node.styles.flex_direction = Some("row".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.padding = Some("28px 64px 18px 64px".to_string());
+        }
+        OpenDesignPreset::TitleBoard => {
+            node.styles.min_width = Some("220px".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.padding = Some("14px 32px 16px 32px".to_string());
+            node.visuals.background_color = Some("#8B5F33".to_string());
+            node.visuals.border_width = Some("3px".to_string());
+            node.visuals.border_color = Some("#3B2818D8".to_string());
+            node.visuals.border_radius = Some("18px".to_string());
+        }
+        OpenDesignPreset::CloseButton => {
+            node.styles.width = Some("48px".to_string());
+            node.styles.height = Some("48px".to_string());
+            node.styles.position_type = Some("absolute".to_string());
+            node.styles.top = Some("18px".to_string());
+            node.styles.right = Some("18px".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.visuals.background_color = Some("#CC4D3F".to_string());
+            node.visuals.border_width = Some("0px".to_string());
+            node.visuals.border_color = Some("transparent".to_string());
+            node.visuals.border_radius = Some("48px".to_string());
+        }
+        OpenDesignPreset::ShopBody => {
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.padding = Some("0px 16px 18px 16px".to_string());
+            node.styles.flex_grow = Some("1".to_string());
+        }
+        OpenDesignPreset::ShopScroll => {
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.overflow = Some("scroll_y".to_string());
+            node.styles.padding = Some("8px 6px 8px 2px".to_string());
+            node.styles.row_gap = Some("14px".to_string());
+            node.styles.max_height = Some("560px".to_string());
+        }
+        OpenDesignPreset::ShopCard => {
+            node.styles.display = Some("grid".to_string());
+            node.styles.grid_template_columns = Some("flex(1) auto".to_string());
+            node.styles.align_items = Some("stretch".to_string());
+            node.styles.padding = Some("14px".to_string());
+            node.visuals.background_color = Some("#F8ECD0".to_string());
+            node.visuals.border_width = Some("2px".to_string());
+            node.visuals.border_color = Some("#8B5F33E6".to_string());
+            node.visuals.border_radius = Some("20px".to_string());
+        }
+        OpenDesignPreset::ItemMain => {
+            node.styles.display = Some("grid".to_string());
+            node.styles.grid_template_columns = Some("px(92) flex(1)".to_string());
+            node.styles.flex_grow = Some("1".to_string());
+        }
+        OpenDesignPreset::AssetStack => {
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.row_gap = Some("10px".to_string());
+            node.styles.align_items = Some("stretch".to_string());
+            node.styles.width = Some("92px".to_string());
+        }
+        OpenDesignPreset::AssetSlot => {
+            node.styles.min_height = Some("92px".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.padding = Some("10px".to_string());
+            node.visuals.background_color = Some("#F8ECD0".to_string());
+            node.visuals.border_width = Some("2px".to_string());
+            node.visuals.border_color = Some("#8B5F33D2".to_string());
+            node.visuals.border_radius = Some("18px".to_string());
+        }
+        OpenDesignPreset::Stars => {
+            node.styles.flex_direction = Some("row".to_string());
+            node.styles.column_gap = Some("6px".to_string());
+            node.styles.justify_content = Some("space_evenly".to_string());
+            node.styles.min_height = Some("24px".to_string());
+            node.styles.padding = Some("0px 2px".to_string());
+        }
+        OpenDesignPreset::ItemCopy => {
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.row_gap = Some("6px".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.flex_grow = Some("1".to_string());
+            node.styles.min_width = Some("0px".to_string());
+        }
+        OpenDesignPreset::ItemBonus => {
+            node.styles.flex_direction = Some("row".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.column_gap = Some("6px".to_string());
+            node.styles.padding = Some("6px 10px".to_string());
+            node.visuals.background_color = Some("#D89A1F2E".to_string());
+            node.visuals.border_radius = Some("48px".to_string());
+        }
+        OpenDesignPreset::Purchase => {
+            node.styles.flex_direction = Some("column".to_string());
+            node.styles.justify_content = Some("space_between".to_string());
+            node.styles.align_items = Some("flex_end".to_string());
+            node.styles.min_width = Some("120px".to_string());
+            node.styles.width = Some("140px".to_string());
+            node.styles.row_gap = Some("12px".to_string());
+        }
+        OpenDesignPreset::PriceTag => {
+            node.styles.flex_direction = Some("row".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.column_gap = Some("6px".to_string());
+            node.styles.padding = Some("8px 12px".to_string());
+            node.visuals.background_color = Some("#FFFFFF2E".to_string());
+            node.visuals.border_width = Some("2px".to_string());
+            node.visuals.border_color = Some("#8B5F33DE".to_string());
+            node.visuals.border_radius = Some("14px".to_string());
+        }
+        OpenDesignPreset::PriceCoin => {
+            node.styles.width = Some("16px".to_string());
+            node.styles.height = Some("16px".to_string());
+            node.visuals.background_color = Some("#D89A1F".to_string());
+            node.visuals.border_width = Some("1px".to_string());
+            node.visuals.border_color = Some("#3B28189C".to_string());
+            node.visuals.border_radius = Some("16px".to_string());
+        }
+        OpenDesignPreset::BuyButton => {
+            node.styles.min_width = Some("112px".to_string());
+            node.styles.min_height = Some("48px".to_string());
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.align_items = Some("center".to_string());
+            node.styles.padding = Some("0px 20px".to_string());
+            node.visuals.background_color = Some("#3FB45A".to_string());
+            node.visuals.border_width = Some("0px".to_string());
+            node.visuals.border_color = Some("transparent".to_string());
+            node.visuals.border_radius = Some("18px".to_string());
+        }
+        OpenDesignPreset::FootHint => {
+            node.styles.justify_content = Some("center".to_string());
+            node.styles.padding = Some("6px 18px 18px 18px".to_string());
+        }
+    }
+}
+
+#[derive(Debug, Default)]
+struct OpenDesignStylesheet {
+    variables: HashMap<String, String>,
+    rules: Vec<OpenDesignCssRule>,
+}
+
+#[derive(Debug)]
+struct OpenDesignCssRule {
+    selector: OpenDesignSelector,
+    declarations: Vec<(String, String)>,
+    order: usize,
+}
+
+#[derive(Debug, Clone)]
+struct OpenDesignSelector {
+    parts: Vec<OpenDesignSelectorPart>,
+    weight: i32,
+}
+
+#[derive(Debug, Clone)]
+struct OpenDesignSelectorPart {
+    combinator: OpenDesignCombinator,
+    compound: OpenDesignSelectorCompound,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OpenDesignCombinator {
+    SelfNode,
+    Descendant,
+    DirectChild,
+}
+
+#[derive(Debug, Default, Clone)]
+struct OpenDesignSelectorCompound {
+    tag: Option<String>,
+    id: Option<String>,
+    classes: Vec<String>,
+    states: Vec<String>,
+    pseudo_element: Option<String>,
+}
+
+impl OpenDesignStylesheet {
+    fn parse(html: &str) -> Self {
+        let mut stylesheet = Self::default();
+        let mut order = 0;
+
+        for block in style_blocks(html) {
+            for (selector_group, declarations) in css_rules(block) {
+                for (name, value) in &declarations {
+                    if selector_group.trim() == ":root" && name.starts_with("--") {
+                        stylesheet
+                            .variables
+                            .insert(name.to_string(), value.trim().to_string());
+                    }
+                }
+
+                for selector in selector_group.split(',') {
+                    let selector = selector.trim();
+                    if selector.is_empty()
+                        || selector.starts_with('@')
+                    {
+                        continue;
+                    }
+                    if selector.contains("::before") || selector.contains("::after") {
+                        if let Some(selector) = OpenDesignSelector::parse_pseudo(selector) {
+                            stylesheet.rules.push(OpenDesignCssRule {
+                                selector,
+                                declarations: declarations.clone(),
+                                order,
+                            });
+                            order += 1;
+                        }
+                        continue;
+                    }
+                    if selector.contains("::") {
+                        continue;
+                    }
+                    if selector.contains('[') {
+                        continue;
+                    }
+                    if let Some(selector) = OpenDesignSelector::parse(selector) {
+                        stylesheet.rules.push(OpenDesignCssRule {
+                            selector,
+                            declarations: declarations.clone(),
+                            order,
+                        });
+                        order += 1;
+                    }
+                }
+            }
+        }
+
+        stylesheet
+    }
+
+    fn matching_declarations(
+        &self,
+        dom_node: roxmltree::Node<'_, '_>,
+    ) -> Vec<&(String, String)> {
+        let mut rules = self
+            .rules
+            .iter()
+            .filter(|rule| rule.selector.state_name().is_none() && rule.selector.pseudo_element_name().is_none() && rule.selector.matches(dom_node))
+            .collect::<Vec<_>>();
+        rules.sort_by_key(|rule| (rule.selector.weight, rule.order));
+        rules
+            .into_iter()
+            .flat_map(|rule| rule.declarations.iter())
+            .collect()
+    }
+
+    fn matching_pseudo_declarations(
+        &self,
+        dom_node: roxmltree::Node<'_, '_>,
+        pseudo_element: &str,
+    ) -> Vec<&(String, String)> {
+        let mut rules = self
+            .rules
+            .iter()
+            .filter(|rule| {
+                rule.selector.state_name().is_none()
+                    && rule.selector.pseudo_element_name() == Some(pseudo_element)
+                    && rule.selector.matches(dom_node)
+            })
+            .collect::<Vec<_>>();
+        rules.sort_by_key(|rule| (rule.selector.weight, rule.order));
+        rules
+            .into_iter()
+            .flat_map(|rule| rule.declarations.iter())
+            .collect()
+    }
+
+    fn matching_state_declarations(
+        &self,
+        dom_node: roxmltree::Node<'_, '_>,
+    ) -> Vec<(&str, &(String, String))> {
+        let mut rules = self
+            .rules
+            .iter()
+            .filter_map(|rule| {
+                rule.selector
+                    .state_name()
+                    .filter(|_| rule.selector.matches(dom_node))
+                    .map(|state| (state, rule))
+            })
+            .collect::<Vec<_>>();
+        rules.sort_by_key(|(_, rule)| (rule.selector.weight, rule.order));
+        rules
+            .into_iter()
+            .flat_map(|(state, rule)| {
+                rule.declarations
+                    .iter()
+                    .map(move |declaration| (state, declaration))
+            })
+            .collect()
+    }
+
+    fn resolve_value(&self, value: &str) -> String {
+        let mut resolved = value.trim().to_string();
+        for _ in 0..4 {
+            let Some(start) = resolved.find("var(") else {
+                break;
+            };
+            let Some(end) = resolved[start..].find(')') else {
+                break;
+            };
+            let end = start + end;
+            let variable_name = resolved[start + 4..end].trim();
+            let replacement = self
+                .variables
+                .get(variable_name)
+                .cloned()
+                .unwrap_or_default();
+            resolved.replace_range(start..=end, &replacement);
+        }
+        resolved.trim().to_string()
+    }
+}
+
+impl OpenDesignSelector {
+    fn parse(selector: &str) -> Option<Self> {
+        let mut parts = Vec::new();
+        let mut token = String::new();
+        let mut combinator = OpenDesignCombinator::SelfNode;
+        let mut chars = selector.chars().peekable();
+
+        while let Some(character) = chars.next() {
+            match character {
+                '>' => {
+                    push_selector_part(&mut parts, &mut token, combinator);
+                    combinator = OpenDesignCombinator::DirectChild;
+                    while chars.peek().is_some_and(|c| c.is_whitespace()) {
+                        chars.next();
+                    }
+                }
+                character if character.is_whitespace() => {
+                    push_selector_part(&mut parts, &mut token, combinator);
+                    if !parts.is_empty() {
+                        combinator = OpenDesignCombinator::Descendant;
+                    }
+                    while chars.peek().is_some_and(|c| c.is_whitespace()) {
+                        chars.next();
+                    }
+                }
+                _ => token.push(character),
+            }
+        }
+        push_selector_part(&mut parts, &mut token, combinator);
+
+        if parts.is_empty() {
+            return None;
+        }
+
+        let weight = parts
+            .iter()
+            .map(|part| part.compound.weight())
+            .sum::<i32>();
+
+        Some(Self { parts, weight })
+    }
+
+    fn matches(&self, dom_node: roxmltree::Node<'_, '_>) -> bool {
+        self.matches_from(self.parts.len() - 1, dom_node)
+    }
+
+    fn state_name(&self) -> Option<&'static str> {
+        self.parts
+            .last()?
+            .compound
+            .states
+            .iter()
+            .rev()
+            .find_map(|state| match state.as_str() {
+                "hover" => Some("hovered"),
+                "active" => Some("pressed"),
+                "focus" | "focus-visible" => Some("focused"),
+                _ => None,
+            })
+    }
+
+    fn pseudo_element_name(&self) -> Option<&str> {
+        self.parts.last()?.compound.pseudo_element.as_deref()
+    }
+
+    fn matches_from(&self, part_index: usize, dom_node: roxmltree::Node<'_, '_>) -> bool {
+        let part = &self.parts[part_index];
+        if !part.compound.matches(dom_node) {
+            return false;
+        }
+        if part_index == 0 {
+            return true;
+        }
+
+        match part.combinator {
+            OpenDesignCombinator::DirectChild => dom_node
+                .parent()
+                .filter(|parent| parent.is_element())
+                .is_some_and(|parent| self.matches_from(part_index - 1, parent)),
+            OpenDesignCombinator::Descendant => dom_node
+                .ancestors()
+                .skip(1)
+                .filter(|ancestor| ancestor.is_element())
+                .any(|ancestor| self.matches_from(part_index - 1, ancestor)),
+            OpenDesignCombinator::SelfNode => false,
+        }
+    }
+
+    fn parse_pseudo(selector: &str) -> Option<Self> {
+        let pseudo_element = if selector.contains("::before") {
+            "before"
+        } else if selector.contains("::after") {
+            "after"
+        } else {
+            return None;
+        };
+
+        let cleaned = selector.replace("::before", "").replace("::after", "");
+        let mut parsed = Self::parse(cleaned.trim())?;
+        parsed.parts.last_mut()?.compound.pseudo_element = Some(pseudo_element.to_string());
+        Some(parsed)
+    }
+}
+
+impl OpenDesignSelectorCompound {
+    fn parse(raw: &str) -> Option<Self> {
+        let raw = raw.trim();
+        if raw.is_empty() {
+            return None;
+        }
+        if raw == "*" {
+            return Some(Self::default());
+        }
+
+        let mut compound = Self::default();
+        let mut chars = raw.chars().peekable();
+        let mut tag = String::new();
+
+        while let Some(character) = chars.peek().copied() {
+            match character {
+                '.' | '#' | ':' => break,
+                _ => {
+                    tag.push(read_selector_char(&mut chars));
+                }
+            }
+        }
+        if !tag.is_empty() {
+            compound.tag = Some(unescape_css_ident(&tag).to_ascii_lowercase());
+        }
+
+        while let Some(prefix) = chars.next() {
+            let mut value = String::new();
+            while let Some(character) = chars.peek().copied() {
+                if matches!(character, '.' | '#' | ':') {
+                    break;
+                }
+                value.push(read_selector_char(&mut chars));
+            }
+            if value.is_empty() {
+                continue;
+            }
+            let value = unescape_css_ident(&value);
+            match prefix {
+                '.' => compound.classes.push(value),
+                '#' => compound.id = Some(value),
+                ':' => compound.states.push(value),
+                _ => {}
+            }
+        }
+
+        Some(compound)
+    }
+
+    fn weight(&self) -> i32 {
+        let mut weight = 0;
+        if self.tag.is_some() {
+            weight += 1;
+        }
+        weight += self.classes.len() as i32 * 10;
+        weight += self.states.len() as i32 * 10;
+        if self.id.is_some() {
+            weight += 100;
+        }
+        weight
+    }
+
+    fn matches(&self, dom_node: roxmltree::Node<'_, '_>) -> bool {
+        if !dom_node.is_element() {
+            return false;
+        }
+        if let Some(tag) = &self.tag {
+            if dom_node.tag_name().name().to_ascii_lowercase() != *tag {
+                return false;
+            }
+        }
+        if let Some(id) = &self.id {
+            if dom_node.attribute("id") != Some(id.as_str()) {
+                return false;
+            }
+        }
+        if !self
+            .classes
+            .iter()
+            .all(|class_name| has_class(dom_node, class_name))
+        {
+            return false;
+        }
+
+        true
+    }
+}
+
+fn apply_opendesign_styles(
+    stylesheet: &OpenDesignStylesheet,
+    bui_node: &mut BuiNode,
+    dom_node: roxmltree::Node<'_, '_>,
+) {
+    for (name, value) in stylesheet.matching_declarations(dom_node) {
+        let value = stylesheet.resolve_value(value);
+        apply_opendesign_declaration(bui_node, name, &value);
+    }
+
+    for (state, (name, value)) in stylesheet.matching_state_declarations(dom_node) {
+        let value = stylesheet.resolve_value(value);
+        apply_opendesign_state_declaration(bui_node, state, name, &value);
+    }
+
+    if let Some(inline_style) = dom_node.attribute("style") {
+        for (name, value) in css_declarations(inline_style) {
+            let value = stylesheet.resolve_value(&value);
+            apply_opendesign_declaration(bui_node, &name, &value);
+        }
+    }
+}
+
+fn apply_opendesign_state_declaration(
+    bui_node: &mut BuiNode,
+    state: &str,
+    name: &str,
+    value: &str,
+) {
+    let value = normalize_css_value(value);
+    if value.is_empty() || value.contains("!important") {
+        return;
+    }
+    if matches!(bui_node.node_type, BuiNodeType::Text) && name != "color" {
+        return;
+    }
+
+    let mut needs_normal_scale_reset = false;
+    let became_empty;
+    {
+        let state_visual = bui_node
+            .state_visuals
+            .entry(state.to_string())
+            .or_insert_with(|| BuiStateVisual {
+                styles: BuiStyles::default(),
+                visuals: BuiVisuals::default(),
+                text_color: None,
+            });
+
+        match name {
+            "background" | "background-color" => {
+                if let Some(color) = css_color(&value) {
+                    state_visual.visuals.background_color = Some(color);
+                }
+            }
+            "border" => {
+                if let Some(color) = css_color(&value) {
+                    state_visual.visuals.border_color = Some(color);
+                }
+                if let Some(width) = css_first_size(&value) {
+                    state_visual.visuals.border_width = Some(width);
+                }
+            }
+            "border-color" => {
+                if let Some(color) = css_color(&value) {
+                    state_visual.visuals.border_color = Some(color);
+                }
+            }
+            "color" => {
+                if let Some(color) = css_color(&value) {
+                    state_visual.text_color = Some(color);
+                }
+            }
+            "transform" => {
+                if let Some(scale) = css_transform_scale(&value) {
+                    state_visual.styles.ui_scale = Some(scale);
+                    needs_normal_scale_reset = true;
+                }
+            }
+            _ => {}
+        }
+
+        became_empty = state_visual.is_empty();
+    }
+
+    if needs_normal_scale_reset {
+        ensure_opendesign_normal_state(bui_node).styles.ui_scale = Some("1 1".to_string());
+    }
+    if became_empty {
+        bui_node.state_visuals.remove(state);
+    }
+}
+
+fn ensure_opendesign_normal_state(bui_node: &mut BuiNode) -> &mut BuiStateVisual {
+    bui_node
+        .state_visuals
+        .entry("normal".to_string())
+        .or_insert_with(|| BuiStateVisual {
+            styles: BuiStyles::default(),
+            visuals: BuiVisuals::default(),
+            text_color: None,
+        })
+}
+
+fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str) {
+    let value = normalize_css_value(value);
+    if value.is_empty() || value.contains("!important") {
+        return;
+    }
+    if matches!(bui_node.node_type, BuiNodeType::Text) && !matches!(name, "color" | "font-size") {
+        return;
+    }
+
+    match name {
+        "display" => {
+            if let Some(display) = css_display(&value) {
+                bui_node.styles.display = Some(display.to_string());
+            }
+        }
+        "position" => {
+            if matches!(value.as_str(), "absolute" | "relative") {
+                bui_node.styles.position_type = Some(value);
+            } else if value == "fixed" {
+                bui_node.styles.position_type = Some("absolute".to_string());
+                bui_node.styles.fixed_node = Some(true);
+            }
+        }
+        "width" => set_simple_css_val(&mut bui_node.styles.width, &value),
+        "height" => set_simple_css_val(&mut bui_node.styles.height, &value),
+        "min-width" => set_simple_css_val(&mut bui_node.styles.min_width, &value),
+        "min-height" => set_simple_css_val(&mut bui_node.styles.min_height, &value),
+        "max-width" => set_simple_css_val(&mut bui_node.styles.max_width, &value),
+        "max-height" => set_simple_css_val(&mut bui_node.styles.max_height, &value),
+        "left" => set_simple_css_val(&mut bui_node.styles.left, &value),
+        "right" => set_simple_css_val(&mut bui_node.styles.right, &value),
+        "top" => set_simple_css_val(&mut bui_node.styles.top, &value),
+        "bottom" => set_simple_css_val(&mut bui_node.styles.bottom, &value),
+        "margin" => set_css_rect(&mut bui_node.styles.margin, &value),
+        "padding" => set_css_rect(&mut bui_node.styles.padding, &value),
+        "padding-inline" => {
+            set_simple_css_val(&mut bui_node.styles.padding_left, &value);
+            set_simple_css_val(&mut bui_node.styles.padding_right, &value);
+        }
+        "padding-block" => {
+            set_simple_css_val(&mut bui_node.styles.padding_top, &value);
+            set_simple_css_val(&mut bui_node.styles.padding_bottom, &value);
+        }
+        "gap" => {
+            if is_simple_css_size(&value) {
+                bui_node.styles.row_gap = Some(value.clone());
+                bui_node.styles.column_gap = Some(value);
+            }
+        }
+        "row-gap" => set_simple_css_val(&mut bui_node.styles.row_gap, &value),
+        "column-gap" => set_simple_css_val(&mut bui_node.styles.column_gap, &value),
+        "flex-direction" => bui_node.styles.flex_direction = Some(value),
+        "flex-wrap" => bui_node.styles.flex_wrap = Some(value),
+        "flex-grow" => bui_node.styles.flex_grow = Some(value),
+        "flex-shrink" => bui_node.styles.flex_shrink = Some(value),
+        "flex-basis" => set_simple_css_val(&mut bui_node.styles.flex_basis, &value),
+        "align-items" => bui_node.styles.align_items = Some(value),
+        "align-self" => bui_node.styles.align_self = Some(value),
+        "align-content" => bui_node.styles.align_content = Some(value),
+        "justify-content" => bui_node.styles.justify_content = Some(value),
+        "justify-items" => bui_node.styles.justify_items = Some(value),
+        "justify-self" => bui_node.styles.justify_self = Some(value),
+        "place-items" => {
+            if value == "center" {
+                bui_node.styles.align_items = Some("center".to_string());
+                bui_node.styles.justify_items = Some("center".to_string());
+                bui_node.styles.justify_content = Some("center".to_string());
+            }
+        }
+        "overflow" => {
+            if let Some(overflow) = css_overflow(&value) {
+                bui_node.styles.overflow = Some(overflow.to_string());
+            }
+        }
+        "overflow-x" => {
+            if value == "auto" || value == "scroll" {
+                bui_node.styles.overflow = Some("scroll_x".to_string());
+            }
+        }
+        "overflow-y" => {
+            if value == "auto" || value == "scroll" {
+                bui_node.styles.overflow = Some("scroll_y".to_string());
+            }
+        }
+        "grid-template-columns" => {
+            if let Some(tracks) = css_grid_tracks(&value) {
+                bui_node.styles.grid_template_columns = Some(tracks);
+            }
+        }
+        "grid-template-rows" => {
+            if let Some(tracks) = css_grid_tracks(&value) {
+                bui_node.styles.grid_template_rows = Some(tracks);
+            }
+        }
+        "border-radius" => {
+            if let Some(radius) = css_first_size(&value) {
+                bui_node.visuals.border_radius = Some(radius);
+            }
+        }
+        "border-width" => set_css_rect(&mut bui_node.visuals.border_width, &value),
+        "border" => apply_css_border(bui_node, &value),
+        "border-color" => {
+            if let Some(color) = css_color(&value) {
+                bui_node.visuals.border_color = Some(color);
+            }
+        }
+        "background" | "background-color" => {
+            if let Some(color) = css_color(&value) {
+                bui_node.visuals.background_color = Some(color);
+            }
+        }
+        "color" => {
+            if let Some(color) = css_color(&value) {
+                if let Some(text_config) = &mut bui_node.text_config {
+                    text_config.font_color = color;
+                }
+            }
+        }
+        "font-size" => {
+            if let Some(font_size) = css_font_size(&value) {
+                if let Some(text_config) = &mut bui_node.text_config {
+                    text_config.font_size = font_size;
+                }
+            }
+        }
+        "font-family" => {
+            if let Some(text_config) = &mut bui_node.text_config {
+                text_config.font_path = Some(css_font_family_to_path(&value));
+            }
+        }
+        "opacity" => {
+            if let Some(opacity) = value.parse::<f32>().ok() {
+                if let Some(color) = &mut bui_node.visuals.background_color {
+                    if let Some(hex) = append_hex_alpha(color, opacity * 100.0) {
+                        *color = hex;
+                    }
+                }
+                if let Some(color) = &mut bui_node.visuals.border_color {
+                    if let Some(hex) = append_hex_alpha(color, opacity * 100.0) {
+                        *color = hex;
+                    }
+                }
+                if let Some(text_config) = &mut bui_node.text_config {
+                    if let Some(hex) = append_hex_alpha(&text_config.font_color, opacity * 100.0) {
+                        text_config.font_color = hex;
+                    }
+                }
+            }
+        }
+        "cursor" | "pointer-events" | "mix-blend-mode" | "filter" | "transition" | "clip-path" | "mask-image" | "content" | "isolation" | "z-index" | "-webkit-tap-highlight-color" | "text-shadow" | "font-weight" | "letter-spacing" | "aspect-ratio" | "text-align" | "box-shadow" => {}
+        _ => {}
+    }
+}
+
+fn style_blocks(html: &str) -> Vec<&str> {
+    let mut blocks = Vec::new();
+    let mut rest = html;
+    while let Some(start) = rest.find("<style") {
+        rest = &rest[start..];
+        let Some(tag_end) = rest.find('>') else {
+            break;
+        };
+        rest = &rest[tag_end + 1..];
+        let Some(end) = rest.find("</style>") else {
+            break;
+        };
+        blocks.push(&rest[..end]);
+        rest = &rest[end + "</style>".len()..];
+    }
+    blocks
+}
+
+fn css_rules(css: &str) -> Vec<(String, Vec<(String, String)>)> {
+    let mut rules = Vec::new();
+    let bytes = css.as_bytes();
+    let mut index = 0;
+
+    while index < bytes.len() {
+        while index < bytes.len() && bytes[index].is_ascii_whitespace() {
+            index += 1;
+        }
+        let selector_start = index;
+        while index < bytes.len() && bytes[index] != b'{' {
+            index += 1;
+        }
+        if index >= bytes.len() {
+            break;
+        }
+        let selector = css[selector_start..index].trim();
+        index += 1;
+
+        let body_start = index;
+        let mut depth = 1;
+        while index < bytes.len() && depth > 0 {
+            match bytes[index] {
+                b'{' => depth += 1,
+                b'}' => depth -= 1,
+                _ => {}
+            }
+            index += 1;
+        }
+        if depth != 0 {
+            break;
+        }
+        let body = &css[body_start..index - 1];
+        if selector.starts_with("@media") {
+            if media_query_matches(selector) {
+                rules.extend(css_rules(body));
+            }
+            continue;
+        }
+        if selector.starts_with('@') {
+            continue;
+        }
+        let declarations = css_declarations(body);
+        if !selector.is_empty() && !declarations.is_empty() {
+            rules.push((selector.to_string(), declarations));
+        }
+    }
+
+    rules
+}
+
+fn media_query_matches(selector: &str) -> bool {
+    let query = selector.trim_start_matches("@media").trim();
+    let mut matched_any_width_condition = false;
+
+    for condition in query.split("and") {
+        let condition = condition
+            .trim()
+            .trim_start_matches('(')
+            .trim_end_matches(')')
+            .trim();
+
+        if let Some(value) = condition.strip_prefix("min-width:") {
+            matched_any_width_condition = true;
+            let Some(width) = css_first_size(value).and_then(|size| css_size_to_px(&size)) else {
+                return false;
+            };
+            if OPENDESIGN_DEFAULT_VIEWPORT_WIDTH < width {
+                return false;
+            }
+        } else if let Some(value) = condition.strip_prefix("max-width:") {
+            matched_any_width_condition = true;
+            let Some(width) = css_first_size(value).and_then(|size| css_size_to_px(&size)) else {
+                return false;
+            };
+            if OPENDESIGN_DEFAULT_VIEWPORT_WIDTH > width {
+                return false;
+            }
+        }
+    }
+
+    matched_any_width_condition
+}
+
+fn css_declarations(body: &str) -> Vec<(String, String)> {
+    body.split(';')
+        .filter_map(|declaration| {
+            let (name, value) = declaration.split_once(':')?;
+            let name = name.trim();
+            let value = value.trim();
+            if name.is_empty() || value.is_empty() {
+                None
+            } else {
+                Some((name.to_string(), value.to_string()))
+            }
+        })
+        .collect()
+}
+
+fn push_selector_part(
+    parts: &mut Vec<OpenDesignSelectorPart>,
+    token: &mut String,
+    combinator: OpenDesignCombinator,
+) {
+    if let Some(compound) = OpenDesignSelectorCompound::parse(token) {
+        parts.push(OpenDesignSelectorPart {
+            combinator: if parts.is_empty() {
+                OpenDesignCombinator::SelfNode
+            } else {
+                combinator
+            },
+            compound,
+        });
+    }
+    token.clear();
+}
+
+fn read_selector_char(chars: &mut std::iter::Peekable<std::str::Chars<'_>>) -> char {
+    let character = chars.next().unwrap_or_default();
+    if character == '\\' {
+        chars.next().unwrap_or(character)
+    } else {
+        character
+    }
+}
+
+fn unescape_css_ident(value: &str) -> String {
+    let mut output = String::new();
+    let mut escaped = false;
+    for character in value.chars() {
+        if escaped {
+            output.push(character);
+            escaped = false;
+        } else if character == '\\' {
+            escaped = true;
+        } else {
+            output.push(character);
+        }
+    }
+    output
+}
+
+fn normalize_css_value(value: &str) -> String {
+    value
+        .trim()
+        .trim_end_matches("!important")
+        .trim()
+        .trim_matches('"')
+        .replace("  ", " ")
+        .replace("solid ", "")
+}
+
+fn set_simple_css_val(target: &mut Option<String>, value: &str) {
+    if let Some(size) = css_eval_length_function(value) {
+        *target = Some(size);
+    } else if is_simple_css_size(value) {
+        *target = Some(value.to_string());
+    } else if let Some(size) = css_first_size(value) {
+        *target = Some(size);
+    }
+}
+
+fn set_css_rect(target: &mut Option<String>, value: &str) {
+    let normalized = value
+        .split_whitespace()
+        .filter(|part| is_simple_css_size(part))
+        .collect::<Vec<_>>()
+        .join(" ");
+    if !normalized.is_empty() {
+        *target = Some(normalized);
+    }
+}
+
+fn is_simple_css_size(value: &str) -> bool {
+    let value = value.trim();
+    if value == "auto" || value == "0" {
+        return true;
+    }
+    value
+        .strip_suffix("px")
+        .or_else(|| value.strip_suffix('%'))
+        .or_else(|| value.strip_suffix("vw"))
+        .or_else(|| value.strip_suffix("vh"))
+        .is_some_and(|number| number.parse::<f32>().is_ok())
+}
+
+fn css_first_size(value: &str) -> Option<String> {
+    if let Some(size) = css_eval_length_function(value) {
+        return Some(size);
+    }
+    value
+        .split(|character: char| character.is_whitespace() || matches!(character, ',' | '(' | ')'))
+        .find(|part| is_simple_css_size(part))
+        .and_then(css_length_to_bui_val)
+}
+
+fn css_size_to_px(value: &str) -> Option<f32> {
+    let value = value.trim();
+    if let Some(px) = value.strip_suffix("px") {
+        px.parse::<f32>().ok()
+    } else if let Some(percent) = value.strip_suffix('%') {
+        percent
+            .parse::<f32>()
+            .ok()
+            .map(|percent| OPENDESIGN_DEFAULT_VIEWPORT_WIDTH * percent / 100.0)
+    } else if let Some(vw) = value.strip_suffix("vw") {
+        vw.parse::<f32>()
+            .ok()
+            .map(|vw| OPENDESIGN_DEFAULT_VIEWPORT_WIDTH * vw / 100.0)
+    } else if let Some(vh) = value.strip_suffix("vh") {
+        vh.parse::<f32>()
+            .ok()
+            .map(|vh| OPENDESIGN_DEFAULT_VIEWPORT_HEIGHT * vh / 100.0)
+    } else {
+        value.parse::<f32>().ok()
+    }
+}
+
+fn css_length_to_bui_val(value: &str) -> Option<String> {
+    let value = value.trim();
+    if value == "auto" || value == "0" || value.ends_with("px") || value.ends_with('%') {
+        return Some(value.to_string());
+    }
+    if value.ends_with("vw") || value.ends_with("vh") {
+        return css_size_to_px(value).map(|px| format_css_px(px));
+    }
+    None
+}
+
+fn css_eval_length_function(value: &str) -> Option<String> {
+    let value = value.trim();
+    let (name, args) = css_function_call(value)?;
+    let args = split_css_function_args(args);
+    match name {
+        "min" => args
+            .iter()
+            .filter_map(|arg| css_size_to_px(arg))
+            .reduce(f32::min)
+            .map(format_css_px),
+        "max" => args
+            .iter()
+            .filter_map(|arg| css_size_to_px(arg))
+            .reduce(f32::max)
+            .map(format_css_px),
+        "clamp" if args.len() == 3 => {
+            let min = css_size_to_px(args[0])?;
+            let preferred = css_size_to_px(args[1])?;
+            let max = css_size_to_px(args[2])?;
+            Some(format_css_px(preferred.clamp(min, max)))
+        }
+        _ => None,
+    }
+}
+
+fn css_function_call(value: &str) -> Option<(&str, &str)> {
+    let (name, rest) = value.split_once('(')?;
+    let args = rest.strip_suffix(')')?;
+    Some((name.trim(), args.trim()))
+}
+
+fn split_css_function_args(value: &str) -> Vec<&str> {
+    let mut args = Vec::new();
+    let mut start = 0;
+    let mut depth = 0usize;
+    for (index, character) in value.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                args.push(value[start..index].trim());
+                start = index + 1;
+            }
+            _ => {}
+        }
+    }
+    args.push(value[start..].trim());
+    args.into_iter().filter(|arg| !arg.is_empty()).collect()
+}
+
+fn format_css_px(value: f32) -> String {
+    if (value.fract()).abs() < f32::EPSILON {
+        format!("{}px", value as i32)
+    } else {
+        let number = format!("{value:.2}");
+        let number = number.trim_end_matches('0').trim_end_matches('.');
+        format!("{number}px")
+    }
+}
+
+fn css_display(value: &str) -> Option<&'static str> {
+    match value {
+        "flex" | "inline-flex" => Some("flex"),
+        "grid" | "inline-grid" => Some("grid"),
+        "none" => Some("none"),
+        _ => None,
+    }
+}
+
+fn css_overflow(value: &str) -> Option<&'static str> {
+    match value {
+        "visible" => Some("visible"),
+        "hidden" | "clip" => Some("clip"),
+        "auto" | "scroll" => Some("scroll_y"),
+        _ => None,
+    }
+}
+
+fn css_grid_tracks(value: &str) -> Option<String> {
+    let value = value.trim();
+    match value {
+        "minmax(0, 1fr) auto" => Some("flex(1) auto".to_string()),
+        "minmax(0, 1fr) 140px" => Some("flex(1) px(140)".to_string()),
+        "92px minmax(0, 1fr)" => Some("px(92) flex(1)".to_string()),
+        "104px minmax(0, 1fr)" => Some("px(104) flex(1)".to_string()),
+        "84px minmax(0, 1fr)" => Some("px(84) flex(1)".to_string()),
+        "repeat(4, minmax(0, 1fr))" => Some("flex(4, 1)".to_string()),
+        "1fr" => Some("flex(1)".to_string()),
+        _ if !value.contains('(') => Some(
+            value
+                .split_whitespace()
+                .map(|part| {
+                    if let Some(px) = part.strip_suffix("px") {
+                        format!("px({px})")
+                    } else if part == "1fr" {
+                        "flex(1)".to_string()
+                    } else {
+                        part.to_string()
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(" "),
+        ),
+        _ => None,
+    }
+}
+
+fn css_color(value: &str) -> Option<String> {
+    let value = value.trim();
+    if let Some(color) = css_color_mix_with_transparency(value) {
+        return Some(color);
+    }
+    if let Some(color) = oklch_to_hex(value) {
+        return Some(color);
+    }
+    if let Some(color) = css_gradient_first_color(value) {
+        return Some(color);
+    }
+    if value == "transparent" {
+        return Some("transparent".to_string());
+    }
+    if is_hex_color(value) {
+        return Some(value.to_string());
+    }
+    for token in value.split(|character: char| {
+        character.is_whitespace() || matches!(character, ',' | '(' | ')')
+    }) {
+        if let Some(color) = oklch_to_hex(token) {
+            return Some(color);
+        }
+        if is_hex_color(token) {
+            return Some(token.to_string());
+        }
+    }
+    css_named_color(value).map(ToString::to_string)
+}
+
+fn is_hex_color(value: &str) -> bool {
+    let value = value.trim();
+    let Some(hex) = value.strip_prefix('#') else {
+        return false;
+    };
+    matches!(hex.len(), 3 | 4 | 6 | 8) && hex.chars().all(|character| character.is_ascii_hexdigit())
+}
+
+fn css_color_mix_with_transparency(value: &str) -> Option<String> {
+    if !value.trim_start().starts_with("color-mix(") || !value.contains("transparent") {
+        return None;
+    }
+
+    let tokens = css_function_tokens(value);
+    let transparent_index = tokens.iter().position(|token| *token == "transparent")?;
+    let transparent_percent = tokens
+        .get(transparent_index + 1)
+        .and_then(|token| token.strip_suffix('%'))
+        .and_then(|percent| percent.parse::<f32>().ok())
+        .unwrap_or(50.0)
+        .clamp(0.0, 100.0);
+
+    let base_color = tokens
+        .iter()
+        .take(transparent_index)
+        .find_map(|token| {
+            if is_hex_color(token) {
+                Some((*token).to_string())
+            } else {
+                css_named_color(token).map(ToString::to_string)
+            }
+        })
+        .or_else(|| {
+            tokens.iter().skip(transparent_index + 1).find_map(|token| {
+                if is_hex_color(token) {
+                    Some((*token).to_string())
+                } else {
+                    css_named_color(token).map(ToString::to_string)
+                }
+            })
+        })?;
+
+    append_hex_alpha(&base_color, 100.0 - transparent_percent)
+}
+
+fn css_function_tokens(value: &str) -> Vec<&str> {
+    value
+        .split(|character: char| character.is_whitespace() || matches!(character, ',' | '(' | ')'))
+        .filter(|token| !token.is_empty() && *token != "in" && *token != "oklab")
+        .collect()
+}
+
+fn css_named_color(value: &str) -> Option<&'static str> {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "black" => Some("#000000"),
+        "white" => Some("#FFFFFF"),
+        "red" => Some("#FF0000"),
+        _ => None,
+    }
+}
+
+fn oklch_to_hex(value: &str) -> Option<String> {
+    let value = value.trim();
+    if !value.starts_with("oklch(") || !value.ends_with(')') {
+        return None;
+    }
+    let inner = value.strip_prefix("oklch(")?.strip_suffix(")")?;
+
+    let parts: Vec<&str> = inner
+        .split(|c: char| c.is_whitespace() || c == ',')
+        .filter(|p| !p.is_empty())
+        .collect();
+
+    if parts.len() < 3 {
+        return None;
+    }
+
+    let l_raw = parts[0];
+    let l = l_raw.strip_suffix('%')
+        .and_then(|s| s.parse::<f32>().ok())
+        .map(|v| v / 100.0)
+        .or_else(|| l_raw.parse::<f32>().ok())?;
+    let c: f32 = parts[1].parse::<f32>().ok()?;
+    let h: f32 = parts[2].parse::<f32>().ok()?;
+
+    let alpha = if parts.len() >= 4 && parts[3].starts_with('/') {
+        parts[3].strip_prefix('/')?.parse::<f32>().ok()
+    } else if parts.len() >= 5 {
+        parts[4].parse::<f32>().ok()
+    } else {
+        Some(1.0)
+    };
+
+    let alpha = alpha?;
+
+    let h_rad = h * std::f32::consts::PI / 180.0;
+    let a = c * h_rad.cos();
+    let b = c * h_rad.sin();
+
+    let l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+    let m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+    let s_ = l - 0.0894841775 * a - 1.2914855480 * b;
+
+    let l_c = l_ * l_ * l_;
+    let m_c = m_ * m_ * m_;
+    let s_c = s_ * s_ * s_;
+
+    let x = 1.2268798737 * l_c - 0.5556238332 * m_c + 0.2811894837 * s_c;
+    let y = -0.0405757626 * l_c + 1.1971573648 * m_c - 0.1560437476 * s_c;
+    let z = -0.0753452638 * l_c + 0.2413318055 * m_c + 1.8340138286 * s_c;
+
+    let r_lin = 3.2404542 * x - 1.5371385 * y - 0.4985314 * z;
+    let g_lin = -0.9692660 * x + 1.8760108 * y + 0.0415560 * z;
+    let b_lin = 0.0556432 * x - 0.2040259 * y + 1.0572252 * z;
+
+    let r = srgb_gamma(r_lin);
+    let g = srgb_gamma(g_lin);
+    let b = srgb_gamma(b_lin);
+
+    let r = (r.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let g = (g.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let b = (b.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let a = (alpha.clamp(0.0, 1.0) * 255.0).round() as u8;
+
+    if a == 255 {
+        Some(format!("#{:02X}{:02X}{:02X}", r, g, b))
+    } else {
+        Some(format!("#{:02X}{:02X}{:02X}{:02X}", r, g, b, a))
+    }
+}
+
+fn srgb_gamma(c: f32) -> f32 {
+    if c <= 0.0031308 {
+        12.92 * c
+    } else {
+        1.055 * c.powf(1.0 / 2.4) - 0.055
+    }
+}
+
+fn css_gradient_first_color(value: &str) -> Option<String> {
+    let value = value.trim();
+    if !value.starts_with("radial-gradient(") && !value.starts_with("linear-gradient(") && !value.starts_with("conic-gradient(") {
+        return None;
+    }
+
+    let inner = if value.starts_with("radial-gradient(") {
+        value.strip_prefix("radial-gradient(")?.strip_suffix(")")
+    } else if value.starts_with("linear-gradient(") {
+        value.strip_prefix("linear-gradient(")?.strip_suffix(")")
+    } else {
+        value.strip_prefix("conic-gradient(")?.strip_suffix(")")
+    };
+    let Some(inner) = inner else {
+        return None;
+    };
+
+    let mut depth = 0;
+    let mut token_start = 0;
+    let mut tokens: Vec<&str> = Vec::new();
+    let bytes = inner.as_bytes();
+    for (i, &b) in bytes.iter().enumerate() {
+        match b {
+            b'(' => depth += 1,
+            b')' => {
+                depth -= 1;
+            }
+            b',' if depth == 0 => {
+                if i > token_start {
+                    tokens.push(inner[token_start..i].trim());
+                }
+                token_start = i + 1;
+            }
+            _ => {}
+        }
+    }
+    if token_start < inner.len() {
+        tokens.push(inner[token_start..].trim());
+    }
+
+    for token in &tokens {
+        let stripped = token.trim();
+        if stripped.starts_with("oklch(") || stripped.starts_with("#") || stripped.starts_with("rgb(") || stripped.starts_with("rgba(") {
+            return css_color(stripped);
+        }
+        if let Some(hex) = css_named_color(stripped) {
+            return Some(hex.to_string());
+        }
+        if stripped.contains("oklch(") || stripped.contains("#") || stripped.contains("rgb(") {
+            for sub in stripped.split(|c: char| c.is_whitespace()) {
+                if let Some(color) = css_color(sub) {
+                    return Some(color);
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn append_hex_alpha(color: &str, alpha_percent: f32) -> Option<String> {
+    let hex = color.trim().strip_prefix('#')?;
+    let rgb = match hex.len() {
+        3 | 4 => hex
+            .chars()
+            .take(3)
+            .flat_map(|character| [character, character])
+            .collect::<String>(),
+        6 | 8 => hex.chars().take(6).collect::<String>(),
+        _ => return None,
+    };
+    let alpha = ((alpha_percent.clamp(0.0, 100.0) / 100.0) * 255.0).round() as u8;
+    Some(format!("#{}{alpha:02X}", rgb.to_ascii_uppercase()))
+}
+
+fn css_font_size(value: &str) -> Option<f32> {
+    value
+        .split(|character: char| character.is_whitespace() || matches!(character, ',' | '(' | ')'))
+        .filter_map(|part| part.strip_suffix("px"))
+        .filter_map(|number| number.parse::<f32>().ok())
+        .last()
+}
+
+fn css_font_family_to_path(value: &str) -> String {
+    let lower = value.to_ascii_lowercase();
+    if lower.contains("palatino") || lower.contains("iowan") || lower.contains("georgia") || lower.contains("serif") {
+        "Hiragino Sans GB.ttc".to_string()
+    } else if lower.contains("sfmono") || lower.contains("menlo") || lower.contains("monospace") || lower.contains("consolas") {
+        "Hiragino Sans GB.ttc".to_string()
+    } else {
+        "Hiragino Sans GB.ttc".to_string()
+    }
+}
+
+fn apply_css_border(bui_node: &mut BuiNode, value: &str) {
+    if let Some(width) = css_first_size(value) {
+        bui_node.visuals.border_width = Some(width);
+    }
+    if let Some(color) = css_color(value) {
+        bui_node.visuals.border_color = Some(color);
+    }
+}
+
+fn css_transform_scale(value: &str) -> Option<String> {
+    let value = value.trim();
+    let args = value
+        .strip_prefix("scale(")
+        .and_then(|value| value.strip_suffix(')'))?
+        .trim();
+    if args.is_empty() {
+        return None;
+    }
+    if let Some((x, y)) = args.split_once(',') {
+        let x = x.trim().parse::<f32>().ok()?;
+        let y = y.trim().parse::<f32>().ok()?;
+        return Some(format!("{x} {y}"));
+    }
+
+    let scale = args.parse::<f32>().ok()?;
+    Some(format!("{scale} {scale}"))
+}
+
+fn has_class(node: roxmltree::Node<'_, '_>, class_name: &str) -> bool {
+    node.is_element()
+        && node
+            .attribute("class")
+            .is_some_and(|classes| classes.split_whitespace().any(|class| class == class_name))
+}
+
+fn first_text_by_class(node: roxmltree::Node<'_, '_>, class_name: &str) -> Option<String> {
+    node.descendants()
+        .find(|candidate| has_class(*candidate, class_name))
+        .map(node_text)
+        .filter(|text| !text.is_empty())
+}
+
+fn node_text(node: roxmltree::Node<'_, '_>) -> String {
+    node.children()
+        .filter_map(|candidate| candidate.text())
+        .map(str::trim)
+        .filter(|text| !text.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn sanitize_id(value: &str) -> String {
+    let sanitized = value
+        .chars()
+        .map(|character| {
+            if character.is_ascii_alphanumeric() {
+                character.to_ascii_lowercase()
+            } else {
+                '_'
+            }
+        })
+        .collect::<String>();
+
+    sanitized.trim_matches('_').to_string()
+}
+
+fn pascal_case(value: &str) -> String {
+    value
+        .split('_')
+        .filter(|part| !part.is_empty())
+        .map(|part| {
+            let mut chars = part.chars();
+            match chars.next() {
+                Some(first) => first.to_ascii_uppercase().to_string() + chars.as_str(),
+                None => String::new(),
+            }
+        })
+        .collect::<String>()
+}
+
+fn format_price(value: &str) -> String {
+    let mut reversed = String::new();
+    for (index, character) in value.chars().rev().enumerate() {
+        if index > 0 && index % 3 == 0 {
+            reversed.push(',');
+        }
+        reversed.push(character);
+    }
+    reversed.chars().rev().collect()
 }
 
 fn validate_bui_document(document: &BuiDocument) -> Result<(), String> {
@@ -719,6 +3352,19 @@ fn validate_state_visuals(states: &HashMap<String, BuiStateVisual>) -> Result<()
             return Err("state_visuals keys must not be empty.".to_string());
         }
 
+        validate_styles(&state.styles).map_err(|error| format!("state_visuals.{name}: {error}"))?;
+        if let Some(value) = &state.styles.visibility {
+            parse_visibility(value).map_err(|error| format!("state_visuals.{name}: {error}"))?;
+        }
+        if let Some(value) = &state.styles.ui_translation {
+            parse_val2(value).map_err(|error| format!("state_visuals.{name}: {error}"))?;
+        }
+        if let Some(value) = &state.styles.ui_scale {
+            parse_vec2(value).map_err(|error| format!("state_visuals.{name}: {error}"))?;
+        }
+        if let Some(value) = &state.styles.ui_rotation {
+            parse_rotation(value).map_err(|error| format!("state_visuals.{name}: {error}"))?;
+        }
         validate_visuals(&state.visuals)?;
 
         if let Some(text_color) = &state.text_color {
@@ -1218,6 +3864,14 @@ fn insert_style_components(
         entity_commands.insert(parse_visibility(value)?);
     }
     insert_ui_transform(entity_commands, &node.styles)?;
+    if !has_ui_transform_styles(&node.styles)
+        && node
+            .state_visuals
+            .values()
+            .any(|state| has_ui_transform_styles(&state.styles))
+    {
+        entity_commands.insert(UiTransform::default());
+    }
     if node.styles.relative_cursor_position.unwrap_or(false) {
         entity_commands.insert(RelativeCursorPosition::default());
     }
@@ -1246,6 +3900,10 @@ fn insert_style_components(
     }
 
     Ok(())
+}
+
+fn has_ui_transform_styles(styles: &BuiStyles) -> bool {
+    styles.ui_translation.is_some() || styles.ui_scale.is_some() || styles.ui_rotation.is_some()
 }
 
 fn insert_ui_transform(
@@ -2059,7 +4717,10 @@ fn dispatch_bui_tab_selection_system(
             continue;
         }
 
-        let Some(group) = tab_groups.iter().find(|group| group.group == tab_item.group) else {
+        let Some(group) = tab_groups
+            .iter()
+            .find(|group| group.group == tab_item.group)
+        else {
             continue;
         };
 
@@ -2081,7 +4742,10 @@ fn sync_bui_tab_selected_state_system(
     }
 
     for (entity, tab_item) in &tab_items {
-        let Some(group) = tab_groups.iter().find(|group| group.group == tab_item.group) else {
+        let Some(group) = tab_groups
+            .iter()
+            .find(|group| group.group == tab_item.group)
+        else {
             continue;
         };
 
@@ -2153,14 +4817,14 @@ fn sync_bui_list_groups_system(
         match state_store.0.get(&list.source) {
             Some(BuiBindingValue::StringList(items)) => {
                 for (index, item) in items.iter().enumerate() {
-                    let template = instantiate_list_item_template_text(
-                        &list.item_template,
-                        index,
-                        item,
-                    );
-                    let Ok(child_entity) =
-                        spawn_bui_node(&mut commands, &asset_server, &mut texture_atlases, &template)
-                    else {
+                    let template =
+                        instantiate_list_item_template_text(&list.item_template, index, item);
+                    let Ok(child_entity) = spawn_bui_node(
+                        &mut commands,
+                        &asset_server,
+                        &mut texture_atlases,
+                        &template,
+                    ) else {
                         continue;
                     };
                     commands.entity(entity).add_child(child_entity);
@@ -2170,9 +4834,12 @@ fn sync_bui_list_groups_system(
                 for (index, item) in items.iter().enumerate() {
                     let template =
                         instantiate_list_item_template_object(&list.item_template, index, item);
-                    let Ok(child_entity) =
-                        spawn_bui_node(&mut commands, &asset_server, &mut texture_atlases, &template)
-                    else {
+                    let Ok(child_entity) = spawn_bui_node(
+                        &mut commands,
+                        &asset_server,
+                        &mut texture_atlases,
+                        &template,
+                    ) else {
                         continue;
                     };
                     commands.entity(entity).add_child(child_entity);
@@ -2566,19 +5233,19 @@ fn apply_bui_visual_states_system(
     input_focus: Res<InputFocus>,
     child_of_query: Query<&ChildOf>,
     explicit_states: Query<&BuiVisualState>,
-    visual_states: Query<
-        (
-            Entity,
-            &BuiVisualStateDefinitions,
-            Option<&BuiVisualState>,
-            Option<&Interaction>,
-            Has<Checked>,
-            Has<BuiDisabled>,
-        ),
-    >,
+    visual_states: Query<(
+        Entity,
+        &BuiVisualStateDefinitions,
+        Option<&BuiVisualState>,
+        Option<&Interaction>,
+        Has<Checked>,
+        Has<BuiDisabled>,
+    )>,
     mut backgrounds: Query<&mut BackgroundColor>,
     mut borders: Query<&mut BorderColor>,
     mut text_colors: Query<&mut TextColor>,
+    mut ui_transforms: Query<&mut UiTransform>,
+    mut visibilities: Query<&mut Visibility>,
 ) {
     for (entity, definitions, explicit_state, interaction, checked, disabled) in &visual_states {
         let inherited_state =
@@ -2597,13 +5264,16 @@ fn apply_bui_visual_states_system(
                     Interaction::None => Some("normal"),
                 })
             })
-            .or_else(|| definitions.states.contains_key("normal").then_some("normal"));
+            .or_else(|| {
+                definitions
+                    .states
+                    .contains_key("normal")
+                    .then_some("normal")
+            });
 
-        let Some(state_name) = resolve_visual_state_name(
-            definitions,
-            base_state.as_deref(),
-            auto_state,
-        ) else {
+        let Some(state_name) =
+            resolve_visual_state_name(definitions, base_state.as_deref(), auto_state)
+        else {
             continue;
         };
 
@@ -2630,6 +5300,31 @@ fn apply_bui_visual_states_system(
             && let Ok(parsed) = parse_color(color)
         {
             text_color.0 = parsed;
+        }
+
+        if let Ok(mut ui_transform) = ui_transforms.get_mut(entity) {
+            if let Some(value) = &state_visual.styles.ui_translation
+                && let Ok(parsed) = parse_val2(value)
+            {
+                ui_transform.translation = parsed;
+            }
+            if let Some(value) = &state_visual.styles.ui_scale
+                && let Ok(parsed) = parse_vec2(value)
+            {
+                ui_transform.scale = parsed;
+            }
+            if let Some(value) = &state_visual.styles.ui_rotation
+                && let Ok(parsed) = parse_rotation(value)
+            {
+                ui_transform.rotation = parsed;
+            }
+        }
+
+        if let Some(value) = &state_visual.styles.visibility
+            && let Ok(mut visibility) = visibilities.get_mut(entity)
+            && let Ok(parsed) = parse_visibility(value)
+        {
+            *visibility = parsed;
         }
     }
 }
@@ -2794,4 +5489,281 @@ fn set_toggle_box_color(
     } else {
         Color::srgb(0.2, 0.2, 0.2)
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const VILLAGE_SHOP_HTML: &str = include_str!(
+        "../../../examples/UiParserTest/opendesignTest/village_shop_overlay/village-shop-overlay.html"
+    );
+    const VILLAGE_SHOP_IR: &str = include_str!(
+        "../../../examples/UiParserTest/opendesignTest/village_shop_overlay/village-shop-overlay.ir.json"
+    );
+    const QUEST_NOTICE_HTML: &str = include_str!(
+        "../../../examples/UiParserTest/opendesignTest/quest_notice_overlay/quest-notice-overlay.html"
+    );
+
+    #[test]
+    fn opendesign_media_query_rules_resolve_into_bui_styles() {
+        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile");
+
+        let panel = find_bui_node(&document.root, "panel");
+        assert_eq!(panel.styles.width.as_deref(), Some("720px"));
+
+        let card = find_bui_node(&document.root, "shop_card_hut");
+        assert_eq!(
+            card.styles.grid_template_columns.as_deref(),
+            Some("flex(1) px(140)")
+        );
+
+        let item_main = find_bui_node(&document.root, "item_main_hut");
+        assert_eq!(
+            item_main.styles.grid_template_columns.as_deref(),
+            Some("px(104) flex(1)")
+        );
+    }
+
+    #[test]
+    fn opendesign_active_transform_compiles_to_pressed_state_scale() {
+        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile");
+
+        let buy_button = find_bui_node(&document.root, "buy_btn_hut");
+        assert_eq!(
+            buy_button
+                .state_visuals
+                .get("pressed")
+                .and_then(|state| state.styles.ui_scale.as_deref()),
+            Some("0.95 0.95")
+        );
+        assert_eq!(
+            buy_button
+                .state_visuals
+                .get("normal")
+                .and_then(|state| state.styles.ui_scale.as_deref()),
+            Some("1 1")
+        );
+
+        let close_button = find_bui_node(&document.root, "close_btn");
+        assert_eq!(
+            close_button
+                .state_visuals
+                .get("pressed")
+                .and_then(|state| state.styles.ui_scale.as_deref()),
+            Some("0.95 0.95")
+        );
+    }
+
+    #[test]
+    fn opendesign_text_nodes_do_not_inherit_button_transform_styles() {
+        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile");
+
+        let buy_text = find_bui_node(&document.root, "buy_btn_hut_text");
+        assert!(buy_text.state_visuals.is_empty());
+        assert_eq!(
+            buy_text
+                .text_config
+                .as_ref()
+                .map(|config| config.font_color.as_str()),
+            Some("#ffffff")
+        );
+    }
+
+    #[test]
+    fn opendesign_ir_export_uses_3_0_shape() {
+        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile");
+        let ir = BuiIrDocument::from_compat_document(&document);
+
+        assert_eq!(ir.version, "3.0-ir");
+        assert_eq!(ir.root.kind, "node");
+
+        let panel = ir
+            .root
+            .children
+            .iter()
+            .find(|child| child.id == "panel")
+            .expect("panel should exist");
+        assert_eq!(panel.layout.styles.max_width.as_deref(), Some("720px"));
+
+        let buy_button = find_ir_node(&ir.root, "buy_btn_hut");
+        assert_eq!(buy_button.kind, "button");
+        assert!(buy_button.content.is_empty());
+        assert!(
+            buy_button
+                .state_visuals
+                .get("pressed")
+                .and_then(|state| state.styles.ui_scale.as_deref())
+                .is_some()
+        );
+    }
+
+    #[test]
+    fn opendesign_ir_snapshot_can_load_through_runtime_parser() {
+        let ir_json = opendesign_html_to_bui_ir_json_str(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile to IR");
+        let document = parse_bui_document(&ir_json).expect("BUI IR should parse for runtime");
+
+        assert_eq!(document.version, EXPECTED_VERSION);
+
+        let panel = find_bui_node(&document.root, "panel");
+        assert_eq!(panel.styles.max_height.as_deref(), Some("648px"));
+
+        let buy_button = find_bui_node(&document.root, "buy_btn_hut");
+        assert!(matches!(buy_button.node_type, BuiNodeType::Button));
+        assert_eq!(
+            buy_button
+                .state_visuals
+                .get("pressed")
+                .and_then(|state| state.styles.ui_scale.as_deref()),
+            Some("0.95 0.95")
+        );
+
+        validate_bui_ir_json_str(&ir_json).expect("BUI IR validator should accept generated IR");
+    }
+
+    #[test]
+    fn checked_in_ir_fixture_loads_through_runtime_parser() {
+        let document = parse_bui_document(VILLAGE_SHOP_IR).expect("checked-in IR should parse");
+
+        let root = find_bui_node(&document.root, "overlay_root");
+        assert_eq!(root.styles.height.as_deref(), Some("100%"));
+
+        let close_button = find_bui_node(&document.root, "close_btn");
+        assert!(matches!(close_button.node_type, BuiNodeType::Button));
+        assert_eq!(
+            close_button
+                .actions
+                .first()
+                .map(|action| (action.event.as_str(), action.emit.as_str())),
+            Some(("press", "close_shop_overlay"))
+        );
+    }
+
+    #[test]
+    fn generic_opendesign_overlay_compiles_without_shop_structure() {
+        let document = opendesign_html_to_bui_document(QUEST_NOTICE_HTML)
+            .expect("generic OpenDesign overlay should compile");
+
+        let title = find_bui_node(&document.root, "notice_title_text_1");
+        assert_eq!(
+            title
+                .text_config
+                .as_ref()
+                .map(|text| text.content.as_str()),
+            Some("新的委托")
+        );
+
+        let accept = find_bui_node(&document.root, "primary_btn");
+        assert!(matches!(accept.node_type, BuiNodeType::Button));
+        assert_eq!(
+            accept
+                .actions
+                .first()
+                .map(|action| (action.event.as_str(), action.emit.as_str())),
+            Some(("press", "accept_quest"))
+        );
+        assert_eq!(
+            accept
+                .state_visuals
+                .get("pressed")
+                .and_then(|state| state.styles.ui_scale.as_deref()),
+            Some("0.96 0.96")
+        );
+
+        let ir_json = opendesign_html_to_bui_ir_json_str(QUEST_NOTICE_HTML)
+            .expect("generic OpenDesign overlay should compile to IR");
+        validate_bui_ir_json_str(&ir_json).expect("generic IR should validate");
+    }
+
+    #[test]
+    fn opendesign_css_important_values_are_normalized() {
+        assert_eq!(normalize_css_value("  48px !important "), "48px");
+        assert_eq!(normalize_css_value("\"#ffffff\" !important"), "#ffffff");
+    }
+
+    #[test]
+    fn opendesign_color_mix_with_transparency_preserves_alpha() {
+        assert_eq!(
+            css_color("color-mix(in oklab, #3b2818, transparent 38%)").as_deref(),
+            Some("#3B28189E")
+        );
+        assert_eq!(
+            css_color("color-mix(in oklab, black, transparent 40%)").as_deref(),
+            Some("#00000099")
+        );
+        assert_eq!(
+            css_color("color-mix(in oklab, #fff, transparent)").as_deref(),
+            Some("#FFFFFF80")
+        );
+    }
+
+    #[test]
+    fn unsupported_pseudo_element_selectors_do_not_leak_into_node_styles() {
+        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
+            .expect("OpenDesign HTML should compile");
+
+        let scroll = find_bui_node(&document.root, "shop_scroll");
+        assert_eq!(
+            scroll.visuals.background_color, None,
+            "::-webkit-scrollbar-thumb background should not leak into shop_scroll"
+        );
+        assert_eq!(
+            scroll.visuals.border_radius, None,
+            "::-webkit-scrollbar-thumb border-radius should not leak into shop_scroll"
+        );
+        assert_eq!(
+            scroll.styles.width, None,
+            "::-webkit-scrollbar width should not leak into shop_scroll"
+        );
+    }
+
+    #[test]
+    fn opendesign_length_functions_resolve_against_default_viewport() {
+        assert_eq!(css_eval_length_function("min(100%, 460px)").as_deref(), Some("460px"));
+        assert_eq!(css_eval_length_function("min(66vh, 620px)").as_deref(), Some("475.2px"));
+        assert_eq!(css_eval_length_function("min(92vw, 720px)").as_deref(), Some("720px"));
+        assert_eq!(css_eval_length_function("clamp(28px, 7vw, 36px)").as_deref(), Some("36px"));
+        assert_eq!(css_eval_length_function("clamp(20px, 4vw, 24px)").as_deref(), Some("24px"));
+        assert_eq!(css_eval_length_function("max(18px, env(safe-area-inset-top))").as_deref(), Some("18px"));
+    }
+
+    fn find_ir_node<'a>(node: &'a BuiIrNode, id: &str) -> &'a BuiIrNode {
+        find_ir_node_optional(node, id).unwrap_or_else(|| panic!("IR node '{id}' should exist"))
+    }
+
+    fn find_ir_node_optional<'a>(node: &'a BuiIrNode, id: &str) -> Option<&'a BuiIrNode> {
+        if node.id == id {
+            return Some(node);
+        }
+
+        node.children
+            .iter()
+            .find_map(|child| find_ir_node_optional(child, id))
+    }
+
+    fn find_bui_node<'a>(node: &'a BuiNode, id: &str) -> &'a BuiNode {
+        if node.id == id {
+            return node;
+        }
+
+        node.children
+            .iter()
+            .find_map(|child| find_bui_node_optional(child, id))
+            .unwrap_or_else(|| panic!("BUI node '{id}' should exist"))
+    }
+
+    fn find_bui_node_optional<'a>(node: &'a BuiNode, id: &str) -> Option<&'a BuiNode> {
+        if node.id == id {
+            return Some(node);
+        }
+
+        node.children
+            .iter()
+            .find_map(|child| find_bui_node_optional(child, id))
+    }
 }
