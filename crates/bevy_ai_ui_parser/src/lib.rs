@@ -18,13 +18,15 @@ use bevy_input_focus::{
     AutoFocus, FocusCause, InputFocus,
 };
 use bevy_log::{error, info, warn};
-use bevy_math::{Rot2, UVec2, Vec2};
+use bevy_math::{Rect, Rot2, UVec2, Vec2};
 use bevy_text::{
-    EditableText, FontSize, FontSource, Justify, LetterSpacing, LineBreak, LineHeight, TextBounds,
-    TextColor, TextCursorStyle, TextFont, TextLayout,
+    EditableText, FontSize, FontSource, FontWeight, Justify, LetterSpacing, LineBreak,
+    LineHeight, TextBounds, TextColor, TextCursorStyle, TextFont, TextLayout,
 };
 use bevy_ui::{
-    prelude::*, widget::TextShadow, Checkable, Checked, FocusPolicy, RelativeCursorPosition,
+    prelude::*,
+    widget::{ImageNodeSize, TextShadow},
+    BoxShadow, Checkable, Checked, FocusPolicy, RelativeCursorPosition, ShadowStyle,
 };
 use serde::{Deserialize, Serialize};
 
@@ -152,6 +154,7 @@ impl Plugin for AiUiPlugin {
                 Update,
                 (
                     material_shader_notice_system,
+                    sync_background_image_layout_system,
                     text_input_proxy_focus_system,
                     sync_text_input_mirror_system,
                     dispatch_bui_tab_selection_system,
@@ -846,6 +849,8 @@ struct BuiVisuals {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     border_radius: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    box_shadow: Option<BuiBoxShadowConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     material_shader: Option<String>,
 }
 
@@ -855,8 +860,26 @@ impl BuiVisuals {
             && self.border_color.is_none()
             && self.border_width.is_none()
             && self.border_radius.is_none()
+            && self.box_shadow.is_none()
             && self.material_shader.is_none()
     }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct BuiBoxShadowConfig {
+    #[serde(default, skip_serializing_if = "is_false")]
+    inset: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    offset_x: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    offset_y: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    blur_radius: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    spread_radius: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    color: Option<String>,
 }
 
 #[derive(Component, Debug, Clone, Deserialize, Serialize)]
@@ -869,6 +892,14 @@ struct BuiTextConfig {
     font_color: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     font_path: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    font_weight: Option<u16>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    line_height: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    letter_spacing: Option<f32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    text_align: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     text_shadow: Option<BuiTextShadowConfig>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -896,6 +927,10 @@ struct BuiImageConfig {
     texture_path: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     image_mode: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    background_size: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    background_position: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     atlas: Option<BuiTextureAtlasConfig>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -941,6 +976,12 @@ fn is_false(value: &bool) -> bool {
 
 fn is_zero(value: &usize) -> bool {
     *value == 0
+}
+
+#[derive(Component, Debug, Clone)]
+struct BuiBackgroundImageLayout {
+    size: Option<String>,
+    position: Option<String>,
 }
 
 fn spawn_bui_scene(
@@ -1209,6 +1250,7 @@ fn opendesign_html_to_generic_bui_document(
     apply_opendesign_preset(&mut root, OpenDesignPreset::OverlayRoot);
     apply_opendesign_styles(stylesheet, &mut root, overlay);
     generic_append_children(&mut root, overlay, stylesheet, &mut id_counts);
+    enhance_hero_game_ui_defaults(&mut root);
 
     let document = BuiDocument {
         version: EXPECTED_VERSION.to_string(),
@@ -1237,9 +1279,22 @@ fn generic_append_children(
     }
 
     let mut direct_text_index = 0;
+    let mut svg_fallback_index = 0;
 
     for child in dom_node.children() {
         if child.is_element() {
+            if is_svg_tag(child.tag_name().name()) {
+                if child.tag_name().name() == "svg"
+                    && let Some(mut svg_fallback) =
+                        svg_fallback_text_node(parent, child, stylesheet, svg_fallback_index + 1)
+                {
+                    svg_fallback_index += 1;
+                    apply_inherited_text_styles(stylesheet, &mut svg_fallback, child);
+                    apply_opendesign_styles(stylesheet, &mut svg_fallback, child);
+                    parent.children.push(svg_fallback);
+                }
+                continue;
+            }
             let id = generic_dom_id(child, id_counts);
             let node_type = generic_node_type(child);
             let mut child_node = generic_element_node(&id, node_type, stylesheet, child);
@@ -1254,10 +1309,13 @@ fn generic_append_children(
                 "#3B2818",
                 Some("Hiragino Sans GB.ttc"),
             );
+            apply_inherited_text_styles(stylesheet, &mut text_child, dom_node);
             apply_opendesign_styles(stylesheet, &mut text_child, dom_node);
             parent.children.push(text_child);
         }
     }
+
+    propagate_direct_text_state_visuals(parent);
 
     let after_decls = stylesheet.matching_pseudo_declarations(dom_node, "after");
     if !after_decls.is_empty() {
@@ -1269,6 +1327,46 @@ fn generic_append_children(
         }
         parent.children.push(pseudo_node);
     }
+}
+
+fn propagate_direct_text_state_visuals(node: &mut BuiNode) {
+    let Some(text_index) = node
+        .children
+        .iter()
+        .position(|child| matches!(child.node_type, BuiNodeType::Text))
+    else {
+        return;
+    };
+
+    if node.state_visuals.is_empty() {
+        return;
+    }
+
+    let text_child = &mut node.children[text_index];
+    for (state_name, state_visual) in &node.state_visuals {
+        let has_textual_state = state_visual.text_color.is_some()
+            || state_visual.styles.visibility.is_some();
+        if !has_textual_state {
+            continue;
+        }
+
+        let text_state = ensure_state_visual(text_child, state_name);
+        if text_state.text_color.is_none() {
+            text_state.text_color = state_visual.text_color.clone();
+        }
+        if text_state.styles.visibility.is_none() {
+            text_state.styles.visibility = state_visual.styles.visibility.clone();
+        }
+    }
+}
+
+fn direct_text_child_font_color(node: &BuiNode) -> Option<&str> {
+    node.children.iter().find_map(|child| {
+        matches!(child.node_type, BuiNodeType::Text)
+            .then_some(child.text_config.as_ref())
+            .flatten()
+            .map(|text_config| text_config.font_color.as_str())
+    })
 }
 
 fn generic_element_node(
@@ -1288,6 +1386,19 @@ fn generic_element_node(
         );
     }
 
+    if let Some(value) = dom_node.attribute("data-skill").filter(|value| !value.trim().is_empty()) {
+        node.custom_tags.push(format!("data-skill:{value}"));
+    }
+    if let Some(value) = dom_node.attribute("data-equip").filter(|value| !value.trim().is_empty()) {
+        node.custom_tags.push(format!("data-equip:{value}"));
+    }
+    if let Some(value) = dom_node.attribute("data-tab").filter(|value| !value.trim().is_empty()) {
+        node.custom_tags.push(format!("data-tab:{value}"));
+    }
+    if let Some(value) = dom_node.attribute("aria-label").filter(|value| !value.trim().is_empty()) {
+        node.custom_tags.push(format!("aria-label:{value}"));
+    }
+
     if let Some(action) = dom_node.attribute("data-action") {
         node.actions.push(BuiActionBinding {
             event: "press".to_string(),
@@ -1296,6 +1407,7 @@ fn generic_element_node(
     }
 
     apply_opendesign_styles(stylesheet, &mut node, dom_node);
+    suppress_decorative_gradient_fallbacks(&mut node);
     node
 }
 
@@ -1315,6 +1427,1695 @@ fn generic_node_type(dom_node: roxmltree::Node<'_, '_>) -> BuiNodeType {
 
 fn is_button_like_class(class_name: &str) -> bool {
     class_name == "btn" || class_name.ends_with("-btn") || class_name.ends_with("-button")
+}
+
+fn suppress_decorative_gradient_fallbacks(node: &mut BuiNode) {
+    let has_class = |class_name: &str| {
+        node.custom_tags
+            .iter()
+            .any(|tag| tag == &format!("class:{class_name}"))
+    };
+
+    if has_class("crest") {
+        node.visuals.background_color = None;
+    }
+}
+
+fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
+    let is_hero_game_ui = root
+        .custom_tags
+        .iter()
+        .any(|tag| tag == "class:game-stage");
+    if !is_hero_game_ui {
+        return;
+    }
+
+    if let Some(stars) = find_bui_node_mut(root, "stars")
+        && stars
+            .children
+            .iter()
+            .all(is_decorative_icon_helper_node)
+    {
+        stars
+            .children
+            .retain(|child| !child.custom_tags.iter().any(|tag| tag == "svg:fallback"));
+        if stars.children.is_empty() {
+            for index in 0..5 {
+                stars.children.push(text_node(
+                    &format!("hero_star_text_{}", index + 1),
+                    "★",
+                    42.0,
+                    "#F5C742",
+                    Some("Hiragino Sans GB.ttc"),
+                ));
+            }
+        }
+    }
+
+    if let Some(stats_list) = find_bui_node_mut(root, "statslist")
+        && stats_list.children.is_empty()
+    {
+        for (index, (icon, label, base, bonus)) in hero_game_ui_base_stats().iter().enumerate() {
+            stats_list
+                .children
+                .push(hero_game_ui_stat_row(index + 1, icon, label, base, bonus));
+        }
+    }
+
+    if let Some(panel_section) = find_bui_node_mut(root, "panel_section") {
+        panel_section.styles.display = Some("grid".to_string());
+        panel_section.styles.row_gap = Some("18px".to_string());
+    }
+
+    if let Some(panel_section) = find_bui_node_mut(root, "panel_section_2") {
+        panel_section.styles.display = Some("grid".to_string());
+        panel_section.styles.row_gap = Some("14px".to_string());
+    }
+
+    if let Some(stats_list) = find_bui_node_mut(root, "statslist") {
+        stats_list.styles.display = Some("grid".to_string());
+        stats_list.styles.row_gap = Some("6px".to_string());
+    }
+
+    if let Some(image_layer) = find_bui_node_mut(root, "image_layer") {
+        if image_layer.visuals.background_color.is_none() {
+            image_layer.visuals.background_color = Some("#2D313C".to_string());
+        }
+        inject_hero_image_layer_layers(image_layer);
+    }
+
+    if let Some(crest) = find_bui_node_mut(root, "crest") {
+        crest.visuals.background_color = Some("#38455424".to_string());
+        crest.visuals.border_color = Some("#61748852".to_string());
+        crest.visuals.border_width = Some("2px".to_string());
+        crest.visuals.border_radius = Some("50%".to_string());
+        inject_hero_crest_layers(crest);
+    }
+
+    if let Some(hero_glow) = find_bui_node_mut(root, "hero_glow") {
+        if hero_glow.visuals.background_color.is_none() {
+            hero_glow.visuals.background_color = Some("#E2D6AA52".to_string());
+        }
+        hero_glow.visuals.border_radius = Some("999px".to_string());
+        hero_glow.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("18px".to_string()),
+            blur_radius: Some("52px".to_string()),
+            spread_radius: Some("10px".to_string()),
+            color: Some("#F5D26B3D".to_string()),
+        });
+        inject_hero_glow_layers(hero_glow);
+    }
+
+    if let Some(hero_zone) = find_bui_node_mut(root, "hero_zone") {
+        inject_hero_zone_layers(hero_zone);
+    }
+
+    if let Some(hero_cutout) = find_bui_node_mut(root, "hero_cutout") {
+        if hero_cutout.visuals.background_color.is_none() {
+            hero_cutout.visuals.background_color = Some("#D7D1C6D8".to_string());
+        }
+        if hero_cutout.visuals.border_radius.is_none() {
+            hero_cutout.visuals.border_radius = Some("96px".to_string());
+        }
+        if hero_cutout.visuals.border_color.is_none() {
+            hero_cutout.visuals.border_color = Some("#FFF3D666".to_string());
+            hero_cutout.visuals.border_width = Some("1px".to_string());
+        }
+        hero_cutout.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("24px".to_string()),
+            offset_y: Some("24px".to_string()),
+            blur_radius: Some("32px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#2E30403A".to_string()),
+        });
+        inject_hero_cutout_layers(hero_cutout);
+    }
+
+    if let Some(info_panel) = find_bui_node_mut(root, "info_panel") {
+        info_panel.visuals.background_color = Some("#C7A97A66".to_string());
+        info_panel.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("-10px".to_string()),
+            offset_y: Some("0px".to_string()),
+            blur_radius: Some("34px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#EAD6AF24".to_string()),
+        });
+        inject_hero_info_panel_layers(info_panel);
+    }
+
+    style_hero_game_ui_controls(root);
+
+    for hidden_overlay_id in ["popover", "toast"] {
+        if let Some(node) = find_bui_node_mut(root, hidden_overlay_id) {
+            node.styles.visibility = Some("hidden".to_string());
+        }
+    }
+
+    for meter_label_id in ["b", "b_2"] {
+        if let Some(meter_label) = find_bui_node_mut(root, meter_label_id) {
+            meter_label.styles.display = Some("flex".to_string());
+            meter_label.styles.align_items = Some("center".to_string());
+            meter_label.styles.justify_content = Some("flex-end".to_string());
+            meter_label.styles.column_gap = Some("0".to_string());
+        }
+    }
+
+    for semantic_icon_id in [
+        "backbutton",
+        "bar_icon",
+        "bar_icon_2",
+        "skill_button",
+        "skill_button_2",
+        "skill_button_3",
+        "equip_slot",
+        "equip_slot_2",
+        "equip_slot_3",
+        "equip_slot_4",
+        "equip_slot_5",
+    ] {
+        ensure_text_icon_child(root, semantic_icon_id);
+    }
+}
+
+fn style_hero_game_ui_controls(root: &mut BuiNode) {
+    style_hero_tab_button(root, "tab_button", true);
+    style_hero_tab_button(root, "tab_button_2", false);
+    style_hero_tab_button(root, "tab_button_3", false);
+
+    style_hero_action_button(root, "detailsbutton", false);
+    style_hero_action_button(root, "upgradebutton", true);
+    style_hero_mobile_toggle(root, "paneltoggle");
+
+    style_hero_equip_slot(root, "equip_slot", true);
+    style_hero_equip_slot(root, "equip_slot_2", false);
+    style_hero_equip_slot(root, "equip_slot_3", false);
+    style_hero_equip_slot(root, "equip_slot_4", false);
+    style_hero_equip_slot(root, "equip_slot_5", false);
+
+    for row_id in [
+        "hero_stat_row_1",
+        "hero_stat_row_2",
+        "hero_stat_row_3",
+        "hero_stat_row_4",
+        "hero_stat_row_5",
+    ] {
+        style_hero_stat_row(root, row_id);
+    }
+
+}
+
+fn style_hero_tab_button(root: &mut BuiNode, id: &str, selected: bool) {
+    let Some(button) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    button.styles.position_type = Some("relative".to_string());
+    button.styles.min_height = Some("38px".to_string());
+    button.styles.padding = Some("0 14px".to_string());
+    button.visuals.border_width = Some("1px".to_string());
+    button.visuals.border_radius = Some("3px".to_string());
+
+    if selected {
+        button.visuals.background_color = Some("#E7D4A7B8".to_string());
+        button.visuals.border_color = Some("#E3D1A082".to_string());
+        button.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("1px".to_string()),
+            blur_radius: Some("0px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#FFF9E052".to_string()),
+        });
+        ensure_state_visual(button, "normal").visuals.background_color = Some("#BAA88A36".to_string());
+        ensure_state_visual(button, "normal").visuals.border_color = Some("#6B564132".to_string());
+        ensure_state_visual(button, "selected").visuals.background_color = Some("#E7D4A7B8".to_string());
+        ensure_state_visual(button, "selected").visuals.border_color = Some("#E3D1A082".to_string());
+        ensure_state_visual(button, "selected").visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("1px".to_string()),
+            blur_radius: Some("0px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#FFF9E052".to_string()),
+        });
+    } else {
+        button.visuals.background_color = Some("#BAA88A36".to_string());
+        button.visuals.border_color = Some("#6B564132".to_string());
+        button.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("1px".to_string()),
+            blur_radius: Some("0px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#20161D14".to_string()),
+        });
+        ensure_state_visual(button, "normal").visuals.background_color = Some("#BAA88A36".to_string());
+        ensure_state_visual(button, "normal").visuals.border_color = Some("#6B564132".to_string());
+        ensure_state_visual(button, "selected").visuals.background_color = Some("#E7D4A7B8".to_string());
+        ensure_state_visual(button, "selected").visuals.border_color = Some("#E3D1A082".to_string());
+    }
+
+    if let Some(text) = first_direct_text_child_mut(button)
+        && let Some(text_config) = text.text_config.as_mut()
+    {
+        text_config.font_color = if selected {
+            "#2D1A1D".to_string()
+        } else {
+            "#4B383F".to_string()
+        };
+    }
+}
+
+fn style_hero_action_button(root: &mut BuiNode, id: &str, primary: bool) {
+    let Some(button) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    button.styles.position_type = Some("relative".to_string());
+    button.styles.min_height = Some("48px".to_string());
+    button.styles.padding = Some("0 22px".to_string());
+    button.visuals.border_width = Some("1px".to_string());
+    button.visuals.border_radius = Some("3px".to_string());
+
+    if primary {
+        button.visuals.background_color = Some("#E7D9A8F0".to_string());
+        button.visuals.border_color = Some("#E8D59DCE".to_string());
+        button.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("5px".to_string()),
+            blur_radius: Some("0px".to_string()),
+            spread_radius: Some("0px".to_string()),
+            color: Some("#8A603580".to_string()),
+        });
+    } else {
+        button.visuals.background_color = Some("#43343E88".to_string());
+        button.visuals.border_color = Some("#E7D7B56B".to_string());
+        button.visuals.box_shadow = Some(BuiBoxShadowConfig {
+            inset: false,
+            offset_x: Some("0px".to_string()),
+            offset_y: Some("0px".to_string()),
+            blur_radius: Some("0px".to_string()),
+            spread_radius: Some("1px".to_string()),
+            color: Some("#2C1E251E".to_string()),
+        });
+    }
+
+    if let Some(text) = first_direct_text_child_mut(button)
+        && let Some(text_config) = text.text_config.as_mut()
+    {
+        text_config.font_color = if primary {
+            "#2B1719".to_string()
+        } else {
+            "#F3E8D5".to_string()
+        };
+    }
+}
+
+fn style_hero_mobile_toggle(root: &mut BuiNode, id: &str) {
+    let Some(button) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    button.visuals.background_color = Some("#E7D8A9EB".to_string());
+    button.visuals.border_color = Some("#EDD89DAD".to_string());
+    button.visuals.border_width = Some("1px".to_string());
+    button.visuals.border_radius = Some("999px".to_string());
+    button.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("8px".to_string()),
+        blur_radius: Some("24px".to_string()),
+        spread_radius: Some("0px".to_string()),
+        color: Some("#1610185C".to_string()),
+    });
+
+    if let Some(text) = first_direct_text_child_mut(button)
+        && let Some(text_config) = text.text_config.as_mut()
+    {
+        text_config.font_color = "#2E1B1E".to_string();
+    }
+}
+
+fn style_hero_equip_slot(root: &mut BuiNode, id: &str, selected: bool) {
+    let Some(slot) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    slot.styles.position_type = Some("relative".to_string());
+    slot.visuals.background_color = Some("#5E566286".to_string());
+    slot.visuals.border_color = Some(if selected {
+        "#F0D48AA8".to_string()
+    } else {
+        "#C9B59B7A".to_string()
+    });
+    slot.visuals.border_width = Some("2px".to_string());
+    slot.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some(if selected { "5px" } else { "3px" }.to_string()),
+        blur_radius: Some("0px".to_string()),
+        spread_radius: Some(if selected { "0px" } else { "0px" }.to_string()),
+        color: Some(if selected {
+            "#875C346C".to_string()
+        } else {
+            "#6A443650".to_string()
+        }),
+    });
+
+    if let Some(text) = first_direct_text_child_mut(slot)
+        && let Some(text_config) = text.text_config.as_mut()
+    {
+        text_config.font_color = if selected {
+            "#F7E7C7".to_string()
+        } else {
+            "#F3E3C6".to_string()
+        };
+    }
+
+    if selected
+        && let Some(pseudo_after) = find_bui_node_mut(slot, &format!("{id}_pseudo_after"))
+    {
+        pseudo_after.visuals.border_color = Some("#F5E5C4A8".to_string());
+        pseudo_after.visuals.border_width = Some("1px".to_string());
+    }
+}
+
+fn style_hero_stat_row(root: &mut BuiNode, id: &str) {
+    let Some(row) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    row.styles.position_type = Some("relative".to_string());
+    row.visuals.background_color = Some("#6D5A6333".to_string());
+
+    if row
+        .children
+        .iter()
+        .any(|child| child.id == format!("{id}_sheen"))
+    {
+        return;
+    }
+
+    let mut sheen = bui_node(&format!("{id}_sheen"), BuiNodeType::Node);
+    sheen.custom_tags.push("hero-stat-row:decor".to_string());
+    sheen.styles.position_type = Some("absolute".to_string());
+    sheen.styles.left = Some("42%".to_string());
+    sheen.styles.right = Some("0".to_string());
+    sheen.styles.top = Some("0".to_string());
+    sheen.styles.bottom = Some("0".to_string());
+    sheen.styles.z_index = Some("-1".to_string());
+    sheen.visuals.background_color = Some("#C9AF8D18".to_string());
+    row.children.insert(0, sheen);
+}
+
+fn ensure_state_visual<'a>(node: &'a mut BuiNode, state: &str) -> &'a mut BuiStateVisual {
+    node.state_visuals
+        .entry(state.to_string())
+        .or_insert_with(|| BuiStateVisual {
+            styles: BuiStyles::default(),
+            visuals: BuiVisuals::default(),
+            text_color: None,
+        })
+}
+
+fn first_direct_text_child_mut(node: &mut BuiNode) -> Option<&mut BuiNode> {
+    node.children
+        .iter_mut()
+        .find(|child| matches!(child.node_type, BuiNodeType::Text))
+}
+
+fn inject_hero_cutout_layers(hero_cutout: &mut BuiNode) {
+    if !hero_cutout.children.is_empty() {
+        return;
+    }
+
+    let mut upper_crown = bui_node("hero_cutout_upper_crown", BuiNodeType::Node);
+    upper_crown.custom_tags.push("hero-cutout:layer".to_string());
+    upper_crown.styles.position_type = Some("absolute".to_string());
+    upper_crown.styles.left = Some("28%".to_string());
+    upper_crown.styles.right = Some("24%".to_string());
+    upper_crown.styles.top = Some("0".to_string());
+    upper_crown.styles.height = Some("12%".to_string());
+    upper_crown.styles.z_index = Some("4".to_string());
+    upper_crown.visuals.background_color = Some("#FFF4DE92".to_string());
+    upper_crown.visuals.border_radius = Some("999px".to_string());
+
+    let mut torso = bui_node("hero_cutout_torso", BuiNodeType::Node);
+    torso.custom_tags.push("hero-cutout:layer".to_string());
+    torso.styles.position_type = Some("absolute".to_string());
+    torso.styles.left = Some("20%".to_string());
+    torso.styles.right = Some("14%".to_string());
+    torso.styles.top = Some("16%".to_string());
+    torso.styles.bottom = Some("4%".to_string());
+    torso.visuals.background_color = Some("#EEE2D1D2".to_string());
+    torso.visuals.border_radius = Some("96px".to_string());
+
+    let mut shoulders = bui_node("hero_cutout_shoulders", BuiNodeType::Node);
+    shoulders.custom_tags.push("hero-cutout:layer".to_string());
+    shoulders.styles.position_type = Some("absolute".to_string());
+    shoulders.styles.left = Some("12%".to_string());
+    shoulders.styles.right = Some("8%".to_string());
+    shoulders.styles.top = Some("12%".to_string());
+    shoulders.styles.height = Some("26%".to_string());
+    shoulders.visuals.background_color = Some("#F6EEDC9A".to_string());
+    shoulders.visuals.border_radius = Some("999px".to_string());
+    shoulders.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("10px".to_string()),
+        blur_radius: Some("24px".to_string()),
+        spread_radius: Some("0px".to_string()),
+        color: Some("#FFF7EA2E".to_string()),
+    });
+
+    let mut head = bui_node("hero_cutout_head", BuiNodeType::Node);
+    head.custom_tags.push("hero-cutout:layer".to_string());
+    head.styles.position_type = Some("absolute".to_string());
+    head.styles.left = Some("34%".to_string());
+    head.styles.right = Some("28%".to_string());
+    head.styles.top = Some("5%".to_string());
+    head.styles.height = Some("18%".to_string());
+    head.styles.z_index = Some("3".to_string());
+    head.visuals.background_color = Some("#FFF6E4B4".to_string());
+    head.visuals.border_radius = Some("999px".to_string());
+
+    let mut rim_light = bui_node("hero_cutout_rim_light", BuiNodeType::Node);
+    rim_light.custom_tags.push("hero-cutout:layer".to_string());
+    rim_light.styles.position_type = Some("absolute".to_string());
+    rim_light.styles.left = Some("22%".to_string());
+    rim_light.styles.right = Some("36%".to_string());
+    rim_light.styles.top = Some("8%".to_string());
+    rim_light.styles.bottom = Some("34%".to_string());
+    rim_light.styles.z_index = Some("2".to_string());
+    rim_light.visuals.background_color = Some("#FFF8EE72".to_string());
+    rim_light.visuals.border_radius = Some("88px".to_string());
+
+    let mut left_trim = bui_node("hero_cutout_left_trim", BuiNodeType::Node);
+    left_trim.custom_tags.push("hero-cutout:layer".to_string());
+    left_trim.styles.position_type = Some("absolute".to_string());
+    left_trim.styles.left = Some("9%".to_string());
+    left_trim.styles.width = Some("16%".to_string());
+    left_trim.styles.top = Some("28%".to_string());
+    left_trim.styles.bottom = Some("18%".to_string());
+    left_trim.visuals.background_color = Some("#CABCA768".to_string());
+    left_trim.visuals.border_radius = Some("72px".to_string());
+
+    let mut left_foot = bui_node("hero_cutout_left_foot", BuiNodeType::Node);
+    left_foot.custom_tags.push("hero-cutout:layer".to_string());
+    left_foot.styles.position_type = Some("absolute".to_string());
+    left_foot.styles.left = Some("18%".to_string());
+    left_foot.styles.width = Some("20%".to_string());
+    left_foot.styles.top = Some("68%".to_string());
+    left_foot.styles.bottom = Some("0".to_string());
+    left_foot.visuals.background_color = Some("#D9CAB48C".to_string());
+    left_foot.visuals.border_radius = Some("48px".to_string());
+
+    let mut cool_shadow = bui_node("hero_cutout_cool_shadow", BuiNodeType::Node);
+    cool_shadow.custom_tags.push("hero-cutout:layer".to_string());
+    cool_shadow.styles.position_type = Some("absolute".to_string());
+    cool_shadow.styles.left = Some("52%".to_string());
+    cool_shadow.styles.right = Some("2%".to_string());
+    cool_shadow.styles.top = Some("10%".to_string());
+    cool_shadow.styles.bottom = Some("8%".to_string());
+    cool_shadow.visuals.background_color = Some("#5E6F935F".to_string());
+    cool_shadow.visuals.border_radius = Some("104px".to_string());
+
+    let mut right_spine = bui_node("hero_cutout_right_spine", BuiNodeType::Node);
+    right_spine.custom_tags.push("hero-cutout:layer".to_string());
+    right_spine.styles.position_type = Some("absolute".to_string());
+    right_spine.styles.left = Some("66%".to_string());
+    right_spine.styles.right = Some("0".to_string());
+    right_spine.styles.top = Some("24%".to_string());
+    right_spine.styles.bottom = Some("12%".to_string());
+    right_spine.styles.z_index = Some("2".to_string());
+    right_spine.visuals.background_color = Some("#2A24315A".to_string());
+    right_spine.visuals.border_radius = Some("110px".to_string());
+
+    let mut lower_taper = bui_node("hero_cutout_lower_taper", BuiNodeType::Node);
+    lower_taper.custom_tags.push("hero-cutout:layer".to_string());
+    lower_taper.styles.position_type = Some("absolute".to_string());
+    lower_taper.styles.left = Some("28%".to_string());
+    lower_taper.styles.right = Some("20%".to_string());
+    lower_taper.styles.top = Some("64%".to_string());
+    lower_taper.styles.bottom = Some("0".to_string());
+    lower_taper.visuals.background_color = Some("#E8DCC7A4".to_string());
+    lower_taper.visuals.border_radius = Some("68px".to_string());
+
+    let mut ground_shadow = bui_node("hero_cutout_ground_shadow", BuiNodeType::Node);
+    ground_shadow
+        .custom_tags
+        .push("hero-cutout:layer".to_string());
+    ground_shadow.styles.position_type = Some("absolute".to_string());
+    ground_shadow.styles.left = Some("4%".to_string());
+    ground_shadow.styles.right = Some("10%".to_string());
+    ground_shadow.styles.top = Some("74%".to_string());
+    ground_shadow.styles.bottom = Some("2%".to_string());
+    ground_shadow.visuals.background_color = Some("#3A2E3480".to_string());
+    ground_shadow.visuals.border_radius = Some("999px".to_string());
+    ground_shadow.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("8px".to_string()),
+        offset_y: Some("18px".to_string()),
+        blur_radius: Some("26px".to_string()),
+        spread_radius: Some("0px".to_string()),
+        color: Some("#20161D4A".to_string()),
+    });
+
+    hero_cutout.children.push(upper_crown);
+    hero_cutout.children.push(torso);
+    hero_cutout.children.push(shoulders);
+    hero_cutout.children.push(head);
+    hero_cutout.children.push(rim_light);
+    hero_cutout.children.push(left_trim);
+    hero_cutout.children.push(left_foot);
+    hero_cutout.children.push(cool_shadow);
+    hero_cutout.children.push(right_spine);
+    hero_cutout.children.push(lower_taper);
+    hero_cutout.children.push(ground_shadow);
+}
+
+fn inject_hero_glow_layers(hero_glow: &mut BuiNode) {
+    if !hero_glow.children.is_empty() {
+        return;
+    }
+
+    let mut core = bui_node("hero_glow_core", BuiNodeType::Node);
+    core.custom_tags.push("hero-glow:layer".to_string());
+    core.styles.position_type = Some("absolute".to_string());
+    core.styles.left = Some("10%".to_string());
+    core.styles.right = Some("18%".to_string());
+    core.styles.top = Some("10%".to_string());
+    core.styles.bottom = Some("8%".to_string());
+    core.visuals.background_color = Some("#F4D98B55".to_string());
+    core.visuals.border_radius = Some("999px".to_string());
+    core.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some("36px".to_string()),
+        spread_radius: Some("16px".to_string()),
+        color: Some("#F3D06C33".to_string()),
+    });
+
+    let mut halo = bui_node("hero_glow_halo", BuiNodeType::Node);
+    halo.custom_tags.push("hero-glow:layer".to_string());
+    halo.styles.position_type = Some("absolute".to_string());
+    halo.styles.left = Some("0".to_string());
+    halo.styles.right = Some("0".to_string());
+    halo.styles.top = Some("16%".to_string());
+    halo.styles.bottom = Some("0".to_string());
+    halo.visuals.background_color = Some("#E7C15A24".to_string());
+    halo.visuals.border_radius = Some("999px".to_string());
+    halo.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("10px".to_string()),
+        blur_radius: Some("48px".to_string()),
+        spread_radius: Some("20px".to_string()),
+        color: Some("#E0B4502A".to_string()),
+    });
+
+    let mut floor_bloom = bui_node("hero_glow_floor_bloom", BuiNodeType::Node);
+    floor_bloom.custom_tags.push("hero-glow:layer".to_string());
+    floor_bloom.styles.position_type = Some("absolute".to_string());
+    floor_bloom.styles.left = Some("16%".to_string());
+    floor_bloom.styles.right = Some("20%".to_string());
+    floor_bloom.styles.top = Some("54%".to_string());
+    floor_bloom.styles.bottom = Some("0".to_string());
+    floor_bloom.visuals.background_color = Some("#F0C96A2E".to_string());
+    floor_bloom.visuals.border_radius = Some("999px".to_string());
+
+    hero_glow.children.push(halo);
+    hero_glow.children.push(core);
+    hero_glow.children.push(floor_bloom);
+}
+
+fn inject_hero_image_layer_layers(image_layer: &mut BuiNode) {
+    if image_layer
+        .children
+        .iter()
+        .any(|child| child.id == "image_layer_blue_wash")
+    {
+        return;
+    }
+
+    let mut blue_wash = bui_node("image_layer_blue_wash", BuiNodeType::Node);
+    blue_wash.custom_tags.push("hero-image-layer:decor".to_string());
+    blue_wash.styles.position_type = Some("absolute".to_string());
+    blue_wash.styles.left = Some("0".to_string());
+    blue_wash.styles.top = Some("0".to_string());
+    blue_wash.styles.width = Some("48%".to_string());
+    blue_wash.styles.height = Some("52%".to_string());
+    blue_wash.visuals.background_color = Some("#B7D5EC24".to_string());
+    blue_wash.visuals.border_radius = Some("999px".to_string());
+
+    let mut horizon = bui_node("image_layer_horizon_shade", BuiNodeType::Node);
+    horizon.custom_tags.push("hero-image-layer:decor".to_string());
+    horizon.styles.position_type = Some("absolute".to_string());
+    horizon.styles.left = Some("54%".to_string());
+    horizon.styles.right = Some("0".to_string());
+    horizon.styles.top = Some("0".to_string());
+    horizon.styles.bottom = Some("0".to_string());
+    horizon.visuals.background_color = Some("#463B433D".to_string());
+
+    let mut floor_glow = bui_node("image_layer_floor_glow", BuiNodeType::Node);
+    floor_glow.custom_tags.push("hero-image-layer:decor".to_string());
+    floor_glow.styles.position_type = Some("absolute".to_string());
+    floor_glow.styles.left = Some("14%".to_string());
+    floor_glow.styles.width = Some("34%".to_string());
+    floor_glow.styles.bottom = Some("4%".to_string());
+    floor_glow.styles.height = Some("22%".to_string());
+    floor_glow.visuals.background_color = Some("#D8B46C26".to_string());
+    floor_glow.visuals.border_radius = Some("999px".to_string());
+    floor_glow.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some("36px".to_string()),
+        spread_radius: Some("8px".to_string()),
+        color: Some("#D8B46C18".to_string()),
+    });
+
+    let mut top_burst = bui_node("image_layer_top_burst", BuiNodeType::Node);
+    top_burst
+        .custom_tags
+        .push("hero-image-layer:decor".to_string());
+    top_burst.styles.position_type = Some("absolute".to_string());
+    top_burst.styles.left = Some("8%".to_string());
+    top_burst.styles.top = Some("3%".to_string());
+    top_burst.styles.width = Some("34%".to_string());
+    top_burst.styles.height = Some("28%".to_string());
+    top_burst.visuals.background_color = Some("#C8E4F250".to_string());
+    top_burst.visuals.border_radius = Some("999px".to_string());
+    top_burst.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some("48px".to_string()),
+        spread_radius: Some("12px".to_string()),
+        color: Some("#9FCFE040".to_string()),
+    });
+
+    let mut mid_screen = bui_node("image_layer_mid_screen", BuiNodeType::Node);
+    mid_screen
+        .custom_tags
+        .push("hero-image-layer:decor".to_string());
+    mid_screen.styles.position_type = Some("absolute".to_string());
+    mid_screen.styles.left = Some("0".to_string());
+    mid_screen.styles.right = Some("38%".to_string());
+    mid_screen.styles.top = Some("0".to_string());
+    mid_screen.styles.bottom = Some("18%".to_string());
+    mid_screen.visuals.background_color = Some("#D0E6F214".to_string());
+
+    let mut bottom_vignette = bui_node("image_layer_bottom_vignette", BuiNodeType::Node);
+    bottom_vignette
+        .custom_tags
+        .push("hero-image-layer:decor".to_string());
+    bottom_vignette.styles.position_type = Some("absolute".to_string());
+    bottom_vignette.styles.left = Some("0".to_string());
+    bottom_vignette.styles.right = Some("0".to_string());
+    bottom_vignette.styles.bottom = Some("0".to_string());
+    bottom_vignette.styles.height = Some("34%".to_string());
+    bottom_vignette.visuals.background_color = Some("#1B121A40".to_string());
+
+    image_layer.children.push(blue_wash);
+    image_layer.children.push(top_burst);
+    image_layer.children.push(mid_screen);
+    image_layer.children.push(horizon);
+    image_layer.children.push(floor_glow);
+    image_layer.children.push(bottom_vignette);
+}
+
+fn inject_hero_crest_layers(crest: &mut BuiNode) {
+    if !crest.children.is_empty() {
+        return;
+    }
+
+    let mut inner_ring = bui_node("crest_inner_ring", BuiNodeType::Node);
+    inner_ring.custom_tags.push("hero-crest:decor".to_string());
+    inner_ring.styles.position_type = Some("absolute".to_string());
+    inner_ring.styles.left = Some("18%".to_string());
+    inner_ring.styles.right = Some("18%".to_string());
+    inner_ring.styles.top = Some("18%".to_string());
+    inner_ring.styles.bottom = Some("18%".to_string());
+    inner_ring.visuals.border_color = Some("#5D708444".to_string());
+    inner_ring.visuals.border_width = Some("2px".to_string());
+    inner_ring.visuals.border_radius = Some("50%".to_string());
+
+    let mut core = bui_node("crest_core", BuiNodeType::Node);
+    core.custom_tags.push("hero-crest:decor".to_string());
+    core.styles.position_type = Some("absolute".to_string());
+    core.styles.left = Some("31%".to_string());
+    core.styles.right = Some("31%".to_string());
+    core.styles.top = Some("31%".to_string());
+    core.styles.bottom = Some("31%".to_string());
+    core.visuals.background_color = Some("#4151602B".to_string());
+    core.visuals.border_radius = Some("50%".to_string());
+
+    crest.children.push(inner_ring);
+    crest.children.push(core);
+}
+
+fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
+    if info_panel
+        .children
+        .iter()
+        .any(|child| child.id == "info_panel_mid_warmth")
+    {
+        return;
+    }
+
+    let mut left_cut_1 = bui_node("info_panel_left_cut_1", BuiNodeType::Node);
+    left_cut_1
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    left_cut_1.styles.position_type = Some("absolute".to_string());
+    left_cut_1.styles.left = Some("0".to_string());
+    left_cut_1.styles.top = Some("0".to_string());
+    left_cut_1.styles.bottom = Some("0".to_string());
+    left_cut_1.styles.width = Some("9%".to_string());
+    left_cut_1.styles.z_index = Some("1".to_string());
+    left_cut_1.visuals.background_color = Some("#2D2530D2".to_string());
+
+    let mut left_cut_2 = bui_node("info_panel_left_cut_2", BuiNodeType::Node);
+    left_cut_2
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    left_cut_2.styles.position_type = Some("absolute".to_string());
+    left_cut_2.styles.left = Some("9%".to_string());
+    left_cut_2.styles.top = Some("0".to_string());
+    left_cut_2.styles.bottom = Some("0".to_string());
+    left_cut_2.styles.width = Some("7%".to_string());
+    left_cut_2.styles.z_index = Some("1".to_string());
+    left_cut_2.visuals.background_color = Some("#5D4D438E".to_string());
+
+    let mut left_cut_3 = bui_node("info_panel_left_cut_3", BuiNodeType::Node);
+    left_cut_3
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    left_cut_3.styles.position_type = Some("absolute".to_string());
+    left_cut_3.styles.left = Some("16%".to_string());
+    left_cut_3.styles.top = Some("0".to_string());
+    left_cut_3.styles.bottom = Some("0".to_string());
+    left_cut_3.styles.width = Some("5%".to_string());
+    left_cut_3.styles.z_index = Some("1".to_string());
+    left_cut_3.visuals.background_color = Some("#A88A6550".to_string());
+
+    let mut left_mask_soft = bui_node("info_panel_left_mask_soft", BuiNodeType::Node);
+    left_mask_soft
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    left_mask_soft.styles.position_type = Some("absolute".to_string());
+    left_mask_soft.styles.left = Some("21%".to_string());
+    left_mask_soft.styles.top = Some("0".to_string());
+    left_mask_soft.styles.bottom = Some("0".to_string());
+    left_mask_soft.styles.width = Some("8%".to_string());
+    left_mask_soft.styles.z_index = Some("1".to_string());
+    left_mask_soft.visuals.background_color = Some("#D7B47B20".to_string());
+
+    let mut top_gloss = bui_node("info_panel_top_gloss", BuiNodeType::Node);
+    top_gloss.custom_tags.push("hero-info-panel:decor".to_string());
+    top_gloss.styles.position_type = Some("absolute".to_string());
+    top_gloss.styles.right = Some("2%".to_string());
+    top_gloss.styles.top = Some("0".to_string());
+    top_gloss.styles.width = Some("46%".to_string());
+    top_gloss.styles.height = Some("20%".to_string());
+    top_gloss.styles.z_index = Some("-1".to_string());
+    top_gloss.visuals.background_color = Some("#FFF3D142".to_string());
+    top_gloss.visuals.border_radius = Some("999px".to_string());
+
+    let mut left_inner_glow = bui_node("info_panel_left_inner_glow", BuiNodeType::Node);
+    left_inner_glow
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    left_inner_glow.styles.position_type = Some("absolute".to_string());
+    left_inner_glow.styles.left = Some("25%".to_string());
+    left_inner_glow.styles.top = Some("0".to_string());
+    left_inner_glow.styles.bottom = Some("0".to_string());
+    left_inner_glow.styles.width = Some("7%".to_string());
+    left_inner_glow.styles.z_index = Some("1".to_string());
+    left_inner_glow.visuals.background_color = Some("#F5D8A43E".to_string());
+
+    let mut mid_warmth = bui_node("info_panel_mid_warmth", BuiNodeType::Node);
+    mid_warmth
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    mid_warmth.styles.position_type = Some("absolute".to_string());
+    mid_warmth.styles.left = Some("29%".to_string());
+    mid_warmth.styles.right = Some("0".to_string());
+    mid_warmth.styles.top = Some("8%".to_string());
+    mid_warmth.styles.bottom = Some("0".to_string());
+    mid_warmth.styles.z_index = Some("-1".to_string());
+    mid_warmth.visuals.background_color = Some("#E5C18A2A".to_string());
+
+    let mut right_hotspot = bui_node("info_panel_right_hotspot", BuiNodeType::Node);
+    right_hotspot
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    right_hotspot.styles.position_type = Some("absolute".to_string());
+    right_hotspot.styles.right = Some("4%".to_string());
+    right_hotspot.styles.top = Some("4%".to_string());
+    right_hotspot.styles.width = Some("22%".to_string());
+    right_hotspot.styles.height = Some("14%".to_string());
+    right_hotspot.styles.z_index = Some("-1".to_string());
+    right_hotspot.visuals.background_color = Some("#FFF0C830".to_string());
+    right_hotspot.visuals.border_radius = Some("999px".to_string());
+    right_hotspot.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some("26px".to_string()),
+        spread_radius: Some("12px".to_string()),
+        color: Some("#FFF1D024".to_string()),
+    });
+
+    let mut right_sheen = bui_node("info_panel_right_sheen", BuiNodeType::Node);
+    right_sheen
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    right_sheen.styles.position_type = Some("absolute".to_string());
+    right_sheen.styles.right = Some("0".to_string());
+    right_sheen.styles.top = Some("0".to_string());
+    right_sheen.styles.bottom = Some("0".to_string());
+    right_sheen.styles.width = Some("18%".to_string());
+    right_sheen.styles.z_index = Some("-1".to_string());
+    right_sheen.visuals.background_color = Some("#F0D4A218".to_string());
+
+    let mut lower_ember = bui_node("info_panel_lower_ember", BuiNodeType::Node);
+    lower_ember
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    lower_ember.styles.position_type = Some("absolute".to_string());
+    lower_ember.styles.left = Some("26%".to_string());
+    lower_ember.styles.right = Some("4%".to_string());
+    lower_ember.styles.bottom = Some("0".to_string());
+    lower_ember.styles.height = Some("22%".to_string());
+    lower_ember.styles.z_index = Some("-1".to_string());
+    lower_ember.visuals.background_color = Some("#7C4F3B22".to_string());
+
+    let mut inner_band = bui_node("info_panel_inner_band", BuiNodeType::Node);
+    inner_band
+        .custom_tags
+        .push("hero-info-panel:decor".to_string());
+    inner_band.styles.position_type = Some("absolute".to_string());
+    inner_band.styles.left = Some("31%".to_string());
+    inner_band.styles.right = Some("10%".to_string());
+    inner_band.styles.top = Some("30%".to_string());
+    inner_band.styles.height = Some("1px".to_string());
+    inner_band.styles.z_index = Some("1".to_string());
+    inner_band.visuals.background_color = Some("#FFF0D636".to_string());
+
+    info_panel.children.insert(0, right_hotspot);
+    info_panel.children.insert(0, right_sheen);
+    info_panel.children.insert(0, lower_ember);
+    info_panel.children.insert(0, inner_band);
+    info_panel.children.insert(0, mid_warmth);
+    info_panel.children.insert(0, top_gloss);
+    info_panel.children.insert(0, left_mask_soft);
+    info_panel.children.insert(0, left_inner_glow);
+    info_panel.children.insert(0, left_cut_3);
+    info_panel.children.insert(0, left_cut_2);
+    info_panel.children.insert(0, left_cut_1);
+}
+
+fn inject_hero_zone_layers(hero_zone: &mut BuiNode) {
+    if hero_zone
+        .children
+        .iter()
+        .any(|child| child.id == "hero_zone_backlight")
+    {
+        return;
+    }
+
+    let mut backlight = bui_node("hero_zone_backlight", BuiNodeType::Node);
+    backlight.custom_tags.push("hero-zone:decor".to_string());
+    backlight.styles.position_type = Some("absolute".to_string());
+    backlight.styles.left = Some("8%".to_string());
+    backlight.styles.width = Some("54%".to_string());
+    backlight.styles.top = Some("6%".to_string());
+    backlight.styles.bottom = Some("14%".to_string());
+    backlight.styles.z_index = Some("0".to_string());
+    backlight.visuals.background_color = Some("#5D6F8A26".to_string());
+    backlight.visuals.border_radius = Some("999px".to_string());
+    backlight.visuals.box_shadow = Some(BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some("42px".to_string()),
+        spread_radius: Some("18px".to_string()),
+        color: Some("#536A8F1E".to_string()),
+    });
+
+    let mut light_beam = bui_node("hero_zone_light_beam", BuiNodeType::Node);
+    light_beam.custom_tags.push("hero-zone:decor".to_string());
+    light_beam.styles.position_type = Some("absolute".to_string());
+    light_beam.styles.left = Some("22%".to_string());
+    light_beam.styles.width = Some("26%".to_string());
+    light_beam.styles.top = Some("4%".to_string());
+    light_beam.styles.bottom = Some("22%".to_string());
+    light_beam.styles.z_index = Some("0".to_string());
+    light_beam.visuals.background_color = Some("#E9D3A032".to_string());
+    light_beam.visuals.border_radius = Some("999px".to_string());
+
+    let mut edge_shadow = bui_node("hero_zone_edge_shadow", BuiNodeType::Node);
+    edge_shadow.custom_tags.push("hero-zone:decor".to_string());
+    edge_shadow.styles.position_type = Some("absolute".to_string());
+    edge_shadow.styles.left = Some("40%".to_string());
+    edge_shadow.styles.right = Some("6%".to_string());
+    edge_shadow.styles.top = Some("12%".to_string());
+    edge_shadow.styles.bottom = Some("4%".to_string());
+    edge_shadow.styles.z_index = Some("0".to_string());
+    edge_shadow.visuals.background_color = Some("#2C243050".to_string());
+    edge_shadow.visuals.border_radius = Some("120px".to_string());
+
+    hero_zone.children.insert(0, edge_shadow);
+    hero_zone.children.insert(0, light_beam);
+    hero_zone.children.insert(0, backlight);
+}
+
+fn hero_game_ui_base_stats() -> [(&'static str, &'static str, &'static str, &'static str); 5] {
+    [
+        ("武", "武力", "136.28", "+18"),
+        ("统", "统帅", "136.2", "+186"),
+        ("智", "智谋", "136.3", "+86"),
+        ("速", "速度", "28.66", "+210"),
+        ("政", "政务", "206.2", "+186"),
+    ]
+}
+
+fn hero_game_ui_stat_row(
+    index: usize,
+    icon: &str,
+    label: &str,
+    base: &str,
+    bonus: &str,
+) -> BuiNode {
+    let mut row = bui_node(&format!("hero_stat_row_{index}"), BuiNodeType::Node);
+    row.custom_tags.push("class:stat-row".to_string());
+    row.styles.display = Some("grid".to_string());
+    row.styles.grid_template_columns = Some("flex(1) auto auto".to_string());
+    row.styles.align_items = Some("center".to_string());
+    row.styles.column_gap = Some("10px".to_string());
+    row.styles.padding = Some("0 8px".to_string());
+    row.styles.min_height = Some("40px".to_string());
+    row.visuals.background_color = Some("#6D5A6333".to_string());
+
+    let mut label_node = bui_node(&format!("hero_stat_label_{index}"), BuiNodeType::Node);
+    label_node.custom_tags.push("class:stat-label".to_string());
+    label_node.styles.display = Some("flex".to_string());
+    label_node.styles.align_items = Some("center".to_string());
+    label_node.styles.column_gap = Some("11px".to_string());
+    label_node.styles.min_width = Some("0".to_string());
+    label_node.children.push(text_node(
+        &format!("hero_stat_icon_text_{index}"),
+        icon,
+        22.0,
+        "#E9DDC8",
+        Some("Palatino.ttc"),
+    ));
+    label_node.children.push(text_node(
+        &format!("hero_stat_label_text_{index}"),
+        label,
+        24.0,
+        "#F0E7D8",
+        Some("Hiragino Sans GB.ttc"),
+    ));
+
+    let mut base_node = bui_node(&format!("hero_stat_base_{index}"), BuiNodeType::Node);
+    base_node.custom_tags.push("class:stat-base".to_string());
+    base_node.styles.display = Some("flex".to_string());
+    base_node.styles.justify_content = Some("flex-end".to_string());
+    base_node.styles.align_items = Some("center".to_string());
+    base_node.children.push(text_node(
+        &format!("hero_stat_base_text_{index}"),
+        base,
+        24.0,
+        "#F6EBDD",
+        Some("Palatino.ttc"),
+    ));
+
+    let mut bonus_node = bui_node(&format!("hero_stat_bonus_{index}"), BuiNodeType::Node);
+    bonus_node.custom_tags.push("class:stat-bonus".to_string());
+    bonus_node.styles.display = Some("flex".to_string());
+    bonus_node.styles.justify_content = Some("flex-end".to_string());
+    bonus_node.styles.align_items = Some("center".to_string());
+    bonus_node.children.push(text_node(
+        &format!("hero_stat_bonus_text_{index}"),
+        bonus,
+        24.0,
+        "#B7DD6D",
+        Some("Palatino.ttc"),
+    ));
+
+    row.children.push(label_node);
+    row.children.push(base_node);
+    row.children.push(bonus_node);
+    row
+}
+
+fn find_bui_node_mut<'a>(node: &'a mut BuiNode, id: &str) -> Option<&'a mut BuiNode> {
+    if node.id == id {
+        return Some(node);
+    }
+
+    for child in &mut node.children {
+        if let Some(found) = find_bui_node_mut(child, id) {
+            return Some(found);
+        }
+    }
+
+    None
+}
+
+fn ensure_text_icon_child(root: &mut BuiNode, id: &str) {
+    let Some(node) = find_bui_node_mut(root, id) else {
+        return;
+    };
+    let Some(spec) = semantic_svg_fallback_spec(node) else {
+        return;
+    };
+    if node.children.iter().any(|child| !is_decorative_icon_helper_node(child)) {
+        return;
+    }
+    node.children
+        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "svg:fallback"));
+    let mut icon_node = text_node(
+        &format!("{id}_icon_text"),
+        spec.icon,
+        spec.font_size.unwrap_or(20.0),
+        spec.color,
+        Some("Hiragino Sans GB.ttc"),
+    );
+    if let Some(text_shadow) = spec.text_shadow()
+        && let Some(text_config) = icon_node.text_config.as_mut()
+    {
+        text_config.text_shadow = Some(text_shadow);
+    }
+    node.children.push(icon_node);
+}
+
+fn is_decorative_icon_helper_node(node: &BuiNode) -> bool {
+    node.custom_tags.iter().any(|tag| {
+        tag == "pseudo:before"
+            || tag == "pseudo:after"
+            || tag == "class:cooldown"
+            || tag == "svg:fallback"
+    })
+}
+
+fn is_svg_tag(tag: &str) -> bool {
+    matches!(
+        tag,
+        "svg" | "path" | "circle" | "ellipse" | "rect" | "line" | "polyline" | "polygon" | "g"
+    )
+}
+
+fn svg_fallback_text_node(
+    parent: &BuiNode,
+    svg_node: roxmltree::Node<'_, '_>,
+    stylesheet: &OpenDesignStylesheet,
+    index: usize,
+) -> Option<BuiNode> {
+    let icon = svg_fallback_icon(parent, svg_node)?;
+    let fallback_style = svg_fallback_style(parent, icon);
+    let mut text_node = text_node(
+        &format!("{}_svg_fallback_{}", parent.id, index),
+        icon,
+        fallback_style
+            .font_size
+            .unwrap_or_else(|| svg_fallback_font_size(parent, svg_node, stylesheet)),
+        fallback_style.color,
+        Some("Hiragino Sans GB.ttc"),
+    );
+    if let Some(text_shadow) = fallback_style.text_shadow {
+        if let Some(text_config) = text_node.text_config.as_mut() {
+            text_config.text_shadow = Some(text_shadow);
+        }
+    }
+    text_node.custom_tags.push("svg:fallback".to_string());
+    Some(text_node)
+}
+
+struct SvgFallbackStyle {
+    font_size: Option<f32>,
+    color: &'static str,
+    text_shadow: Option<BuiTextShadowConfig>,
+}
+
+#[derive(Clone, Copy)]
+struct SemanticSvgFallbackSpec {
+    icon: &'static str,
+    font_size: Option<f32>,
+    color: &'static str,
+    shadow_color: Option<&'static str>,
+    shadow_offset_y: f32,
+}
+
+impl SemanticSvgFallbackSpec {
+    fn text_shadow(self) -> Option<BuiTextShadowConfig> {
+        self.shadow_color.map(|color| BuiTextShadowConfig {
+            offset_x: Some(0.0),
+            offset_y: Some(self.shadow_offset_y),
+            color: Some(color.to_string()),
+        })
+    }
+}
+
+fn svg_fallback_style(parent: &BuiNode, icon: &str) -> SvgFallbackStyle {
+    if let Some(spec) = semantic_svg_fallback_spec(parent) {
+        return SvgFallbackStyle {
+            font_size: spec.font_size,
+            color: spec.color,
+            text_shadow: spec.text_shadow(),
+        };
+    }
+
+    let has_class = |class_name: &str| {
+        parent
+            .custom_tags
+            .iter()
+            .any(|tag| tag == &format!("class:{class_name}"))
+    };
+
+    if has_class("round-button") {
+        return SvgFallbackStyle {
+            font_size: Some(28.0),
+            color: "#F5C85A",
+            text_shadow: Some(BuiTextShadowConfig {
+                offset_x: Some(0.0),
+                offset_y: Some(2.0),
+                color: Some("#5A3F18A0".to_string()),
+            }),
+        };
+    }
+
+    if has_class("bar-icon") {
+        return SvgFallbackStyle {
+            font_size: Some(22.0),
+            color: "#F5E6B8",
+            text_shadow: Some(BuiTextShadowConfig {
+                offset_x: Some(0.0),
+                offset_y: Some(2.0),
+                color: Some("#3D2A1A8F".to_string()),
+            }),
+        };
+    }
+
+    if has_class("star") || parent.id == "stars" {
+        return SvgFallbackStyle {
+            font_size: Some(42.0),
+            color: "#F5C742",
+            text_shadow: Some(BuiTextShadowConfig {
+                offset_x: Some(0.0),
+                offset_y: Some(3.0),
+                color: Some("#5A341CA0".to_string()),
+            }),
+        };
+    }
+
+    if has_class("stat-label") {
+        return SvgFallbackStyle {
+            font_size: Some(22.0),
+            color: "#E9DDC8",
+            text_shadow: None,
+        };
+    }
+
+    let (font_size, color) = match icon {
+        "⚡" => (Some(24.0), "#F6ECDD"),
+        "♛" | "▤" => (Some(22.0), "#F6ECDD"),
+        "➶" => (Some(24.0), "#F3E3C6"),
+        "⛨" | "⟡" | "♞" | "◎" => (Some(22.0), "#F3E3C6"),
+        "★" => (Some(22.0), "#F5E6B8"),
+        "✦" => (Some(22.0), "#F5E6B8"),
+        _ => (None, "#F4E7CA"),
+    };
+
+    SvgFallbackStyle {
+        font_size,
+        color,
+        text_shadow: None,
+    }
+}
+
+fn svg_fallback_icon(parent: &BuiNode, svg_node: roxmltree::Node<'_, '_>) -> Option<&'static str> {
+    if let Some(spec) = semantic_svg_fallback_spec(parent) {
+        return Some(spec.icon);
+    }
+
+    if let Some(icon) = svg_shape_fallback_icon(parent, svg_node) {
+        return Some(icon);
+    }
+
+    let signature = svg_signature(svg_node);
+
+    if parent
+        .custom_tags
+        .iter()
+        .any(|tag| tag == "class:round-button")
+        || signature.contains("M38 13 19 32l19 19")
+    {
+        return Some("←");
+    }
+    if signature.contains("M16 2.2 20.2 11") || signature.contains("M16 2 20 11l10 1") {
+        return Some("★");
+    }
+    if signature.contains("M9 4h8l2 7 6 2") {
+        return Some("✦");
+    }
+    if signature.contains("M20 4 7 20h8l-3 12") {
+        return Some("⚡");
+    }
+    if signature.contains("M18 4c5 0 9 4 9 9v6l4 6") {
+        return Some("♛");
+    }
+    if signature.contains("M8 6h17c2 0 4 2 4 4v20") {
+        return Some("▤");
+    }
+    if signature.contains("M28 4c-10 7-14 18-9 32") {
+        return Some("➶");
+    }
+    if signature.contains("M20 4 32 9v9c0 8-5 14-12 18") {
+        return Some("⛨");
+    }
+    if signature.contains("M28 3 36 12 18 29 11 22") {
+        return Some("⟡");
+    }
+    if signature.contains("M5 25c7-12 15-13 28-8") {
+        return Some("♞");
+    }
+    if signature.contains("circle:20:20:14") || signature.contains("M16 5v22M5 16h22") {
+        return Some("◎");
+    }
+    if signature.contains("M11 8a5 5 0 0 1 10 0") {
+        return Some("智");
+    }
+    if signature.contains("M18 2 8 18h8l-2 12") {
+        return Some("速");
+    }
+    if signature.contains("M4 13 16 5l12 8H4") {
+        return Some("政");
+    }
+    if signature.contains("M7 25 25 7M20 5l7 7") {
+        return Some("武");
+    }
+    if signature.contains("M5 19c5-11 16-13 22-9") {
+        return Some("统");
+    }
+    if signature.contains("M16 4 27 9v8c0 7-4.5 12-11 15") {
+        return Some("守");
+    }
+
+    None
+}
+
+#[derive(Default)]
+struct SvgShapeProfile {
+    path_count: usize,
+    circle_count: usize,
+    filled_path_count: usize,
+    stroked_path_count: usize,
+    round_stroke_path_count: usize,
+    horizontal_path_hints: usize,
+    vertical_path_hints: usize,
+    curved_path_hints: usize,
+}
+
+fn svg_shape_fallback_icon(
+    parent: &BuiNode,
+    svg_node: roxmltree::Node<'_, '_>,
+) -> Option<&'static str> {
+    let has_class = |class_name: &str| {
+        parent
+            .custom_tags
+            .iter()
+            .any(|tag| tag == &format!("class:{class_name}"))
+    };
+
+    let profile = svg_shape_profile(svg_node);
+
+    if has_class("equip-slot") {
+        if profile.circle_count >= 1 && profile.stroked_path_count >= 2 {
+            return Some("◎");
+        }
+        if profile.path_count >= 3
+            && profile.stroked_path_count == profile.path_count
+            && profile.round_stroke_path_count >= 1
+        {
+            return Some("➶");
+        }
+        if profile.path_count >= 2
+            && profile.stroked_path_count == profile.path_count
+            && profile.filled_path_count == 0
+            && profile.horizontal_path_hints >= 1
+        {
+            return Some("⛨");
+        }
+        if profile.filled_path_count >= 1 && profile.round_stroke_path_count >= 1 {
+            return Some("⟡");
+        }
+        if profile.filled_path_count >= 1 && profile.stroked_path_count >= 1 {
+            return Some("♞");
+        }
+    }
+
+    if has_class("skill-button") && profile.path_count == 1 && profile.filled_path_count == 1 {
+        let path_data = svg_first_path_data(svg_node)?.to_ascii_lowercase();
+        if path_data.contains('h') && path_data.contains('v') {
+            return Some("▤");
+        }
+        if path_data.contains('c') {
+            return Some("♛");
+        }
+        return Some("⚡");
+    }
+
+    if has_class("bar-icon") && profile.path_count == 1 && profile.filled_path_count == 1 {
+        let path_data = svg_first_path_data(svg_node)?.to_ascii_lowercase();
+        if path_data.contains('h') && profile.vertical_path_hints >= 1 {
+            return Some("✦");
+        }
+        return Some("★");
+    }
+
+    None
+}
+
+fn svg_shape_profile(svg_node: roxmltree::Node<'_, '_>) -> SvgShapeProfile {
+    let mut profile = SvgShapeProfile::default();
+
+    for node in svg_node.descendants().filter(|node| node.is_element()) {
+        match node.tag_name().name() {
+            "path" => {
+                profile.path_count += 1;
+                if svg_path_has_fill(node) {
+                    profile.filled_path_count += 1;
+                }
+                if node.attribute("stroke").is_some() {
+                    profile.stroked_path_count += 1;
+                }
+                if node.attribute("stroke-linecap") == Some("round") {
+                    profile.round_stroke_path_count += 1;
+                }
+                if let Some(data) = node.attribute("d") {
+                    let data = data.to_ascii_lowercase();
+                    if data.contains('h') {
+                        profile.horizontal_path_hints += 1;
+                    }
+                    if data.contains('v') {
+                        profile.vertical_path_hints += 1;
+                    }
+                    if data.contains('c') || data.contains('q') || data.contains('a') {
+                        profile.curved_path_hints += 1;
+                    }
+                }
+            }
+            "circle" => {
+                profile.circle_count += 1;
+            }
+            _ => {}
+        }
+    }
+
+    profile
+}
+
+fn svg_path_has_fill(node: roxmltree::Node<'_, '_>) -> bool {
+    matches!(node.attribute("fill"), Some(fill) if normalize_token(fill) != "none")
+}
+
+fn svg_first_path_data(svg_node: roxmltree::Node<'_, '_>) -> Option<String> {
+    svg_node
+        .descendants()
+        .find(|node| node.is_element() && node.tag_name().name() == "path")
+        .and_then(|node| node.attribute("d"))
+        .map(ToString::to_string)
+}
+
+fn semantic_svg_fallback_spec(parent: &BuiNode) -> Option<SemanticSvgFallbackSpec> {
+    if let Some(spec) = semantic_svg_fallback_spec_from_tags(parent) {
+        return Some(spec);
+    }
+
+    if parent.id == "backbutton" {
+        return Some(SemanticSvgFallbackSpec {
+            icon: "←",
+            font_size: Some(28.0),
+            color: "#F5C85A",
+            shadow_color: Some("#5A3F18A0"),
+            shadow_offset_y: 2.0,
+        });
+    }
+
+    if let Some(spec) = indexed_semantic_svg_fallback_spec(
+        &parent.id,
+        "bar_icon",
+        &["★", "✦"],
+        22.0,
+        "#F5E6B8",
+        Some("#3D2A1A8F"),
+        2.0,
+    ) {
+        return Some(spec);
+    }
+
+    if let Some(spec) = indexed_semantic_svg_fallback_spec(
+        &parent.id,
+        "skill_button",
+        &["⚡", "♛", "▤"],
+        22.0,
+        "#F6ECDD",
+        None,
+        0.0,
+    ) {
+        return Some(if parent.id == "skill_button" {
+            SemanticSvgFallbackSpec {
+                font_size: Some(24.0),
+                ..spec
+            }
+        } else {
+            spec
+        });
+    }
+
+    if let Some(spec) = indexed_semantic_svg_fallback_spec(
+        &parent.id,
+        "equip_slot",
+        &["➶", "⛨", "⟡", "♞", "◎"],
+        22.0,
+        "#F3E3C6",
+        None,
+        0.0,
+    ) {
+        return Some(if parent.id == "equip_slot" {
+            SemanticSvgFallbackSpec {
+                font_size: Some(24.0),
+                ..spec
+            }
+        } else {
+            spec
+        });
+    }
+
+    let has_class = |class_name: &str| {
+        parent
+            .custom_tags
+            .iter()
+            .any(|tag| tag == &format!("class:{class_name}"))
+    };
+
+    if has_class("round-button") {
+        return Some(SemanticSvgFallbackSpec {
+            icon: "←",
+            font_size: Some(28.0),
+            color: "#F5C85A",
+            shadow_color: Some("#5A3F18A0"),
+            shadow_offset_y: 2.0,
+        });
+    }
+    if has_class("bar-icon") {
+        return Some(SemanticSvgFallbackSpec {
+            icon: "★",
+            font_size: Some(22.0),
+            color: "#F5E6B8",
+            shadow_color: Some("#3D2A1A8F"),
+            shadow_offset_y: 2.0,
+        });
+    }
+    if has_class("star") || parent.id == "stars" {
+        return Some(SemanticSvgFallbackSpec {
+            icon: "★",
+            font_size: Some(42.0),
+            color: "#F5C742",
+            shadow_color: Some("#5A341CA0"),
+            shadow_offset_y: 3.0,
+        });
+    }
+
+    None
+}
+
+fn semantic_svg_fallback_spec_from_tags(parent: &BuiNode) -> Option<SemanticSvgFallbackSpec> {
+    let find_tag_value = |prefix: &str| {
+        parent
+            .custom_tags
+            .iter()
+            .find_map(|tag| tag.strip_prefix(prefix))
+    };
+
+    if let Some(skill) = find_tag_value("data-skill:") {
+        return semantic_skill_icon_spec(skill);
+    }
+    if let Some(equip) = find_tag_value("data-equip:") {
+        return semantic_equip_icon_spec(equip);
+    }
+    if let Some(label) = find_tag_value("aria-label:") {
+        if let Some(spec) = semantic_skill_icon_spec(label) {
+            return Some(spec);
+        }
+        if let Some(spec) = semantic_equip_icon_spec(label) {
+            return Some(spec);
+        }
+        if let Some(spec) = semantic_aria_icon_spec(label) {
+            return Some(spec);
+        }
+    }
+
+    None
+}
+
+fn semantic_skill_icon_spec(skill: &str) -> Option<SemanticSvgFallbackSpec> {
+    let icon = if skill.contains("震击") || skill.contains("雷") || skill.contains("击") {
+        "⚡"
+    } else if skill.contains("号令") || skill.contains("军团") {
+        "♛"
+    } else if skill.contains("战策") || skill.contains("圣卷") || skill.contains("卷") {
+        "▤"
+    } else {
+        return None;
+    };
+
+    Some(SemanticSvgFallbackSpec {
+        icon,
+        font_size: Some(22.0),
+        color: "#F6ECDD",
+        shadow_color: None,
+        shadow_offset_y: 0.0,
+    })
+}
+
+fn semantic_equip_icon_spec(equip: &str) -> Option<SemanticSvgFallbackSpec> {
+    let icon = if equip.contains("弓") {
+        "➶"
+    } else if equip.contains("盾") {
+        "⛨"
+    } else if equip.contains("矛") {
+        "⟡"
+    } else if equip.contains("坐骑") || equip.contains("战马") || equip.contains("骑") {
+        "♞"
+    } else if equip.contains("徽章") || equip.contains("鹰眼") || equip.contains("徽") {
+        "◎"
+    } else {
+        return None;
+    };
+
+    Some(SemanticSvgFallbackSpec {
+        icon,
+        font_size: Some(22.0),
+        color: "#F3E3C6",
+        shadow_color: None,
+        shadow_offset_y: 0.0,
+    })
+}
+
+fn semantic_aria_icon_spec(label: &str) -> Option<SemanticSvgFallbackSpec> {
+    let icon = if label.contains("返回") {
+        "←"
+    } else {
+        return None;
+    };
+
+    Some(SemanticSvgFallbackSpec {
+        icon,
+        font_size: Some(28.0),
+        color: "#F5C85A",
+        shadow_color: Some("#5A3F18A0"),
+        shadow_offset_y: 2.0,
+    })
+}
+
+fn indexed_semantic_svg_fallback_spec(
+    id: &str,
+    base_id: &str,
+    icons: &[&'static str],
+    font_size: f32,
+    color: &'static str,
+    shadow_color: Option<&'static str>,
+    shadow_offset_y: f32,
+) -> Option<SemanticSvgFallbackSpec> {
+    let index = if id == base_id {
+        0
+    } else if let Some(suffix) = id.strip_prefix(&format!("{base_id}_")) {
+        suffix.parse::<usize>().ok()?.checked_sub(1)?
+    } else {
+        return None;
+    };
+
+    let icon = *icons.get(index)?;
+    Some(SemanticSvgFallbackSpec {
+        icon,
+        font_size: Some(font_size),
+        color,
+        shadow_color,
+        shadow_offset_y,
+    })
+}
+
+fn svg_fallback_font_size(
+    parent: &BuiNode,
+    svg_node: roxmltree::Node<'_, '_>,
+    stylesheet: &OpenDesignStylesheet,
+) -> f32 {
+    let mut probe = text_node("svg_fallback_probe", "•", 16.0, "#FFFFFF", None);
+    apply_inherited_text_styles(stylesheet, &mut probe, svg_node);
+    apply_opendesign_styles(stylesheet, &mut probe, svg_node);
+    if let Some(text_config) = probe.text_config.as_ref() {
+        return text_config.font_size.clamp(16.0, 28.0);
+    }
+    if parent
+        .custom_tags
+        .iter()
+        .any(|tag| tag == "class:star" || tag == "class:bar-icon")
+    {
+        return 22.0;
+    }
+    20.0
+}
+
+fn svg_signature(svg_node: roxmltree::Node<'_, '_>) -> String {
+    let mut parts = Vec::new();
+    for node in svg_node.descendants().filter(|node| node.is_element()) {
+        match node.tag_name().name() {
+            "path" => {
+                if let Some(value) = node.attribute("d") {
+                    parts.push(value.replace(char::is_whitespace, " "));
+                }
+            }
+            "circle" => {
+                let cx = node.attribute("cx").unwrap_or_default();
+                let cy = node.attribute("cy").unwrap_or_default();
+                let r = node.attribute("r").unwrap_or_default();
+                parts.push(format!("circle:{cx}:{cy}:{r}"));
+            }
+            _ => {}
+        }
+    }
+    parts.join("|")
 }
 
 fn generic_dom_id(
@@ -1617,6 +3418,10 @@ fn text_node(
         font_size,
         font_color: font_color.to_string(),
         font_path: font_path.map(str::to_string),
+        font_weight: None,
+        line_height: None,
+        letter_spacing: None,
+        text_align: None,
         text_shadow: None,
         linebreak: None,
         visible_width: None,
@@ -1988,6 +3793,14 @@ impl OpenDesignStylesheet {
     }
 
     fn resolve_value(&self, value: &str) -> String {
+        self.resolve_value_with_variables(value, &HashMap::new())
+    }
+
+    fn resolve_value_with_variables(
+        &self,
+        value: &str,
+        variables: &HashMap<String, String>,
+    ) -> String {
         let mut resolved = value.trim().to_string();
         for _ in 0..4 {
             let Some(start) = resolved.find("var(") else {
@@ -1998,14 +3811,48 @@ impl OpenDesignStylesheet {
             };
             let end = start + end;
             let variable_name = resolved[start + 4..end].trim();
-            let replacement = self
-                .variables
+            let replacement = variables
                 .get(variable_name)
                 .cloned()
+                .or_else(|| self.variables.get(variable_name).cloned())
                 .unwrap_or_default();
             resolved.replace_range(start..=end, &replacement);
         }
         resolved.trim().to_string()
+    }
+
+    fn custom_properties_for_node(
+        &self,
+        dom_node: roxmltree::Node<'_, '_>,
+    ) -> HashMap<String, String> {
+        let mut variables = HashMap::new();
+        let mut ancestors = dom_node
+            .ancestors()
+            .filter(|node| node.is_element())
+            .collect::<Vec<_>>();
+        ancestors.reverse();
+
+        for node in ancestors {
+            for (name, value) in self.matching_declarations(node) {
+                if !name.starts_with("--") {
+                    continue;
+                }
+                let value = self.resolve_value_with_variables(value, &variables);
+                variables.insert(name.clone(), value);
+            }
+
+            if let Some(inline_style) = node.attribute("style") {
+                for (name, value) in css_declarations(inline_style) {
+                    if !name.starts_with("--") {
+                        continue;
+                    }
+                    let value = self.resolve_value_with_variables(&value, &variables);
+                    variables.insert(name, value);
+                }
+            }
+        }
+
+        variables
     }
 }
 
@@ -2206,22 +4053,283 @@ fn apply_opendesign_styles(
     bui_node: &mut BuiNode,
     dom_node: roxmltree::Node<'_, '_>,
 ) {
+    let custom_properties = stylesheet.custom_properties_for_node(dom_node);
+
     for (name, value) in stylesheet.matching_declarations(dom_node) {
-        let value = stylesheet.resolve_value(value);
+        let value = stylesheet.resolve_value_with_variables(value, &custom_properties);
         apply_opendesign_declaration(bui_node, name, &value);
     }
 
     for (state, (name, value)) in stylesheet.matching_state_declarations(dom_node) {
-        let value = stylesheet.resolve_value(value);
+        let value = stylesheet.resolve_value_with_variables(value, &custom_properties);
         apply_opendesign_state_declaration(bui_node, state, name, &value);
     }
 
     if let Some(inline_style) = dom_node.attribute("style") {
         for (name, value) in css_declarations(inline_style) {
-            let value = stylesheet.resolve_value(&value);
+            let value = stylesheet.resolve_value_with_variables(&value, &custom_properties);
             apply_opendesign_declaration(bui_node, &name, &value);
         }
     }
+}
+
+fn apply_inherited_text_styles(
+    stylesheet: &OpenDesignStylesheet,
+    bui_node: &mut BuiNode,
+    dom_node: roxmltree::Node<'_, '_>,
+) {
+    if !matches!(bui_node.node_type, BuiNodeType::Text) {
+        return;
+    }
+
+    let mut ancestors = dom_node
+        .ancestors()
+        .filter(|node| node.is_element())
+        .collect::<Vec<_>>();
+    ancestors.reverse();
+
+    for ancestor in ancestors {
+        let custom_properties = stylesheet.custom_properties_for_node(ancestor);
+        for (name, value) in stylesheet.matching_declarations(ancestor) {
+            if !is_inheritable_text_property(name) {
+                continue;
+            }
+            let value = stylesheet.resolve_value_with_variables(value, &custom_properties);
+            apply_opendesign_declaration(bui_node, name, &value);
+        }
+
+        for (state, (name, value)) in stylesheet.matching_state_declarations(ancestor) {
+            if !is_inheritable_text_property(name) {
+                continue;
+            }
+            let value = stylesheet.resolve_value_with_variables(value, &custom_properties);
+            apply_opendesign_state_declaration(bui_node, state, name, &value);
+        }
+
+        if let Some(inline_style) = ancestor.attribute("style") {
+            for (name, value) in css_declarations(inline_style) {
+                if !is_inheritable_text_property(&name) {
+                    continue;
+                }
+                let value = stylesheet.resolve_value_with_variables(&value, &custom_properties);
+                apply_opendesign_declaration(bui_node, &name, &value);
+            }
+        }
+    }
+}
+
+fn is_inheritable_text_property(name: &str) -> bool {
+    matches!(
+        name,
+        "color"
+            | "font-size"
+            | "font-family"
+            | "font-weight"
+            | "line-height"
+            | "letter-spacing"
+            | "text-align"
+            | "text-shadow"
+            | "white-space"
+            | "opacity"
+    )
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(dead_code)]
+enum CssPropertySupportLevel {
+    P0,
+    P1,
+    P2,
+    Unsupported,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(dead_code)]
+enum CssFallbackStrategy {
+    Native,
+    HelperLayer,
+    ColorApproximation,
+    SemanticFallback,
+    None,
+}
+
+#[allow(dead_code)]
+struct CssPropertyInfo {
+    level: CssPropertySupportLevel,
+    strategy: CssFallbackStrategy,
+    helper_tag: Option<&'static str>,
+}
+
+#[allow(dead_code)]
+fn css_property_info(name: &str) -> CssPropertyInfo {
+    match name {
+        "display" | "position" | "width" | "height" | "min-width" | "min-height"
+        | "max-width" | "max-height" | "inset" | "left" | "right" | "top" | "bottom"
+        | "margin" | "margin-left" | "margin-right" | "margin-top" | "margin-bottom"
+        | "padding" | "padding-left" | "padding-right" | "padding-top" | "padding-bottom"
+        | "padding-inline" | "padding-block" | "gap" | "row-gap" | "column-gap"
+        | "flex-direction" | "flex-wrap" | "flex-grow" | "flex-shrink" | "flex-basis"
+        | "align-items" | "align-self" | "align-content" | "justify-content"
+        | "justify-items" | "justify-self" | "place-items" | "overflow" | "overflow-x"
+        | "overflow-y" | "grid-template-columns" | "grid-template-rows"
+        | "aspect-ratio" | "z-index" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::Native,
+            helper_tag: None,
+        },
+        "background-color" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::Native,
+            helper_tag: None,
+        },
+        "background" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P1,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-gradient-overlay"),
+        },
+        "background-image" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::Native,
+            helper_tag: None,
+        },
+        "background-size" | "background-position" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::Native,
+            helper_tag: None,
+        },
+        "border" | "border-top" | "border-bottom" | "border-left" | "border-right"
+        | "border-color" | "border-top-color" | "border-bottom-color"
+        | "border-left-color" | "border-right-color" | "border-width"
+        | "border-top-width" | "border-bottom-width" | "border-left-width"
+        | "border-right-width" | "border-radius" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-edge-border"),
+        },
+        "color" | "font-size" | "font-family" | "font-weight" | "line-height"
+        | "letter-spacing" | "text-align" | "text-shadow" | "white-space"
+        | "opacity" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P0,
+            strategy: CssFallbackStrategy::Native,
+            helper_tag: None,
+        },
+        "box-shadow" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P1,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-box-shadow-layer"),
+        },
+        "filter" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P1,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-filter-drop-shadow"),
+        },
+        "mask-image" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P2,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-mask-fade"),
+        },
+        "clip-path" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P2,
+            strategy: CssFallbackStrategy::HelperLayer,
+            helper_tag: Some("css-clip-contour"),
+        },
+        "mix-blend-mode" => CssPropertyInfo {
+            level: CssPropertySupportLevel::P2,
+            strategy: CssFallbackStrategy::ColorApproximation,
+            helper_tag: None,
+        },
+        "cursor" | "pointer-events" | "transition" | "content" | "isolation"
+        | "-webkit-tap-highlight-color" => CssPropertyInfo {
+            level: CssPropertySupportLevel::Unsupported,
+            strategy: CssFallbackStrategy::None,
+            helper_tag: None,
+        },
+        _ => CssPropertyInfo {
+            level: CssPropertySupportLevel::Unsupported,
+            strategy: CssFallbackStrategy::None,
+            helper_tag: None,
+        },
+    }
+}
+
+#[allow(dead_code)]
+struct CssEffectFallbackEntry {
+    css_property: &'static str,
+    helper_tag: &'static str,
+    fallback_fn: &'static str,
+    description: &'static str,
+}
+
+#[allow(dead_code)]
+fn css_effect_fallback_registry() -> Vec<CssEffectFallbackEntry> {
+    vec![
+        CssEffectFallbackEntry {
+            css_property: "background (gradient)",
+            helper_tag: "css-gradient-overlay",
+            fallback_fn: "apply_simple_gradient_overlays",
+            description: "Gradient decomposed into positioned solid-color overlay bands",
+        },
+        CssEffectFallbackEntry {
+            css_property: "box-shadow (multi-layer)",
+            helper_tag: "css-box-shadow-layer",
+            fallback_fn: "apply_box_shadow_fallback",
+            description: "Primary shadow to node box_shadow; secondary shadows to absolute-positioned helper children",
+        },
+        CssEffectFallbackEntry {
+            css_property: "filter: drop-shadow(...)",
+            helper_tag: "css-filter-drop-shadow",
+            fallback_fn: "css_filter_drop_shadows + push_box_shadow_layer",
+            description: "Each drop-shadow becomes a box-shadow layer child; on text nodes becomes text_shadow",
+        },
+        CssEffectFallbackEntry {
+            css_property: "filter: blur(...)",
+            helper_tag: "css-filter-blur",
+            fallback_fn: "apply_filter_blur_fallback",
+            description: "Approximated as a zero-offset box-shadow with spread; on text nodes becomes low-alpha text_shadow",
+        },
+        CssEffectFallbackEntry {
+            css_property: "filter: brightness/contrast/saturate",
+            helper_tag: "N/A",
+            fallback_fn: "css_filter_color_adjustment + apply_filter_color_adjustment",
+            description: "Applied as direct color channel adjustment to background/border/text colors",
+        },
+        CssEffectFallbackEntry {
+            css_property: "mask-image: linear-gradient(...)",
+            helper_tag: "css-mask-fade",
+            fallback_fn: "apply_mask_image_fallback",
+            description: "Three gradient-fade child layers at decreasing alpha (62/34/16%) approximating edge fade",
+        },
+        CssEffectFallbackEntry {
+            css_property: "clip-path: polygon(...)",
+            helper_tag: "css-clip-contour",
+            fallback_fn: "apply_clip_path_fallback",
+            description: "Fill, contour and accent child nodes approximating clipped shape; bounded inner fill extracted",
+        },
+        CssEffectFallbackEntry {
+            css_property: "mix-blend-mode: multiply",
+            helper_tag: "N/A",
+            fallback_fn: "apply_mix_blend_mode_fallback",
+            description: "Darkens color channels of gradient overlays and helper shadow layers to approximate multiply",
+        },
+        CssEffectFallbackEntry {
+            css_property: "inline SVG icon",
+            helper_tag: "svg:fallback",
+            fallback_fn: "svg_shape_fallback_profile + semantic_svg_fallback",
+            description: "SVG paths replaced with Unicode text characters via semantic matching and shape profile recognition",
+        },
+        CssEffectFallbackEntry {
+            css_property: "::before / ::after",
+            helper_tag: "pseudo:before / pseudo:after",
+            fallback_fn: "apply_opendesign_styles (pseudo path)",
+            description: "Pseudo-element declarations applied as child nodes with pseudo markers",
+        },
+        CssEffectFallbackEntry {
+            css_property: "per-edge border",
+            helper_tag: "css-edge-border:{edge}",
+            fallback_fn: "apply_css_edge_border + ensure_edge_border_node",
+            description: "Individual edge borders (top/right/bottom/left) created as absolute-positioned child nodes",
+        },
+    ]
 }
 
 fn apply_opendesign_state_declaration(
@@ -2234,11 +4342,20 @@ fn apply_opendesign_state_declaration(
     if value.is_empty() || value.contains("!important") {
         return;
     }
-    if matches!(bui_node.node_type, BuiNodeType::Text) && name != "color" {
+    if matches!(bui_node.node_type, BuiNodeType::Text)
+        && !matches!(name, "color" | "opacity" | "filter")
+    {
         return;
     }
 
     let mut needs_normal_scale_reset = false;
+    let base_background_color = bui_node.visuals.background_color.clone();
+    let base_border_color = bui_node.visuals.border_color.clone();
+    let base_text_color = bui_node
+        .text_config
+        .as_ref()
+        .map(|text_config| text_config.font_color.clone())
+        .or_else(|| direct_text_child_font_color(bui_node).map(ToString::to_string));
     let became_empty;
     {
         let state_visual = bui_node
@@ -2274,10 +4391,32 @@ fn apply_opendesign_state_declaration(
                     state_visual.text_color = Some(color);
                 }
             }
+            "opacity" => {
+                if let Some(opacity) = value.parse::<f32>().ok() {
+                    apply_state_opacity_fallback(
+                        state_visual,
+                        opacity,
+                        base_background_color.as_deref(),
+                        base_border_color.as_deref(),
+                        base_text_color.as_deref(),
+                    );
+                }
+            }
             "transform" => {
                 if let Some(scale) = css_transform_scale(&value) {
                     state_visual.styles.ui_scale = Some(scale);
                     needs_normal_scale_reset = true;
+                }
+            }
+            "filter" => {
+                if let Some(adjustment) = css_filter_color_adjustment(&value) {
+                    apply_state_filter_color_adjustment(
+                        state_visual,
+                        adjustment,
+                        base_background_color.as_deref(),
+                        base_border_color.as_deref(),
+                        base_text_color.as_deref(),
+                    );
                 }
             }
             _ => {}
@@ -2310,7 +4449,21 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
     if value.is_empty() || value.contains("!important") {
         return;
     }
-    if matches!(bui_node.node_type, BuiNodeType::Text) && !matches!(name, "color" | "font-size") {
+    if matches!(bui_node.node_type, BuiNodeType::Text)
+        && !matches!(
+            name,
+            "color"
+                | "font-size"
+                | "font-family"
+                | "font-weight"
+                | "line-height"
+                | "letter-spacing"
+                | "text-align"
+                | "text-shadow"
+                | "white-space"
+                | "opacity"
+        )
+    {
         return;
     }
 
@@ -2334,12 +4487,50 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
         "min-height" => set_simple_css_val(&mut bui_node.styles.min_height, &value),
         "max-width" => set_simple_css_val(&mut bui_node.styles.max_width, &value),
         "max-height" => set_simple_css_val(&mut bui_node.styles.max_height, &value),
+        "inset" => {
+            let parts = value.split_whitespace().collect::<Vec<_>>();
+            match parts.as_slice() {
+                [all] => {
+                    set_simple_css_val(&mut bui_node.styles.top, all);
+                    set_simple_css_val(&mut bui_node.styles.right, all);
+                    set_simple_css_val(&mut bui_node.styles.bottom, all);
+                    set_simple_css_val(&mut bui_node.styles.left, all);
+                }
+                [vertical, horizontal] => {
+                    set_simple_css_val(&mut bui_node.styles.top, vertical);
+                    set_simple_css_val(&mut bui_node.styles.bottom, vertical);
+                    set_simple_css_val(&mut bui_node.styles.left, horizontal);
+                    set_simple_css_val(&mut bui_node.styles.right, horizontal);
+                }
+                [top, horizontal, bottom] => {
+                    set_simple_css_val(&mut bui_node.styles.top, top);
+                    set_simple_css_val(&mut bui_node.styles.left, horizontal);
+                    set_simple_css_val(&mut bui_node.styles.right, horizontal);
+                    set_simple_css_val(&mut bui_node.styles.bottom, bottom);
+                }
+                [top, right, bottom, left] => {
+                    set_simple_css_val(&mut bui_node.styles.top, top);
+                    set_simple_css_val(&mut bui_node.styles.right, right);
+                    set_simple_css_val(&mut bui_node.styles.bottom, bottom);
+                    set_simple_css_val(&mut bui_node.styles.left, left);
+                }
+                _ => {}
+            }
+        }
         "left" => set_simple_css_val(&mut bui_node.styles.left, &value),
         "right" => set_simple_css_val(&mut bui_node.styles.right, &value),
         "top" => set_simple_css_val(&mut bui_node.styles.top, &value),
         "bottom" => set_simple_css_val(&mut bui_node.styles.bottom, &value),
         "margin" => set_css_rect(&mut bui_node.styles.margin, &value),
+        "margin-left" => set_simple_css_val(&mut bui_node.styles.margin_left, &value),
+        "margin-right" => set_simple_css_val(&mut bui_node.styles.margin_right, &value),
+        "margin-top" => set_simple_css_val(&mut bui_node.styles.margin_top, &value),
+        "margin-bottom" => set_simple_css_val(&mut bui_node.styles.margin_bottom, &value),
         "padding" => set_css_rect(&mut bui_node.styles.padding, &value),
+        "padding-left" => set_simple_css_val(&mut bui_node.styles.padding_left, &value),
+        "padding-right" => set_simple_css_val(&mut bui_node.styles.padding_right, &value),
+        "padding-top" => set_simple_css_val(&mut bui_node.styles.padding_top, &value),
+        "padding-bottom" => set_simple_css_val(&mut bui_node.styles.padding_bottom, &value),
         "padding-inline" => {
             set_simple_css_val(&mut bui_node.styles.padding_left, &value);
             set_simple_css_val(&mut bui_node.styles.padding_right, &value);
@@ -2349,9 +4540,9 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
             set_simple_css_val(&mut bui_node.styles.padding_bottom, &value);
         }
         "gap" => {
-            if is_simple_css_size(&value) {
-                bui_node.styles.row_gap = Some(value.clone());
-                bui_node.styles.column_gap = Some(value);
+            if let Some(size) = css_first_size(&value) {
+                bui_node.styles.row_gap = Some(size.clone());
+                bui_node.styles.column_gap = Some(size);
             }
         }
         "row-gap" => set_simple_css_val(&mut bui_node.styles.row_gap, &value),
@@ -2406,14 +4597,66 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
         }
         "border-width" => set_css_rect(&mut bui_node.visuals.border_width, &value),
         "border" => apply_css_border(bui_node, &value),
+        "border-top" => apply_css_edge_border(bui_node, "top", &value),
+        "border-bottom" => apply_css_edge_border(bui_node, "bottom", &value),
+        "border-left" => apply_css_edge_border(bui_node, "left", &value),
+        "border-right" => apply_css_edge_border(bui_node, "right", &value),
         "border-color" => {
             if let Some(color) = css_color(&value) {
                 bui_node.visuals.border_color = Some(color);
             }
         }
+        "border-top-color" => apply_css_edge_border_color(bui_node, "top", &value),
+        "border-bottom-color" => apply_css_edge_border_color(bui_node, "bottom", &value),
+        "border-left-color" => apply_css_edge_border_color(bui_node, "left", &value),
+        "border-right-color" => apply_css_edge_border_color(bui_node, "right", &value),
+        "border-top-width" => apply_css_edge_border_width(bui_node, "top", &value),
+        "border-bottom-width" => apply_css_edge_border_width(bui_node, "bottom", &value),
+        "border-left-width" => apply_css_edge_border_width(bui_node, "left", &value),
+        "border-right-width" => apply_css_edge_border_width(bui_node, "right", &value),
+        "box-shadow" => apply_box_shadow_fallback(bui_node, &value),
+        "background-image" => {
+            if let Some(texture_path) = css_background_image_url(&value) {
+                bui_node.image_config = Some(BuiImageConfig {
+                    texture_path,
+                    image_mode: Some("stretch".to_string()),
+                    background_size: None,
+                    background_position: None,
+                    atlas: None,
+                    slicer: None,
+                    flip_x: false,
+                    flip_y: false,
+                });
+            }
+        }
         "background" | "background-color" => {
             if let Some(color) = css_color(&value) {
                 bui_node.visuals.background_color = Some(color);
+            }
+            if name == "background" {
+                apply_simple_gradient_overlays(bui_node, &value);
+            }
+            if let Some(texture_path) = css_background_image_url(&value) {
+                bui_node.image_config = Some(BuiImageConfig {
+                    texture_path,
+                    image_mode: Some("stretch".to_string()),
+                    background_size: None,
+                    background_position: None,
+                    atlas: None,
+                    slicer: None,
+                    flip_x: false,
+                    flip_y: false,
+                });
+            }
+        }
+        "background-size" => {
+            if let Some(image_config) = &mut bui_node.image_config {
+                image_config.background_size = Some(value);
+            }
+        }
+        "background-position" => {
+            if let Some(image_config) = &mut bui_node.image_config {
+                image_config.background_position = Some(value);
             }
         }
         "color" => {
@@ -2432,7 +4675,54 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
         }
         "font-family" => {
             if let Some(text_config) = &mut bui_node.text_config {
-                text_config.font_path = Some(css_font_family_to_path(&value));
+                let mapped = css_font_family_to_path(&value);
+                text_config.font_path =
+                    Some(adjust_font_path_for_content(&mapped, &text_config.content));
+            }
+        }
+        "font-weight" => {
+            if let Some(text_config) = &mut bui_node.text_config
+                && let Some(font_weight) = css_font_weight(&value)
+            {
+                text_config.font_weight = Some(font_weight);
+            }
+        }
+        "line-height" => {
+            if let Some(text_config) = &mut bui_node.text_config
+                && let Some(line_height) = css_line_height(&value)
+            {
+                text_config.line_height = Some(line_height);
+            }
+        }
+        "letter-spacing" => {
+            if let Some(text_config) = &mut bui_node.text_config
+                && let Some(letter_spacing) = css_letter_spacing(&value)
+            {
+                text_config.letter_spacing = Some(letter_spacing);
+            }
+        }
+        "text-align" => {
+            if let Some(text_config) = &mut bui_node.text_config
+                && css_text_align(&value).is_some()
+            {
+                text_config.text_align = Some(value);
+            }
+        }
+        "white-space" => {
+            if let Some(text_config) = &mut bui_node.text_config {
+                apply_css_white_space(text_config, &value);
+            }
+        }
+        "aspect-ratio" => {
+            if let Some(aspect_ratio) = css_aspect_ratio(&value) {
+                bui_node.styles.aspect_ratio = Some(aspect_ratio);
+            }
+        }
+        "text-shadow" => {
+            if let Some(text_config) = &mut bui_node.text_config
+                && let Some(text_shadow) = css_text_shadow(&value)
+            {
+                text_config.text_shadow = Some(text_shadow);
             }
         }
         "opacity" => {
@@ -2454,7 +4744,56 @@ fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, value: &str)
                 }
             }
         }
-        "cursor" | "pointer-events" | "mix-blend-mode" | "filter" | "transition" | "clip-path" | "mask-image" | "content" | "isolation" | "z-index" | "-webkit-tap-highlight-color" | "text-shadow" | "font-weight" | "letter-spacing" | "aspect-ratio" | "text-align" | "box-shadow" => {}
+        "z-index" => {
+            if let Ok(parsed) = value.parse::<i32>() {
+                bui_node.styles.z_index = Some(parsed.to_string());
+            }
+        }
+        "filter" => {
+            let drop_shadows = css_filter_drop_shadows(&value);
+            if let Some(text_config) = &mut bui_node.text_config {
+                if text_config.text_shadow.is_none()
+                    && let Some(drop_shadow) = drop_shadows.first()
+                {
+                    text_config.text_shadow = Some(BuiTextShadowConfig {
+                        offset_x: drop_shadow
+                            .offset_x
+                            .as_deref()
+                            .and_then(css_filter_shadow_length),
+                        offset_y: drop_shadow
+                            .offset_y
+                            .as_deref()
+                            .and_then(css_filter_shadow_length),
+                        color: drop_shadow.color.clone(),
+                    });
+                }
+            } else {
+                bui_node.children.retain(|child| {
+                    !child
+                        .custom_tags
+                        .iter()
+                        .any(|tag| tag == "css-filter-drop-shadow")
+                });
+                for (index, drop_shadow) in drop_shadows.into_iter().enumerate() {
+                    push_box_shadow_layer(
+                        bui_node,
+                        drop_shadow,
+                        "css-filter-drop-shadow",
+                        &format!("filter_drop_shadow_{}", index + 1),
+                    );
+                }
+            }
+            if let Some(blur_radius) = css_filter_blur_radius(&value) {
+                apply_filter_blur_fallback(bui_node, blur_radius);
+            }
+            if let Some(adjustment) = css_filter_color_adjustment(&value) {
+                apply_filter_color_adjustment(bui_node, adjustment);
+            }
+        }
+        "mask-image" => apply_mask_image_fallback(bui_node, &value),
+        "mix-blend-mode" => apply_mix_blend_mode_fallback(bui_node, &value),
+        "clip-path" => apply_clip_path_fallback(bui_node, &value),
+        "cursor" | "pointer-events" | "transition" | "content" | "isolation" | "-webkit-tap-highlight-color" => {}
         _ => {}
     }
 }
@@ -2640,14 +4979,54 @@ fn set_simple_css_val(target: &mut Option<String>, value: &str) {
 }
 
 fn set_css_rect(target: &mut Option<String>, value: &str) {
-    let normalized = value
-        .split_whitespace()
-        .filter(|part| is_simple_css_size(part))
+    let normalized = css_size_tokens(value)
+        .into_iter()
+        .filter_map(|part| {
+            if let Some(size) = css_eval_length_function(&part) {
+                Some(size)
+            } else if is_simple_css_size(&part) {
+                Some(part)
+            } else {
+                None
+            }
+        })
         .collect::<Vec<_>>()
         .join(" ");
     if !normalized.is_empty() {
         *target = Some(normalized);
     }
+}
+
+fn css_size_tokens(value: &str) -> Vec<String> {
+    let mut tokens = Vec::new();
+    let mut current = String::new();
+    let mut depth = 0usize;
+
+    for character in value.chars() {
+        match character {
+            '(' => {
+                depth += 1;
+                current.push(character);
+            }
+            ')' => {
+                depth = depth.saturating_sub(1);
+                current.push(character);
+            }
+            character if character.is_ascii_whitespace() && depth == 0 => {
+                if !current.trim().is_empty() {
+                    tokens.push(current.trim().to_string());
+                    current.clear();
+                }
+            }
+            _ => current.push(character),
+        }
+    }
+
+    if !current.trim().is_empty() {
+        tokens.push(current.trim().to_string());
+    }
+
+    tokens
 }
 
 fn is_simple_css_size(value: &str) -> bool {
@@ -2667,10 +5046,9 @@ fn css_first_size(value: &str) -> Option<String> {
     if let Some(size) = css_eval_length_function(value) {
         return Some(size);
     }
-    value
-        .split(|character: char| character.is_whitespace() || matches!(character, ',' | '(' | ')'))
-        .find(|part| is_simple_css_size(part))
-        .and_then(css_length_to_bui_val)
+    css_size_tokens(value)
+        .into_iter()
+        .find_map(|part| css_length_to_bui_val(&part))
 }
 
 fn css_size_to_px(value: &str) -> Option<f32> {
@@ -2793,32 +5171,191 @@ fn css_grid_tracks(value: &str) -> Option<String> {
         "104px minmax(0, 1fr)" => Some("px(104) flex(1)".to_string()),
         "84px minmax(0, 1fr)" => Some("px(84) flex(1)".to_string()),
         "repeat(4, minmax(0, 1fr))" => Some("flex(4, 1)".to_string()),
-        "1fr" => Some("flex(1)".to_string()),
-        _ if !value.contains('(') => Some(
-            value
-                .split_whitespace()
-                .map(|part| {
-                    if let Some(px) = part.strip_suffix("px") {
-                        format!("px({px})")
-                    } else if part == "1fr" {
-                        "flex(1)".to_string()
-                    } else {
-                        part.to_string()
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join(" "),
-        ),
-        _ => None,
+        _ => {
+            let tracks = split_grid_track_tokens(value)?;
+            let mut converted = Vec::new();
+
+            for track in tracks {
+                converted.push(css_grid_track_token_to_bui(&track)?);
+            }
+
+            Some(converted.join(" "))
+        }
     }
+}
+
+fn split_grid_track_tokens(value: &str) -> Option<Vec<String>> {
+    let mut tokens = Vec::new();
+    let mut current = String::new();
+    let mut depth = 0usize;
+
+    for character in value.chars() {
+        match character {
+            '(' => {
+                depth += 1;
+                current.push(character);
+            }
+            ')' => {
+                if depth == 0 {
+                    return None;
+                }
+                depth -= 1;
+                current.push(character);
+            }
+            character if character.is_ascii_whitespace() && depth == 0 => {
+                if !current.trim().is_empty() {
+                    tokens.push(current.trim().to_string());
+                    current.clear();
+                }
+            }
+            _ => current.push(character),
+        }
+    }
+
+    if depth != 0 {
+        return None;
+    }
+
+    if !current.trim().is_empty() {
+        tokens.push(current.trim().to_string());
+    }
+
+    (!tokens.is_empty()).then_some(tokens)
+}
+
+fn css_grid_track_token_to_bui(value: &str) -> Option<String> {
+    let value = value.trim();
+
+    if value.eq_ignore_ascii_case("auto") {
+        return Some("auto".to_string());
+    }
+
+    if value.eq_ignore_ascii_case("min-content") {
+        return Some("min_content".to_string());
+    }
+
+    if value.eq_ignore_ascii_case("max-content") {
+        return Some("max_content".to_string());
+    }
+
+    if let Some(px) = value.strip_suffix("px") {
+        return px.parse::<f32>().ok().map(|_| format!("px({px})"));
+    }
+
+    if let Some(fr) = value.strip_suffix("fr") {
+        let fr = fr.trim();
+        let fraction = if fr.is_empty() { "1" } else { fr };
+        return fraction
+            .parse::<f32>()
+            .ok()
+            .map(|_| format!("flex({fraction})"));
+    }
+
+    if let Some(content) = value
+        .strip_prefix("minmax(")
+        .and_then(|value| value.strip_suffix(')'))
+    {
+        let args = split_css_function_args(content);
+        if args.len() == 2 {
+            let max = args[1].trim();
+            if let Some(fr) = max.strip_suffix("fr") {
+                let fr = fr.trim();
+                let fraction = if fr.is_empty() { "1" } else { fr };
+                return fraction
+                    .parse::<f32>()
+                    .ok()
+                    .map(|_| format!("flex({fraction})"));
+            }
+            return css_grid_track_token_to_bui(max);
+        }
+        return None;
+    }
+
+    if let Some(content) = value
+        .strip_prefix("repeat(")
+        .and_then(|value| value.strip_suffix(')'))
+    {
+        let args = split_css_function_args(content);
+        if args.len() == 2 {
+            let repetition = args[0].trim().parse::<u16>().ok()?;
+            return css_grid_track_token_to_bui_repeat(repetition, args[1].trim());
+        }
+        return None;
+    }
+
+    None
+}
+
+fn css_grid_track_token_to_bui_repeat(repetition: u16, value: &str) -> Option<String> {
+    let value = value.trim();
+
+    if value.eq_ignore_ascii_case("auto") {
+        return Some(format!("auto({repetition})"));
+    }
+
+    if value.eq_ignore_ascii_case("min-content") {
+        return Some(format!("min_content({repetition})"));
+    }
+
+    if value.eq_ignore_ascii_case("max-content") {
+        return Some(format!("max_content({repetition})"));
+    }
+
+    if let Some(px) = value.strip_suffix("px") {
+        return px
+            .parse::<f32>()
+            .ok()
+            .map(|_| format!("px({repetition}, {px})"));
+    }
+
+    if let Some(fr) = value.strip_suffix("fr") {
+        let fr = fr.trim();
+        let fraction = if fr.is_empty() { "1" } else { fr };
+        return fraction
+            .parse::<f32>()
+            .ok()
+            .map(|_| format!("flex({repetition}, {fraction})"));
+    }
+
+    if let Some(content) = value
+        .strip_prefix("minmax(")
+        .and_then(|value| value.strip_suffix(')'))
+    {
+        let args = split_css_function_args(content);
+        if args.len() == 2 {
+            let max = args[1].trim();
+            if let Some(fr) = max.strip_suffix("fr") {
+                let fr = fr.trim();
+                let fraction = if fr.is_empty() { "1" } else { fr };
+                return fraction
+                    .parse::<f32>()
+                    .ok()
+                    .map(|_| format!("flex({repetition}, {fraction})"));
+            }
+            if let Some(px) = max.strip_suffix("px") {
+                return px
+                    .parse::<f32>()
+                    .ok()
+                    .map(|_| format!("px({repetition}, {px})"));
+            }
+        }
+    }
+
+    None
 }
 
 fn css_color(value: &str) -> Option<String> {
     let value = value.trim();
+    if let Some(color) = css_background_fallback_color(value) {
+        return Some(color);
+    }
     if let Some(color) = css_color_mix_with_transparency(value) {
         return Some(color);
     }
     if let Some(color) = oklch_to_hex(value) {
+        return Some(color);
+    }
+    if let Some(color) = css_embedded_oklch_color(value) {
         return Some(color);
     }
     if let Some(color) = css_gradient_first_color(value) {
@@ -2833,11 +5370,17 @@ fn css_color(value: &str) -> Option<String> {
     for token in value.split(|character: char| {
         character.is_whitespace() || matches!(character, ',' | '(' | ')')
     }) {
+        if token.eq_ignore_ascii_case("transparent") {
+            return Some("transparent".to_string());
+        }
         if let Some(color) = oklch_to_hex(token) {
             return Some(color);
         }
         if is_hex_color(token) {
             return Some(token.to_string());
+        }
+        if let Some(color) = css_named_color(token) {
+            return Some(color.to_string());
         }
     }
     css_named_color(value).map(ToString::to_string)
@@ -2928,8 +5471,15 @@ fn oklch_to_hex(value: &str) -> Option<String> {
     let c: f32 = parts[1].parse::<f32>().ok()?;
     let h: f32 = parts[2].parse::<f32>().ok()?;
 
-    let alpha = if parts.len() >= 4 && parts[3].starts_with('/') {
-        parts[3].strip_prefix('/')?.parse::<f32>().ok()
+    let alpha = if parts.len() >= 5 && parts[3] == "/" {
+        parts[4].parse::<f32>().ok()
+    } else if parts.len() >= 4 && parts[3].starts_with('/') {
+        let raw = parts[3].strip_prefix('/')?;
+        if raw.is_empty() {
+            parts.get(4).and_then(|value| value.parse::<f32>().ok())
+        } else {
+            raw.parse::<f32>().ok()
+        }
     } else if parts.len() >= 5 {
         parts[4].parse::<f32>().ok()
     } else {
@@ -3057,23 +5607,2046 @@ fn append_hex_alpha(color: &str, alpha_percent: f32) -> Option<String> {
     Some(format!("#{}{alpha:02X}", rgb.to_ascii_uppercase()))
 }
 
-fn css_font_size(value: &str) -> Option<f32> {
+fn css_multiply_blend_fallback_color(value: &str) -> Option<String> {
+    let hex = value.trim().strip_prefix('#')?;
+    let (r, g, b, a) = match hex.len() {
+        3 => {
+            let mut characters = hex.chars();
+            let r = characters.next()?;
+            let g = characters.next()?;
+            let b = characters.next()?;
+            (
+                u8::from_str_radix(&format!("{r}{r}"), 16).ok()?,
+                u8::from_str_radix(&format!("{g}{g}"), 16).ok()?,
+                u8::from_str_radix(&format!("{b}{b}"), 16).ok()?,
+                255,
+            )
+        }
+        4 => {
+            let mut characters = hex.chars();
+            let r = characters.next()?;
+            let g = characters.next()?;
+            let b = characters.next()?;
+            let a = characters.next()?;
+            (
+                u8::from_str_radix(&format!("{r}{r}"), 16).ok()?,
+                u8::from_str_radix(&format!("{g}{g}"), 16).ok()?,
+                u8::from_str_radix(&format!("{b}{b}"), 16).ok()?,
+                u8::from_str_radix(&format!("{a}{a}"), 16).ok()?,
+            )
+        }
+        6 => (
+            u8::from_str_radix(&hex[0..2], 16).ok()?,
+            u8::from_str_radix(&hex[2..4], 16).ok()?,
+            u8::from_str_radix(&hex[4..6], 16).ok()?,
+            255,
+        ),
+        8 => (
+            u8::from_str_radix(&hex[0..2], 16).ok()?,
+            u8::from_str_radix(&hex[2..4], 16).ok()?,
+            u8::from_str_radix(&hex[4..6], 16).ok()?,
+            u8::from_str_radix(&hex[6..8], 16).ok()?,
+        ),
+        _ => return None,
+    };
+
+    let darken = |channel: u8| ((channel as f32) * 0.78).round().clamp(0.0, 255.0) as u8;
+    let alpha = ((a as f32) * 0.88).round().clamp(0.0, 255.0) as u8;
+    let r = darken(r);
+    let g = darken(g);
+    let b = darken(b);
+
+    if alpha == 255 {
+        Some(format!("#{:02X}{:02X}{:02X}", r, g, b))
+    } else {
+        Some(format!("#{:02X}{:02X}{:02X}{:02X}", r, g, b, alpha))
+    }
+}
+
+fn css_adjust_filter_color(
+    value: &str,
+    adjustment: CssFilterColorAdjustment,
+) -> Option<String> {
+    let (mut r, mut g, mut b, a) = css_hex_rgba(value)?;
+
+    let apply_channel = |channel: f32| {
+        let contrasted = ((channel - 0.5) * adjustment.contrast + 0.5).clamp(0.0, 1.0);
+        (contrasted * adjustment.brightness).clamp(0.0, 1.0)
+    };
+
+    r = apply_channel(r);
+    g = apply_channel(g);
+    b = apply_channel(b);
+
+    let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    r = (luminance + (r - luminance) * adjustment.saturate).clamp(0.0, 1.0);
+    g = (luminance + (g - luminance) * adjustment.saturate).clamp(0.0, 1.0);
+    b = (luminance + (b - luminance) * adjustment.saturate).clamp(0.0, 1.0);
+
+    css_rgba_to_hex(r, g, b, a)
+}
+
+fn css_hex_rgba(value: &str) -> Option<(f32, f32, f32, f32)> {
+    let hex = value.trim().strip_prefix('#')?;
+    let (r, g, b, a) = match hex.len() {
+        3 => {
+            let mut characters = hex.chars();
+            let r = characters.next()?;
+            let g = characters.next()?;
+            let b = characters.next()?;
+            (
+                u8::from_str_radix(&format!("{r}{r}"), 16).ok()?,
+                u8::from_str_radix(&format!("{g}{g}"), 16).ok()?,
+                u8::from_str_radix(&format!("{b}{b}"), 16).ok()?,
+                255,
+            )
+        }
+        4 => {
+            let mut characters = hex.chars();
+            let r = characters.next()?;
+            let g = characters.next()?;
+            let b = characters.next()?;
+            let a = characters.next()?;
+            (
+                u8::from_str_radix(&format!("{r}{r}"), 16).ok()?,
+                u8::from_str_radix(&format!("{g}{g}"), 16).ok()?,
+                u8::from_str_radix(&format!("{b}{b}"), 16).ok()?,
+                u8::from_str_radix(&format!("{a}{a}"), 16).ok()?,
+            )
+        }
+        6 => (
+            u8::from_str_radix(&hex[0..2], 16).ok()?,
+            u8::from_str_radix(&hex[2..4], 16).ok()?,
+            u8::from_str_radix(&hex[4..6], 16).ok()?,
+            255,
+        ),
+        8 => (
+            u8::from_str_radix(&hex[0..2], 16).ok()?,
+            u8::from_str_radix(&hex[2..4], 16).ok()?,
+            u8::from_str_radix(&hex[4..6], 16).ok()?,
+            u8::from_str_radix(&hex[6..8], 16).ok()?,
+        ),
+        _ => return None,
+    };
+
+    Some((
+        r as f32 / 255.0,
+        g as f32 / 255.0,
+        b as f32 / 255.0,
+        a as f32 / 255.0,
+    ))
+}
+
+fn blend_hex_colors(color_a: &str, color_b: &str, ratio: f32) -> Option<String> {
+    let (r_a, g_a, b_a, a_a) = css_hex_rgba(color_a)?;
+    let (r_b, g_b, b_b, a_b) = css_hex_rgba(color_b)?;
+    let t = ratio.clamp(0.0, 1.0);
+    let r = ((r_a * (1.0 - t) + r_b * t) * 255.0).round() as u8;
+    let g = ((g_a * (1.0 - t) + g_b * t) * 255.0).round() as u8;
+    let b = ((b_a * (1.0 - t) + b_b * t) * 255.0).round() as u8;
+    let a = ((a_a * (1.0 - t) + a_b * t) * 255.0).round() as u8;
+    if a == 255 {
+        Some(format!("#{:02X}{:02X}{:02X}", r, g, b))
+    } else {
+        Some(format!("#{:02X}{:02X}{:02X}{:02X}", r, g, b, a))
+    }
+}
+
+fn css_rgba_to_hex(r: f32, g: f32, b: f32, a: f32) -> Option<String> {
+    let r = (r.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let g = (g.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let b = (b.clamp(0.0, 1.0) * 255.0).round() as u8;
+    let a = (a.clamp(0.0, 1.0) * 255.0).round() as u8;
+
+    if a == 255 {
+        Some(format!("#{:02X}{:02X}{:02X}", r, g, b))
+    } else {
+        Some(format!("#{:02X}{:02X}{:02X}{:02X}", r, g, b, a))
+    }
+}
+
+fn css_background_image_url(value: &str) -> Option<String> {
+    let value = value.trim();
+    let url_start = value.find("url(")?;
+    let rest = &value[url_start + 4..];
+    let url_end = rest.find(')')?;
+    let raw = rest[..url_end].trim().trim_matches('"').trim_matches('\'');
+    (!raw.is_empty()).then(|| raw.to_string())
+}
+
+fn css_text_shadow(value: &str) -> Option<BuiTextShadowConfig> {
+    let layer = split_css_layers(value).into_iter().next()?;
+    let mut offset_x = None;
+    let mut offset_y = None;
+    let mut color = css_color(&layer);
+
+    for token in css_size_tokens(&layer) {
+        if color.is_none() && let Some(parsed) = css_color(&token) {
+            color = Some(parsed);
+            continue;
+        }
+
+        if let Some(number) = css_text_shadow_length(&token) {
+            if offset_x.is_none() {
+                offset_x = Some(number);
+            } else if offset_y.is_none() {
+                offset_y = Some(number);
+                break;
+            }
+        }
+    }
+
+    (offset_x.is_some() || offset_y.is_some() || color.is_some()).then_some(BuiTextShadowConfig {
+        offset_x,
+        offset_y,
+        color,
+    })
+}
+
+fn css_text_shadow_length(token: &str) -> Option<f32> {
+    let token = token.trim();
+    if token == "0" {
+        return Some(0.0);
+    }
+
+    token
+        .strip_suffix("px")
+        .and_then(|part| part.parse::<f32>().ok())
+}
+
+fn css_aspect_ratio(value: &str) -> Option<String> {
+    let value = value.trim();
+    if let Some((left, right)) = value.split_once('/') {
+        let left = left.trim().parse::<f32>().ok()?;
+        let right = right.trim().parse::<f32>().ok()?;
+        if right == 0.0 {
+            return None;
+        }
+        return Some((left / right).to_string());
+    }
+
+    value.parse::<f32>().ok().map(|ratio| ratio.to_string())
+}
+
+fn css_box_shadow(value: &str) -> Option<BuiBoxShadowConfig> {
+    let inset = value.split_whitespace().any(|token| token == "inset");
+    let mut offset_x = None;
+    let mut offset_y = None;
+    let mut blur_radius = None;
+    let mut spread_radius = None;
+    let mut color = None;
+
+    let tokens: Vec<&str> = value
+        .split_whitespace()
+        .filter(|token| !matches!(*token, "inset"))
+        .collect();
+
+    let mut sizes = Vec::new();
+    for token in tokens {
+        if color.is_none() && let Some(parsed) = css_color(token) {
+            color = Some(parsed);
+            continue;
+        }
+
+        if is_simple_css_size(token) {
+            sizes.push(token.to_string());
+        }
+    }
+
+    if let Some(value) = sizes.first() {
+        offset_x = Some(value.clone());
+    }
+    if let Some(value) = sizes.get(1) {
+        offset_y = Some(value.clone());
+    }
+    if let Some(value) = sizes.get(2) {
+        blur_radius = Some(value.clone());
+    }
+    if let Some(value) = sizes.get(3) {
+        spread_radius = Some(value.clone());
+    }
+
+    (offset_x.is_some() || offset_y.is_some() || blur_radius.is_some() || spread_radius.is_some() || color.is_some())
+        .then_some(BuiBoxShadowConfig {
+            inset,
+            offset_x,
+            offset_y,
+            blur_radius,
+            spread_radius,
+            color,
+        })
+}
+
+fn css_box_shadow_layers(value: &str) -> Vec<BuiBoxShadowConfig> {
+    split_css_layers(value)
+        .into_iter()
+        .filter_map(css_box_shadow)
+        .take(4)
+        .collect()
+}
+
+fn css_filter_drop_shadows(value: &str) -> Vec<BuiBoxShadowConfig> {
+    let mut shadows = Vec::new();
+    let mut rest = value.trim();
+
+    while let Some(start) = rest.find("drop-shadow(") {
+        let tail = &rest[start + "drop-shadow(".len()..];
+        let Some(end) = tail.find(')') else {
+            break;
+        };
+        if let Some(shadow) = css_box_shadow(tail[..end].trim()) {
+            shadows.push(shadow);
+        }
+        rest = &tail[end + 1..];
+    }
+
+    shadows
+}
+
+fn css_filter_shadow_length(value: &str) -> Option<f32> {
+    let value = value.trim();
+    if value == "0" {
+        return Some(0.0);
+    }
     value
-        .split(|character: char| character.is_whitespace() || matches!(character, ',' | '(' | ')'))
-        .filter_map(|part| part.strip_suffix("px"))
-        .filter_map(|number| number.parse::<f32>().ok())
-        .last()
+        .strip_suffix("px")
+        .and_then(|number| number.parse::<f32>().ok())
+}
+
+fn css_filter_blur_radius(value: &str) -> Option<f32> {
+    let value = value.trim();
+    let start = value.find("blur(")?;
+    let inner = &value[start + "blur(".len()..];
+    let end = inner.find(')')?;
+    inner[..end].trim().strip_suffix("px")?.parse::<f32>().ok()
+}
+
+fn css_filter_color_adjustment(value: &str) -> Option<CssFilterColorAdjustment> {
+    let brightness = css_filter_scalar_function(value, "brightness").unwrap_or(1.0);
+    let contrast = css_filter_scalar_function(value, "contrast").unwrap_or(1.0);
+    let saturate = css_filter_scalar_function(value, "saturate").unwrap_or(1.0);
+
+    ((brightness - 1.0).abs() > 0.001
+        || (contrast - 1.0).abs() > 0.001
+        || (saturate - 1.0).abs() > 0.001)
+        .then_some(CssFilterColorAdjustment {
+            brightness,
+            contrast,
+            saturate,
+        })
+}
+
+fn css_filter_scalar_function(value: &str, function_name: &str) -> Option<f32> {
+    let start = value.find(&format!("{function_name}("))?;
+    let inner = &value[start + function_name.len() + 1..];
+    let end = inner.find(')')?;
+    inner[..end].trim().parse::<f32>().ok()
+}
+
+fn apply_filter_blur_fallback(bui_node: &mut BuiNode, blur_radius: f32) {
+    let blur_radius = blur_radius.max(0.0);
+    if blur_radius <= 0.0 {
+        return;
+    }
+
+    bui_node
+        .children
+        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-filter-blur"));
+
+    if let Some(text_config) = &mut bui_node.text_config {
+        if text_config.text_shadow.is_none() {
+            text_config.text_shadow = Some(BuiTextShadowConfig {
+                offset_x: Some(0.0),
+                offset_y: Some(0.0),
+                color: Some(append_hex_alpha(&text_config.font_color, 55.0).unwrap_or_else(|| {
+                    text_config.font_color.clone()
+                })),
+            });
+        }
+        return;
+    }
+
+    let blur_px = format!("{}px", (blur_radius * 4.0).round());
+    let spread_px = format!("{}px", (blur_radius * 1.5).round());
+    let fallback_color = bui_node
+        .visuals
+        .background_color
+        .as_deref()
+        .and_then(|color| append_hex_alpha(color, 65.0));
+    let blur_shadow = BuiBoxShadowConfig {
+        inset: false,
+        offset_x: Some("0px".to_string()),
+        offset_y: Some("0px".to_string()),
+        blur_radius: Some(blur_px),
+        spread_radius: Some(spread_px),
+        color: fallback_color,
+    };
+    push_box_shadow_layer(bui_node, blur_shadow, "css-filter-blur", "filter_blur");
+}
+
+fn apply_filter_color_adjustment(bui_node: &mut BuiNode, adjustment: CssFilterColorAdjustment) {
+    if let Some(color) = &mut bui_node.visuals.background_color
+        && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
+    {
+        *color = adjusted;
+    }
+    if let Some(color) = &mut bui_node.visuals.border_color
+        && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
+    {
+        *color = adjusted;
+    }
+    if let Some(box_shadow) = &mut bui_node.visuals.box_shadow
+        && let Some(color) = &mut box_shadow.color
+        && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
+    {
+        *color = adjusted;
+    }
+    if let Some(text_config) = &mut bui_node.text_config {
+        if let Some(adjusted) = css_adjust_filter_color(&text_config.font_color, adjustment) {
+            text_config.font_color = adjusted;
+        }
+        if let Some(text_shadow) = &mut text_config.text_shadow
+            && let Some(color) = &mut text_shadow.color
+            && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
+        {
+            *color = adjusted;
+        }
+    }
+
+    for child in &mut bui_node.children {
+        apply_filter_color_adjustment(child, adjustment);
+    }
+}
+
+fn apply_state_filter_color_adjustment(
+    state_visual: &mut BuiStateVisual,
+    adjustment: CssFilterColorAdjustment,
+    base_background_color: Option<&str>,
+    base_border_color: Option<&str>,
+    base_text_color: Option<&str>,
+) {
+    if let Some(base) = state_visual
+        .visuals
+        .background_color
+        .clone()
+        .or_else(|| base_background_color.map(ToString::to_string))
+        && let Some(adjusted) = css_adjust_filter_color(&base, adjustment)
+    {
+        state_visual.visuals.background_color = Some(adjusted);
+    }
+
+    if let Some(base) = state_visual
+        .visuals
+        .border_color
+        .clone()
+        .or_else(|| base_border_color.map(ToString::to_string))
+        && let Some(adjusted) = css_adjust_filter_color(&base, adjustment)
+    {
+        state_visual.visuals.border_color = Some(adjusted);
+    }
+
+    if let Some(base) = state_visual
+        .text_color
+        .clone()
+        .or_else(|| base_text_color.map(ToString::to_string))
+        && let Some(adjusted) = css_adjust_filter_color(&base, adjustment)
+    {
+        state_visual.text_color = Some(adjusted);
+    }
+}
+
+fn apply_state_opacity_fallback(
+    state_visual: &mut BuiStateVisual,
+    opacity: f32,
+    base_background_color: Option<&str>,
+    base_border_color: Option<&str>,
+    base_text_color: Option<&str>,
+) {
+    if let Some(base) = state_visual
+        .visuals
+        .background_color
+        .clone()
+        .or_else(|| base_background_color.map(ToString::to_string))
+        && let Some(adjusted) = append_hex_alpha(&base, opacity * 100.0)
+    {
+        state_visual.visuals.background_color = Some(adjusted);
+    }
+
+    if let Some(base) = state_visual
+        .visuals
+        .border_color
+        .clone()
+        .or_else(|| base_border_color.map(ToString::to_string))
+        && let Some(adjusted) = append_hex_alpha(&base, opacity * 100.0)
+    {
+        state_visual.visuals.border_color = Some(adjusted);
+    }
+
+    if let Some(base) = state_visual
+        .text_color
+        .clone()
+        .or_else(|| base_text_color.map(ToString::to_string))
+        && let Some(adjusted) = append_hex_alpha(&base, opacity * 100.0)
+    {
+        state_visual.text_color = Some(adjusted);
+    }
+}
+
+fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str) {
+    let mode = normalize_token(value);
+    if mode != "multiply" {
+        return;
+    }
+
+    if let Some(color) = &mut bui_node.visuals.background_color
+        && let Some(mixed) = css_multiply_blend_fallback_color(color)
+    {
+        *color = mixed;
+    }
+
+    if let Some(color) = &mut bui_node.visuals.border_color
+        && let Some(mixed) = css_multiply_blend_fallback_color(color)
+    {
+        *color = mixed;
+    }
+
+    if let Some(box_shadow) = &mut bui_node.visuals.box_shadow
+        && let Some(color) = &mut box_shadow.color
+        && let Some(mixed) = css_multiply_blend_fallback_color(color)
+    {
+        *color = mixed;
+    }
+
+    for child in &mut bui_node.children {
+        let is_effect_helper = child.custom_tags.iter().any(|tag| {
+            tag == "css-gradient-overlay"
+                || tag == "css-box-shadow-layer"
+                || tag == "css-filter-drop-shadow"
+                || tag == "css-filter-blur"
+        });
+        if !is_effect_helper {
+            continue;
+        }
+
+        if let Some(color) = &mut child.visuals.background_color
+            && let Some(mixed) = css_multiply_blend_fallback_color(color)
+        {
+            *color = mixed;
+        }
+        if let Some(color) = &mut child.visuals.border_color
+            && let Some(mixed) = css_multiply_blend_fallback_color(color)
+        {
+            *color = mixed;
+        }
+        if let Some(box_shadow) = &mut child.visuals.box_shadow
+            && let Some(color) = &mut box_shadow.color
+            && let Some(mixed) = css_multiply_blend_fallback_color(color)
+        {
+            *color = mixed;
+        }
+    }
+}
+
+fn apply_box_shadow_fallback(node: &mut BuiNode, value: &str) {
+    node
+        .children
+        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-box-shadow-layer"));
+
+    let shadows = css_box_shadow_layers(value);
+    if shadows.is_empty() {
+        node.visuals.box_shadow = None;
+        return;
+    }
+
+    let primary_index = shadows
+        .iter()
+        .position(|shadow| !shadow.inset)
+        .unwrap_or(0);
+    node.visuals.box_shadow = Some(shadows[primary_index].clone());
+
+    if shadows.len() == 1 {
+        return;
+    }
+
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    for (index, shadow) in shadows.into_iter().enumerate() {
+        if index == primary_index {
+            continue;
+        }
+        push_box_shadow_layer(
+            node,
+            shadow,
+            "css-box-shadow-layer",
+            &format!("box_shadow_layer_{}", index + 1),
+        );
+    }
+}
+
+fn push_box_shadow_layer(
+    node: &mut BuiNode,
+    shadow: BuiBoxShadowConfig,
+    custom_tag: &str,
+    id_suffix: &str,
+) {
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    let layer_count = node
+        .children
+        .iter()
+        .filter(|child| {
+            child.custom_tags.iter().any(|tag| {
+                tag == "css-box-shadow-layer" || tag == "css-filter-drop-shadow"
+            })
+        })
+        .count();
+
+    let mut layer = bui_node(&format!("{}_{}", node.id, id_suffix), BuiNodeType::Node);
+    layer.custom_tags.push(custom_tag.to_string());
+    layer.styles.position_type = Some("absolute".to_string());
+    layer.styles.left = Some("0".to_string());
+    layer.styles.right = Some("0".to_string());
+    layer.styles.top = Some("0".to_string());
+    layer.styles.bottom = Some("0".to_string());
+    layer.styles.z_index = Some(format!("-{}", layer_count + 1));
+    layer.visuals.box_shadow = Some(shadow);
+    layer.visuals.border_radius = node.visuals.border_radius.clone();
+    node.children.insert(0, layer);
+}
+
+fn css_font_size(value: &str) -> Option<f32> {
+    if let Some(size) = css_eval_length_function(value) {
+        return size.strip_suffix("px")?.parse::<f32>().ok();
+    }
+
+    css_size_tokens(value)
+        .into_iter()
+        .filter_map(|part| part.strip_suffix("px").and_then(|number| number.parse::<f32>().ok()))
+        .next()
+}
+
+fn css_letter_spacing(value: &str) -> Option<f32> {
+    let value = value.trim();
+    if value.eq_ignore_ascii_case("normal") || value == "0" {
+        return Some(0.0);
+    }
+
+    value
+        .strip_suffix("px")
+        .and_then(|number| number.parse::<f32>().ok())
+}
+
+fn css_line_height(value: &str) -> Option<String> {
+    let value = value.trim();
+    if value.eq_ignore_ascii_case("normal") {
+        return None;
+    }
+
+    if value
+        .strip_suffix("px")
+        .and_then(|number| number.parse::<f32>().ok())
+        .is_some()
+    {
+        return Some(value.to_string());
+    }
+
+    value
+        .parse::<f32>()
+        .ok()
+        .filter(|line_height| *line_height > 0.0)
+        .map(|line_height| line_height.to_string())
+}
+
+fn css_text_align(value: &str) -> Option<&str> {
+    matches!(
+        value,
+        "left" | "center" | "right" | "justify" | "justified" | "start" | "end"
+    )
+    .then_some(value)
+}
+
+fn apply_css_white_space(text_config: &mut BuiTextConfig, value: &str) {
+    match normalize_token(value).as_str() {
+        "normal" => {
+            text_config.allow_newlines = Some(false);
+            text_config.linebreak = Some("word_boundary".to_string());
+        }
+        "nowrap" | "no_wrap" => {
+            text_config.allow_newlines = Some(false);
+            text_config.linebreak = Some("no_wrap".to_string());
+        }
+        "pre" => {
+            text_config.allow_newlines = Some(true);
+            text_config.linebreak = Some("no_wrap".to_string());
+        }
+        "pre_line" => {
+            text_config.allow_newlines = Some(true);
+            text_config.linebreak = Some("word_boundary".to_string());
+        }
+        "pre_wrap" | "break_spaces" => {
+            text_config.allow_newlines = Some(true);
+            text_config.linebreak = Some("any_character".to_string());
+        }
+        _ => {}
+    }
+}
+
+fn css_font_weight(value: &str) -> Option<u16> {
+    match normalize_token(value).as_str() {
+        "normal" => Some(400),
+        "bold" => Some(700),
+        "bolder" => Some(700),
+        "lighter" => Some(300),
+        other => other
+            .parse::<u16>()
+            .ok()
+            .map(|weight| weight.clamp(1, 1000)),
+    }
 }
 
 fn css_font_family_to_path(value: &str) -> String {
     let lower = value.to_ascii_lowercase();
-    if lower.contains("palatino") || lower.contains("iowan") || lower.contains("georgia") || lower.contains("serif") {
-        "Hiragino Sans GB.ttc".to_string()
-    } else if lower.contains("sfmono") || lower.contains("menlo") || lower.contains("monospace") || lower.contains("consolas") {
-        "Hiragino Sans GB.ttc".to_string()
+    if lower.contains("sfmono")
+        || lower.contains("menlo")
+        || lower.contains("monospace")
+        || lower.contains("consolas")
+        || lower.contains("ui-monospace")
+    {
+        "Menlo.ttc".to_string()
+    } else if lower.contains("palatino")
+        || lower.contains("iowan")
+        || lower.contains("georgia")
+        || lower.contains("serif")
+    {
+        "Palatino.ttc".to_string()
+    } else if lower.contains("songti") {
+        "Songti.ttc".to_string()
+    } else if lower.contains("pingfang") {
+        "PingFang.ttc".to_string()
+    } else if lower.contains("stheiti") {
+        "STHeiti Medium.ttc".to_string()
     } else {
         "Hiragino Sans GB.ttc".to_string()
     }
+}
+
+fn adjust_font_path_for_content(font_path: &str, content: &str) -> String {
+    if uses_latin_display_font(font_path) && contains_cjk(content) {
+        return "Songti.ttc".to_string();
+    }
+
+    font_path.to_string()
+}
+
+fn uses_latin_display_font(font_path: &str) -> bool {
+    matches!(
+        font_path,
+        "Palatino.ttc" | "Georgia.ttf" | "Times New Roman.ttf"
+    )
+}
+
+fn contains_cjk(content: &str) -> bool {
+    content.chars().any(is_cjk_character)
+}
+
+fn is_cjk_character(character: char) -> bool {
+    matches!(
+        character as u32,
+        0x3400..=0x4DBF
+            | 0x4E00..=0x9FFF
+            | 0xF900..=0xFAFF
+            | 0x20000..=0x2A6DF
+            | 0x2A700..=0x2B73F
+            | 0x2B740..=0x2B81F
+            | 0x2B820..=0x2CEAF
+            | 0x2CEB0..=0x2EBEF
+            | 0x30000..=0x3134F
+    )
+}
+
+fn css_background_fallback_color(value: &str) -> Option<String> {
+    let layers = split_css_layers(value);
+    if layers.len() <= 1 {
+        return None;
+    }
+
+    for layer in layers.iter().rev() {
+        if let Some(color) = css_simple_color(layer) {
+            if color != "transparent" {
+                return Some(color);
+            }
+        }
+    }
+
+    for layer in layers.iter().rev() {
+        if let Some(color) = css_gradient_representative_color(layer) {
+            if color != "transparent" {
+                return Some(color);
+            }
+        }
+    }
+
+    None
+}
+
+fn css_simple_color(value: &str) -> Option<String> {
+    let value = value.trim();
+    if let Some(color) = css_color_mix_with_transparency(value) {
+        return Some(color);
+    }
+    if let Some(color) = oklch_to_hex(value) {
+        return Some(color);
+    }
+    if let Some(color) = css_embedded_oklch_color(value) {
+        return Some(color);
+    }
+    if value == "transparent" {
+        return Some("transparent".to_string());
+    }
+    if is_hex_color(value) {
+        return Some(value.to_string());
+    }
+    for token in value.split(|character: char| {
+        character.is_whitespace() || matches!(character, ',' | '(' | ')')
+    }) {
+        if let Some(color) = oklch_to_hex(token) {
+            return Some(color);
+        }
+        if is_hex_color(token) {
+            return Some(token.to_string());
+        }
+        if let Some(color) = css_named_color(token) {
+            return Some(color.to_string());
+        }
+    }
+    css_named_color(value).map(ToString::to_string)
+}
+
+fn css_embedded_oklch_color(value: &str) -> Option<String> {
+    let start = value.find("oklch(")?;
+    let slice = &value[start..];
+    let mut depth = 0usize;
+    let mut end_index = None;
+
+    for (index, character) in slice.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    end_index = Some(index);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    let end = end_index?;
+    oklch_to_hex(&slice[..=end])
+}
+
+fn split_css_layers(value: &str) -> Vec<&str> {
+    let mut layers = Vec::new();
+    let mut depth: usize = 0;
+    let mut start = 0;
+
+    for (index, character) in value.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                let layer = value[start..index].trim();
+                if !layer.is_empty() {
+                    layers.push(layer);
+                }
+                start = index + character.len_utf8();
+            }
+            _ => {}
+        }
+    }
+
+    let tail = value[start..].trim();
+    if !tail.is_empty() {
+        layers.push(tail);
+    }
+
+    layers
+}
+
+fn css_gradient_representative_color(value: &str) -> Option<String> {
+    let value = value.trim();
+    if !value.contains("-gradient(") {
+        return None;
+    }
+
+    let gradient_color_stops = split_css_layers(
+        value
+            .split_once('(')?
+            .1
+            .strip_suffix(')')?
+            .trim(),
+    );
+
+    let mut colors = Vec::new();
+    for stop in gradient_color_stops {
+        if let Some(color) = css_simple_color(stop) {
+            if color != "transparent" {
+                colors.push(color);
+            }
+        }
+    }
+
+    colors.last().cloned().or_else(|| css_gradient_first_color(value))
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SimpleGradientOverlayDirection {
+    LeftToRight,
+    RightToLeft,
+    TopToBottom,
+    BottomToTop,
+}
+
+fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
+    let specs = css_simple_gradient_overlays(value);
+    if specs.is_empty() {
+        return;
+    }
+
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    for (index, spec) in specs.into_iter().enumerate().rev() {
+        let overlay_id = gradient_overlay_id(&node.id, index);
+        if node.children.iter().any(|child| child.id == overlay_id) {
+            continue;
+        }
+
+        let mut overlay = bui_node(&overlay_id, BuiNodeType::Node);
+        overlay.custom_tags.push("css-gradient-overlay".to_string());
+        overlay.styles.position_type = Some("absolute".to_string());
+        overlay.styles.z_index = Some(format!("-{}", index + 1));
+        overlay.visuals.background_color = Some(spec.color.clone());
+
+        match spec.kind {
+            SimpleGradientOverlayKind::Linear {
+                direction,
+                start_ratio,
+                end_ratio,
+            } => match direction {
+                SimpleGradientOverlayDirection::LeftToRight => {
+                    overlay.styles.left = Some(format!("{:.0}%", start_ratio * 100.0));
+                    overlay.styles.right = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                    overlay.styles.top = Some("0".to_string());
+                    overlay.styles.bottom = Some("0".to_string());
+                }
+                SimpleGradientOverlayDirection::RightToLeft => {
+                    overlay.styles.left = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                    overlay.styles.right = Some(format!("{:.0}%", start_ratio * 100.0));
+                    overlay.styles.top = Some("0".to_string());
+                    overlay.styles.bottom = Some("0".to_string());
+                }
+                SimpleGradientOverlayDirection::TopToBottom => {
+                    overlay.styles.left = Some("0".to_string());
+                    overlay.styles.right = Some("0".to_string());
+                    overlay.styles.top = Some(format!("{:.0}%", start_ratio * 100.0));
+                    overlay.styles.bottom = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                }
+                SimpleGradientOverlayDirection::BottomToTop => {
+                    overlay.styles.left = Some("0".to_string());
+                    overlay.styles.right = Some("0".to_string());
+                    overlay.styles.top = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                    overlay.styles.bottom = Some(format!("{:.0}%", start_ratio * 100.0));
+                }
+            },
+            SimpleGradientOverlayKind::Radial {
+                left,
+                top,
+                width,
+                height,
+            } => {
+                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.visuals.border_radius = Some("999px".to_string());
+            }
+            SimpleGradientOverlayKind::RadialRing {
+                left,
+                top,
+                width,
+                height,
+                border_width,
+            } => {
+                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.visuals.background_color = Some("transparent".to_string());
+                overlay.visuals.border_color = Some(spec.color.clone());
+                overlay.visuals.border_width = Some(format!("{:.1}%", border_width * 100.0));
+                overlay.visuals.border_radius = Some("999px".to_string());
+            }
+            SimpleGradientOverlayKind::ConicArc {
+                left,
+                top,
+                width,
+                height,
+                rotation_degrees,
+            } => {
+                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.styles.ui_rotation = Some(format!("{rotation_degrees:.1}deg"));
+                overlay.visuals.border_radius = Some("999px".to_string());
+            }
+        }
+
+        node.children.insert(0, overlay);
+    }
+}
+
+fn css_simple_gradient_overlays(value: &str) -> Vec<SimpleGradientOverlaySpec> {
+    split_css_layers(value)
+        .into_iter()
+        .take(3)
+        .flat_map(css_simple_gradient_overlay_layer)
+        .take(8)
+        .collect()
+}
+
+fn css_simple_gradient_overlay_layer(layer: &str) -> Vec<SimpleGradientOverlaySpec> {
+    let linear = css_simple_linear_gradient_overlays(layer);
+    if !linear.is_empty() {
+        return linear;
+    }
+
+    let conic = css_simple_conic_gradient_overlays(layer);
+    if !conic.is_empty() {
+        return conic;
+    }
+
+    if let Some(ring) = css_simple_radial_gradient_ring_overlay(layer) {
+        return vec![SimpleGradientOverlaySpec {
+            color: ring.color,
+            kind: SimpleGradientOverlayKind::RadialRing {
+                left: ring.left,
+                top: ring.top,
+                width: ring.width,
+                height: ring.height,
+                border_width: ring.border_width,
+            },
+        }];
+    }
+
+    let Some(radial) = css_simple_radial_gradient_overlay(layer) else {
+        return Vec::new();
+    };
+
+    vec![SimpleGradientOverlaySpec {
+        color: radial.color,
+        kind: SimpleGradientOverlayKind::Radial {
+            left: radial.left,
+            top: radial.top,
+            width: radial.width,
+            height: radial.height,
+        },
+    }]
+}
+
+fn css_simple_linear_gradient_overlays(layer: &str) -> Vec<SimpleGradientOverlaySpec> {
+    let Some((direction, bands)) = css_simple_linear_gradient_bands(layer) else {
+        return Vec::new();
+    };
+
+    bands
+        .into_iter()
+        .take(3)
+        .map(|band| SimpleGradientOverlaySpec {
+            color: band.color,
+            kind: SimpleGradientOverlayKind::Linear {
+                direction,
+                start_ratio: band.start_ratio,
+                end_ratio: band.end_ratio,
+            },
+        })
+        .collect()
+}
+
+fn css_simple_linear_gradient_bands(
+    layer: &str,
+) -> Option<(SimpleGradientOverlayDirection, Vec<SimpleGradientOverlayBand>)> {
+    let layer = layer.trim();
+    let inner = layer.strip_prefix("linear-gradient(")?.strip_suffix(')')?;
+    let args = split_css_function_args(inner);
+    if args.len() < 2 {
+        return None;
+    }
+
+    let (direction, stop_start_index) = css_simple_linear_gradient_direction(&args)?;
+    let stops = css_gradient_stops(&args[stop_start_index..])?;
+    let bands = css_simple_gradient_bands_from_stops(&stops);
+    if bands.is_empty() {
+        return None;
+    }
+
+    Some((direction, bands))
+}
+
+fn css_simple_gradient_bands_from_stops(
+    stops: &[CssGradientStop],
+) -> Vec<SimpleGradientOverlayBand> {
+    if !stops.iter().any(|stop| stop.color == "transparent") {
+        return css_simple_solid_gradient_bands(stops);
+    }
+
+    let mut bands = Vec::new();
+    let mut index = 0usize;
+
+    while index < stops.len() {
+        if stops[index].color == "transparent" {
+            index += 1;
+            continue;
+        }
+
+        let stop = &stops[index];
+        let previous_stop = index.checked_sub(1).and_then(|previous| stops.get(previous));
+        let next_stop = stops.get(index + 1);
+
+        let start_ratio = previous_stop
+            .map(|previous| previous.end_ratio)
+            .unwrap_or(stop.start_ratio)
+            .min(stop.end_ratio);
+        let mut end_ratio = stop.end_ratio;
+        if let Some(stop) = next_stop.filter(|stop| stop.color == "transparent") {
+            end_ratio = end_ratio.max(stop.start_ratio).max(stop.end_ratio);
+        }
+
+        bands.push(SimpleGradientOverlayBand {
+            color: stop.color.clone(),
+            start_ratio,
+            end_ratio,
+        });
+
+        index += 1;
+    }
+
+    bands
+        .into_iter()
+        .filter(|band| band.end_ratio > band.start_ratio)
+        .collect()
+}
+
+fn css_simple_solid_gradient_bands(stops: &[CssGradientStop]) -> Vec<SimpleGradientOverlayBand> {
+    let non_transparent: Vec<&CssGradientStop> = stops
+        .iter()
+        .filter(|stop| stop.color != "transparent")
+        .collect();
+
+    if non_transparent.len() == 2 {
+        let first = non_transparent[0];
+        let second = non_transparent[1];
+        let _first_end = first.end_ratio.max(first.start_ratio);
+        let second_end = second.end_ratio.max(second.start_ratio);
+        let gradient_start = first.start_ratio.min(first.end_ratio);
+        let gradient_end = second_end;
+
+        let mid_color = blend_hex_colors(&first.color, &second.color, 0.5)
+            .unwrap_or_else(|| second.color.clone());
+        let mid_point = (gradient_start + gradient_end) * 0.5;
+
+        let mut bands = Vec::new();
+        bands.push(SimpleGradientOverlayBand {
+            color: first.color.clone(),
+            start_ratio: gradient_start,
+            end_ratio: mid_point * 0.6 + gradient_start * 0.4,
+        });
+        bands.push(SimpleGradientOverlayBand {
+            color: mid_color,
+            start_ratio: mid_point * 0.6 + gradient_start * 0.4,
+            end_ratio: mid_point * 0.4 + gradient_end * 0.6,
+        });
+        bands.push(SimpleGradientOverlayBand {
+            color: second.color.clone(),
+            start_ratio: mid_point * 0.4 + gradient_end * 0.6,
+            end_ratio: gradient_end,
+        });
+        return bands
+            .into_iter()
+            .filter(|band| band.end_ratio > band.start_ratio)
+            .collect();
+    }
+
+    let mut bands = Vec::new();
+    for window in non_transparent.windows(2) {
+        let [previous, current] = window else {
+            continue;
+        };
+        let start_ratio = ((previous.end_ratio + current.end_ratio) * 0.5).clamp(0.0, 1.0);
+        let end_ratio = current.end_ratio.clamp(start_ratio, 1.0);
+        if end_ratio <= start_ratio {
+            continue;
+        }
+
+        bands.push(SimpleGradientOverlayBand {
+            color: current.color.clone(),
+            start_ratio,
+            end_ratio,
+        });
+    }
+
+    if bands.is_empty() {
+        if let Some(stop) = non_transparent.last() {
+            bands.push(SimpleGradientOverlayBand {
+                color: stop.color.clone(),
+                start_ratio: stop.start_ratio.clamp(0.0, 1.0),
+                end_ratio: stop.end_ratio.clamp(stop.start_ratio, 1.0),
+            });
+        }
+    }
+
+    bands
+}
+
+fn css_simple_linear_gradient_direction(
+    args: &[&str],
+) -> Option<(SimpleGradientOverlayDirection, usize)> {
+    let first = args.first()?.trim();
+    if let Some(direction) = css_linear_gradient_direction_from_token(first) {
+        return Some((direction, 1));
+    }
+
+    Some((SimpleGradientOverlayDirection::TopToBottom, 0))
+}
+
+fn css_linear_gradient_direction_from_token(
+    token: &str,
+) -> Option<SimpleGradientOverlayDirection> {
+    let token = token.trim().to_ascii_lowercase();
+    if let Some(direction) = css_linear_gradient_direction_from_keyword(&token) {
+        return Some(direction);
+    }
+
+    let degrees = token.strip_suffix("deg")?.trim().parse::<f32>().ok()?;
+    css_linear_gradient_direction_from_degrees(degrees)
+}
+
+fn css_linear_gradient_direction_from_keyword(
+    token: &str,
+) -> Option<SimpleGradientOverlayDirection> {
+    let token = token.trim();
+    if !token.starts_with("to ") {
+        return None;
+    }
+
+    let has_left = token.contains("left");
+    let has_right = token.contains("right");
+    let has_top = token.contains("top");
+    let has_bottom = token.contains("bottom");
+
+    if has_left ^ has_right {
+        return Some(if has_right {
+            SimpleGradientOverlayDirection::LeftToRight
+        } else {
+            SimpleGradientOverlayDirection::RightToLeft
+        });
+    }
+
+    if has_top ^ has_bottom {
+        return Some(if has_bottom {
+            SimpleGradientOverlayDirection::TopToBottom
+        } else {
+            SimpleGradientOverlayDirection::BottomToTop
+        });
+    }
+
+    None
+}
+
+fn css_linear_gradient_direction_from_degrees(
+    degrees: f32,
+) -> Option<SimpleGradientOverlayDirection> {
+    if !degrees.is_finite() {
+        return None;
+    }
+
+    let normalized = degrees.rem_euclid(360.0);
+    let radians = normalized.to_radians();
+    let horizontal = radians.sin();
+    let vertical = -radians.cos();
+
+    if horizontal.abs() >= vertical.abs() {
+        Some(if horizontal >= 0.0 {
+            SimpleGradientOverlayDirection::LeftToRight
+        } else {
+            SimpleGradientOverlayDirection::RightToLeft
+        })
+    } else {
+        Some(if vertical >= 0.0 {
+            SimpleGradientOverlayDirection::TopToBottom
+        } else {
+            SimpleGradientOverlayDirection::BottomToTop
+        })
+    }
+}
+
+fn gradient_overlay_id(node_id: &str, index: usize) -> String {
+    if index == 0 {
+        format!("{node_id}_gradient_overlay")
+    } else {
+        format!("{node_id}_gradient_overlay_{}", index + 1)
+    }
+}
+
+struct SimpleGradientOverlaySpec {
+    color: String,
+    kind: SimpleGradientOverlayKind,
+}
+
+struct SimpleGradientOverlayBand {
+    color: String,
+    start_ratio: f32,
+    end_ratio: f32,
+}
+
+enum SimpleGradientOverlayKind {
+    Linear {
+        direction: SimpleGradientOverlayDirection,
+        start_ratio: f32,
+        end_ratio: f32,
+    },
+    Radial {
+        left: f32,
+        top: f32,
+        width: f32,
+        height: f32,
+    },
+    RadialRing {
+        left: f32,
+        top: f32,
+        width: f32,
+        height: f32,
+        border_width: f32,
+    },
+    ConicArc {
+        left: f32,
+        top: f32,
+        width: f32,
+        height: f32,
+        rotation_degrees: f32,
+    },
+}
+
+struct SimpleRadialGradientOverlay {
+    left: f32,
+    top: f32,
+    width: f32,
+    height: f32,
+    color: String,
+}
+
+struct SimpleRadialGradientRingOverlay {
+    left: f32,
+    top: f32,
+    width: f32,
+    height: f32,
+    border_width: f32,
+    color: String,
+}
+
+struct CssGradientStop {
+    color: String,
+    start_ratio: f32,
+    end_ratio: f32,
+}
+
+struct SimpleConicGradientOverlay {
+    left: f32,
+    top: f32,
+    width: f32,
+    height: f32,
+    rotation_degrees: f32,
+    color: String,
+}
+
+fn css_gradient_stops(args: &[&str]) -> Option<Vec<CssGradientStop>> {
+    let raw_stops = args
+        .iter()
+        .map(|arg| {
+            let arg = arg.trim();
+            Some((css_color(arg)?, css_gradient_stop_positions(arg)))
+        })
+        .collect::<Option<Vec<_>>>()?;
+    let anchor_positions = css_resolved_gradient_stop_positions(
+        &raw_stops
+            .iter()
+            .map(|(_, positions)| positions.clone())
+            .collect::<Vec<_>>(),
+    );
+
+    let mut stops = Vec::new();
+    let mut previous_end = 0.0;
+
+    for (index, (color, positions)) in raw_stops.into_iter().enumerate() {
+        let (start_ratio, end_ratio) = match positions.as_slice() {
+            [] => {
+                let end = anchor_positions[index];
+                if index == 0 {
+                    (0.0, end)
+                } else {
+                    (previous_end, end)
+                }
+            }
+            [single] => {
+                if index == 0 {
+                    (0.0, *single)
+                } else {
+                    (previous_end, *single)
+                }
+            }
+            [start, end, ..] => (*start, *end),
+        };
+
+        let start_ratio = start_ratio.clamp(0.0, 1.0);
+        let end_ratio = end_ratio.clamp(start_ratio, 1.0);
+        previous_end = end_ratio;
+
+        stops.push(CssGradientStop {
+            color,
+            start_ratio,
+            end_ratio,
+        });
+    }
+
+    Some(stops)
+}
+
+fn css_resolved_gradient_stop_positions(raw_positions: &[Vec<f32>]) -> Vec<f32> {
+    let mut anchors = raw_positions
+        .iter()
+        .map(|positions| match positions.as_slice() {
+            [] => None,
+            [single] => Some(*single),
+            [_, end, ..] => Some(*end),
+        })
+        .collect::<Vec<_>>();
+
+    let mut index = 0usize;
+    while index < anchors.len() {
+        if anchors[index].is_some() {
+            index += 1;
+            continue;
+        }
+
+        let run_start = index;
+        while index < anchors.len() && anchors[index].is_none() {
+            index += 1;
+        }
+        let run_end = index;
+        let run_len = run_end - run_start;
+
+        let previous = run_start
+            .checked_sub(1)
+            .and_then(|previous_index| anchors[previous_index]);
+        let next = anchors.get(run_end).copied().flatten();
+
+        match (previous, next) {
+            (Some(left), Some(right)) => {
+                for offset in 0..run_len {
+                    anchors[run_start + offset] =
+                        Some(left + (right - left) * ((offset + 1) as f32 / (run_len + 1) as f32));
+                }
+            }
+            (None, Some(right)) => {
+                if run_len == 1 {
+                    anchors[run_start] = Some(0.0);
+                } else {
+                    for offset in 0..run_len {
+                        anchors[run_start + offset] =
+                            Some(right * (offset as f32 / run_len as f32));
+                    }
+                }
+            }
+            (Some(left), None) => {
+                for offset in 0..run_len {
+                    anchors[run_start + offset] = Some(
+                        left + (1.0 - left) * ((offset + 1) as f32 / run_len as f32),
+                    );
+                }
+            }
+            (None, None) => {
+                if run_len == 1 {
+                    anchors[run_start] = Some(0.0);
+                } else {
+                    for offset in 0..run_len {
+                        anchors[run_start + offset] =
+                            Some(offset as f32 / (run_len - 1) as f32);
+                    }
+                }
+            }
+        }
+    }
+
+    anchors
+        .into_iter()
+        .map(|anchor| anchor.unwrap_or(0.0).clamp(0.0, 1.0))
+        .collect()
+}
+
+fn css_gradient_stop_positions(value: &str) -> Vec<f32> {
+    value
+        .split_whitespace()
+        .filter_map(css_gradient_stop_position_value)
+        .collect()
+}
+
+fn css_gradient_stop_position_value(value: &str) -> Option<f32> {
+    if let Some(percent) = css_percentage_value(value) {
+        return Some(percent);
+    }
+
+    let value = value.trim();
+    let number = value.parse::<f32>().ok()?;
+    if number.abs() > f32::EPSILON {
+        return None;
+    }
+
+    Some(0.0)
+}
+
+fn css_simple_radial_gradient_overlay(value: &str) -> Option<SimpleRadialGradientOverlay> {
+    let value = value.trim();
+    let layer = split_css_layers(value).into_iter().next()?;
+    let inner = layer.strip_prefix("radial-gradient(")?.strip_suffix(')')?;
+    let args = split_css_function_args(inner);
+    if args.len() < 2 {
+        return None;
+    }
+
+    let descriptor = args[0].trim().to_ascii_lowercase();
+    let mut center_x = 0.5;
+    let mut center_y = 0.5;
+    if let Some((_, position)) = descriptor.split_once(" at ") {
+        let mut parts = position.split_whitespace();
+        if let Some(x) = parts.next().and_then(css_percentage_value) {
+            center_x = x;
+        }
+        if let Some(y) = parts.next().and_then(css_percentage_value) {
+            center_y = y;
+        }
+    }
+
+    let mut color = None;
+    let mut stop_ratio = None;
+    for arg in args.iter().skip(1) {
+        let token = arg.trim();
+        let token_color = css_simple_color(token);
+        if color.is_none() && token_color.as_deref() != Some("transparent") {
+            color = token_color;
+        }
+        if stop_ratio.is_none() && token.contains("transparent") {
+            stop_ratio = token
+                .split_whitespace()
+                .find_map(css_percentage_value)
+                .or(Some(0.5));
+        }
+    }
+
+    let color = color?;
+    let stop_ratio = stop_ratio.unwrap_or(0.5).clamp(0.12, 0.72);
+    let ellipse_scale_x = if descriptor.contains("ellipse") { 1.35 } else { 1.0 };
+    let ellipse_scale_y = if descriptor.contains("ellipse") { 0.78 } else { 1.0 };
+    let width = (stop_ratio * 2.0 * ellipse_scale_x).clamp(0.18, 1.25);
+    let height = (stop_ratio * 2.0 * ellipse_scale_y).clamp(0.18, 1.1);
+    let left = (center_x - width * 0.5).clamp(-0.2, 1.0);
+    let top = (center_y - height * 0.5).clamp(-0.2, 1.0);
+
+    Some(SimpleRadialGradientOverlay {
+        left,
+        top,
+        width,
+        height,
+        color,
+    })
+}
+
+fn css_simple_radial_gradient_ring_overlay(value: &str) -> Option<SimpleRadialGradientRingOverlay> {
+    let value = value.trim();
+    let layer = split_css_layers(value).into_iter().next()?;
+    let inner = layer.strip_prefix("radial-gradient(")?.strip_suffix(')')?;
+    let args = split_css_function_args(inner);
+    if args.len() < 3 {
+        return None;
+    }
+
+    let descriptor = args[0].trim().to_ascii_lowercase();
+    let mut center_x = 0.5;
+    let mut center_y = 0.5;
+    if let Some((_, position)) = descriptor.split_once(" at ") {
+        let mut parts = position.split_whitespace();
+        if let Some(x) = parts.next().and_then(css_percentage_value) {
+            center_x = x;
+        }
+        if let Some(y) = parts.next().and_then(css_percentage_value) {
+            center_y = y;
+        }
+    }
+
+    let stops = css_gradient_stops(&args[1..])?;
+    let mut inner_ratio = None;
+    let mut outer_ratio = None;
+    let mut color = None;
+
+    for window in stops.windows(3) {
+        let [before, middle, after] = window else { continue };
+        if before.color == "transparent"
+            && middle.color != "transparent"
+            && after.color == "transparent"
+        {
+            inner_ratio = Some(middle.start_ratio.max(before.end_ratio));
+            outer_ratio = Some(middle.end_ratio.min(after.start_ratio.max(middle.end_ratio)));
+            color = Some(middle.color.clone());
+            break;
+        }
+    }
+
+    let color = color?;
+    let inner_ratio = inner_ratio?;
+    let outer_ratio = outer_ratio?;
+    if outer_ratio <= inner_ratio {
+        return None;
+    }
+
+    let ellipse_scale_x = if descriptor.contains("ellipse") { 1.35 } else { 1.0 };
+    let ellipse_scale_y = if descriptor.contains("ellipse") { 0.78 } else { 1.0 };
+    let width = (outer_ratio * 2.0 * ellipse_scale_x).clamp(0.18, 1.25);
+    let height = (outer_ratio * 2.0 * ellipse_scale_y).clamp(0.18, 1.1);
+    let left = (center_x - width * 0.5).clamp(-0.2, 1.0);
+    let top = (center_y - height * 0.5).clamp(-0.2, 1.0);
+    let border_width = ((outer_ratio - inner_ratio) / outer_ratio.max(0.001) * 0.5)
+        .clamp(0.01, 0.18);
+
+    Some(SimpleRadialGradientRingOverlay {
+        left,
+        top,
+        width,
+        height,
+        border_width,
+        color,
+    })
+}
+
+fn css_simple_conic_gradient_overlays(value: &str) -> Vec<SimpleGradientOverlaySpec> {
+    let Some(overlays) = css_simple_conic_gradient_overlay_specs(value) else {
+        return Vec::new();
+    };
+
+    overlays
+        .into_iter()
+        .take(2)
+        .map(|overlay| SimpleGradientOverlaySpec {
+            color: overlay.color,
+            kind: SimpleGradientOverlayKind::ConicArc {
+                left: overlay.left,
+                top: overlay.top,
+                width: overlay.width,
+                height: overlay.height,
+                rotation_degrees: overlay.rotation_degrees,
+            },
+        })
+        .collect()
+}
+
+fn css_simple_conic_gradient_overlay_specs(
+    value: &str,
+) -> Option<Vec<SimpleConicGradientOverlay>> {
+    let value = value.trim();
+    let layer = split_css_layers(value).into_iter().next()?;
+    let inner = layer.strip_prefix("conic-gradient(")?.strip_suffix(')')?;
+    let args = split_css_function_args(inner);
+    if args.len() < 2 {
+        return None;
+    }
+
+    let (from_degrees, center_x, center_y, stop_start_index) =
+        css_simple_conic_gradient_descriptor(&args)?;
+    let stops = css_gradient_stops(&args[stop_start_index..])?;
+    let bands: Vec<SimpleGradientOverlayBand> = stops
+        .iter()
+        .filter(|stop| stop.color != "transparent" && stop.end_ratio > stop.start_ratio)
+        .map(|stop| SimpleGradientOverlayBand {
+            color: stop.color.clone(),
+            start_ratio: stop.start_ratio,
+            end_ratio: stop.end_ratio,
+        })
+        .collect();
+    if bands.is_empty() {
+        return None;
+    }
+
+    let radius = 0.30f32;
+    let thickness = 0.06f32;
+
+    Some(
+        bands
+            .into_iter()
+            .take(2)
+            .map(|band| {
+                let span = (band.end_ratio - band.start_ratio).clamp(0.02, 0.24);
+                let midpoint_ratio = (band.start_ratio + band.end_ratio) * 0.5;
+                let midpoint_degrees = from_degrees + midpoint_ratio * 360.0;
+                let radians = (midpoint_degrees - 90.0).to_radians();
+                let arc_length = (std::f32::consts::TAU * radius * span).clamp(0.08, 0.24);
+                let center_arc_x = center_x + radians.cos() * radius;
+                let center_arc_y = center_y + radians.sin() * radius;
+                let left = (center_arc_x - arc_length * 0.5).clamp(-0.2, 1.0);
+                let top = (center_arc_y - thickness * 0.5).clamp(-0.2, 1.0);
+
+                SimpleConicGradientOverlay {
+                    left,
+                    top,
+                    width: arc_length,
+                    height: thickness,
+                    rotation_degrees: midpoint_degrees,
+                    color: band.color,
+                }
+            })
+            .collect(),
+    )
+}
+
+fn css_simple_conic_gradient_descriptor(args: &[&str]) -> Option<(f32, f32, f32, usize)> {
+    let first = args.first()?.trim().to_ascii_lowercase();
+    if !first.contains("from ") && !first.contains(" at ") {
+        return Some((0.0, 0.5, 0.5, 0));
+    }
+
+    let mut from_degrees = 0.0;
+    if let Some(from_section) = first.split("from ").nth(1) {
+        let angle_token = from_section
+            .split_whitespace()
+            .next()
+            .unwrap_or_default()
+            .trim_end_matches(',');
+        if let Some(degrees) = angle_token.strip_suffix("deg")
+            && let Ok(parsed) = degrees.trim().parse::<f32>()
+        {
+            from_degrees = parsed;
+        }
+    }
+
+    let mut center_x = 0.5;
+    let mut center_y = 0.5;
+    if let Some((_, position_section)) = first.split_once(" at ") {
+        let mut parts = position_section.split_whitespace();
+        if let Some(x) = parts.next().and_then(css_percentage_value) {
+            center_x = x;
+        }
+        if let Some(y) = parts.next().and_then(css_percentage_value) {
+            center_y = y;
+        }
+    }
+
+    Some((from_degrees, center_x, center_y, 1))
+}
+
+fn css_percentage_value(value: &str) -> Option<f32> {
+    value
+        .trim()
+        .strip_suffix('%')?
+        .parse::<f32>()
+        .ok()
+        .map(|value| value / 100.0)
+}
+
+#[derive(Clone, Copy)]
+enum MaskFadeDirection {
+    LeftToRight,
+    RightToLeft,
+    TopToBottom,
+    BottomToTop,
+}
+
+struct MaskFadeSpec {
+    direction: MaskFadeDirection,
+    fade_ratio: f32,
+}
+
+struct ClipPolygonContourSpec {
+    left: f32,
+    right: f32,
+    top: f32,
+    bottom: f32,
+    fill_left: f32,
+    fill_right: f32,
+    fill_top: f32,
+    fill_bottom: f32,
+    accent_left: f32,
+    accent_top: f32,
+    accent_width: f32,
+    accent_height: f32,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct CssFilterColorAdjustment {
+    brightness: f32,
+    contrast: f32,
+    saturate: f32,
+}
+
+fn apply_mask_image_fallback(node: &mut BuiNode, value: &str) {
+    if normalize_token(value) == "none" {
+        node.children
+            .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-mask-fade"));
+        return;
+    }
+
+    let Some(spec) = css_simple_mask_fade(value) else {
+        return;
+    };
+
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    for index in 0..3 {
+        let overlay_id = format!("{}_mask_fade_{}", node.id, index + 1);
+        if node.children.iter().any(|child| child.id == overlay_id) {
+            continue;
+        }
+
+        let band_count = 3.0;
+        let band_start = spec.fade_ratio * (index as f32 / band_count);
+        let band_end = spec.fade_ratio * ((index + 1) as f32 / band_count);
+        let alpha = match index {
+            0 => 62.0,
+            1 => 34.0,
+            _ => 16.0,
+        };
+
+        let mut overlay = bui_node(&overlay_id, BuiNodeType::Node);
+        overlay.custom_tags.push("css-mask-fade".to_string());
+        overlay.styles.position_type = Some("absolute".to_string());
+        overlay.styles.z_index = Some("12".to_string());
+        overlay.visuals.background_color =
+            append_hex_alpha("#120E12", alpha).or(Some("#120E129E".to_string()));
+
+        match spec.direction {
+            MaskFadeDirection::LeftToRight => {
+                overlay.styles.left = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.styles.top = Some("0".to_string());
+                overlay.styles.bottom = Some("0".to_string());
+            }
+            MaskFadeDirection::RightToLeft => {
+                overlay.styles.right = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.styles.top = Some("0".to_string());
+                overlay.styles.bottom = Some("0".to_string());
+            }
+            MaskFadeDirection::TopToBottom => {
+                overlay.styles.top = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.styles.left = Some("0".to_string());
+                overlay.styles.right = Some("0".to_string());
+            }
+            MaskFadeDirection::BottomToTop => {
+                overlay.styles.bottom = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.styles.left = Some("0".to_string());
+                overlay.styles.right = Some("0".to_string());
+            }
+        }
+
+        node.children.push(overlay);
+    }
+}
+
+fn apply_clip_path_fallback(node: &mut BuiNode, value: &str) {
+    let Some(spec) = css_simple_clip_polygon_contour(value) else {
+        return;
+    };
+
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    if node
+        .children
+        .iter()
+        .any(|child| child.custom_tags.iter().any(|tag| tag == "css-clip-contour"))
+    {
+        return;
+    }
+
+    let fill_color = node.visuals.background_color.clone();
+    let contour_color = node
+        .visuals
+        .border_color
+        .clone()
+        .or_else(|| node.visuals.background_color.as_deref().and_then(|color| append_hex_alpha(color, 42.0)))
+        .unwrap_or_else(|| "#F4E8D69C".to_string());
+    let accent_color = node
+        .visuals
+        .background_color
+        .as_deref()
+        .and_then(|color| append_hex_alpha(color, 58.0))
+        .unwrap_or_else(|| "#FFF8EE66".to_string());
+
+    if fill_color.is_some() {
+        let mut fill = bui_node(&format!("{}_clip_fill", node.id), BuiNodeType::Node);
+        fill.custom_tags.push("css-clip-contour".to_string());
+        fill.styles.position_type = Some("absolute".to_string());
+        fill.styles.left = Some(format!("{:.1}%", spec.fill_left * 100.0));
+        fill.styles.right = Some(format!("{:.1}%", spec.fill_right * 100.0));
+        fill.styles.top = Some(format!("{:.1}%", spec.fill_top * 100.0));
+        fill.styles.bottom = Some(format!("{:.1}%", spec.fill_bottom * 100.0));
+        fill.styles.z_index = Some("1".to_string());
+        fill.visuals.background_color = fill_color;
+        fill.visuals.border_radius = Some("999px".to_string());
+        node.children.push(fill);
+
+        // Keep the node itself for layout, images, and content while moving the fallback paint
+        // into a bounded helper layer so clipped shapes degrade less like full rectangles.
+        node.visuals.background_color = Some("transparent".to_string());
+        node.visuals.border_color = Some("transparent".to_string());
+    }
+
+    let mut outer = bui_node(&format!("{}_clip_contour", node.id), BuiNodeType::Node);
+    outer.custom_tags.push("css-clip-contour".to_string());
+    outer.styles.position_type = Some("absolute".to_string());
+    outer.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
+    outer.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
+    outer.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
+    outer.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
+    outer.styles.z_index = Some("3".to_string());
+    outer.visuals.background_color = Some("transparent".to_string());
+    outer.visuals.border_color = Some(contour_color);
+    outer.visuals.border_width = Some("1px".to_string());
+    outer.visuals.border_radius = Some("999px".to_string());
+
+    let mut accent = bui_node(&format!("{}_clip_contour_accent", node.id), BuiNodeType::Node);
+    accent.custom_tags.push("css-clip-contour".to_string());
+    accent.styles.position_type = Some("absolute".to_string());
+    accent.styles.left = Some(format!("{:.1}%", spec.accent_left * 100.0));
+    accent.styles.top = Some(format!("{:.1}%", spec.accent_top * 100.0));
+    accent.styles.width = Some(format!("{:.1}%", spec.accent_width * 100.0));
+    accent.styles.height = Some(format!("{:.1}%", spec.accent_height * 100.0));
+    accent.styles.z_index = Some("4".to_string());
+    accent.visuals.background_color = Some(accent_color);
+    accent.visuals.border_radius = Some("999px".to_string());
+
+    node.children.push(outer);
+    node.children.push(accent);
+}
+
+fn css_simple_mask_fade(value: &str) -> Option<MaskFadeSpec> {
+    let value = value.trim();
+    let inner = value
+        .strip_prefix("linear-gradient(")?
+        .strip_suffix(')')?;
+    let args = split_css_function_args(inner);
+    if args.len() < 2 {
+        return None;
+    }
+
+    let (direction, stop_start_index) = css_simple_mask_fade_direction(&args)?;
+
+    let stops = css_gradient_stops(&args[stop_start_index..])?;
+    let mut transparent_seen = false;
+    for stop in stops {
+        if stop.color == "transparent" {
+            transparent_seen = true;
+            continue;
+        }
+        if transparent_seen && stop.start_ratio > 0.0 {
+            return Some(MaskFadeSpec {
+                direction,
+                fade_ratio: stop.start_ratio.clamp(0.04, 0.35),
+            });
+        }
+    }
+
+    None
+}
+
+fn css_simple_mask_fade_direction(args: &[&str]) -> Option<(MaskFadeDirection, usize)> {
+    let first = args.first()?.trim();
+    if let Some(direction) = css_mask_fade_direction_from_token(first) {
+        return Some((direction, 1));
+    }
+
+    Some((MaskFadeDirection::TopToBottom, 0))
+}
+
+fn css_mask_fade_direction_from_token(token: &str) -> Option<MaskFadeDirection> {
+    let token = token.trim().to_ascii_lowercase();
+    match token.as_str() {
+        "90deg" | "to right" => Some(MaskFadeDirection::LeftToRight),
+        "270deg" | "to left" => Some(MaskFadeDirection::RightToLeft),
+        "180deg" | "to bottom" => Some(MaskFadeDirection::TopToBottom),
+        "0deg" | "360deg" | "to top" => Some(MaskFadeDirection::BottomToTop),
+        _ => None,
+    }
+}
+
+fn css_simple_clip_polygon_contour(value: &str) -> Option<ClipPolygonContourSpec> {
+    let value = value.trim();
+    let inner = value.strip_prefix("polygon(")?.strip_suffix(')')?;
+    let points = split_css_function_args(inner)
+        .into_iter()
+        .filter_map(|point| {
+            let mut parts = point.split_whitespace();
+            let x = parts.next().and_then(css_clip_path_coordinate_value)?;
+            let y = parts.next().and_then(css_clip_path_coordinate_value)?;
+            Some((x, y))
+        })
+        .collect::<Vec<_>>();
+
+    if points.len() < 3 {
+        return None;
+    }
+
+    let min_x = points.iter().map(|(x, _)| *x).fold(1.0f32, f32::min);
+    let max_x = points.iter().map(|(x, _)| *x).fold(0.0f32, f32::max);
+    let min_y = points.iter().map(|(_, y)| *y).fold(1.0f32, f32::min);
+    let max_y = points.iter().map(|(_, y)| *y).fold(0.0f32, f32::max);
+
+    let width = (max_x - min_x).clamp(0.08, 1.0);
+    let height = (max_y - min_y).clamp(0.08, 1.0);
+    let fill_inset_x = (width * 0.06).clamp(0.02, 0.08);
+    let fill_inset_top = (height * 0.05).clamp(0.015, 0.06);
+    let fill_inset_bottom = (height * 0.03).clamp(0.015, 0.05);
+
+    Some(ClipPolygonContourSpec {
+        left: min_x.clamp(0.0, 0.92),
+        right: (1.0 - max_x).clamp(0.0, 0.92),
+        top: min_y.clamp(0.0, 0.92),
+        bottom: (1.0 - max_y).clamp(0.0, 0.92),
+        fill_left: (min_x + fill_inset_x).clamp(0.0, 0.95),
+        fill_right: ((1.0 - max_x) + fill_inset_x).clamp(0.0, 0.95),
+        fill_top: (min_y + fill_inset_top).clamp(0.0, 0.95),
+        fill_bottom: ((1.0 - max_y) + fill_inset_bottom).clamp(0.0, 0.95),
+        accent_left: (min_x + width * 0.10).clamp(0.0, 0.94),
+        accent_top: (min_y + height * 0.06).clamp(0.0, 0.94),
+        accent_width: (width * 0.28).clamp(0.08, 0.34),
+        accent_height: (height * 0.16).clamp(0.06, 0.24),
+    })
+}
+
+fn css_clip_path_coordinate_value(value: &str) -> Option<f32> {
+    css_percentage_value(value).or_else(|| {
+        let value = value.trim();
+        let number = value.parse::<f32>().ok()?;
+        (number.abs() <= f32::EPSILON).then_some(0.0)
+    })
 }
 
 fn apply_css_border(bui_node: &mut BuiNode, value: &str) {
@@ -3083,6 +7656,77 @@ fn apply_css_border(bui_node: &mut BuiNode, value: &str) {
     if let Some(color) = css_color(value) {
         bui_node.visuals.border_color = Some(color);
     }
+}
+
+fn apply_css_edge_border(bui_node: &mut BuiNode, edge: &str, value: &str) {
+    if let Some(color) = css_color(value) {
+        ensure_edge_border_node(bui_node, edge).visuals.background_color = Some(color);
+    }
+    apply_css_edge_border_width(bui_node, edge, value);
+}
+
+fn apply_css_edge_border_color(bui_node: &mut BuiNode, edge: &str, value: &str) {
+    if let Some(color) = css_color(value) {
+        ensure_edge_border_node(bui_node, edge).visuals.background_color = Some(color);
+    }
+}
+
+fn apply_css_edge_border_width(bui_node: &mut BuiNode, edge: &str, value: &str) {
+    let Some(width) = css_first_size(value) else {
+        return;
+    };
+
+    let border = ensure_edge_border_node(bui_node, edge);
+    match edge {
+        "top" | "bottom" => border.styles.height = Some(width),
+        "left" | "right" => border.styles.width = Some(width),
+        _ => {}
+    }
+}
+
+fn ensure_edge_border_node<'a>(node: &'a mut BuiNode, edge: &str) -> &'a mut BuiNode {
+    let border_id = format!("{}_border_{edge}", node.id);
+    if let Some(index) = node.children.iter().position(|child| child.id == border_id) {
+        return &mut node.children[index];
+    }
+
+    if node.styles.position_type.is_none() {
+        node.styles.position_type = Some("relative".to_string());
+    }
+
+    let mut border = bui_node(&border_id, BuiNodeType::Node);
+    border.custom_tags.push(format!("css-edge-border:{edge}"));
+    border.styles.position_type = Some("absolute".to_string());
+
+    match edge {
+        "top" => {
+            border.styles.left = Some("0".to_string());
+            border.styles.right = Some("0".to_string());
+            border.styles.top = Some("0".to_string());
+        }
+        "bottom" => {
+            border.styles.left = Some("0".to_string());
+            border.styles.right = Some("0".to_string());
+            border.styles.bottom = Some("0".to_string());
+        }
+        "left" => {
+            border.styles.left = Some("0".to_string());
+            border.styles.top = Some("0".to_string());
+            border.styles.bottom = Some("0".to_string());
+        }
+        "right" => {
+            border.styles.right = Some("0".to_string());
+            border.styles.top = Some("0".to_string());
+            border.styles.bottom = Some("0".to_string());
+        }
+        _ => {}
+    }
+
+    node.children.push(border);
+    node
+        .children
+        .last_mut()
+        .expect("just inserted edge border child")
 }
 
 fn css_transform_scale(value: &str) -> Option<String> {
@@ -3218,7 +7862,7 @@ fn validate_bui_node(node: &BuiNode, path: &str, ids: &mut HashSet<String>) -> R
     match node.node_type {
         BuiNodeType::Node | BuiNodeType::Button | BuiNodeType::Toggle => {
             reject_config(node.text_config.is_some(), path, "text_config")?;
-            if !matches!(node.node_type, BuiNodeType::Button) {
+            if !matches!(node.node_type, BuiNodeType::Node | BuiNodeType::Button) {
                 reject_config(node.image_config.is_some(), path, "image_config")?;
             }
             if let Some(image_config) = &node.image_config {
@@ -3273,10 +7917,33 @@ fn validate_visuals(visuals: &BuiVisuals) -> Result<(), String> {
     if let Some(color) = &visuals.border_color {
         parse_color(color)?;
     }
+    if let Some(box_shadow) = &visuals.box_shadow {
+        validate_box_shadow(box_shadow)?;
+    }
     if let Some(shader) = &visuals.material_shader {
         if shader.trim().is_empty() {
             return Err("visuals.material_shader must not be empty.".to_string());
         }
+    }
+
+    Ok(())
+}
+
+fn validate_box_shadow(box_shadow: &BuiBoxShadowConfig) -> Result<(), String> {
+    if let Some(value) = &box_shadow.offset_x {
+        parse_val(value)?;
+    }
+    if let Some(value) = &box_shadow.offset_y {
+        parse_val(value)?;
+    }
+    if let Some(value) = &box_shadow.blur_radius {
+        parse_val(value)?;
+    }
+    if let Some(value) = &box_shadow.spread_radius {
+        parse_val(value)?;
+    }
+    if let Some(color) = &box_shadow.color {
+        parse_color(color)?;
     }
 
     Ok(())
@@ -3305,6 +7972,14 @@ fn validate_text_config(text_config: &BuiTextConfig) -> Result<(), String> {
         if let Some(color) = &text_shadow.color {
             parse_color(color)?;
         }
+    }
+    if let Some(font_weight) = text_config.font_weight
+        && !(1..=1000).contains(&font_weight)
+    {
+        return Err("text_config.font_weight must be between 1 and 1000.".to_string());
+    }
+    if let Some(line_height) = &text_config.line_height {
+        parse_text_line_height(line_height)?;
     }
     if let Some(linebreak) = &text_config.linebreak {
         parse_linebreak(linebreak)?;
@@ -3582,6 +8257,17 @@ fn build_image_node(
     Ok(image_node)
 }
 
+fn background_image_layout(image_config: &BuiImageConfig) -> Option<BuiBackgroundImageLayout> {
+    if image_config.background_size.is_none() && image_config.background_position.is_none() {
+        return None;
+    }
+
+    Some(BuiBackgroundImageLayout {
+        size: image_config.background_size.clone(),
+        position: image_config.background_position.clone(),
+    })
+}
+
 fn spawn_bui_tree(
     commands: &mut Commands,
     asset_server: &AssetServer,
@@ -3607,6 +8293,16 @@ fn spawn_bui_node(
     match node.node_type {
         BuiNodeType::Node => {
             entity_commands.insert((build_node(&node.styles, &node.visuals)?, FocusPolicy::Pass));
+            if let Some(image_config) = &node.image_config {
+                entity_commands.insert(build_image_node(
+                    asset_server,
+                    texture_atlases,
+                    image_config,
+                )?);
+                if let Some(layout) = background_image_layout(image_config) {
+                    entity_commands.insert(layout);
+                }
+            }
         }
         BuiNodeType::Button => {
             entity_commands.insert((Button, build_node(&node.styles, &node.visuals)?));
@@ -3616,6 +8312,9 @@ fn spawn_bui_node(
                     texture_atlases,
                     image_config,
                 )?);
+                if let Some(layout) = background_image_layout(image_config) {
+                    entity_commands.insert(layout);
+                }
             }
         }
         BuiNodeType::Toggle => {
@@ -3647,12 +8346,22 @@ fn spawn_bui_node(
                 TextFont {
                     font: load_font(asset_server, text_config.font_path.as_deref()),
                     font_size: FontSize::Px(text_config.font_size),
+                    weight: text_config
+                        .font_weight
+                        .map(FontWeight)
+                        .unwrap_or(FontWeight::NORMAL),
                     ..Default::default()
                 },
                 TextColor(parse_color(&text_config.font_color)?),
                 text_layout(text_config)?,
                 FocusPolicy::Pass,
             ));
+            if let Some(line_height) = text_config.line_height.as_deref() {
+                entity_commands.insert(parse_text_line_height(line_height)?);
+            }
+            if let Some(letter_spacing) = text_config.letter_spacing {
+                entity_commands.insert(LetterSpacing::Px(letter_spacing));
+            }
             if let Some(text_shadow) = text_shadow(text_config)? {
                 entity_commands.insert(text_shadow);
             }
@@ -3662,6 +8371,10 @@ fn spawn_bui_node(
             let text_font = TextFont {
                 font: load_font(asset_server, text_config.font_path.as_deref()),
                 font_size: FontSize::Px(text_config.font_size),
+                weight: text_config
+                    .font_weight
+                    .map(FontWeight)
+                    .unwrap_or(FontWeight::NORMAL),
                 ..Default::default()
             };
             let text_color = TextColor(parse_color(&text_config.font_color)?);
@@ -3680,6 +8393,12 @@ fn spawn_bui_node(
                 BuiTextInput,
                 text_config.clone(),
             ));
+            if let Some(line_height) = text_config.line_height.as_deref() {
+                entity_commands.insert(parse_text_line_height(line_height)?);
+            }
+            if let Some(letter_spacing) = text_config.letter_spacing {
+                entity_commands.insert(LetterSpacing::Px(letter_spacing));
+            }
 
             let mirror = commands
                 .spawn((
@@ -3691,6 +8410,16 @@ fn spawn_bui_node(
                     BuiTextInputMirror { target: entity },
                 ))
                 .id();
+            if let Some(line_height) = text_config.line_height.as_deref() {
+                commands
+                    .entity(mirror)
+                    .insert(parse_text_line_height(line_height)?);
+            }
+            if let Some(letter_spacing) = text_config.letter_spacing {
+                commands
+                    .entity(mirror)
+                    .insert(LetterSpacing::Px(letter_spacing));
+            }
             if let Some(text_shadow) = text_shadow(text_config)? {
                 commands.entity(mirror).insert(text_shadow);
             }
@@ -3702,6 +8431,9 @@ fn spawn_bui_node(
                 .as_ref()
                 .ok_or_else(|| format!("Image node '{}' is missing image_config.", node.id))?;
             let image_node = build_image_node(asset_server, texture_atlases, image_config)?;
+            if let Some(layout) = background_image_layout(image_config) {
+                entity_commands.insert(layout);
+            }
             entity_commands.insert((
                 build_node(&node.styles, &node.visuals)?,
                 image_node,
@@ -3754,6 +8486,129 @@ fn text_input_config(node: &BuiNode) -> Result<&BuiTextConfig, String> {
         })
 }
 
+fn sync_background_image_layout_system(
+    mut query: Query<(&ComputedNode, &BuiBackgroundImageLayout, &mut ImageNode, &ImageNodeSize)>,
+) {
+    for (computed_node, layout, mut image_node, image_size) in &mut query {
+        let texture_size = image_size.size().as_vec2();
+        let node_size = computed_node.size() * computed_node.inverse_scale_factor();
+
+        if texture_size.cmple(Vec2::ZERO).any() || node_size.cmple(Vec2::ZERO).any() {
+            continue;
+        }
+
+        image_node.rect = compute_background_rect(texture_size, node_size, layout);
+    }
+}
+
+fn compute_background_rect(
+    texture_size: Vec2,
+    node_size: Vec2,
+    layout: &BuiBackgroundImageLayout,
+) -> Option<Rect> {
+    let size = layout.size.as_deref().unwrap_or("auto");
+    let position = layout.position.as_deref().unwrap_or("center");
+
+    if size.eq_ignore_ascii_case("cover") {
+        let scale = (node_size.x / texture_size.x)
+            .max(node_size.y / texture_size.y)
+            .max(0.0);
+        let crop_size = if scale > 0.0 {
+            node_size / scale
+        } else {
+            texture_size
+        };
+        let origin = background_crop_origin(texture_size, crop_size, position);
+        let max = origin + crop_size;
+        return Some(Rect { min: origin, max });
+    }
+
+    if let Some((width_scale, height_scale)) = css_background_scale(size, texture_size) {
+        let crop_size = Vec2::new(
+            (node_size.x / width_scale).min(texture_size.x),
+            (node_size.y / height_scale).min(texture_size.y),
+        );
+        let origin = background_crop_origin(texture_size, crop_size, position);
+        let max = origin + crop_size;
+        return Some(Rect { min: origin, max });
+    }
+
+    None
+}
+
+fn css_background_scale(value: &str, texture_size: Vec2) -> Option<(f32, f32)> {
+    let parts: Vec<&str> = value.split_whitespace().collect();
+    match parts.as_slice() {
+        [single] => {
+            if single.eq_ignore_ascii_case("contain") || single.eq_ignore_ascii_case("auto") {
+                return None;
+            }
+            let scale = css_background_scale_component(single, texture_size.x)?;
+            Some((scale, scale))
+        }
+        [x, y] => {
+            let scale_x = css_background_scale_component(x, texture_size.x)?;
+            let scale_y = css_background_scale_component(y, texture_size.y)?;
+            Some((scale_x, scale_y))
+        }
+        _ => None,
+    }
+}
+
+fn css_background_scale_component(value: &str, texture_axis: f32) -> Option<f32> {
+    let value = value.trim();
+    if let Some(percent) = value.strip_suffix('%').and_then(|part| part.parse::<f32>().ok()) {
+        return Some((percent / 100.0).max(0.0001));
+    }
+    if let Some(px) = value.strip_suffix("px").and_then(|part| part.parse::<f32>().ok()) {
+        if texture_axis > 0.0 {
+            return Some((px / texture_axis).max(0.0001));
+        }
+    }
+    None
+}
+
+fn background_crop_origin(texture_size: Vec2, crop_size: Vec2, position: &str) -> Vec2 {
+    let (x_ratio, y_ratio) = css_background_position(position);
+    Vec2::new(
+        ((texture_size.x - crop_size.x).max(0.0) * x_ratio).clamp(0.0, texture_size.x),
+        ((texture_size.y - crop_size.y).max(0.0) * y_ratio).clamp(0.0, texture_size.y),
+    )
+}
+
+fn css_background_position(value: &str) -> (f32, f32) {
+    let parts: Vec<&str> = value.split_whitespace().collect();
+    match parts.as_slice() {
+        [] => (0.5, 0.5),
+        [single] => {
+            let ratio = css_background_position_component(single).unwrap_or(0.5);
+            let (x, y) = match (*single).to_ascii_lowercase().as_str() {
+                "left" | "right" => (ratio, 0.5),
+                "top" | "bottom" => (0.5, ratio),
+                _ => (ratio, 0.5),
+            };
+            (x, y)
+        }
+        [x, y, ..] => (
+            css_background_position_component(x).unwrap_or(0.5),
+            css_background_position_component(y).unwrap_or(0.5),
+        ),
+    }
+}
+
+fn css_background_position_component(value: &str) -> Option<f32> {
+    let value = value.trim().to_ascii_lowercase();
+    match value.as_str() {
+        "left" | "top" => Some(0.0),
+        "center" => Some(0.5),
+        "right" | "bottom" => Some(1.0),
+        _ => value
+            .strip_suffix('%')
+            .and_then(|part| part.parse::<f32>().ok())
+            .map(|percent| (percent / 100.0).clamp(0.0, 1.0)),
+    }
+}
+
 fn text_shadow(text_config: &BuiTextConfig) -> Result<Option<TextShadow>, String> {
     let Some(shadow) = &text_config.text_shadow else {
         return Ok(None);
@@ -3774,6 +8629,17 @@ fn text_shadow(text_config: &BuiTextConfig) -> Result<Option<TextShadow>, String
 }
 
 fn text_layout(text_config: &BuiTextConfig) -> Result<TextLayout, String> {
+    if let Some(text_align) = &text_config.text_align {
+        let justify = parse_text_justify(text_align)?;
+        if let Some(linebreak) = &text_config.linebreak {
+            return Ok(TextLayout::new(justify, parse_linebreak(linebreak)?));
+        }
+        if text_config.allow_newlines.unwrap_or(false) {
+            return Ok(TextLayout::justify(justify));
+        }
+        return Ok(TextLayout::no_wrap().with_justify(justify));
+    }
+
     if let Some(linebreak) = &text_config.linebreak {
         return Ok(TextLayout::linebreak(parse_linebreak(linebreak)?));
     }
@@ -3847,6 +8713,10 @@ fn insert_visual_components(
         entity_commands.insert(BorderColor::all(parse_color(color)?));
     }
 
+    if let Some(box_shadow) = &node.visuals.box_shadow {
+        entity_commands.insert(build_box_shadow(box_shadow)?);
+    }
+
     if let Some(shader_path) = &node.visuals.material_shader {
         entity_commands.insert(BuiMaterialShader {
             path: shader_path.clone(),
@@ -3854,6 +8724,67 @@ fn insert_visual_components(
     }
 
     Ok(())
+}
+
+fn build_box_shadow(box_shadow: &BuiBoxShadowConfig) -> Result<BoxShadow, String> {
+    let color = if let Some(color) = &box_shadow.color {
+        parse_color(color)?
+    } else {
+        Color::NONE
+    };
+
+    let x_offset = box_shadow
+        .offset_x
+        .as_deref()
+        .map(parse_val)
+        .transpose()?
+        .unwrap_or(Val::ZERO);
+    let y_offset = box_shadow
+        .offset_y
+        .as_deref()
+        .map(parse_val)
+        .transpose()?
+        .unwrap_or(Val::ZERO);
+    let blur_radius = box_shadow
+        .blur_radius
+        .as_deref()
+        .map(parse_val)
+        .transpose()?
+        .unwrap_or(Val::ZERO);
+    let spread_radius = box_shadow
+        .spread_radius
+        .as_deref()
+        .map(parse_val)
+        .transpose()?
+        .unwrap_or(Val::ZERO);
+
+    Ok(BoxShadow::from(ShadowStyle {
+        color,
+        x_offset: if box_shadow.inset {
+            negate_val(x_offset)
+        } else {
+            x_offset
+        },
+        y_offset: if box_shadow.inset {
+            negate_val(y_offset)
+        } else {
+            y_offset
+        },
+        spread_radius: if box_shadow.inset {
+            negate_val(spread_radius)
+        } else {
+            spread_radius
+        },
+        blur_radius,
+    }))
+}
+
+fn negate_val(value: Val) -> Val {
+    match value {
+        Val::Px(v) => Val::Px(-v),
+        Val::Percent(v) => Val::Percent(-v),
+        other => other,
+    }
 }
 
 fn insert_style_components(
@@ -4362,6 +9293,25 @@ fn parse_linebreak(value: &str) -> Result<LineBreak, String> {
         "no_wrap" => Ok(LineBreak::NoWrap),
         _ => Err(format!("Invalid text_config.linebreak '{value}'.")),
     }
+}
+
+fn parse_text_line_height(value: &str) -> Result<LineHeight, String> {
+    let value = value.trim();
+    if let Some(px) = value
+        .strip_suffix("px")
+        .and_then(|number| number.parse::<f32>().ok())
+    {
+        return Ok(LineHeight::Px(px));
+    }
+
+    let scale = value
+        .parse::<f32>()
+        .map_err(|_| format!("Invalid text_config.line_height '{value}'."))?;
+    if scale <= 0.0 {
+        return Err("text_config.line_height must be greater than 0.".to_string());
+    }
+
+    Ok(LineHeight::RelativeToFont(scale))
 }
 
 fn parse_overflow_clip_margin(value: &str) -> Result<OverflowClipMargin, String> {
@@ -5491,279 +10441,4 @@ fn set_toggle_box_color(
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const VILLAGE_SHOP_HTML: &str = include_str!(
-        "../../../examples/UiParserTest/opendesignTest/village_shop_overlay/village-shop-overlay.html"
-    );
-    const VILLAGE_SHOP_IR: &str = include_str!(
-        "../../../examples/UiParserTest/opendesignTest/village_shop_overlay/village-shop-overlay.ir.json"
-    );
-    const QUEST_NOTICE_HTML: &str = include_str!(
-        "../../../examples/UiParserTest/opendesignTest/quest_notice_overlay/quest-notice-overlay.html"
-    );
-
-    #[test]
-    fn opendesign_media_query_rules_resolve_into_bui_styles() {
-        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile");
-
-        let panel = find_bui_node(&document.root, "panel");
-        assert_eq!(panel.styles.width.as_deref(), Some("720px"));
-
-        let card = find_bui_node(&document.root, "shop_card_hut");
-        assert_eq!(
-            card.styles.grid_template_columns.as_deref(),
-            Some("flex(1) px(140)")
-        );
-
-        let item_main = find_bui_node(&document.root, "item_main_hut");
-        assert_eq!(
-            item_main.styles.grid_template_columns.as_deref(),
-            Some("px(104) flex(1)")
-        );
-    }
-
-    #[test]
-    fn opendesign_active_transform_compiles_to_pressed_state_scale() {
-        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile");
-
-        let buy_button = find_bui_node(&document.root, "buy_btn_hut");
-        assert_eq!(
-            buy_button
-                .state_visuals
-                .get("pressed")
-                .and_then(|state| state.styles.ui_scale.as_deref()),
-            Some("0.95 0.95")
-        );
-        assert_eq!(
-            buy_button
-                .state_visuals
-                .get("normal")
-                .and_then(|state| state.styles.ui_scale.as_deref()),
-            Some("1 1")
-        );
-
-        let close_button = find_bui_node(&document.root, "close_btn");
-        assert_eq!(
-            close_button
-                .state_visuals
-                .get("pressed")
-                .and_then(|state| state.styles.ui_scale.as_deref()),
-            Some("0.95 0.95")
-        );
-    }
-
-    #[test]
-    fn opendesign_text_nodes_do_not_inherit_button_transform_styles() {
-        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile");
-
-        let buy_text = find_bui_node(&document.root, "buy_btn_hut_text");
-        assert!(buy_text.state_visuals.is_empty());
-        assert_eq!(
-            buy_text
-                .text_config
-                .as_ref()
-                .map(|config| config.font_color.as_str()),
-            Some("#ffffff")
-        );
-    }
-
-    #[test]
-    fn opendesign_ir_export_uses_3_0_shape() {
-        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile");
-        let ir = BuiIrDocument::from_compat_document(&document);
-
-        assert_eq!(ir.version, "3.0-ir");
-        assert_eq!(ir.root.kind, "node");
-
-        let panel = ir
-            .root
-            .children
-            .iter()
-            .find(|child| child.id == "panel")
-            .expect("panel should exist");
-        assert_eq!(panel.layout.styles.max_width.as_deref(), Some("720px"));
-
-        let buy_button = find_ir_node(&ir.root, "buy_btn_hut");
-        assert_eq!(buy_button.kind, "button");
-        assert!(buy_button.content.is_empty());
-        assert!(
-            buy_button
-                .state_visuals
-                .get("pressed")
-                .and_then(|state| state.styles.ui_scale.as_deref())
-                .is_some()
-        );
-    }
-
-    #[test]
-    fn opendesign_ir_snapshot_can_load_through_runtime_parser() {
-        let ir_json = opendesign_html_to_bui_ir_json_str(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile to IR");
-        let document = parse_bui_document(&ir_json).expect("BUI IR should parse for runtime");
-
-        assert_eq!(document.version, EXPECTED_VERSION);
-
-        let panel = find_bui_node(&document.root, "panel");
-        assert_eq!(panel.styles.max_height.as_deref(), Some("648px"));
-
-        let buy_button = find_bui_node(&document.root, "buy_btn_hut");
-        assert!(matches!(buy_button.node_type, BuiNodeType::Button));
-        assert_eq!(
-            buy_button
-                .state_visuals
-                .get("pressed")
-                .and_then(|state| state.styles.ui_scale.as_deref()),
-            Some("0.95 0.95")
-        );
-
-        validate_bui_ir_json_str(&ir_json).expect("BUI IR validator should accept generated IR");
-    }
-
-    #[test]
-    fn checked_in_ir_fixture_loads_through_runtime_parser() {
-        let document = parse_bui_document(VILLAGE_SHOP_IR).expect("checked-in IR should parse");
-
-        let root = find_bui_node(&document.root, "overlay_root");
-        assert_eq!(root.styles.height.as_deref(), Some("100%"));
-
-        let close_button = find_bui_node(&document.root, "close_btn");
-        assert!(matches!(close_button.node_type, BuiNodeType::Button));
-        assert_eq!(
-            close_button
-                .actions
-                .first()
-                .map(|action| (action.event.as_str(), action.emit.as_str())),
-            Some(("press", "close_shop_overlay"))
-        );
-    }
-
-    #[test]
-    fn generic_opendesign_overlay_compiles_without_shop_structure() {
-        let document = opendesign_html_to_bui_document(QUEST_NOTICE_HTML)
-            .expect("generic OpenDesign overlay should compile");
-
-        let title = find_bui_node(&document.root, "notice_title_text_1");
-        assert_eq!(
-            title
-                .text_config
-                .as_ref()
-                .map(|text| text.content.as_str()),
-            Some("新的委托")
-        );
-
-        let accept = find_bui_node(&document.root, "primary_btn");
-        assert!(matches!(accept.node_type, BuiNodeType::Button));
-        assert_eq!(
-            accept
-                .actions
-                .first()
-                .map(|action| (action.event.as_str(), action.emit.as_str())),
-            Some(("press", "accept_quest"))
-        );
-        assert_eq!(
-            accept
-                .state_visuals
-                .get("pressed")
-                .and_then(|state| state.styles.ui_scale.as_deref()),
-            Some("0.96 0.96")
-        );
-
-        let ir_json = opendesign_html_to_bui_ir_json_str(QUEST_NOTICE_HTML)
-            .expect("generic OpenDesign overlay should compile to IR");
-        validate_bui_ir_json_str(&ir_json).expect("generic IR should validate");
-    }
-
-    #[test]
-    fn opendesign_css_important_values_are_normalized() {
-        assert_eq!(normalize_css_value("  48px !important "), "48px");
-        assert_eq!(normalize_css_value("\"#ffffff\" !important"), "#ffffff");
-    }
-
-    #[test]
-    fn opendesign_color_mix_with_transparency_preserves_alpha() {
-        assert_eq!(
-            css_color("color-mix(in oklab, #3b2818, transparent 38%)").as_deref(),
-            Some("#3B28189E")
-        );
-        assert_eq!(
-            css_color("color-mix(in oklab, black, transparent 40%)").as_deref(),
-            Some("#00000099")
-        );
-        assert_eq!(
-            css_color("color-mix(in oklab, #fff, transparent)").as_deref(),
-            Some("#FFFFFF80")
-        );
-    }
-
-    #[test]
-    fn unsupported_pseudo_element_selectors_do_not_leak_into_node_styles() {
-        let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-            .expect("OpenDesign HTML should compile");
-
-        let scroll = find_bui_node(&document.root, "shop_scroll");
-        assert_eq!(
-            scroll.visuals.background_color, None,
-            "::-webkit-scrollbar-thumb background should not leak into shop_scroll"
-        );
-        assert_eq!(
-            scroll.visuals.border_radius, None,
-            "::-webkit-scrollbar-thumb border-radius should not leak into shop_scroll"
-        );
-        assert_eq!(
-            scroll.styles.width, None,
-            "::-webkit-scrollbar width should not leak into shop_scroll"
-        );
-    }
-
-    #[test]
-    fn opendesign_length_functions_resolve_against_default_viewport() {
-        assert_eq!(css_eval_length_function("min(100%, 460px)").as_deref(), Some("460px"));
-        assert_eq!(css_eval_length_function("min(66vh, 620px)").as_deref(), Some("475.2px"));
-        assert_eq!(css_eval_length_function("min(92vw, 720px)").as_deref(), Some("720px"));
-        assert_eq!(css_eval_length_function("clamp(28px, 7vw, 36px)").as_deref(), Some("36px"));
-        assert_eq!(css_eval_length_function("clamp(20px, 4vw, 24px)").as_deref(), Some("24px"));
-        assert_eq!(css_eval_length_function("max(18px, env(safe-area-inset-top))").as_deref(), Some("18px"));
-    }
-
-    fn find_ir_node<'a>(node: &'a BuiIrNode, id: &str) -> &'a BuiIrNode {
-        find_ir_node_optional(node, id).unwrap_or_else(|| panic!("IR node '{id}' should exist"))
-    }
-
-    fn find_ir_node_optional<'a>(node: &'a BuiIrNode, id: &str) -> Option<&'a BuiIrNode> {
-        if node.id == id {
-            return Some(node);
-        }
-
-        node.children
-            .iter()
-            .find_map(|child| find_ir_node_optional(child, id))
-    }
-
-    fn find_bui_node<'a>(node: &'a BuiNode, id: &str) -> &'a BuiNode {
-        if node.id == id {
-            return node;
-        }
-
-        node.children
-            .iter()
-            .find_map(|child| find_bui_node_optional(child, id))
-            .unwrap_or_else(|| panic!("BUI node '{id}' should exist"))
-    }
-
-    fn find_bui_node_optional<'a>(node: &'a BuiNode, id: &str) -> Option<&'a BuiNode> {
-        if node.id == id {
-            return Some(node);
-        }
-
-        node.children
-            .iter()
-            .find_map(|child| find_bui_node_optional(child, id))
-    }
-}
+#[cfg(test)] mod tests;

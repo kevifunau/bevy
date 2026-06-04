@@ -5,12 +5,14 @@
     "id": "overlay_root",
     "kind": "node",
     "markers": [
-      "class:game-stage"
+      "class:game-stage",
+      "aria-label:Olympia 英雄详情游戏界面"
     ],
     "layout": {
       "styles": {
         "width": "1280px",
         "height": "100%",
+        "aspect_ratio": "2.1383765",
         "min_height": "780px",
         "overflow": "clip",
         "justify_content": "center",
@@ -21,8 +23,14 @@
     "style": {
       "visuals": {
         "background_color": "#362E36",
+        "border_color": "#C7CCE070",
         "border_width": "1px",
-        "border_radius": "6px"
+        "border_radius": "6px",
+        "box_shadow": {
+          "offset_x": "0",
+          "offset_y": "30px",
+          "blur_radius": "110px"
+        }
       }
     },
     "children": [
@@ -34,7 +42,17 @@
         ],
         "layout": {
           "styles": {
-            "position_type": "absolute"
+            "left": "0",
+            "right": "0",
+            "top": "0",
+            "bottom": "0",
+            "position_type": "absolute",
+            "z_index": "-4"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#2D313C"
           }
         },
         "children": [
@@ -46,9 +64,109 @@
             ],
             "layout": {
               "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
                 "position_type": "absolute"
               }
-            }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#372F3936"
+              }
+            },
+            "children": [
+              {
+                "id": "image_layer_pseudo_before_gradient_overlay",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "50%",
+                    "height": "50%",
+                    "left": "-7%",
+                    "top": "-13%",
+                    "position_type": "absolute",
+                    "z_index": "-1"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#37A4C7A2",
+                    "border_radius": "999px"
+                  }
+                }
+              },
+              {
+                "id": "image_layer_pseudo_before_gradient_overlay_2",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "0%",
+                    "right": "41%",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-2"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#42AAC724"
+                  }
+                }
+              },
+              {
+                "id": "image_layer_pseudo_before_gradient_overlay_3",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "54%",
+                    "right": "36%",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-3"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#372F3936"
+                  }
+                }
+              },
+              {
+                "id": "image_layer_pseudo_before_gradient_overlay_4",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "64%",
+                    "right": "0%",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-4"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#241E258F"
+                  }
+                }
+              }
+            ]
           },
           {
             "id": "image_layer_pseudo_after",
@@ -58,7 +176,206 @@
             ],
             "layout": {
               "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
                 "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#1A0E1233"
+              }
+            },
+            "children": [
+              {
+                "id": "image_layer_pseudo_after_gradient_overlay",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "81%",
+                    "height": "47%",
+                    "left": "-5%",
+                    "top": "65%",
+                    "position_type": "absolute",
+                    "z_index": "-1"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#C6B5B847",
+                    "border_radius": "999px"
+                  }
+                }
+              },
+              {
+                "id": "image_layer_pseudo_after_gradient_overlay_2",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "0",
+                    "right": "0",
+                    "top": "72%",
+                    "bottom": "0%",
+                    "position_type": "absolute",
+                    "z_index": "-2"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#1A0E1233"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "image_layer_blue_wash",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "48%",
+                "height": "52%",
+                "left": "0",
+                "top": "0",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#B7D5EC24",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "image_layer_top_burst",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "34%",
+                "height": "28%",
+                "left": "8%",
+                "top": "3%",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#C8E4F250",
+                "border_radius": "999px",
+                "box_shadow": {
+                  "offset_x": "0px",
+                  "offset_y": "0px",
+                  "blur_radius": "48px",
+                  "spread_radius": "12px",
+                  "color": "#9FCFE040"
+                }
+              }
+            }
+          },
+          {
+            "id": "image_layer_mid_screen",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "38%",
+                "top": "0",
+                "bottom": "18%",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D0E6F214"
+              }
+            }
+          },
+          {
+            "id": "image_layer_horizon_shade",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "left": "54%",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#463B433D"
+              }
+            }
+          },
+          {
+            "id": "image_layer_floor_glow",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "34%",
+                "height": "22%",
+                "left": "14%",
+                "bottom": "4%",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D8B46C26",
+                "border_radius": "999px",
+                "box_shadow": {
+                  "offset_x": "0px",
+                  "offset_y": "0px",
+                  "blur_radius": "36px",
+                  "spread_radius": "8px",
+                  "color": "#D8B46C18"
+                }
+              }
+            }
+          },
+          {
+            "id": "image_layer_bottom_vignette",
+            "kind": "node",
+            "markers": [
+              "hero-image-layer:decor"
+            ],
+            "layout": {
+              "styles": {
+                "height": "34%",
+                "left": "0",
+                "right": "0",
+                "bottom": "0",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#1B121A40"
               }
             }
           }
@@ -73,6 +390,7 @@
         "layout": {
           "styles": {
             "width": "320px",
+            "aspect_ratio": "1",
             "left": "0",
             "top": "0",
             "position_type": "absolute"
@@ -80,9 +398,87 @@
         },
         "style": {
           "visuals": {
+            "background_color": "#38455424",
+            "border_color": "#61748852",
+            "border_width": "2px",
             "border_radius": "50%"
           }
-        }
+        },
+        "children": [
+          {
+            "id": "crest_gradient_overlay",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "width": "72%",
+                "height": "72%",
+                "left": "14%",
+                "top": "14%",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "transparent",
+                "border_color": "#0048688C",
+                "border_width": "2.8%",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "crest_gradient_overlay_2",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "width": "8%",
+                "height": "6%",
+                "left": "72%",
+                "top": "32%",
+                "ui_rotation": "60.4deg",
+                "position_type": "absolute",
+                "z_index": "-2"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#004E6F8A",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "crest_gradient_overlay_3",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "width": "8%",
+                "height": "6%",
+                "left": "72%",
+                "top": "61%",
+                "ui_rotation": "118.0deg",
+                "position_type": "absolute",
+                "z_index": "-3"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#004E6F7A",
+                "border_radius": "999px"
+              }
+            }
+          }
+        ]
       },
       {
         "id": "topbar",
@@ -100,7 +496,8 @@
             "column_gap": "24px",
             "justify_content": "space-between",
             "align_items": "flex-start",
-            "position_type": "absolute"
+            "position_type": "absolute",
+            "z_index": "4"
           }
         },
         "children": [
@@ -113,6 +510,8 @@
             "layout": {
               "styles": {
                 "display": "flex",
+                "row_gap": "23.04px",
+                "column_gap": "23.04px",
                 "align_items": "center"
               }
             },
@@ -121,7 +520,8 @@
                 "id": "backbutton",
                 "kind": "button",
                 "markers": [
-                  "class:round-button"
+                  "class:round-button",
+                  "aria-label:返回英雄列表"
                 ],
                 "layout": {
                   "styles": {
@@ -130,35 +530,129 @@
                     "height": "58.88px",
                     "justify_content": "center",
                     "justify_items": "center",
-                    "align_items": "center"
+                    "align_items": "center",
+                    "position_type": "relative"
                   }
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#45414D5C",
                     "border_width": "0",
-                    "border_radius": "999px"
+                    "border_radius": "999px",
+                    "box_shadow": {
+                      "offset_x": "0",
+                      "offset_y": "6px",
+                      "blur_radius": "16px"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#4B46535C"
+                    }
                   }
                 },
                 "children": [
                   {
-                    "id": "svg",
+                    "id": "backbutton_box_shadow_layer_2",
                     "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
                     "layout": {
                       "styles": {
-                        "width": "62%",
-                        "height": "62%"
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-2"
                       }
                     },
-                    "children": [
-                      {
-                        "id": "path",
-                        "kind": "node"
-                      },
-                      {
-                        "id": "path_2",
-                        "kind": "node"
+                    "style": {
+                      "visuals": {
+                        "border_radius": "999px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "-8px",
+                          "blur_radius": "14px"
+                        }
                       }
-                    ]
+                    }
+                  },
+                  {
+                    "id": "backbutton_box_shadow_layer_1",
+                    "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_radius": "999px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "0",
+                          "blur_radius": "0",
+                          "spread_radius": "3px"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": "backbutton_gradient_overlay",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "58%",
+                        "height": "58%",
+                        "left": "5%",
+                        "top": "-3%",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#E2FFFF75",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "backbutton_svg_fallback_1",
+                    "kind": "text",
+                    "markers": [
+                      "svg:fallback"
+                    ],
+                    "content": {
+                      "text": {
+                        "content": "←",
+                        "font_size": 28.0,
+                        "font_color": "#CCB6A2",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "text_shadow": {
+                          "offset_x": 0.0,
+                          "offset_y": 2.0,
+                          "color": "#5A3F18A0"
+                        }
+                      }
+                    }
                   }
                 ]
               },
@@ -180,9 +674,16 @@
                     "content": {
                       "text": {
                         "content": "英雄",
-                        "font_size": 92.0,
+                        "font_size": 65.28,
                         "font_color": "#CCB6A2",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc",
+                        "line_height": "0.9",
+                        "letter_spacing": 0.0,
+                        "text_shadow": {
+                          "offset_x": 0.0,
+                          "offset_y": 4.0,
+                          "color": "#824F4F"
+                        }
                       }
                     }
                   }
@@ -194,12 +695,14 @@
             "id": "resource_card",
             "kind": "node",
             "markers": [
-              "class:resource-card"
+              "class:resource-card",
+              "aria-label:英雄等级与资源"
             ],
             "layout": {
               "styles": {
                 "display": "grid",
                 "min_width": "345.6px",
+                "padding_top": "4px",
                 "row_gap": "8px",
                 "column_gap": "8px"
               }
@@ -225,7 +728,8 @@
                     "id": "level",
                     "kind": "node",
                     "markers": [
-                      "class:level"
+                      "class:level",
+                      "aria-label:等级 20"
                     ],
                     "layout": {
                       "styles": {
@@ -246,9 +750,17 @@
                             "content": {
                               "text": {
                                 "content": "Lv.",
-                                "font_size": 40.0,
-                                "font_color": "#3B2818",
-                                "font_path": "Hiragino Sans GB.ttc"
+                                "font_size": 28.16,
+                                "font_color": "#CCB6A2",
+                                "font_path": "Palatino.ttc",
+                                "font_weight": 700,
+                                "text_shadow": {
+                                  "offset_x": 0.0,
+                                  "offset_y": 3.0,
+                                  "color": "#1D1014B8"
+                                },
+                                "linebreak": "no_wrap",
+                                "allow_newlines": false
                               }
                             }
                           }
@@ -264,9 +776,17 @@
                             "content": {
                               "text": {
                                 "content": "20",
-                                "font_size": 92.0,
-                                "font_color": "#3B2818",
-                                "font_path": "Hiragino Sans GB.ttc"
+                                "font_size": 64.0,
+                                "font_color": "#CCB6A2",
+                                "font_path": "Palatino.ttc",
+                                "line_height": "0.8",
+                                "text_shadow": {
+                                  "offset_x": 0.0,
+                                  "offset_y": 3.0,
+                                  "color": "#1D1014B8"
+                                },
+                                "linebreak": "no_wrap",
+                                "allow_newlines": false
                               }
                             }
                           }
@@ -316,25 +836,56 @@
                                 "display": "grid",
                                 "justify_content": "center",
                                 "justify_items": "center",
-                                "align_items": "center"
+                                "align_items": "center",
+                                "position_type": "relative"
                               }
                             },
                             "children": [
                               {
-                                "id": "svg_2",
+                                "id": "bar_icon_filter_drop_shadow_1",
                                 "kind": "node",
+                                "markers": [
+                                  "css-filter-drop-shadow"
+                                ],
                                 "layout": {
                                   "styles": {
-                                    "width": "30px",
-                                    "height": "30px"
+                                    "left": "0",
+                                    "right": "0",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-1"
                                   }
                                 },
-                                "children": [
-                                  {
-                                    "id": "path_3",
-                                    "kind": "node"
+                                "style": {
+                                  "visuals": {
+                                    "box_shadow": {
+                                      "offset_x": "0",
+                                      "offset_y": "2px",
+                                      "blur_radius": "0"
+                                    }
                                   }
-                                ]
+                                }
+                              },
+                              {
+                                "id": "bar_icon_svg_fallback_1",
+                                "kind": "text",
+                                "markers": [
+                                  "svg:fallback"
+                                ],
+                                "content": {
+                                  "text": {
+                                    "content": "★",
+                                    "font_size": 22.0,
+                                    "font_color": "#D7F8FF",
+                                    "font_path": "Hiragino Sans GB.ttc",
+                                    "text_shadow": {
+                                      "offset_x": 0.0,
+                                      "offset_y": 2.0,
+                                      "color": "#3D2A1A8F"
+                                    }
+                                  }
+                                }
                               }
                             ]
                           },
@@ -342,7 +893,8 @@
                             "id": "meter",
                             "kind": "node",
                             "markers": [
-                              "class:meter"
+                              "class:meter",
+                              "aria-label:经验值 1634824 / 6218543"
                             ],
                             "layout": {
                               "styles": {
@@ -353,10 +905,84 @@
                             },
                             "style": {
                               "visuals": {
-                                "border_radius": "2px"
+                                "background_color": "#3E3845BD",
+                                "border_radius": "2px",
+                                "box_shadow": {
+                                  "inset": true,
+                                  "offset_x": "0",
+                                  "offset_y": "0",
+                                  "blur_radius": "0",
+                                  "spread_radius": "1px"
+                                }
                               }
                             },
                             "children": [
+                              {
+                                "id": "meter_gradient_overlay",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "0%",
+                                    "right": "70%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-1"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#3E3845BD"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "meter_gradient_overlay_2",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "30%",
+                                    "right": "20%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-2"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#362F3BAE"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "meter_gradient_overlay_3",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "80%",
+                                    "right": "0%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-3"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#2D26319E"
+                                  }
+                                }
+                              },
                               {
                                 "id": "xpfill",
                                 "kind": "node",
@@ -365,21 +991,146 @@
                                 ],
                                 "layout": {
                                   "styles": {
+                                    "width": "26%",
+                                    "left": "4px",
+                                    "right": "auto",
+                                    "top": "4px",
+                                    "bottom": "4px",
                                     "position_type": "absolute"
                                   }
                                 },
                                 "style": {
                                   "visuals": {
+                                    "background_color": "#31C4A4",
                                     "border_radius": "2px"
                                   }
-                                }
+                                },
+                                "children": [
+                                  {
+                                    "id": "xpfill_gradient_overlay",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "64%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-1"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#C4FFFF4D"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "xpfill_gradient_overlay_2",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "59%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-2"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#C4FFFF33"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "xpfill_gradient_overlay_3",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "70%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-3"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#31C4A4"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "xpfill_gradient_overlay_4",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "30%",
+                                        "right": "20%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-4"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#64D4C3"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "xpfill_gradient_overlay_5",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "80%",
+                                        "right": "0%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-5"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#96E4E1"
+                                      }
+                                    }
+                                  }
+                                ]
                               },
                               {
                                 "id": "b",
                                 "kind": "node",
                                 "layout": {
                                   "styles": {
-                                    "display": "grid",
+                                    "display": "flex",
+                                    "left": "auto",
+                                    "right": "12px",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "column_gap": "0",
+                                    "justify_content": "flex-end",
+                                    "align_items": "center",
                                     "position_type": "absolute"
                                   }
                                 },
@@ -394,9 +1145,16 @@
                                         "content": {
                                           "text": {
                                             "content": "1634824",
-                                            "font_size": 16.0,
-                                            "font_color": "#3B2818",
-                                            "font_path": "Hiragino Sans GB.ttc"
+                                            "font_size": 19.2,
+                                            "font_color": "#CAFAFF",
+                                            "font_path": "Palatino.ttc",
+                                            "text_shadow": {
+                                              "offset_x": 0.0,
+                                              "offset_y": 2.0,
+                                              "color": "#14070AC2"
+                                            },
+                                            "linebreak": "no_wrap",
+                                            "allow_newlines": false
                                           }
                                         }
                                       }
@@ -408,9 +1166,16 @@
                                     "content": {
                                       "text": {
                                         "content": "/ 6218543",
-                                        "font_size": 26.0,
+                                        "font_size": 19.2,
                                         "font_color": "#CAFAFF",
-                                        "font_path": "Hiragino Sans GB.ttc"
+                                        "font_path": "Palatino.ttc",
+                                        "text_shadow": {
+                                          "offset_x": 0.0,
+                                          "offset_y": 2.0,
+                                          "color": "#14070AC2"
+                                        },
+                                        "linebreak": "no_wrap",
+                                        "allow_newlines": false
                                       }
                                     }
                                   }
@@ -448,25 +1213,56 @@
                                 "display": "grid",
                                 "justify_content": "center",
                                 "justify_items": "center",
-                                "align_items": "center"
+                                "align_items": "center",
+                                "position_type": "relative"
                               }
                             },
                             "children": [
                               {
-                                "id": "svg_3",
+                                "id": "bar_icon_2_filter_drop_shadow_1",
                                 "kind": "node",
+                                "markers": [
+                                  "css-filter-drop-shadow"
+                                ],
                                 "layout": {
                                   "styles": {
-                                    "width": "30px",
-                                    "height": "30px"
+                                    "left": "0",
+                                    "right": "0",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-1"
                                   }
                                 },
-                                "children": [
-                                  {
-                                    "id": "path_4",
-                                    "kind": "node"
+                                "style": {
+                                  "visuals": {
+                                    "box_shadow": {
+                                      "offset_x": "0",
+                                      "offset_y": "2px",
+                                      "blur_radius": "0"
+                                    }
                                   }
-                                ]
+                                }
+                              },
+                              {
+                                "id": "bar_icon_2_svg_fallback_1",
+                                "kind": "text",
+                                "markers": [
+                                  "svg:fallback"
+                                ],
+                                "content": {
+                                  "text": {
+                                    "content": "✦",
+                                    "font_size": 22.0,
+                                    "font_color": "#D7F8FF",
+                                    "font_path": "Hiragino Sans GB.ttc",
+                                    "text_shadow": {
+                                      "offset_x": 0.0,
+                                      "offset_y": 2.0,
+                                      "color": "#3D2A1A8F"
+                                    }
+                                  }
+                                }
                               }
                             ]
                           },
@@ -474,7 +1270,8 @@
                             "id": "meter_2",
                             "kind": "node",
                             "markers": [
-                              "class:meter"
+                              "class:meter",
+                              "aria-label:体力 58 / 120"
                             ],
                             "layout": {
                               "styles": {
@@ -485,10 +1282,84 @@
                             },
                             "style": {
                               "visuals": {
-                                "border_radius": "2px"
+                                "background_color": "#3E3845BD",
+                                "border_radius": "2px",
+                                "box_shadow": {
+                                  "inset": true,
+                                  "offset_x": "0",
+                                  "offset_y": "0",
+                                  "blur_radius": "0",
+                                  "spread_radius": "1px"
+                                }
                               }
                             },
                             "children": [
+                              {
+                                "id": "meter_2_gradient_overlay",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "0%",
+                                    "right": "70%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-1"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#3E3845BD"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "meter_2_gradient_overlay_2",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "30%",
+                                    "right": "20%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-2"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#362F3BAE"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "meter_2_gradient_overlay_3",
+                                "kind": "node",
+                                "markers": [
+                                  "css-gradient-overlay"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "left": "80%",
+                                    "right": "0%",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "position_type": "absolute",
+                                    "z_index": "-3"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#2D26319E"
+                                  }
+                                }
+                              },
                               {
                                 "id": "energyfill",
                                 "kind": "node",
@@ -497,21 +1368,146 @@
                                 ],
                                 "layout": {
                                   "styles": {
+                                    "width": "48%",
+                                    "left": "4px",
+                                    "right": "auto",
+                                    "top": "4px",
+                                    "bottom": "4px",
                                     "position_type": "absolute"
                                   }
                                 },
                                 "style": {
                                   "visuals": {
+                                    "background_color": "#CEABA1",
                                     "border_radius": "2px"
                                   }
-                                }
+                                },
+                                "children": [
+                                  {
+                                    "id": "energyfill_gradient_overlay",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "64%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-1"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#C4FFFF4D"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "energyfill_gradient_overlay_2",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "59%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-2"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#C4FFFF33"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "energyfill_gradient_overlay_3",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "0%",
+                                        "right": "70%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-3"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#CEABA1"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "energyfill_gradient_overlay_4",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "30%",
+                                        "right": "20%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-4"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#CBC1BC"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "energyfill_gradient_overlay_5",
+                                    "kind": "node",
+                                    "markers": [
+                                      "css-gradient-overlay"
+                                    ],
+                                    "layout": {
+                                      "styles": {
+                                        "left": "80%",
+                                        "right": "0%",
+                                        "top": "0",
+                                        "bottom": "0",
+                                        "position_type": "absolute",
+                                        "z_index": "-5"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "background_color": "#C8D7D7"
+                                      }
+                                    }
+                                  }
+                                ]
                               },
                               {
                                 "id": "b_2",
                                 "kind": "node",
                                 "layout": {
                                   "styles": {
-                                    "display": "grid",
+                                    "display": "flex",
+                                    "left": "auto",
+                                    "right": "12px",
+                                    "top": "0",
+                                    "bottom": "0",
+                                    "column_gap": "0",
+                                    "justify_content": "flex-end",
+                                    "align_items": "center",
                                     "position_type": "absolute"
                                   }
                                 },
@@ -526,9 +1522,16 @@
                                         "content": {
                                           "text": {
                                             "content": "58",
-                                            "font_size": 16.0,
-                                            "font_color": "#3B2818",
-                                            "font_path": "Hiragino Sans GB.ttc"
+                                            "font_size": 19.2,
+                                            "font_color": "#CAFAFF",
+                                            "font_path": "Palatino.ttc",
+                                            "text_shadow": {
+                                              "offset_x": 0.0,
+                                              "offset_y": 2.0,
+                                              "color": "#14070AC2"
+                                            },
+                                            "linebreak": "no_wrap",
+                                            "allow_newlines": false
                                           }
                                         }
                                       }
@@ -540,9 +1543,16 @@
                                     "content": {
                                       "text": {
                                         "content": "/ 120",
-                                        "font_size": 26.0,
+                                        "font_size": 19.2,
                                         "font_color": "#CAFAFF",
-                                        "font_path": "Hiragino Sans GB.ttc"
+                                        "font_path": "Palatino.ttc",
+                                        "text_shadow": {
+                                          "offset_x": 0.0,
+                                          "offset_y": 2.0,
+                                          "color": "#14070AC2"
+                                        },
+                                        "linebreak": "no_wrap",
+                                        "allow_newlines": false
                                       }
                                     }
                                   }
@@ -572,10 +1582,87 @@
             "height": "86%",
             "left": "3.8%",
             "bottom": "3%",
-            "position_type": "absolute"
+            "position_type": "absolute",
+            "z_index": "1"
           }
         },
         "children": [
+          {
+            "id": "hero_zone_backlight",
+            "kind": "node",
+            "markers": [
+              "hero-zone:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "54%",
+                "left": "8%",
+                "top": "6%",
+                "bottom": "14%",
+                "position_type": "absolute",
+                "z_index": "0"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#5D6F8A26",
+                "border_radius": "999px",
+                "box_shadow": {
+                  "offset_x": "0px",
+                  "offset_y": "0px",
+                  "blur_radius": "42px",
+                  "spread_radius": "18px",
+                  "color": "#536A8F1E"
+                }
+              }
+            }
+          },
+          {
+            "id": "hero_zone_light_beam",
+            "kind": "node",
+            "markers": [
+              "hero-zone:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "26%",
+                "left": "22%",
+                "top": "4%",
+                "bottom": "22%",
+                "position_type": "absolute",
+                "z_index": "0"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#E9D3A032",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "hero_zone_edge_shadow",
+            "kind": "node",
+            "markers": [
+              "hero-zone:decor"
+            ],
+            "layout": {
+              "styles": {
+                "left": "40%",
+                "right": "6%",
+                "top": "12%",
+                "bottom": "4%",
+                "position_type": "absolute",
+                "z_index": "0"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#2C243050",
+                "border_radius": "120px"
+              }
+            }
+          },
           {
             "id": "hero_glow",
             "kind": "node",
@@ -590,7 +1677,73 @@
                 "bottom": "0",
                 "position_type": "absolute"
               }
-            }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D5D2D74D",
+                "border_radius": "999px",
+                "box_shadow": {
+                  "offset_x": "0px",
+                  "offset_y": "18px",
+                  "blur_radius": "52px",
+                  "spread_radius": "10px",
+                  "color": "#F5D26B3D"
+                }
+              }
+            },
+            "children": [
+              {
+                "id": "hero_glow_filter_blur",
+                "kind": "node",
+                "markers": [
+                  "css-filter-blur"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "0",
+                    "right": "0",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-1"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "box_shadow": {
+                      "offset_x": "0px",
+                      "offset_y": "0px",
+                      "blur_radius": "32px",
+                      "spread_radius": "12px",
+                      "color": "#D5D2D7A6"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "hero_glow_gradient_overlay",
+                "kind": "node",
+                "markers": [
+                  "css-gradient-overlay"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "125%",
+                    "height": "106%",
+                    "left": "-12%",
+                    "top": "-3%",
+                    "position_type": "absolute",
+                    "z_index": "-1"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#D5D2D74D",
+                    "border_radius": "999px"
+                  }
+                }
+              }
+            ]
           },
           {
             "id": "hero_cutout",
@@ -601,12 +1754,130 @@
             "layout": {
               "styles": {
                 "width": "55%",
+                "aspect_ratio": "0.58",
                 "max_height": "100%",
                 "left": "13%",
                 "bottom": "-1.5%",
                 "position_type": "absolute"
               }
-            }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D7D1C6D8",
+                "border_color": "#FFF3D666",
+                "border_width": "1px",
+                "border_radius": "96px",
+                "box_shadow": {
+                  "offset_x": "24px",
+                  "offset_y": "24px",
+                  "blur_radius": "32px",
+                  "spread_radius": "0px",
+                  "color": "#2E30403A"
+                }
+              }
+            },
+            "children": [
+              {
+                "id": "hero_cutout_filter_drop_shadow_2",
+                "kind": "node",
+                "markers": [
+                  "css-filter-drop-shadow"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "0",
+                    "right": "0",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-2"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "box_shadow": {
+                      "offset_x": "0",
+                      "offset_y": "24px",
+                      "blur_radius": "20px"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "hero_cutout_filter_drop_shadow_1",
+                "kind": "node",
+                "markers": [
+                  "css-filter-drop-shadow"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "0",
+                    "right": "0",
+                    "top": "0",
+                    "bottom": "0",
+                    "position_type": "absolute",
+                    "z_index": "-1"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "box_shadow": {
+                      "offset_x": "24px",
+                      "offset_y": "24px",
+                      "blur_radius": "0"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "hero_cutout_clip_contour",
+                "kind": "node",
+                "markers": [
+                  "css-clip-contour"
+                ],
+                "layout": {
+                  "styles": {
+                    "left": "13.0%",
+                    "right": "10.0%",
+                    "top": "0.0%",
+                    "bottom": "0.0%",
+                    "position_type": "absolute",
+                    "z_index": "3"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "transparent",
+                    "border_color": "#F4E8D69C",
+                    "border_width": "1px",
+                    "border_radius": "999px"
+                  }
+                }
+              },
+              {
+                "id": "hero_cutout_clip_contour_accent",
+                "kind": "node",
+                "markers": [
+                  "css-clip-contour"
+                ],
+                "layout": {
+                  "styles": {
+                    "width": "21.6%",
+                    "height": "16.0%",
+                    "left": "20.7%",
+                    "top": "6.0%",
+                    "position_type": "absolute",
+                    "z_index": "4"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#FFF8EE66",
+                    "border_radius": "999px"
+                  }
+                }
+              }
+            ]
           }
         ]
       },
@@ -614,7 +1885,8 @@
         "id": "name_card",
         "kind": "node",
         "markers": [
-          "class:name-card"
+          "class:name-card",
+          "aria-label:英雄摘要"
         ],
         "layout": {
           "styles": {
@@ -623,7 +1895,8 @@
             "bottom": "16.8%",
             "row_gap": "12px",
             "column_gap": "12px",
-            "position_type": "absolute"
+            "position_type": "absolute",
+            "z_index": "3"
           }
         },
         "children": [
@@ -640,9 +1913,15 @@
                 "content": {
                   "text": {
                     "content": "Olympia",
-                    "font_size": 124.0,
+                    "font_size": 83.2,
                     "font_color": "#CDF9FF",
-                    "font_path": "Hiragino Sans GB.ttc"
+                    "font_path": "Palatino.ttc",
+                    "line_height": "0.86",
+                    "text_shadow": {
+                      "offset_x": 0.0,
+                      "offset_y": 4.0,
+                      "color": "#34283094"
+                    }
                   }
                 }
               }
@@ -652,108 +1931,77 @@
             "id": "stars",
             "kind": "node",
             "markers": [
-              "class:stars"
+              "class:stars",
+              "aria-label:五星英雄"
             ],
             "layout": {
               "styles": {
-                "display": "flex"
+                "display": "flex",
+                "padding_left": "10px",
+                "row_gap": "6.14px",
+                "column_gap": "6.14px"
               }
             },
             "children": [
               {
-                "id": "star",
-                "kind": "node",
-                "markers": [
-                  "class:star"
-                ],
-                "layout": {
-                  "styles": {
-                    "width": "39.68px",
-                    "height": "39.68px"
+                "id": "hero_star_text_1",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "★",
+                    "font_size": 42.0,
+                    "font_color": "#F5C742",
+                    "font_path": "Hiragino Sans GB.ttc"
                   }
-                },
-                "children": [
-                  {
-                    "id": "path_5",
-                    "kind": "node"
-                  }
-                ]
+                }
               },
               {
-                "id": "star_2",
-                "kind": "node",
-                "markers": [
-                  "class:star"
-                ],
-                "layout": {
-                  "styles": {
-                    "width": "39.68px",
-                    "height": "39.68px"
+                "id": "hero_star_text_2",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "★",
+                    "font_size": 42.0,
+                    "font_color": "#F5C742",
+                    "font_path": "Hiragino Sans GB.ttc"
                   }
-                },
-                "children": [
-                  {
-                    "id": "path_6",
-                    "kind": "node"
-                  }
-                ]
+                }
               },
               {
-                "id": "star_3",
-                "kind": "node",
-                "markers": [
-                  "class:star"
-                ],
-                "layout": {
-                  "styles": {
-                    "width": "39.68px",
-                    "height": "39.68px"
+                "id": "hero_star_text_3",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "★",
+                    "font_size": 42.0,
+                    "font_color": "#F5C742",
+                    "font_path": "Hiragino Sans GB.ttc"
                   }
-                },
-                "children": [
-                  {
-                    "id": "path_7",
-                    "kind": "node"
-                  }
-                ]
+                }
               },
               {
-                "id": "star_4",
-                "kind": "node",
-                "markers": [
-                  "class:star"
-                ],
-                "layout": {
-                  "styles": {
-                    "width": "39.68px",
-                    "height": "39.68px"
+                "id": "hero_star_text_4",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "★",
+                    "font_size": 42.0,
+                    "font_color": "#F5C742",
+                    "font_path": "Hiragino Sans GB.ttc"
                   }
-                },
-                "children": [
-                  {
-                    "id": "path_8",
-                    "kind": "node"
-                  }
-                ]
+                }
               },
               {
-                "id": "star_5",
-                "kind": "node",
-                "markers": [
-                  "class:star"
-                ],
-                "layout": {
-                  "styles": {
-                    "width": "39.68px",
-                    "height": "39.68px"
+                "id": "hero_star_text_5",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "★",
+                    "font_size": 42.0,
+                    "font_color": "#F5C742",
+                    "font_path": "Hiragino Sans GB.ttc"
                   }
-                },
-                "children": [
-                  {
-                    "id": "path_9",
-                    "kind": "node"
-                  }
-                ]
+                }
               }
             ]
           },
@@ -761,11 +2009,15 @@
             "id": "skill_row",
             "kind": "node",
             "markers": [
-              "class:skill-row"
+              "class:skill-row",
+              "aria-label:英雄技能"
             ],
             "layout": {
               "styles": {
-                "display": "flex"
+                "display": "flex",
+                "margin_top": "12.8px",
+                "row_gap": "23.04px",
+                "column_gap": "23.04px"
               }
             },
             "children": [
@@ -773,7 +2025,9 @@
                 "id": "skill_button",
                 "kind": "button",
                 "markers": [
-                  "class:skill-button"
+                  "class:skill-button",
+                  "data-skill:王权震击",
+                  "aria-label:释放王权震击"
                 ],
                 "layout": {
                   "styles": {
@@ -788,26 +2042,115 @@
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#545465F2",
+                    "border_color": "#BDD3FBB8",
                     "border_width": "2px",
-                    "border_radius": "999px"
+                    "border_radius": "999px",
+                    "box_shadow": {
+                      "offset_x": "0",
+                      "offset_y": "8px",
+                      "blur_radius": "18px"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#5B5B6DF2",
+                      "border_color": "#CCE4FFB8"
+                    }
                   }
                 },
                 "children": [
                   {
-                    "id": "svg_4",
+                    "id": "skill_button_box_shadow_layer_1",
                     "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
                     "layout": {
                       "styles": {
-                        "width": "58%",
-                        "height": "58%"
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-1"
                       }
                     },
-                    "children": [
-                      {
-                        "id": "path_10",
-                        "kind": "node"
+                    "style": {
+                      "visuals": {
+                        "border_radius": "999px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "0",
+                          "blur_radius": "0",
+                          "spread_radius": "5px"
+                        }
                       }
-                    ]
+                    }
+                  },
+                  {
+                    "id": "skill_button_gradient_overlay",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "48%",
+                        "height": "48%",
+                        "left": "11%",
+                        "top": "2%",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#C4FFFF47",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_gradient_overlay_2",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "100%",
+                        "height": "100%",
+                        "left": "0%",
+                        "top": "0%",
+                        "position_type": "absolute",
+                        "z_index": "-2"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#545465F2",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_svg_fallback_1",
+                    "kind": "text",
+                    "markers": [
+                      "svg:fallback"
+                    ],
+                    "content": {
+                      "text": {
+                        "content": "⚡",
+                        "font_size": 22.0,
+                        "font_color": "#C5E8FF",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
                   },
                   {
                     "id": "cooldown",
@@ -818,10 +2161,19 @@
                     "layout": {
                       "styles": {
                         "display": "none",
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
                         "justify_content": "center",
                         "justify_items": "center",
                         "align_items": "center",
                         "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#0B06089E"
                       }
                     }
                   }
@@ -831,7 +2183,9 @@
                 "id": "skill_button_2",
                 "kind": "button",
                 "markers": [
-                  "class:skill-button"
+                  "class:skill-button",
+                  "data-skill:军团号令",
+                  "aria-label:释放军团号令"
                 ],
                 "layout": {
                   "styles": {
@@ -846,26 +2200,115 @@
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#545465F2",
+                    "border_color": "#BDD3FBB8",
                     "border_width": "2px",
-                    "border_radius": "999px"
+                    "border_radius": "999px",
+                    "box_shadow": {
+                      "offset_x": "0",
+                      "offset_y": "8px",
+                      "blur_radius": "18px"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#5B5B6DF2",
+                      "border_color": "#CCE4FFB8"
+                    }
                   }
                 },
                 "children": [
                   {
-                    "id": "svg_5",
+                    "id": "skill_button_2_box_shadow_layer_1",
                     "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
                     "layout": {
                       "styles": {
-                        "width": "58%",
-                        "height": "58%"
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-1"
                       }
                     },
-                    "children": [
-                      {
-                        "id": "path_11",
-                        "kind": "node"
+                    "style": {
+                      "visuals": {
+                        "border_radius": "999px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "0",
+                          "blur_radius": "0",
+                          "spread_radius": "5px"
+                        }
                       }
-                    ]
+                    }
+                  },
+                  {
+                    "id": "skill_button_2_gradient_overlay",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "48%",
+                        "height": "48%",
+                        "left": "11%",
+                        "top": "2%",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#C4FFFF47",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_2_gradient_overlay_2",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "100%",
+                        "height": "100%",
+                        "left": "0%",
+                        "top": "0%",
+                        "position_type": "absolute",
+                        "z_index": "-2"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#545465F2",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_2_svg_fallback_1",
+                    "kind": "text",
+                    "markers": [
+                      "svg:fallback"
+                    ],
+                    "content": {
+                      "text": {
+                        "content": "♛",
+                        "font_size": 22.0,
+                        "font_color": "#C5E8FF",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
                   },
                   {
                     "id": "cooldown_2",
@@ -876,10 +2319,19 @@
                     "layout": {
                       "styles": {
                         "display": "none",
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
                         "justify_content": "center",
                         "justify_items": "center",
                         "align_items": "center",
                         "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#0B06089E"
                       }
                     }
                   }
@@ -889,7 +2341,9 @@
                 "id": "skill_button_3",
                 "kind": "button",
                 "markers": [
-                  "class:skill-button"
+                  "class:skill-button",
+                  "data-skill:圣卷战策",
+                  "aria-label:释放圣卷战策"
                 ],
                 "layout": {
                   "styles": {
@@ -904,26 +2358,115 @@
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#545465F2",
+                    "border_color": "#BDD3FBB8",
                     "border_width": "2px",
-                    "border_radius": "999px"
+                    "border_radius": "999px",
+                    "box_shadow": {
+                      "offset_x": "0",
+                      "offset_y": "8px",
+                      "blur_radius": "18px"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#5B5B6DF2",
+                      "border_color": "#CCE4FFB8"
+                    }
                   }
                 },
                 "children": [
                   {
-                    "id": "svg_6",
+                    "id": "skill_button_3_box_shadow_layer_1",
                     "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
                     "layout": {
                       "styles": {
-                        "width": "58%",
-                        "height": "58%"
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-1"
                       }
                     },
-                    "children": [
-                      {
-                        "id": "path_12",
-                        "kind": "node"
+                    "style": {
+                      "visuals": {
+                        "border_radius": "999px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "0",
+                          "blur_radius": "0",
+                          "spread_radius": "5px"
+                        }
                       }
-                    ]
+                    }
+                  },
+                  {
+                    "id": "skill_button_3_gradient_overlay",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "48%",
+                        "height": "48%",
+                        "left": "11%",
+                        "top": "2%",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#C4FFFF47",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_3_gradient_overlay_2",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "width": "100%",
+                        "height": "100%",
+                        "left": "0%",
+                        "top": "0%",
+                        "position_type": "absolute",
+                        "z_index": "-2"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#545465F2",
+                        "border_radius": "999px"
+                      }
+                    }
+                  },
+                  {
+                    "id": "skill_button_3_svg_fallback_1",
+                    "kind": "text",
+                    "markers": [
+                      "svg:fallback"
+                    ],
+                    "content": {
+                      "text": {
+                        "content": "▤",
+                        "font_size": 22.0,
+                        "font_color": "#C5E8FF",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
                   },
                   {
                     "id": "cooldown_3",
@@ -934,10 +2477,19 @@
                     "layout": {
                       "styles": {
                         "display": "none",
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
                         "justify_content": "center",
                         "justify_items": "center",
                         "align_items": "center",
                         "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#0B06089E"
                       }
                     }
                   }
@@ -951,7 +2503,8 @@
         "id": "info_panel",
         "kind": "node",
         "markers": [
-          "class:info-panel"
+          "class:info-panel",
+          "aria-label:英雄属性与装备"
         ],
         "layout": {
           "styles": {
@@ -960,11 +2513,411 @@
             "right": "5.4%",
             "top": "25.4%",
             "bottom": "7.5%",
+            "padding": "30.72px 35.84px",
+            "row_gap": "25.6px",
+            "column_gap": "25.6px",
             "position_type": "absolute",
+            "z_index": "3",
             "grid_template_rows": "auto auto flex(1) auto"
           }
         },
+        "style": {
+          "visuals": {
+            "background_color": "#C7A97A66",
+            "box_shadow": {
+              "offset_x": "-10px",
+              "offset_y": "0px",
+              "blur_radius": "34px",
+              "spread_radius": "0px",
+              "color": "#EAD6AF24"
+            }
+          }
+        },
         "children": [
+          {
+            "id": "info_panel_left_cut_1",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "9%",
+                "left": "0",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#2D2530D2"
+              }
+            }
+          },
+          {
+            "id": "info_panel_left_cut_2",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "7%",
+                "left": "9%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#5D4D438E"
+              }
+            }
+          },
+          {
+            "id": "info_panel_left_cut_3",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "5%",
+                "left": "16%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#A88A6550"
+              }
+            }
+          },
+          {
+            "id": "info_panel_left_inner_glow",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "7%",
+                "left": "25%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#F5D8A43E"
+              }
+            }
+          },
+          {
+            "id": "info_panel_left_mask_soft",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "8%",
+                "left": "21%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D7B47B20"
+              }
+            }
+          },
+          {
+            "id": "info_panel_top_gloss",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "46%",
+                "height": "20%",
+                "right": "2%",
+                "top": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FFF3D142",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "info_panel_mid_warmth",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "left": "29%",
+                "right": "0",
+                "top": "8%",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#E5C18A2A"
+              }
+            }
+          },
+          {
+            "id": "info_panel_inner_band",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "height": "1px",
+                "left": "31%",
+                "right": "10%",
+                "top": "30%",
+                "position_type": "absolute",
+                "z_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FFF0D636"
+              }
+            }
+          },
+          {
+            "id": "info_panel_lower_ember",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "height": "22%",
+                "left": "26%",
+                "right": "4%",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#7C4F3B22"
+              }
+            }
+          },
+          {
+            "id": "info_panel_right_sheen",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "18%",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#F0D4A218"
+              }
+            }
+          },
+          {
+            "id": "info_panel_right_hotspot",
+            "kind": "node",
+            "markers": [
+              "hero-info-panel:decor"
+            ],
+            "layout": {
+              "styles": {
+                "width": "22%",
+                "height": "14%",
+                "right": "4%",
+                "top": "4%",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FFF0C830",
+                "border_radius": "999px",
+                "box_shadow": {
+                  "offset_x": "0px",
+                  "offset_y": "0px",
+                  "blur_radius": "26px",
+                  "spread_radius": "12px",
+                  "color": "#FFF1D024"
+                }
+              }
+            }
+          },
+          {
+            "id": "info_panel_gradient_overlay",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0%",
+                "right": "87%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#A4AACB99"
+              }
+            }
+          },
+          {
+            "id": "info_panel_gradient_overlay_2",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "13%",
+                "right": "0%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-2"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#8A8AA7A8"
+              }
+            }
+          },
+          {
+            "id": "info_panel_gradient_overlay_3",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "width": "68%",
+                "height": "68%",
+                "left": "66%",
+                "top": "16%",
+                "position_type": "absolute",
+                "z_index": "-3"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#D2E5FF2E",
+                "border_radius": "999px"
+              }
+            }
+          },
+          {
+            "id": "info_panel_mask_fade_1",
+            "kind": "node",
+            "markers": [
+              "css-mask-fade"
+            ],
+            "layout": {
+              "styles": {
+                "width": "3.7%",
+                "left": "0.0%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "12"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#120E129E"
+              }
+            }
+          },
+          {
+            "id": "info_panel_mask_fade_2",
+            "kind": "node",
+            "markers": [
+              "css-mask-fade"
+            ],
+            "layout": {
+              "styles": {
+                "width": "3.7%",
+                "left": "3.7%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "12"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#120E1257"
+              }
+            }
+          },
+          {
+            "id": "info_panel_mask_fade_3",
+            "kind": "node",
+            "markers": [
+              "css-mask-fade"
+            ],
+            "layout": {
+              "styles": {
+                "width": "3.7%",
+                "left": "7.3%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "12"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#120E1229"
+              }
+            }
+          },
           {
             "id": "panel_section",
             "kind": "node",
@@ -973,7 +2926,9 @@
             ],
             "layout": {
               "styles": {
-                "min_width": "0"
+                "display": "grid",
+                "min_width": "0",
+                "row_gap": "18px"
               }
             },
             "children": [
@@ -985,19 +2940,49 @@
                 ],
                 "layout": {
                   "styles": {
-                    "margin": "0 0 18px"
+                    "margin": "0 0 18px",
+                    "padding_bottom": "15px",
+                    "position_type": "relative"
                   }
                 },
                 "children": [
+                  {
+                    "id": "section_title_border_bottom",
+                    "kind": "node",
+                    "markers": [
+                      "css-edge-border:bottom"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "height": "1px",
+                        "left": "0",
+                        "right": "0",
+                        "bottom": "0",
+                        "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#46404C3D"
+                      }
+                    }
+                  },
                   {
                     "id": "section_title_text_1",
                     "kind": "text",
                     "content": {
                       "text": {
                         "content": "武装",
-                        "font_size": 44.0,
+                        "font_size": 33.28,
                         "font_color": "#4D3033",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 850,
+                        "line_height": "1",
+                        "text_shadow": {
+                          "offset_x": 0.0,
+                          "offset_y": 1.0,
+                          "color": "#C4FFFF3D"
+                        }
                       }
                     }
                   }
@@ -1007,11 +2992,15 @@
                 "id": "equipment_grid",
                 "kind": "node",
                 "markers": [
-                  "class:equipment-grid"
+                  "class:equipment-grid",
+                  "aria-label:武装槽位"
                 ],
                 "layout": {
                   "styles": {
-                    "display": "grid"
+                    "display": "grid",
+                    "row_gap": "9.6px",
+                    "column_gap": "9.6px",
+                    "grid_template_columns": "flex(5, 1)"
                   }
                 },
                 "children": [
@@ -1020,11 +3009,14 @@
                     "kind": "button",
                     "markers": [
                       "class:equip-slot",
-                      "class:selected"
+                      "class:selected",
+                      "data-equip:远征长弓",
+                      "aria-label:选择远征长弓"
                     ],
                     "layout": {
                       "styles": {
                         "display": "grid",
+                        "aspect_ratio": "1",
                         "min_width": "0",
                         "justify_content": "center",
                         "justify_items": "center",
@@ -1034,26 +3026,140 @@
                     },
                     "style": {
                       "visuals": {
-                        "border_color": "#CCB6A2",
-                        "border_width": "2px"
+                        "background_color": "#5E566286",
+                        "border_color": "#F0D48AA8",
+                        "border_width": "2px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "5px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#875C346C"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#DCC5AF"
+                        }
                       }
                     },
                     "children": [
                       {
-                        "id": "svg_7",
+                        "id": "equip_slot_box_shadow_layer_3",
                         "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
                         "layout": {
                           "styles": {
-                            "width": "62%",
-                            "height": "62%"
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-2"
                           }
                         },
-                        "children": [
-                          {
-                            "id": "path_13",
-                            "kind": "node"
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "offset_x": "0",
+                              "offset_y": "5px",
+                              "blur_radius": "0"
+                            }
                           }
-                        ]
+                        }
+                      },
+                      {
+                        "id": "equip_slot_box_shadow_layer_1",
+                        "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "inset": true,
+                              "offset_x": "0",
+                              "offset_y": "0",
+                              "blur_radius": "0",
+                              "spread_radius": "2px"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0%",
+                            "right": "46%",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#271F2770"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "width": "60%",
+                            "height": "60%",
+                            "left": "4%",
+                            "top": "2%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#CCF6FF38",
+                            "border_radius": "999px"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_svg_fallback_1",
+                        "kind": "text",
+                        "markers": [
+                          "svg:fallback"
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "➶",
+                            "font_size": 22.0,
+                            "font_color": "#F7E7C7",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
                       },
                       {
                         "id": "equip_slot_pseudo_after",
@@ -1063,11 +3169,16 @@
                         ],
                         "layout": {
                           "styles": {
+                            "left": "8%",
+                            "right": "8%",
+                            "top": "8%",
+                            "bottom": "8%",
                             "position_type": "absolute"
                           }
                         },
                         "style": {
                           "visuals": {
+                            "border_color": "#F5E5C4A8",
                             "border_width": "1px"
                           }
                         }
@@ -1078,11 +3189,14 @@
                     "id": "equip_slot_2",
                     "kind": "button",
                     "markers": [
-                      "class:equip-slot"
+                      "class:equip-slot",
+                      "data-equip:城邦圆盾",
+                      "aria-label:选择城邦圆盾"
                     ],
                     "layout": {
                       "styles": {
                         "display": "grid",
+                        "aspect_ratio": "1",
                         "min_width": "0",
                         "justify_content": "center",
                         "justify_items": "center",
@@ -1092,29 +3206,114 @@
                     },
                     "style": {
                       "visuals": {
-                        "border_width": "2px"
+                        "background_color": "#5E566286",
+                        "border_color": "#C9B59B7A",
+                        "border_width": "2px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "3px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#6A443650"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#B7A1A2BD"
+                        }
                       }
                     },
                     "children": [
                       {
-                        "id": "svg_8",
+                        "id": "equip_slot_2_box_shadow_layer_1",
                         "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
                         "layout": {
                           "styles": {
-                            "width": "62%",
-                            "height": "62%"
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
                           }
                         },
-                        "children": [
-                          {
-                            "id": "path_14",
-                            "kind": "node"
-                          },
-                          {
-                            "id": "path_15",
-                            "kind": "node"
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "inset": true,
+                              "offset_x": "0",
+                              "offset_y": "0",
+                              "blur_radius": "0",
+                              "spread_radius": "2px"
+                            }
                           }
-                        ]
+                        }
+                      },
+                      {
+                        "id": "equip_slot_2_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0%",
+                            "right": "46%",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#271F2770"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_2_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "width": "60%",
+                            "height": "60%",
+                            "left": "4%",
+                            "top": "2%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#CCF6FF38",
+                            "border_radius": "999px"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_2_svg_fallback_1",
+                        "kind": "text",
+                        "markers": [
+                          "svg:fallback"
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "⛨",
+                            "font_size": 22.0,
+                            "font_color": "#F3E3C6",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
                       }
                     ]
                   },
@@ -1122,11 +3321,14 @@
                     "id": "equip_slot_3",
                     "kind": "button",
                     "markers": [
-                      "class:equip-slot"
+                      "class:equip-slot",
+                      "data-equip:青铜短矛",
+                      "aria-label:选择青铜短矛"
                     ],
                     "layout": {
                       "styles": {
                         "display": "grid",
+                        "aspect_ratio": "1",
                         "min_width": "0",
                         "justify_content": "center",
                         "justify_items": "center",
@@ -1136,29 +3338,114 @@
                     },
                     "style": {
                       "visuals": {
-                        "border_width": "2px"
+                        "background_color": "#5E566286",
+                        "border_color": "#C9B59B7A",
+                        "border_width": "2px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "3px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#6A443650"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#B7A1A2BD"
+                        }
                       }
                     },
                     "children": [
                       {
-                        "id": "svg_9",
+                        "id": "equip_slot_3_box_shadow_layer_1",
                         "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
                         "layout": {
                           "styles": {
-                            "width": "62%",
-                            "height": "62%"
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
                           }
                         },
-                        "children": [
-                          {
-                            "id": "path_16",
-                            "kind": "node"
-                          },
-                          {
-                            "id": "path_17",
-                            "kind": "node"
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "inset": true,
+                              "offset_x": "0",
+                              "offset_y": "0",
+                              "blur_radius": "0",
+                              "spread_radius": "2px"
+                            }
                           }
-                        ]
+                        }
+                      },
+                      {
+                        "id": "equip_slot_3_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0%",
+                            "right": "46%",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#271F2770"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_3_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "width": "60%",
+                            "height": "60%",
+                            "left": "4%",
+                            "top": "2%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#CCF6FF38",
+                            "border_radius": "999px"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_3_svg_fallback_1",
+                        "kind": "text",
+                        "markers": [
+                          "svg:fallback"
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "⟡",
+                            "font_size": 22.0,
+                            "font_color": "#F3E3C6",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
                       }
                     ]
                   },
@@ -1166,11 +3453,14 @@
                     "id": "equip_slot_4",
                     "kind": "button",
                     "markers": [
-                      "class:equip-slot"
+                      "class:equip-slot",
+                      "data-equip:王室坐骑",
+                      "aria-label:选择王室坐骑"
                     ],
                     "layout": {
                       "styles": {
                         "display": "grid",
+                        "aspect_ratio": "1",
                         "min_width": "0",
                         "justify_content": "center",
                         "justify_items": "center",
@@ -1180,29 +3470,114 @@
                     },
                     "style": {
                       "visuals": {
-                        "border_width": "2px"
+                        "background_color": "#5E566286",
+                        "border_color": "#C9B59B7A",
+                        "border_width": "2px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "3px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#6A443650"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#B7A1A2BD"
+                        }
                       }
                     },
                     "children": [
                       {
-                        "id": "svg_10",
+                        "id": "equip_slot_4_box_shadow_layer_1",
                         "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
                         "layout": {
                           "styles": {
-                            "width": "62%",
-                            "height": "62%"
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
                           }
                         },
-                        "children": [
-                          {
-                            "id": "path_18",
-                            "kind": "node"
-                          },
-                          {
-                            "id": "path_19",
-                            "kind": "node"
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "inset": true,
+                              "offset_x": "0",
+                              "offset_y": "0",
+                              "blur_radius": "0",
+                              "spread_radius": "2px"
+                            }
                           }
-                        ]
+                        }
+                      },
+                      {
+                        "id": "equip_slot_4_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0%",
+                            "right": "46%",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#271F2770"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_4_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "width": "60%",
+                            "height": "60%",
+                            "left": "4%",
+                            "top": "2%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#CCF6FF38",
+                            "border_radius": "999px"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_4_svg_fallback_1",
+                        "kind": "text",
+                        "markers": [
+                          "svg:fallback"
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "♞",
+                            "font_size": 22.0,
+                            "font_color": "#F3E3C6",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
                       }
                     ]
                   },
@@ -1210,11 +3585,14 @@
                     "id": "equip_slot_5",
                     "kind": "button",
                     "markers": [
-                      "class:equip-slot"
+                      "class:equip-slot",
+                      "data-equip:鹰眼徽章",
+                      "aria-label:选择鹰眼徽章"
                     ],
                     "layout": {
                       "styles": {
                         "display": "grid",
+                        "aspect_ratio": "1",
                         "min_width": "0",
                         "justify_content": "center",
                         "justify_items": "center",
@@ -1224,29 +3602,114 @@
                     },
                     "style": {
                       "visuals": {
-                        "border_width": "2px"
+                        "background_color": "#5E566286",
+                        "border_color": "#C9B59B7A",
+                        "border_width": "2px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "3px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#6A443650"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#B7A1A2BD"
+                        }
                       }
                     },
                     "children": [
                       {
-                        "id": "svg_11",
+                        "id": "equip_slot_5_box_shadow_layer_1",
                         "kind": "node",
+                        "markers": [
+                          "css-box-shadow-layer"
+                        ],
                         "layout": {
                           "styles": {
-                            "width": "62%",
-                            "height": "62%"
+                            "left": "0",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
                           }
                         },
-                        "children": [
-                          {
-                            "id": "circle",
-                            "kind": "node"
-                          },
-                          {
-                            "id": "path_20",
-                            "kind": "node"
+                        "style": {
+                          "visuals": {
+                            "box_shadow": {
+                              "inset": true,
+                              "offset_x": "0",
+                              "offset_y": "0",
+                              "blur_radius": "0",
+                              "spread_radius": "2px"
+                            }
                           }
-                        ]
+                        }
+                      },
+                      {
+                        "id": "equip_slot_5_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0%",
+                            "right": "46%",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#271F2770"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_5_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "width": "60%",
+                            "height": "60%",
+                            "left": "4%",
+                            "top": "2%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#CCF6FF38",
+                            "border_radius": "999px"
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_slot_5_svg_fallback_1",
+                        "kind": "text",
+                        "markers": [
+                          "svg:fallback"
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "◎",
+                            "font_size": 22.0,
+                            "font_color": "#F3E3C6",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
                       }
                     ]
                   }
@@ -1262,7 +3725,9 @@
             ],
             "layout": {
               "styles": {
-                "min_width": "0"
+                "display": "grid",
+                "min_width": "0",
+                "row_gap": "14px"
               }
             },
             "children": [
@@ -1274,19 +3739,49 @@
                 ],
                 "layout": {
                   "styles": {
-                    "margin": "0 0 18px"
+                    "margin": "0 0 18px",
+                    "padding_bottom": "15px",
+                    "position_type": "relative"
                   }
                 },
                 "children": [
+                  {
+                    "id": "section_title_2_border_bottom",
+                    "kind": "node",
+                    "markers": [
+                      "css-edge-border:bottom"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "height": "1px",
+                        "left": "0",
+                        "right": "0",
+                        "bottom": "0",
+                        "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#46404C3D"
+                      }
+                    }
+                  },
                   {
                     "id": "section_title_2_text_1",
                     "kind": "text",
                     "content": {
                       "text": {
                         "content": "基础信息",
-                        "font_size": 44.0,
+                        "font_size": 33.28,
                         "font_color": "#4D3033",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 850,
+                        "line_height": "1",
+                        "text_shadow": {
+                          "offset_x": 0.0,
+                          "offset_y": 1.0,
+                          "color": "#C4FFFF3D"
+                        }
                       }
                     }
                   }
@@ -1296,7 +3791,8 @@
                 "id": "tabs",
                 "kind": "node",
                 "markers": [
-                  "class:tabs"
+                  "class:tabs",
+                  "aria-label:属性类别"
                 ],
                 "layout": {
                   "styles": {
@@ -1312,21 +3808,125 @@
                     "kind": "button",
                     "markers": [
                       "class:tab-button",
-                      "class:active"
+                      "class:active",
+                      "data-tab:base"
                     ],
                     "layout": {
                       "styles": {
                         "min_height": "38px",
-                        "padding": "0 14px"
+                        "padding": "0 14px",
+                        "position_type": "relative"
                       }
                     },
                     "style": {
                       "visuals": {
+                        "background_color": "#E7D4A7B8",
+                        "border_color": "#E3D1A082",
                         "border_width": "1px",
-                        "border_radius": "3px"
+                        "border_radius": "3px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "1px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#FFF9E052"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#E1F5FFB8",
+                          "border_color": "#4F475638"
+                        }
+                      },
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#E7D4A7B8",
+                          "border_color": "#E3D1A082",
+                          "box_shadow": {
+                            "offset_x": "0px",
+                            "offset_y": "1px",
+                            "blur_radius": "0px",
+                            "spread_radius": "0px",
+                            "color": "#FFF9E052"
+                          }
+                        }
+                      },
+                      "normal": {
+                        "visuals": {
+                          "background_color": "#BAA88A36",
+                          "border_color": "#6B564132"
+                        }
                       }
                     },
                     "children": [
+                      {
+                        "id": "tab_button_gradient_overlay",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0",
+                            "right": "0",
+                            "top": "0%",
+                            "bottom": "70%",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#D0E3F3B8"
+                          }
+                        }
+                      },
+                      {
+                        "id": "tab_button_gradient_overlay_2",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0",
+                            "right": "0",
+                            "top": "30%",
+                            "bottom": "20%",
+                            "position_type": "absolute",
+                            "z_index": "-2"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#BCBCC8AE"
+                          }
+                        }
+                      },
+                      {
+                        "id": "tab_button_gradient_overlay_3",
+                        "kind": "node",
+                        "markers": [
+                          "css-gradient-overlay"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "0",
+                            "right": "0",
+                            "top": "80%",
+                            "bottom": "0%",
+                            "position_type": "absolute",
+                            "z_index": "-3"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#A8949CA3"
+                          }
+                        }
+                      },
                       {
                         "id": "tab_button_text_1",
                         "kind": "text",
@@ -1335,7 +3935,13 @@
                             "content": "基础",
                             "font_size": 16.0,
                             "font_color": "#2D1A1D",
-                            "font_path": "Hiragino Sans GB.ttc"
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 850
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#311C1F"
                           }
                         }
                       }
@@ -1345,18 +3951,49 @@
                     "id": "tab_button_2",
                     "kind": "button",
                     "markers": [
-                      "class:tab-button"
+                      "class:tab-button",
+                      "data-tab:battle"
                     ],
                     "layout": {
                       "styles": {
                         "min_height": "38px",
-                        "padding": "0 14px"
+                        "padding": "0 14px",
+                        "position_type": "relative"
                       }
                     },
                     "style": {
                       "visuals": {
+                        "background_color": "#BAA88A36",
+                        "border_color": "#6B564132",
                         "border_width": "1px",
-                        "border_radius": "3px"
+                        "border_radius": "3px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "1px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#20161D14"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#E7D4A7B8",
+                          "border_color": "#E3D1A082"
+                        }
+                      },
+                      "normal": {
+                        "visuals": {
+                          "background_color": "#BAA88A36",
+                          "border_color": "#6B564132"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#C0D6FF33",
+                          "border_color": "#4F475638"
+                        }
                       }
                     },
                     "children": [
@@ -1368,7 +4005,13 @@
                             "content": "战斗",
                             "font_size": 16.0,
                             "font_color": "#4B383F",
-                            "font_path": "Hiragino Sans GB.ttc"
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 850
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#513C44"
                           }
                         }
                       }
@@ -1378,18 +4021,49 @@
                     "id": "tab_button_3",
                     "kind": "button",
                     "markers": [
-                      "class:tab-button"
+                      "class:tab-button",
+                      "data-tab:march"
                     ],
                     "layout": {
                       "styles": {
                         "min_height": "38px",
-                        "padding": "0 14px"
+                        "padding": "0 14px",
+                        "position_type": "relative"
                       }
                     },
                     "style": {
                       "visuals": {
+                        "background_color": "#BAA88A36",
+                        "border_color": "#6B564132",
                         "border_width": "1px",
-                        "border_radius": "3px"
+                        "border_radius": "3px",
+                        "box_shadow": {
+                          "offset_x": "0px",
+                          "offset_y": "1px",
+                          "blur_radius": "0px",
+                          "spread_radius": "0px",
+                          "color": "#20161D14"
+                        }
+                      }
+                    },
+                    "state_visuals": {
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#E7D4A7B8",
+                          "border_color": "#E3D1A082"
+                        }
+                      },
+                      "normal": {
+                        "visuals": {
+                          "background_color": "#BAA88A36",
+                          "border_color": "#6B564132"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#C0D6FF33",
+                          "border_color": "#4F475638"
+                        }
                       }
                     },
                     "children": [
@@ -1401,7 +4075,13 @@
                             "content": "行军",
                             "font_size": 16.0,
                             "font_color": "#4B383F",
-                            "font_path": "Hiragino Sans GB.ttc"
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 850
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#513C44"
                           }
                         }
                       }
@@ -1422,7 +4102,729 @@
                     "row_gap": "6px",
                     "column_gap": "6px"
                   }
-                }
+                },
+                "children": [
+                  {
+                    "id": "hero_stat_row_1",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_height": "40px",
+                        "padding": "0 8px",
+                        "column_gap": "10px",
+                        "align_items": "center",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) auto auto"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#6D5A6333"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hero_stat_row_1_sheen",
+                        "kind": "node",
+                        "markers": [
+                          "hero-stat-row:decor"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "42%",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#C9AF8D18"
+                          }
+                        }
+                      },
+                      {
+                        "id": "hero_stat_label_1",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "min_width": "0",
+                            "column_gap": "11px",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_icon_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "武",
+                                "font_size": 22.0,
+                                "font_color": "#E9DDC8",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hero_stat_label_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "武力",
+                                "font_size": 24.0,
+                                "font_color": "#F0E7D8",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_base_1",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-base"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_base_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "136.28",
+                                "font_size": 24.0,
+                                "font_color": "#F6EBDD",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_bonus_1",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-bonus"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_bonus_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "+18",
+                                "font_size": 24.0,
+                                "font_color": "#B7DD6D",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "hero_stat_row_2",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_height": "40px",
+                        "padding": "0 8px",
+                        "column_gap": "10px",
+                        "align_items": "center",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) auto auto"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#6D5A6333"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hero_stat_row_2_sheen",
+                        "kind": "node",
+                        "markers": [
+                          "hero-stat-row:decor"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "42%",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#C9AF8D18"
+                          }
+                        }
+                      },
+                      {
+                        "id": "hero_stat_label_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "min_width": "0",
+                            "column_gap": "11px",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_icon_text_2",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "统",
+                                "font_size": 22.0,
+                                "font_color": "#E9DDC8",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hero_stat_label_text_2",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "统帅",
+                                "font_size": 24.0,
+                                "font_color": "#F0E7D8",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_base_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-base"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_base_text_2",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "136.2",
+                                "font_size": 24.0,
+                                "font_color": "#F6EBDD",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_bonus_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-bonus"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_bonus_text_2",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "+186",
+                                "font_size": 24.0,
+                                "font_color": "#B7DD6D",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "hero_stat_row_3",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_height": "40px",
+                        "padding": "0 8px",
+                        "column_gap": "10px",
+                        "align_items": "center",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) auto auto"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#6D5A6333"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hero_stat_row_3_sheen",
+                        "kind": "node",
+                        "markers": [
+                          "hero-stat-row:decor"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "42%",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#C9AF8D18"
+                          }
+                        }
+                      },
+                      {
+                        "id": "hero_stat_label_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "min_width": "0",
+                            "column_gap": "11px",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_icon_text_3",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "智",
+                                "font_size": 22.0,
+                                "font_color": "#E9DDC8",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hero_stat_label_text_3",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "智谋",
+                                "font_size": 24.0,
+                                "font_color": "#F0E7D8",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_base_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-base"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_base_text_3",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "136.3",
+                                "font_size": 24.0,
+                                "font_color": "#F6EBDD",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_bonus_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-bonus"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_bonus_text_3",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "+86",
+                                "font_size": 24.0,
+                                "font_color": "#B7DD6D",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "hero_stat_row_4",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_height": "40px",
+                        "padding": "0 8px",
+                        "column_gap": "10px",
+                        "align_items": "center",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) auto auto"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#6D5A6333"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hero_stat_row_4_sheen",
+                        "kind": "node",
+                        "markers": [
+                          "hero-stat-row:decor"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "42%",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#C9AF8D18"
+                          }
+                        }
+                      },
+                      {
+                        "id": "hero_stat_label_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "min_width": "0",
+                            "column_gap": "11px",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_icon_text_4",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "速",
+                                "font_size": 22.0,
+                                "font_color": "#E9DDC8",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hero_stat_label_text_4",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "速度",
+                                "font_size": 24.0,
+                                "font_color": "#F0E7D8",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_base_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-base"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_base_text_4",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "28.66",
+                                "font_size": 24.0,
+                                "font_color": "#F6EBDD",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_bonus_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-bonus"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_bonus_text_4",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "+210",
+                                "font_size": 24.0,
+                                "font_color": "#B7DD6D",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "hero_stat_row_5",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "min_height": "40px",
+                        "padding": "0 8px",
+                        "column_gap": "10px",
+                        "align_items": "center",
+                        "position_type": "relative",
+                        "grid_template_columns": "flex(1) auto auto"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#6D5A6333"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hero_stat_row_5_sheen",
+                        "kind": "node",
+                        "markers": [
+                          "hero-stat-row:decor"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "left": "42%",
+                            "right": "0",
+                            "top": "0",
+                            "bottom": "0",
+                            "position_type": "absolute",
+                            "z_index": "-1"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#C9AF8D18"
+                          }
+                        }
+                      },
+                      {
+                        "id": "hero_stat_label_5",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "min_width": "0",
+                            "column_gap": "11px",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_icon_text_5",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "政",
+                                "font_size": 22.0,
+                                "font_color": "#E9DDC8",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hero_stat_label_text_5",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "政务",
+                                "font_size": 24.0,
+                                "font_color": "#F0E7D8",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_base_5",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-base"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_base_text_5",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "206.2",
+                                "font_size": 24.0,
+                                "font_color": "#F6EBDD",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "hero_stat_bonus_5",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat-bonus"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "justify_content": "flex-end",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "hero_stat_bonus_text_5",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "+186",
+                                "font_size": 24.0,
+                                "font_color": "#B7DD6D",
+                                "font_path": "Palatino.ttc"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1430,7 +4832,8 @@
             "id": "action_strip",
             "kind": "node",
             "markers": [
-              "class:action-strip"
+              "class:action-strip",
+              "aria-label:英雄操作"
             ],
             "layout": {
               "styles": {
@@ -1451,13 +4854,31 @@
                 "layout": {
                   "styles": {
                     "min_height": "48px",
-                    "padding": "0 22px"
+                    "padding": "0 22px",
+                    "position_type": "relative"
                   }
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#43343E88",
+                    "border_color": "#E7D7B56B",
                     "border_width": "1px",
-                    "border_radius": "3px"
+                    "border_radius": "3px",
+                    "box_shadow": {
+                      "offset_x": "0px",
+                      "offset_y": "0px",
+                      "blur_radius": "0px",
+                      "spread_radius": "1px",
+                      "color": "#2C1E251E"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#392E3770",
+                      "border_color": "#D3F5FF6B"
+                    }
                   }
                 },
                 "children": [
@@ -1468,8 +4889,14 @@
                       "text": {
                         "content": "查看词条",
                         "font_size": 16.0,
-                        "font_color": "#CCF6FF",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_color": "#F3E8D5",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 900
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#DCFFFF"
                       }
                     }
                   }
@@ -1484,17 +4911,129 @@
                 "layout": {
                   "styles": {
                     "min_height": "48px",
-                    "padding": "0 22px"
+                    "padding": "0 22px",
+                    "position_type": "relative"
                   }
                 },
                 "style": {
                   "visuals": {
-                    "background_color": "#D7E7EC",
+                    "background_color": "#E7D9A8F0",
+                    "border_color": "#E8D59DCE",
                     "border_width": "1px",
-                    "border_radius": "3px"
+                    "border_radius": "3px",
+                    "box_shadow": {
+                      "offset_x": "0px",
+                      "offset_y": "5px",
+                      "blur_radius": "0px",
+                      "spread_radius": "0px",
+                      "color": "#8A603580"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#E8F9FF",
+                      "border_color": "#EBF0F5BD"
+                    }
                   }
                 },
                 "children": [
+                  {
+                    "id": "upgradebutton_box_shadow_layer_1",
+                    "kind": "node",
+                    "markers": [
+                      "css-box-shadow-layer"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "left": "0",
+                        "right": "0",
+                        "top": "0",
+                        "bottom": "0",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_radius": "3px",
+                        "box_shadow": {
+                          "inset": true,
+                          "offset_x": "0",
+                          "offset_y": "1px",
+                          "blur_radius": "0",
+                          "spread_radius": "0"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": "upgradebutton_gradient_overlay",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "left": "0",
+                        "right": "0",
+                        "top": "0%",
+                        "bottom": "70%",
+                        "position_type": "absolute",
+                        "z_index": "-1"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#D7E7EC"
+                      }
+                    }
+                  },
+                  {
+                    "id": "upgradebutton_gradient_overlay_2",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "left": "0",
+                        "right": "0",
+                        "top": "30%",
+                        "bottom": "20%",
+                        "position_type": "absolute",
+                        "z_index": "-2"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#C4B9B7"
+                      }
+                    }
+                  },
+                  {
+                    "id": "upgradebutton_gradient_overlay_3",
+                    "kind": "node",
+                    "markers": [
+                      "css-gradient-overlay"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "left": "0",
+                        "right": "0",
+                        "top": "80%",
+                        "bottom": "0%",
+                        "position_type": "absolute",
+                        "z_index": "-3"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#B18A81"
+                      }
+                    }
+                  },
                   {
                     "id": "upgradebutton_text_1",
                     "kind": "text",
@@ -1503,7 +5042,13 @@
                         "content": "升级",
                         "font_size": 16.0,
                         "font_color": "#2B1719",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 900
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#2E191B"
                       }
                     }
                   }
@@ -1527,17 +5072,92 @@
             "bottom": "16px",
             "padding": "0 18px",
             "position_type": "absolute",
-            "fixed_node": true
+            "fixed_node": true,
+            "z_index": "20"
           }
         },
         "style": {
           "visuals": {
-            "background_color": "#DAEBF0",
+            "background_color": "#E7D8A9EB",
+            "border_color": "#EDD89DAD",
             "border_width": "1px",
-            "border_radius": "999px"
+            "border_radius": "999px",
+            "box_shadow": {
+              "offset_x": "0px",
+              "offset_y": "8px",
+              "blur_radius": "24px",
+              "spread_radius": "0px",
+              "color": "#1610185C"
+            }
           }
         },
         "children": [
+          {
+            "id": "paneltoggle_gradient_overlay",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "0%",
+                "bottom": "70%",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#DAEBF0"
+              }
+            }
+          },
+          {
+            "id": "paneltoggle_gradient_overlay_2",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "30%",
+                "bottom": "20%",
+                "position_type": "absolute",
+                "z_index": "-2"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#CAC2C0"
+              }
+            }
+          },
+          {
+            "id": "paneltoggle_gradient_overlay_3",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "80%",
+                "bottom": "0%",
+                "position_type": "absolute",
+                "z_index": "-3"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#BA988F"
+              }
+            }
+          },
           {
             "id": "paneltoggle_text_1",
             "kind": "text",
@@ -1545,8 +5165,9 @@
               "text": {
                 "content": "属性 / 武装",
                 "font_size": 16.0,
-                "font_color": "#2E1D20",
-                "font_path": "Hiragino Sans GB.ttc"
+                "font_color": "#2E1B1E",
+                "font_path": "Hiragino Sans GB.ttc",
+                "font_weight": 900
               }
             }
           }
@@ -1556,23 +5177,99 @@
         "id": "popover",
         "kind": "node",
         "markers": [
-          "class:popover"
+          "class:popover",
+          "aria-label:英雄词条"
         ],
         "layout": {
           "styles": {
+            "visibility": "hidden",
             "width": "350px",
             "right": "7%",
             "top": "52%",
             "padding": "18px",
-            "position_type": "absolute"
+            "position_type": "absolute",
+            "z_index": "12"
           }
         },
         "style": {
           "visuals": {
-            "border_width": "1px"
+            "background_color": "#B9CDF000",
+            "border_color": "#D2D6E600",
+            "border_width": "1px",
+            "box_shadow": {
+              "offset_x": "0",
+              "offset_y": "18px",
+              "blur_radius": "46px"
+            }
           }
         },
         "children": [
+          {
+            "id": "popover_gradient_overlay",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "0%",
+                "bottom": "70%",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#B9CDF0F0"
+              }
+            }
+          },
+          {
+            "id": "popover_gradient_overlay_2",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "30%",
+                "bottom": "20%",
+                "position_type": "absolute",
+                "z_index": "-2"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#9FA7C4EE"
+              }
+            }
+          },
+          {
+            "id": "popover_gradient_overlay_3",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0",
+                "right": "0",
+                "top": "80%",
+                "bottom": "0%",
+                "position_type": "absolute",
+                "z_index": "-3"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#848198EB"
+              }
+            }
+          },
           {
             "id": "popovertitle",
             "kind": "node",
@@ -1590,7 +5287,8 @@
                     "content": "远征长弓",
                     "font_size": 29.0,
                     "font_color": "#44292B",
-                    "font_path": "Hiragino Sans GB.ttc"
+                    "font_path": "Songti.ttc",
+                    "line_height": "1.05"
                   }
                 }
               }
@@ -1613,7 +5311,9 @@
                     "content": "远程武装。当前选中后提高武力与先手压制，适合在回合开始时削弱敌方前排。",
                     "font_size": 16.0,
                     "font_color": "#40343E",
-                    "font_path": "Hiragino Sans GB.ttc"
+                    "font_path": "Hiragino Sans GB.ttc",
+                    "font_weight": 700,
+                    "line_height": "1.55"
                   }
                 }
               }
@@ -1629,18 +5329,95 @@
         ],
         "layout": {
           "styles": {
+            "visibility": "hidden",
             "min_width": "460px",
             "left": "50%",
             "bottom": "5.8%",
             "padding": "14px 20px",
-            "position_type": "absolute"
+            "position_type": "absolute",
+            "z_index": "14"
           }
         },
         "style": {
           "visuals": {
-            "border_width": "1px"
+            "background_color": "#2D232C00",
+            "border_color": "#E0E4EC00",
+            "border_width": "1px",
+            "box_shadow": {
+              "offset_x": "0",
+              "offset_y": "18px",
+              "blur_radius": "46px"
+            }
           }
-        }
+        },
+        "children": [
+          {
+            "id": "toast_gradient_overlay",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "0%",
+                "right": "70%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#2D232CEB"
+              }
+            }
+          },
+          {
+            "id": "toast_gradient_overlay_2",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "30%",
+                "right": "20%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-2"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#40343DE9"
+              }
+            }
+          },
+          {
+            "id": "toast_gradient_overlay_3",
+            "kind": "node",
+            "markers": [
+              "css-gradient-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "left": "80%",
+                "right": "0%",
+                "top": "0",
+                "bottom": "0",
+                "position_type": "absolute",
+                "z_index": "-3"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#52444DE6"
+              }
+            }
+          }
+        ]
       }
     ]
   }

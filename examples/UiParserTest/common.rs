@@ -320,7 +320,7 @@ fn auto_capture_screenshot_system(
     }
 
     state.frames_after_root += 1;
-    if state.frames_after_root < 12 {
+    if state.frames_after_root < 30 {
         return;
     }
 
