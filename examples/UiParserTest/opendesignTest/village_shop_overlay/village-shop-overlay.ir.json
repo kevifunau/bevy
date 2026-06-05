@@ -266,7 +266,7 @@
                                     },
                                     "content": {
                                       "text": {
-                                        "content": "Hut Asset Slot",
+                                        "content": "小屋",
                                         "font_size": 12.0,
                                         "font_color": "#79614b",
                                         "font_path": "Hiragino Sans GB.ttc",
@@ -636,7 +636,7 @@
                                     },
                                     "content": {
                                       "text": {
-                                        "content": "Statue Asset Slot",
+                                        "content": "雕像",
                                         "font_size": 12.0,
                                         "font_color": "#79614b",
                                         "font_path": "Hiragino Sans GB.ttc",
@@ -1006,7 +1006,7 @@
                                     },
                                     "content": {
                                       "text": {
-                                        "content": "Cart Asset Slot",
+                                        "content": "货车",
                                         "font_size": 12.0,
                                         "font_color": "#79614b",
                                         "font_path": "Hiragino Sans GB.ttc",
@@ -1376,7 +1376,7 @@
                                     },
                                     "content": {
                                       "text": {
-                                        "content": "Lantern Asset Slot",
+                                        "content": "灯",
                                         "font_size": 12.0,
                                         "font_color": "#79614b",
                                         "font_path": "Hiragino Sans GB.ttc",
@@ -1633,14 +1633,14 @@
                               }
                             },
                             "state_visuals": {
-                              "pressed": {
-                                "styles": {
-                                  "ui_scale": "0.95 0.95"
-                                }
-                              },
                               "normal": {
                                 "styles": {
                                   "ui_scale": "1 1"
+                                }
+                              },
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.95 0.95"
                                 }
                               }
                             },

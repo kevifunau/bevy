@@ -92,14 +92,14 @@
                   }
                 ],
                 "state_visuals": {
-                  "normal": {
-                    "styles": {
-                      "ui_scale": "1 1"
-                    }
-                  },
                   "pressed": {
                     "styles": {
                       "ui_scale": "0.95 0.95"
+                    }
+                  },
+                  "normal": {
+                    "styles": {
+                      "ui_scale": "1 1"
                     }
                   }
                 },
@@ -149,6 +149,7 @@
                 "type": "Node",
                 "styles": {
                   "display": "flex",
+                  "height": "475.2px",
                   "max_height": "475.2px",
                   "overflow": "scroll_y",
                   "padding": "8px 6px 8px 2px",
@@ -225,7 +226,7 @@
                                       "width": "72px"
                                     },
                                     "text_config": {
-                                      "content": "Hut Asset Slot",
+                                      "content": "小屋",
                                       "font_size": 12.0,
                                       "font_color": "#79614b",
                                       "font_path": "Hiragino Sans GB.ttc",
@@ -539,7 +540,7 @@
                                       "width": "72px"
                                     },
                                     "text_config": {
-                                      "content": "Statue Asset Slot",
+                                      "content": "雕像",
                                       "font_size": 12.0,
                                       "font_color": "#79614b",
                                       "font_path": "Hiragino Sans GB.ttc",
@@ -853,7 +854,7 @@
                                       "width": "72px"
                                     },
                                     "text_config": {
-                                      "content": "Cart Asset Slot",
+                                      "content": "货车",
                                       "font_size": 12.0,
                                       "font_color": "#79614b",
                                       "font_path": "Hiragino Sans GB.ttc",
@@ -1167,7 +1168,7 @@
                                       "width": "72px"
                                     },
                                     "text_config": {
-                                      "content": "Lantern Asset Slot",
+                                      "content": "灯",
                                       "font_size": 12.0,
                                       "font_color": "#79614b",
                                       "font_path": "Hiragino Sans GB.ttc",

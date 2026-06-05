@@ -1,9 +1,13 @@
 use std::path::{Path, PathBuf};
 
 use bevy::app::AppExit;
+use bevy::asset::RenderAssetUsages;
+use bevy::camera::RenderTarget;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::image::Image;
 use bevy::input_focus::InputFocus;
 use bevy::picking::hover::HoverMap;
+use bevy::render::render_resource::TextureFormat;
 use bevy::render::view::screenshot::{save_to_disk, Screenshot, ScreenshotCaptured};
 use bevy::text::EditableText;
 use bevy::{asset::io::AssetSourceBuilder, prelude::*};
@@ -68,7 +72,8 @@ fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_
 
     app.add_plugins(DefaultPlugins)
         .add_plugins(plugin)
-        .add_systems(Startup, setup_camera);
+        .insert_resource(ClearColor(Color::srgb_u8(59, 40, 24)))
+        .add_systems(Startup, (setup_camera, setup_auto_screenshot_target));
 
     if button_feedback_enabled {
         app.add_systems(Update, button_feedback_system);
@@ -79,6 +84,7 @@ fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_
         (
             send_scroll_events_system,
             log_bui_root_system,
+            route_bui_root_to_auto_screenshot_target_system,
             log_text_input_focus_system,
             log_text_input_value_system,
             auto_capture_screenshot_system,
@@ -126,6 +132,20 @@ fn register_optional_auto_screenshot(app: &mut App) {
 
     if let Ok(path) = std::env::var(SCREENSHOT_ENV) {
         app.insert_resource(AutoScreenshotPath(PathBuf::from(path)));
+        app.insert_resource(ActiveAutoScreenshotProfile(detect_auto_screenshot_profile()));
+    }
+}
+
+fn detect_auto_screenshot_profile() -> AutoScreenshotProfile {
+    let example_name = std::env::current_exe()
+        .ok()
+        .and_then(|path| path.file_stem().map(|stem| stem.to_string_lossy().to_string()))
+        .unwrap_or_default();
+
+    if example_name.starts_with("hero_game_ui") {
+        AutoScreenshotProfile::HERO_GAME_UI
+    } else {
+        AutoScreenshotProfile::DEFAULT
     }
 }
 
@@ -239,10 +259,45 @@ fn on_scroll_handler(
 #[derive(Resource)]
 struct AutoScreenshotPath(PathBuf);
 
+#[derive(Clone, Copy)]
+struct AutoScreenshotProfile {
+    width: u32,
+    height: u32,
+}
+
+impl AutoScreenshotProfile {
+    const DEFAULT: Self = Self {
+        width: 2048,
+        height: 1152,
+    };
+
+    // Match the browser-reference composition more closely:
+    // 1680x786 game-stage centered inside a 1728x888 logical viewport.
+    const HERO_GAME_UI: Self = Self {
+        width: 1728,
+        height: 888,
+    };
+}
+
+#[derive(Resource, Clone, Copy)]
+struct ActiveAutoScreenshotProfile(AutoScreenshotProfile);
+
+#[derive(Resource, Clone)]
+struct AutoScreenshotTarget {
+    image: Handle<Image>,
+    camera: Entity,
+    container: Entity,
+}
+
 #[derive(Default)]
 struct AutoScreenshotState {
-    frames_after_root: u8,
+    frames_after_layout: u8,
     requested: bool,
+}
+
+#[derive(Default)]
+struct AutoScreenshotTargetRoutingState {
+    routed: bool,
 }
 
 fn button_feedback_system(
@@ -305,31 +360,139 @@ fn log_text_input_value_system(
     }
 }
 
+fn setup_auto_screenshot_target(
+    mut commands: Commands,
+    screenshot_path: Option<Res<AutoScreenshotPath>>,
+    screenshot_profile: Option<Res<ActiveAutoScreenshotProfile>>,
+    mut images: ResMut<Assets<Image>>,
+) {
+    if screenshot_path.is_none() {
+        return;
+    }
+
+    let profile = screenshot_profile
+        .map(|profile| profile.0)
+        .unwrap_or(AutoScreenshotProfile::DEFAULT);
+
+    if profile.width == AutoScreenshotProfile::DEFAULT.width
+        && profile.height == AutoScreenshotProfile::DEFAULT.height
+    {
+        return;
+    }
+
+    let mut image = Image::new_target_texture(
+        profile.width,
+        profile.height,
+        TextureFormat::Rgba8UnormSrgb,
+        None,
+    );
+    image.asset_usage = RenderAssetUsages::RENDER_WORLD;
+    let image_handle = images.add(image);
+    let container = commands
+        .spawn((
+            Name::new("bui_auto_screenshot_root"),
+            Node {
+                width: percent(100.0),
+                height: percent(100.0),
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                overflow: Overflow::clip(),
+                ..default()
+            },
+            BackgroundColor(Color::srgba_u8(67, 41, 30, 255)),
+        ))
+        .id();
+    let camera = commands
+        .spawn((
+            Name::new("bui_auto_screenshot_camera"),
+            Camera2d,
+            Camera {
+                order: -1,
+                ..default()
+            },
+            RenderTarget::Image(image_handle.clone().into()),
+        ))
+        .id();
+
+    commands.insert_resource(AutoScreenshotTarget {
+        image: image_handle,
+        camera,
+        container,
+    });
+}
+
+fn route_bui_root_to_auto_screenshot_target_system(
+    mut commands: Commands,
+    screenshot_target: Option<Res<AutoScreenshotTarget>>,
+    root: Option<Res<BuiRootEntity>>,
+    mut state: Local<AutoScreenshotTargetRoutingState>,
+) {
+    if state.routed {
+        return;
+    }
+
+    let (Some(screenshot_target), Some(root)) = (screenshot_target, root) else {
+        return;
+    };
+
+    commands
+        .entity(screenshot_target.container)
+        .insert(UiTargetCamera(screenshot_target.camera));
+    commands.entity(screenshot_target.container).add_child(root.0);
+    state.routed = true;
+}
+
 fn auto_capture_screenshot_system(
     mut commands: Commands,
     screenshot_path: Option<Res<AutoScreenshotPath>>,
+    screenshot_target: Option<Res<AutoScreenshotTarget>>,
     root: Option<Res<BuiRootEntity>>,
+    computed_nodes: Query<&ComputedNode>,
     mut state: Local<AutoScreenshotState>,
 ) {
     let Some(screenshot_path) = screenshot_path else {
         return;
     };
 
-    if state.requested || root.is_none() {
+    if state.requested {
         return;
     }
 
-    state.frames_after_root += 1;
-    if state.frames_after_root < 30 {
+    let Some(root) = root else {
+        return;
+    };
+
+    let Ok(computed_root) = computed_nodes.get(root.0) else {
+        state.frames_after_layout = 0;
+        return;
+    };
+
+    if computed_root.size().x <= 0.0 || computed_root.size().y <= 0.0 {
+        state.frames_after_layout = 0;
+        return;
+    }
+
+    state.frames_after_layout += 1;
+    if state.frames_after_layout < 30 {
         return;
     }
 
     let screenshot_path = screenshot_path.0.clone();
-    commands.spawn(Screenshot::primary_window()).observe(
-        move |captured: On<ScreenshotCaptured>, mut app_exit_writer: MessageWriter<AppExit>| {
-            save_to_disk(screenshot_path.clone())(captured);
-            app_exit_writer.write(AppExit::Success);
-        },
-    );
+    if let Some(screenshot_target) = screenshot_target {
+        let screenshot_image = screenshot_target.image.clone();
+        commands.spawn(Screenshot::image(screenshot_image)).observe(
+            move |captured: On<ScreenshotCaptured>, mut app_exit_writer: MessageWriter<AppExit>| {
+                save_to_disk(screenshot_path.clone())(captured);
+                app_exit_writer.write(AppExit::Success);
+            },
+        );
+    } else {
+        commands.spawn(Screenshot::primary_window()).observe(
+            move |captured: On<ScreenshotCaptured>, mut app_exit_writer: MessageWriter<AppExit>| {
+                save_to_disk(screenshot_path.clone())(captured);
+                app_exit_writer.write(AppExit::Success);
+            },
+        );
+    }
     state.requested = true;
 }

@@ -4735,6 +4735,17 @@ category = "Window"
 wasm = true
 
 [[example]]
+name = "auto_screenshot_probe"
+path = "examples/window/auto_screenshot_probe.rs"
+doc-scrape-examples = false
+
+[package.metadata.example.auto_screenshot_probe]
+name = "Auto Screenshot Probe"
+description = "Captures a simple UI scene automatically to debug screenshot readback"
+category = "Window"
+wasm = false
+
+[[example]]
 name = "screenshot"
 path = "examples/window/screenshot.rs"
 doc-scrape-examples = true

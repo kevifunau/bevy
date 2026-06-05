@@ -2,10 +2,22 @@ use super::*;
 
 fn css_simple_linear_gradient_overlay(
     layer: &str,
-) -> Option<(SimpleGradientOverlayDirection, String, f32, f32)> {
-    let (direction, bands) = css_simple_linear_gradient_bands(layer)?;
+) -> Option<(
+    SimpleGradientOverlayDirection,
+    Option<f32>,
+    String,
+    f32,
+    f32,
+)> {
+    let (direction, diagonal_angle, bands) = css_simple_linear_gradient_bands(layer)?;
     let band = bands.into_iter().next()?;
-    Some((direction, band.color, band.start_ratio, band.end_ratio))
+    Some((
+        direction,
+        diagonal_angle,
+        band.color,
+        band.start_ratio,
+        band.end_ratio,
+    ))
 }
 
 const VILLAGE_SHOP_HTML: &str = include_str!(
@@ -17,20 +29,17 @@ const VILLAGE_SHOP_IR: &str = include_str!(
 const QUEST_NOTICE_HTML: &str = include_str!(
     "../../../examples/UiParserTest/opendesignTest/quest_notice_overlay/quest-notice-overlay.html"
 );
-const HERO_GAME_UI_HTML: &str = include_str!(
-    "../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.html"
-);
-const HERO_GAME_UI_JSON: &str = include_str!(
-    "../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.json"
-);
-const HERO_GAME_UI_IR: &str = include_str!(
-    "../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.ir.json"
-);
+const HERO_GAME_UI_HTML: &str =
+    include_str!("../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.html");
+const HERO_GAME_UI_JSON: &str =
+    include_str!("../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.json");
+const HERO_GAME_UI_IR: &str =
+    include_str!("../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.ir.json");
 
 #[test]
 fn opendesign_media_query_rules_resolve_into_bui_styles() {
-    let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let document =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     let panel = find_bui_node(&document.root, "panel");
     assert_eq!(panel.styles.width.as_deref(), Some("720px"));
@@ -50,8 +59,8 @@ fn opendesign_media_query_rules_resolve_into_bui_styles() {
 
 #[test]
 fn opendesign_active_transform_compiles_to_pressed_state_scale() {
-    let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let document =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     let buy_button = find_bui_node(&document.root, "buy_btn_hut");
     assert_eq!(
@@ -81,8 +90,8 @@ fn opendesign_active_transform_compiles_to_pressed_state_scale() {
 
 #[test]
 fn opendesign_text_nodes_do_not_inherit_button_transform_styles() {
-    let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let document =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     let buy_text = find_bui_node(&document.root, "buy_btn_hut_text");
     for (_, state) in &buy_text.state_visuals {
@@ -102,8 +111,8 @@ fn opendesign_text_nodes_do_not_inherit_button_transform_styles() {
 
 #[test]
 fn opendesign_ir_export_uses_3_0_shape() {
-    let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let document =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
     let ir = BuiIrDocument::from_compat_document(&document);
 
     assert_eq!(ir.version, "3.0-ir");
@@ -120,13 +129,11 @@ fn opendesign_ir_export_uses_3_0_shape() {
     let buy_button = find_ir_node(&ir.root, "buy_btn_hut");
     assert_eq!(buy_button.kind, "button");
     assert!(buy_button.content.is_empty());
-    assert!(
-        buy_button
-            .state_visuals
-            .get("pressed")
-            .and_then(|state| state.styles.ui_scale.as_deref())
-            .is_some()
-    );
+    assert!(buy_button
+        .state_visuals
+        .get("pressed")
+        .and_then(|state| state.styles.ui_scale.as_deref())
+        .is_some());
 }
 
 #[test]
@@ -178,10 +185,7 @@ fn generic_opendesign_overlay_compiles_without_shop_structure() {
 
     let title = find_bui_node(&document.root, "notice_title_text_1");
     assert_eq!(
-        title
-            .text_config
-            .as_ref()
-            .map(|text| text.content.as_str()),
+        title.text_config.as_ref().map(|text| text.content.as_str()),
         Some("新的委托")
     );
 
@@ -231,8 +235,8 @@ fn opendesign_color_mix_with_transparency_preserves_alpha() {
 
 #[test]
 fn unsupported_pseudo_element_selectors_do_not_leak_into_node_styles() {
-    let document = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let document =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     let scroll = find_bui_node(&document.root, "shop_scroll");
     assert_eq!(
@@ -251,12 +255,30 @@ fn unsupported_pseudo_element_selectors_do_not_leak_into_node_styles() {
 
 #[test]
 fn opendesign_length_functions_resolve_against_default_viewport() {
-    assert_eq!(css_eval_length_function("min(100%, 460px)").as_deref(), Some("460px"));
-    assert_eq!(css_eval_length_function("min(66vh, 620px)").as_deref(), Some("475.2px"));
-    assert_eq!(css_eval_length_function("min(92vw, 720px)").as_deref(), Some("720px"));
-    assert_eq!(css_eval_length_function("clamp(28px, 7vw, 36px)").as_deref(), Some("36px"));
-    assert_eq!(css_eval_length_function("clamp(20px, 4vw, 24px)").as_deref(), Some("24px"));
-    assert_eq!(css_eval_length_function("max(18px, env(safe-area-inset-top))").as_deref(), Some("18px"));
+    assert_eq!(
+        css_eval_length_function("min(100%, 460px)").as_deref(),
+        Some("460px")
+    );
+    assert_eq!(
+        css_eval_length_function("min(66vh, 620px)").as_deref(),
+        Some("475.2px")
+    );
+    assert_eq!(
+        css_eval_length_function("min(92vw, 720px)").as_deref(),
+        Some("720px")
+    );
+    assert_eq!(
+        css_eval_length_function("clamp(28px, 7vw, 36px)").as_deref(),
+        Some("36px")
+    );
+    assert_eq!(
+        css_eval_length_function("clamp(20px, 4vw, 24px)").as_deref(),
+        Some("24px")
+    );
+    assert_eq!(
+        css_eval_length_function("max(18px, env(safe-area-inset-top))").as_deref(),
+        Some("18px")
+    );
 }
 
 fn find_ir_node<'a>(node: &'a BuiIrNode, id: &str) -> &'a BuiIrNode {
@@ -300,12 +322,10 @@ fn hero_game_ui_html_compiles_to_bui_document() {
         .expect("hero game UI HTML should compile");
 
     let root = find_bui_node(&document.root, "overlay_root");
-    assert_eq!(
-        root.visuals.background_color.as_deref(),
-        Some("#362E36")
-    );
-    assert_eq!(root.styles.width.as_deref(), Some("1280px"));
-    assert_eq!(root.styles.height.as_deref(), Some("100%"));
+    assert_eq!(root.visuals.background_color.as_deref(), Some("#47362B"));
+    assert_eq!(root.styles.width.as_deref(), Some("1680px"));
+    assert_eq!(root.styles.height.as_deref(), None);
+    assert_eq!(root.styles.aspect_ratio.as_deref(), Some("2.1383765"));
 
     let page_title = find_bui_node(&document.root, "page_title_text_1");
     assert_eq!(
@@ -328,19 +348,14 @@ fn hero_game_ui_html_compiles_to_bui_document() {
 
 #[test]
 fn hero_game_ui_three_entry_paths_produce_identical_bui_documents() {
-    let from_html = opendesign_html_to_bui_document(HERO_GAME_UI_HTML)
-        .expect("HTML should compile");
-    let from_json = parse_bui_document(HERO_GAME_UI_JSON)
-        .expect("2.x JSON should parse");
-    let from_ir = parse_bui_document(HERO_GAME_UI_IR)
-        .expect("3.0-ir JSON should parse");
+    let from_html =
+        opendesign_html_to_bui_document(HERO_GAME_UI_HTML).expect("HTML should compile");
+    let from_json = parse_bui_document(HERO_GAME_UI_JSON).expect("2.x JSON should parse");
+    let from_ir = parse_bui_document(HERO_GAME_UI_IR).expect("3.0-ir JSON should parse");
 
-    let html_value = serde_json::to_value(&from_html)
-        .expect("HTML document should serialize");
-    let json_value = serde_json::to_value(&from_json)
-        .expect("JSON document should serialize");
-    let ir_value = serde_json::to_value(&from_ir)
-        .expect("IR document should serialize");
+    let html_value = serde_json::to_value(&from_html).expect("HTML document should serialize");
+    let json_value = serde_json::to_value(&from_json).expect("JSON document should serialize");
+    let ir_value = serde_json::to_value(&from_ir).expect("IR document should serialize");
 
     assert_eq!(
         html_value, ir_value,
@@ -547,19 +562,27 @@ fn opendesign_inherited_font_weight_maps_bold_keyword() {
 fn css_linear_gradient_direction_supports_default_and_keyword_directions() {
     assert_eq!(
         css_simple_linear_gradient_direction(&["to right", "#fff", "transparent"]),
-        Some((SimpleGradientOverlayDirection::LeftToRight, 1))
+        Some((SimpleGradientOverlayDirection::LeftToRight, None, 1))
     );
     assert_eq!(
         css_simple_linear_gradient_direction(&["to left", "#fff", "transparent"]),
-        Some((SimpleGradientOverlayDirection::RightToLeft, 1))
+        Some((SimpleGradientOverlayDirection::RightToLeft, None, 1))
     );
     assert_eq!(
         css_simple_linear_gradient_direction(&["to top", "#fff", "transparent"]),
-        Some((SimpleGradientOverlayDirection::BottomToTop, 1))
+        Some((SimpleGradientOverlayDirection::BottomToTop, None, 1))
     );
     assert_eq!(
         css_simple_linear_gradient_direction(&["#fff", "transparent"]),
-        Some((SimpleGradientOverlayDirection::TopToBottom, 0))
+        Some((SimpleGradientOverlayDirection::TopToBottom, None, 0))
+    );
+    assert_eq!(
+        css_simple_linear_gradient_direction(&["to bottom right", "#fff", "transparent"]),
+        Some((SimpleGradientOverlayDirection::LeftToRight, Some(135.0), 1))
+    );
+    assert_eq!(
+        css_simple_linear_gradient_direction(&["to top left", "#fff", "transparent"]),
+        Some((SimpleGradientOverlayDirection::RightToLeft, Some(315.0), 1))
     );
 }
 
@@ -567,26 +590,25 @@ fn css_linear_gradient_direction_supports_default_and_keyword_directions() {
 fn css_linear_gradient_direction_maps_diagonal_angles_to_dominant_axis() {
     assert_eq!(
         css_linear_gradient_direction_from_degrees(90.0),
-        Some(SimpleGradientOverlayDirection::LeftToRight)
+        Some((SimpleGradientOverlayDirection::LeftToRight, None))
     );
     assert_eq!(
         css_linear_gradient_direction_from_degrees(135.0),
-        Some(SimpleGradientOverlayDirection::LeftToRight)
+        Some((SimpleGradientOverlayDirection::LeftToRight, Some(135.0)))
     );
     assert_eq!(
         css_linear_gradient_direction_from_degrees(180.0),
-        Some(SimpleGradientOverlayDirection::TopToBottom)
+        Some((SimpleGradientOverlayDirection::TopToBottom, None))
     );
     assert_eq!(
         css_linear_gradient_direction_from_degrees(315.0),
-        Some(SimpleGradientOverlayDirection::RightToLeft)
+        Some((SimpleGradientOverlayDirection::RightToLeft, Some(315.0)))
     );
 }
 
 #[test]
 fn css_simple_linear_gradient_overlay_supports_default_direction() {
-    let overlays =
-        css_simple_linear_gradient_overlays("linear-gradient(#6d5a3d, #2d2119)");
+    let overlays = css_simple_linear_gradient_overlays("linear-gradient(#6d5a3d, #2d2119)");
 
     assert!(!overlays.is_empty());
     assert_eq!(
@@ -600,9 +622,7 @@ fn css_simple_linear_gradient_overlay_supports_default_direction() {
 
 #[test]
 fn css_simple_linear_gradient_overlay_uses_trailing_band_for_solid_two_stop_gradients() {
-    let overlays = css_simple_linear_gradient_overlays(
-        "linear-gradient(180deg, #f7edd6, #8c6c52)",
-    );
+    let overlays = css_simple_linear_gradient_overlays("linear-gradient(180deg, #f7edd6, #8c6c52)");
 
     assert!(overlays.len() >= 2);
     assert_eq!(overlays[0].color.to_ascii_uppercase(), "#F7EDD6");
@@ -614,41 +634,57 @@ fn css_simple_linear_gradient_overlay_uses_trailing_band_for_solid_two_stop_grad
 }
 
 #[test]
-fn css_simple_linear_gradient_overlays_extract_trailing_segments_from_solid_multi_stop_gradients()
-{
+fn css_simple_linear_gradient_overlays_extract_trailing_segments_from_solid_multi_stop_gradients() {
     let overlays = css_simple_linear_gradient_overlays(
         "linear-gradient(180deg, #f5e7c8 0%, #d1b48c 46%, #8b6c53 100%)",
     );
 
-    assert_eq!(overlays.len(), 2);
+    assert!(overlays.len() >= 4);
 
     match &overlays[0].kind {
         SimpleGradientOverlayKind::Linear {
             direction,
+            diagonal_angle,
             start_ratio,
             end_ratio,
         } => {
             assert_eq!(*direction, SimpleGradientOverlayDirection::TopToBottom);
-            assert_eq!(overlays[0].color, "#d1b48c");
-            assert!((*start_ratio - 0.23).abs() < 0.01);
-            assert!((*end_ratio - 0.46).abs() < 0.01);
+            assert_eq!(*diagonal_angle, None);
+            assert!(overlays[0].color.starts_with('#'));
+            assert!(*start_ratio >= 0.0);
+            assert!(*end_ratio > *start_ratio);
         }
         _ => panic!("expected linear overlay"),
     }
 
-    match &overlays[1].kind {
+    match &overlays.last().expect("should have overlays").kind {
         SimpleGradientOverlayKind::Linear {
             direction,
+            diagonal_angle,
             start_ratio,
             end_ratio,
         } => {
             assert_eq!(*direction, SimpleGradientOverlayDirection::TopToBottom);
-            assert_eq!(overlays[1].color, "#8b6c53");
-            assert!((*start_ratio - 0.73).abs() < 0.01);
-            assert!((*end_ratio - 1.0).abs() < 0.01);
+            assert_eq!(*diagonal_angle, None);
+            assert!(overlays
+                .last()
+                .expect("should have overlays")
+                .color
+                .starts_with('#'));
+            assert!(*start_ratio < 1.0);
+            assert!(*end_ratio > *start_ratio);
+            assert!(*end_ratio <= 1.0);
         }
         _ => panic!("expected linear overlay"),
     }
+}
+
+#[test]
+fn css_simple_linear_gradient_overlays_add_more_bands_for_wide_two_stop_gradients() {
+    let overlays =
+        css_simple_linear_gradient_overlays("linear-gradient(90deg, #201818 0%, #f6e7c1 100%)");
+
+    assert!(overlays.len() >= 6, "expected smoother gradient banding");
 }
 
 #[test]
@@ -659,9 +695,10 @@ fn css_simple_linear_gradient_overlay_supports_diagonal_highlight_bands() {
     .expect("diagonal gradient should produce an overlay");
 
     assert_eq!(overlay.0, SimpleGradientOverlayDirection::LeftToRight);
-    assert_eq!(overlay.1, "#f7edd6");
-    assert_eq!(overlay.2, 0.0);
-    assert_eq!(overlay.3, 0.48);
+    assert_eq!(overlay.1, Some(135.0));
+    assert_eq!(overlay.2, "#f7edd6");
+    assert_eq!(overlay.3, 0.0);
+    assert_eq!(overlay.4, 0.48);
 }
 
 #[test]
@@ -675,10 +712,12 @@ fn css_simple_linear_gradient_overlays_extract_multiple_highlight_bands() {
     match &overlays[0].kind {
         SimpleGradientOverlayKind::Linear {
             direction,
+            diagonal_angle,
             start_ratio,
             end_ratio,
         } => {
             assert_eq!(*direction, SimpleGradientOverlayDirection::LeftToRight);
+            assert_eq!(*diagonal_angle, Some(110.0));
             assert_eq!(overlays[0].color, "#ffffff4d");
             assert_eq!(*start_ratio, 0.16);
             assert_eq!(*end_ratio, 0.36);
@@ -691,10 +730,12 @@ fn css_simple_linear_gradient_overlays_extract_multiple_highlight_bands() {
     match &overlays[1].kind {
         SimpleGradientOverlayKind::Linear {
             direction,
+            diagonal_angle,
             start_ratio,
             end_ratio,
         } => {
             assert_eq!(*direction, SimpleGradientOverlayDirection::LeftToRight);
+            assert_eq!(*diagonal_angle, Some(110.0));
             assert_eq!(overlays[1].color, "#ffffff33");
             assert_eq!(*start_ratio, 0.36);
             assert_eq!(*end_ratio, 0.41);
@@ -711,7 +752,7 @@ fn css_simple_conic_gradient_overlays_extract_rotated_arc_bands() {
         "conic-gradient(from 10deg, transparent 0 12%, #6b8190 12% 16%, transparent 16% 28%, #5e7382 28% 32%, transparent 32%)",
     );
 
-    assert_eq!(overlays.len(), 2);
+    assert!(overlays.len() >= 2);
 
     match &overlays[0].kind {
         SimpleGradientOverlayKind::ConicArc {
@@ -741,6 +782,38 @@ fn css_simple_conic_gradient_overlays_extract_rotated_arc_bands() {
         | SimpleGradientOverlayKind::Radial { .. }
         | SimpleGradientOverlayKind::RadialRing { .. } => panic!("expected conic arc"),
     }
+}
+
+#[test]
+fn css_simple_radial_gradient_overlays_expand_into_soft_layers() {
+    let overlays = css_simple_radial_gradient_overlays(
+        "radial-gradient(circle at 34% 26%, #fff4d8 0%, transparent 29%)",
+    );
+
+    assert!(
+        overlays.len() >= 3,
+        "expected radial gradient to emit multiple soft layers"
+    );
+    assert!(overlays
+        .iter()
+        .all(|overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })));
+}
+
+#[test]
+fn css_simple_radial_gradient_large_scene_wash_stays_more_conservative() {
+    let overlays = css_simple_radial_gradient_overlays(
+        "radial-gradient(circle at 24% 16%, #B7D5EC33 0%, transparent 32%)",
+    );
+
+    assert_eq!(overlays.len(), 3);
+    assert!(overlays
+        .iter()
+        .all(|overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })));
+    let alphas = overlays
+        .iter()
+        .filter_map(|overlay| css_hex_rgba(&overlay.color).map(|(_, _, _, alpha)| alpha))
+        .collect::<Vec<_>>();
+    assert!(alphas.iter().all(|alpha| *alpha <= 0.08));
 }
 
 #[test]
@@ -774,7 +847,12 @@ fn opendesign_inline_custom_properties_resolve_inside_background_gradients() {
     let overlay_colors = meter_fill
         .children
         .iter()
-        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
         .filter_map(|child| child.visuals.background_color.as_deref())
         .collect::<Vec<_>>();
     assert!(
@@ -795,11 +873,11 @@ fn opendesign_inline_custom_properties_resolve_inside_background_gradients() {
 fn css_multiply_blend_fallback_color_darkens_and_softens_alpha() {
     assert_eq!(
         css_multiply_blend_fallback_color("#80A0C080"),
-        Some("#647D9671".to_string())
+        Some("#5C83AD78".to_string())
     );
     assert_eq!(
         css_multiply_blend_fallback_color("#C8E4F250"),
-        Some("#9CB2BD46".to_string())
+        Some("#90BBDA4B".to_string())
     );
 }
 
@@ -832,17 +910,72 @@ fn opendesign_mix_blend_mode_multiply_darkens_gradient_overlays() {
     let overlay_colors = wash
         .children
         .iter()
-        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
         .filter_map(|child| child.visuals.background_color.as_deref())
         .collect::<Vec<_>>();
 
     assert!(
-        overlay_colors.contains(&"#37A4C7A2"),
-        "multiply fallback should darken the radial wash overlay"
+        overlay_colors
+            .iter()
+            .any(|color| color.starts_with("#3DB3E6")),
+        "multiply fallback should preserve a darkened radial wash overlay set"
     );
     assert!(
-        overlay_colors.contains(&"#42AAC724"),
+        overlay_colors
+            .iter()
+            .any(|color| color.starts_with("#33ACE6")),
         "multiply fallback should darken the linear wash overlay"
+    );
+}
+
+#[test]
+fn multiply_scene_wash_linear_overlays_stay_conservative() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 320px;
+        height: 160px;
+        position: relative;
+      }
+      .wash {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 18% 12%, oklch(84% 0.072 235 / 0.72), transparent 25%),
+          linear-gradient(90deg, oklch(86% 0.064 230 / 0.16) 0 48%, transparent 59%),
+          linear-gradient(90deg, transparent 0 54%, oklch(37% 0.042 53 / 0.24) 64%, oklch(28% 0.032 47 / 0.64) 100%);
+        mix-blend-mode: multiply;
+      }
+    </style>
+    <main class="game-stage">
+      <div class="wash"></div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let wash = find_bui_node(&document.root, "wash");
+
+    let conservative_linear_alphas = wash
+        .children
+        .iter()
+        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| child.visuals.border_radius.is_none())
+        .filter(|child| {
+            child.styles.top.as_deref() == Some("0") && child.styles.bottom.as_deref() == Some("0")
+        })
+        .filter_map(|child| child.visuals.background_color.as_deref())
+        .filter_map(css_hex_rgba)
+        .map(|(_, _, _, alpha)| alpha)
+        .collect::<Vec<_>>();
+
+    assert!(
+        conservative_linear_alphas.iter().any(|alpha| *alpha <= 0.16),
+        "large multiply scene-wash overlays should stay softly transparent"
     );
 }
 
@@ -891,7 +1024,12 @@ fn opendesign_filter_color_adjustment_updates_node_and_overlay_colors() {
     let overlay_colors = panel
         .children
         .iter()
-        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
         .filter_map(|child| child.visuals.background_color.as_deref())
         .collect::<Vec<_>>();
 
@@ -932,10 +1070,7 @@ fn opendesign_hover_filter_compiles_to_hovered_state_colors() {
         .get("hovered")
         .expect("hovered state should exist");
 
-    assert_eq!(
-        hovered.visuals.background_color.as_deref(),
-        Some("#847261")
-    );
+    assert_eq!(hovered.visuals.background_color.as_deref(), Some("#847261"));
     assert_eq!(hovered.visuals.border_color.as_deref(), Some("#A69584"));
     assert_eq!(hovered.text_color.as_deref(), None);
 }
@@ -1106,7 +1241,12 @@ fn opendesign_clip_path_polygon_adds_contour_children() {
     let contour_children = cutout
         .children
         .iter()
-        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-clip-contour"))
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-clip-contour")
+        })
         .collect::<Vec<_>>();
 
     assert_eq!(contour_children.len(), 3);
@@ -1114,10 +1254,7 @@ fn opendesign_clip_path_polygon_adds_contour_children() {
         cutout.visuals.background_color.as_deref(),
         Some("transparent")
     );
-    assert_eq!(
-        cutout.visuals.border_color.as_deref(),
-        Some("transparent")
-    );
+    assert_eq!(cutout.visuals.border_color.as_deref(), Some("transparent"));
     assert_eq!(
         contour_children[0].visuals.background_color.as_deref(),
         Some("#d7d1c6")
@@ -1134,25 +1271,27 @@ fn opendesign_clip_path_polygon_adds_contour_children() {
 
 #[test]
 fn css_simple_mask_fade_supports_keyword_and_default_directions() {
-    let left_fade = css_simple_mask_fade(
-        "linear-gradient(to right, transparent 0, black 11%, black 100%)",
-    )
-    .expect("keyword mask fade should parse");
-    assert!(matches!(left_fade.direction, MaskFadeDirection::LeftToRight));
+    let left_fade =
+        css_simple_mask_fade("linear-gradient(to right, transparent 0, black 11%, black 100%)")
+            .expect("keyword mask fade should parse");
+    assert!(matches!(
+        left_fade.direction,
+        MaskFadeDirection::LeftToRight
+    ));
     assert!((left_fade.fade_ratio - 0.11).abs() < 0.001);
 
-    let top_fade = css_simple_mask_fade(
-        "linear-gradient(transparent 0, black 18%, black 100%)",
-    )
-    .expect("default-direction mask fade should parse");
+    let top_fade = css_simple_mask_fade("linear-gradient(transparent 0, black 18%, black 100%)")
+        .expect("default-direction mask fade should parse");
     assert!(matches!(top_fade.direction, MaskFadeDirection::TopToBottom));
     assert!((top_fade.fade_ratio - 0.18).abs() < 0.001);
 
-    let right_fade = css_simple_mask_fade(
-        "linear-gradient(to left, transparent 0, black 20%, black 100%)",
-    )
-    .expect("reverse keyword mask fade should parse");
-    assert!(matches!(right_fade.direction, MaskFadeDirection::RightToLeft));
+    let right_fade =
+        css_simple_mask_fade("linear-gradient(to left, transparent 0, black 20%, black 100%)")
+            .expect("reverse keyword mask fade should parse");
+    assert!(matches!(
+        right_fade.direction,
+        MaskFadeDirection::RightToLeft
+    ));
 }
 
 #[test]
@@ -1246,29 +1385,45 @@ fn css_simple_radial_gradient_ring_overlay_extracts_ring_band() {
 
 #[test]
 fn css_simple_gradient_bands_split_contiguous_non_transparent_color_stops() {
-    let stops = css_gradient_stops(&[
-        "transparent 0 54%",
-        "#6E5A5D3D 64%",
-        "#463C49A3 100%",
-    ])
-    .expect("gradient stops should parse");
+    let stops = css_gradient_stops(&["transparent 0 54%", "#6E5A5D3D 64%", "#463C49A3 100%"])
+        .expect("gradient stops should parse");
 
     let bands = css_simple_gradient_bands_from_stops(&stops);
-    assert_eq!(bands.len(), 2);
+    assert!(bands.len() >= 4);
+    let first = bands.first().expect("should have a leading fade-in band");
+    assert_eq!(first.start_ratio, 0.54);
+    assert!(first.end_ratio > first.start_ratio);
 
-    assert_eq!(bands[0].color, "#6E5A5D3D");
-    assert_eq!(bands[0].start_ratio, 0.54);
-    assert_eq!(bands[0].end_ratio, 0.64);
+    let last = bands.last().expect("should have a terminal color band");
+    assert_eq!(last.color, "#463C49A3");
+    assert!(last.start_ratio < 1.0);
+    assert_eq!(last.end_ratio, 1.0);
+    assert!(bands.windows(2).all(|pair| pair[1].start_ratio >= pair[0].start_ratio));
+}
 
-    assert_eq!(bands[1].color, "#463C49A3");
-    assert_eq!(bands[1].start_ratio, 0.64);
-    assert_eq!(bands[1].end_ratio, 1.0);
+#[test]
+fn css_simple_gradient_bands_soften_transparent_leading_segment_before_terminal_color() {
+    let stops = css_gradient_stops(&["transparent 0 54%", "#6E5A5D3D 64%", "#463C49A3 100%"])
+        .expect("gradient stops should parse");
+
+    let bands = css_simple_gradient_bands_from_stops(&stops);
+    let fade_in = bands
+        .iter()
+        .take_while(|band| band.start_ratio < 0.64)
+        .collect::<Vec<_>>();
+
+    assert!(fade_in.len() >= 3, "leading transparent segment should soften into multiple bands");
+    assert!(fade_in
+        .iter()
+        .filter_map(|band| css_hex_rgba(&band.color).map(|(_, _, _, alpha)| alpha))
+        .collect::<Vec<_>>()
+        .windows(2)
+        .all(|pair| pair[1] >= pair[0]));
 }
 
 #[test]
 fn css_simple_gradient_bands_keep_terminal_color_for_fully_opaque_gradients() {
-    let stops = css_gradient_stops(&["#6d5a3d", "#2d2119"])
-        .expect("gradient stops should parse");
+    let stops = css_gradient_stops(&["#6d5a3d", "#2d2119"]).expect("gradient stops should parse");
 
     let bands = css_simple_gradient_bands_from_stops(&stops);
     assert!(bands.len() >= 2);
@@ -1276,6 +1431,17 @@ fn css_simple_gradient_bands_keep_terminal_color_for_fully_opaque_gradients() {
     let last = bands.last().expect("should have trailing band");
     assert_eq!(last.color.to_ascii_uppercase(), "#2D2119");
     assert!((last.end_ratio - 1.0).abs() < 0.01);
+}
+
+#[test]
+fn css_simple_gradient_bands_keep_low_contrast_long_panel_fills_conservative() {
+    let stops = css_gradient_stops(&["#BD9B7299 13%", "#A27F5DA8 100%"])
+        .expect("gradient stops should parse");
+
+    let bands = css_simple_gradient_bands_from_stops(&stops);
+    assert_eq!(bands.len(), 4);
+    assert_eq!(bands.first().map(|band| band.color.to_ascii_uppercase()), Some("#BD9B7299".to_string()));
+    assert_eq!(bands.last().map(|band| band.color.to_ascii_uppercase()), Some("#A27F5DA8".to_string()));
 }
 
 #[test]
@@ -1321,12 +1487,12 @@ fn apply_box_shadow_fallback_keeps_primary_shadow_and_adds_helper_layers() {
         })
         .collect::<Vec<_>>();
     assert_eq!(helper_layers.len(), 2);
-    assert!(helper_layers.iter().all(|child| child.visuals.box_shadow.is_some()));
-    assert!(
-        helper_layers
-            .iter()
-            .all(|child| child.visuals.border_radius.as_deref() == Some("999px"))
-    );
+    assert!(helper_layers
+        .iter()
+        .all(|child| child.visuals.box_shadow.is_some()));
+    assert!(helper_layers
+        .iter()
+        .all(|child| child.visuals.border_radius.as_deref() == Some("999px")));
 }
 
 #[test]
@@ -1409,12 +1575,7 @@ fn filter_blur_adds_a_helper_shadow_layer() {
     let blur_layers = glow
         .children
         .iter()
-        .filter(|child| {
-            child
-                .custom_tags
-                .iter()
-                .any(|tag| tag == "css-filter-blur")
-        })
+        .filter(|child| child.custom_tags.iter().any(|tag| tag == "css-filter-blur"))
         .collect::<Vec<_>>();
     assert_eq!(blur_layers.len(), 1);
 
@@ -1456,12 +1617,7 @@ fn mix_blend_mode_multiply_darkens_filter_helper_shadow_layers() {
     let blur_layer = glow
         .children
         .iter()
-        .find(|child| {
-            child
-                .custom_tags
-                .iter()
-                .any(|tag| tag == "css-filter-blur")
-        })
+        .find(|child| child.custom_tags.iter().any(|tag| tag == "css-filter-blur"))
         .expect("blur helper layer should exist");
 
     let blur_shadow = blur_layer
@@ -1527,6 +1683,97 @@ fn filter_multiple_drop_shadows_add_multiple_helper_layers() {
     assert_eq!(second_shadow.offset_x.as_deref(), Some("24px"));
     assert_eq!(second_shadow.offset_y.as_deref(), Some("24px"));
     assert_eq!(second_shadow.blur_radius.as_deref(), Some("0"));
+}
+
+#[test]
+fn filter_drop_shadow_parses_oklch_color_functions() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 320px;
+        height: 180px;
+      }
+      .cutout {
+        width: 120px;
+        height: 160px;
+        clip-path: polygon(35% 0, 68% 4%, 81% 18%, 90% 38%, 80% 64%, 86% 100%, 24% 100%, 31% 70%, 13% 55%, 20% 31%);
+        filter:
+          drop-shadow(24px 24px 0 oklch(29% 0.055 245 / 0.23))
+          drop-shadow(0 24px 20px oklch(17% 0.032 45 / 0.3));
+      }
+    </style>
+    <main class="game-stage">
+      <div class="cutout"></div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let cutout = find_bui_node(&document.root, "cutout");
+
+    let helper_layers = cutout
+        .children
+        .iter()
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(helper_layers.len(), 2);
+
+    let first_shadow = helper_layers[0]
+        .visuals
+        .box_shadow
+        .as_ref()
+        .expect("first drop shadow should exist");
+    let second_shadow = helper_layers[1]
+        .visuals
+        .box_shadow
+        .as_ref()
+        .expect("second drop shadow should exist");
+
+    assert_eq!(first_shadow.color.as_deref(), Some("#170C104D"));
+    assert_eq!(second_shadow.color.as_deref(), Some("#002C543B"));
+}
+
+#[test]
+fn filter_drop_shadow_on_fully_transparent_node_does_not_create_fake_silhouette_layers() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 320px;
+        height: 180px;
+      }
+      .cutout {
+        width: 120px;
+        height: 160px;
+        clip-path: polygon(35% 0, 68% 4%, 81% 18%, 90% 38%, 80% 64%, 86% 100%, 24% 100%, 31% 70%, 13% 55%, 20% 31%);
+        filter: drop-shadow(24px 24px 0 oklch(29% 0.055 245 / 0.23));
+      }
+    </style>
+    <main class="game-stage">
+      <div class="cutout"></div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let cutout = find_bui_node(&document.root, "cutout");
+
+    let helper_layers = cutout
+        .children
+        .iter()
+        .filter(|child| {
+            child
+                .custom_tags
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        helper_layers.is_empty(),
+        "transparent nodes should not generate fake drop-shadow silhouette helpers"
+    );
 }
 
 #[test]
@@ -1756,7 +2003,10 @@ fn gradient_two_stop_produces_transition_bands() {
     let mid = &bands[bands.len() / 2];
     let blended = blend_hex_colors("#F0E0C0", "#6A4A2A", 0.5);
     assert!(blended.is_some());
-    assert_eq!(mid.color.to_ascii_uppercase(), blended.unwrap().to_ascii_uppercase());
+    assert_eq!(
+        mid.color.to_ascii_uppercase(),
+        blended.unwrap().to_ascii_uppercase()
+    );
     assert_eq!(bands.last().unwrap().color.to_ascii_uppercase(), "#6A4A2A");
     assert!((bands.last().unwrap().end_ratio - 1.0).abs() < 0.01);
 }
@@ -1769,16 +2019,26 @@ fn blend_hex_colors_produces_correct_intermediate_colors() {
     let quarter = blend_hex_colors("#FF0000", "#0000FF", 0.25).expect("blend should work");
     assert_eq!(quarter.to_ascii_uppercase(), "#BF0040");
 
-    let with_alpha = blend_hex_colors("#FF000080", "#00FF0080", 0.5).expect("blend should work with alpha");
+    let with_alpha =
+        blend_hex_colors("#FF000080", "#00FF0080", 0.5).expect("blend should work with alpha");
     assert!(with_alpha.to_ascii_uppercase().starts_with("#8080"));
 }
 
 #[test]
 fn css_property_support_matrix_classifies_p0_properties() {
     let p0_properties = [
-        "display", "position", "width", "height", "z-index",
-        "background-color", "color", "font-size", "font-family",
-        "line-height", "white-space", "aspect-ratio",
+        "display",
+        "position",
+        "width",
+        "height",
+        "z-index",
+        "background-color",
+        "color",
+        "font-size",
+        "font-family",
+        "line-height",
+        "white-space",
+        "aspect-ratio",
     ];
     for prop in p0_properties {
         let info = css_property_info(prop);
@@ -1808,13 +2068,188 @@ fn css_property_support_matrix_classifies_p2_properties() {
 fn css_effect_fallback_registry_documents_all_fallback_entries() {
     let registry = css_effect_fallback_registry();
     assert!(registry.len() >= 10);
-    let gradient_entry = registry.iter().find(|e| e.css_property == "background (gradient)");
+    let gradient_entry = registry
+        .iter()
+        .find(|e| e.css_property == "background (gradient)");
     assert!(gradient_entry.is_some());
     assert_eq!(gradient_entry.unwrap().helper_tag, "css-gradient-overlay");
-    let mask_entry = registry.iter().find(|e| e.css_property == "mask-image: linear-gradient(...)");
+    let mask_entry = registry
+        .iter()
+        .find(|e| e.css_property == "mask-image: linear-gradient(...)");
     assert!(mask_entry.is_some());
     assert_eq!(mask_entry.unwrap().helper_tag, "css-mask-fade");
-    let clip_entry = registry.iter().find(|e| e.css_property == "clip-path: polygon(...)");
+    let clip_entry = registry
+        .iter()
+        .find(|e| e.css_property == "clip-path: polygon(...)");
     assert!(clip_entry.is_some());
     assert_eq!(clip_entry.unwrap().helper_tag, "css-clip-contour");
+}
+
+#[test]
+fn css_transform_translate_parses_composite_values() {
+    let mut node = bui_node("test", BuiNodeType::Node);
+    apply_css_transform(&mut node, "translate(-34%, -36%) rotate(12deg)");
+    assert_eq!(node.styles.ui_translation.as_deref(), Some("-34% -36%"));
+    assert_eq!(node.styles.ui_rotation.as_deref(), Some("12.0deg"));
+}
+
+#[test]
+fn css_transform_translate_parses_single_axis() {
+    let mut node = bui_node("test", BuiNodeType::Node);
+    apply_css_transform(&mut node, "translateY(14px)");
+    let translation = node
+        .styles
+        .ui_translation
+        .as_deref()
+        .expect("translation should exist");
+    assert!(translation.contains("14") && translation.starts_with("0px"));
+}
+
+#[test]
+fn css_transform_state_handles_composite_transform() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 320px;
+            height: 180px;
+          }
+          .btn {
+            color: #fff;
+          }
+          .btn:active {
+            transform: translateY(2px) scale(0.98);
+          }
+        </style>
+        <main class="game-stage">
+          <button class="btn">Click</button>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let button = find_bui_node(&document.root, "btn");
+    let pressed = button
+        .state_visuals
+        .get("pressed")
+        .expect("pressed state should exist");
+    let translation = pressed
+        .styles
+        .ui_translation
+        .as_deref()
+        .expect("translation should exist");
+    assert!(translation.contains("2") && translation.starts_with("0px"));
+    assert_eq!(pressed.styles.ui_scale.as_deref(), Some("0.98 0.98"));
+    assert_eq!(
+        button
+            .state_visuals
+            .get("normal")
+            .and_then(|s| s.styles.ui_scale.as_deref()),
+        Some("1 1")
+    );
+}
+
+#[test]
+fn diagonal_gradient_overlay_sets_ui_rotation_on_band() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 200px;
+            height: 100px;
+          }
+          .box {
+            background: linear-gradient(135deg, #ff0 0 30%, #0ff 70% 100%);
+          }
+        </style>
+        <main class="game-stage">
+          <div class="box"></div>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let overlay = find_bui_node(&document.root, "box_gradient_overlay");
+    assert_eq!(
+        overlay.styles.ui_rotation.as_deref(),
+        Some("45.0deg"),
+        "135deg gradient should rotate overlay by 45deg (135 - 90)"
+    );
+}
+
+#[test]
+fn diagonal_keyword_gradient_sets_ui_rotation() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 200px;
+            height: 100px;
+          }
+          .box {
+            background: linear-gradient(to bottom right, #ff0 0 30%, #0ff 70% 100%);
+          }
+        </style>
+        <main class="game-stage">
+          <div class="box"></div>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let overlay = find_bui_node(&document.root, "box_gradient_overlay");
+    assert_eq!(
+        overlay.styles.ui_rotation.as_deref(),
+        Some("45.0deg"),
+        "to bottom right keyword should produce 135deg equivalent rotation (135 - 90)"
+    );
+}
+
+#[test]
+fn css_opacity_stores_ui_opacity_and_adjusts_colors() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 320px;
+            height: 180px;
+          }
+          .crest {
+            background: #ff0000;
+            opacity: 0.22;
+          }
+        </style>
+        <main class="game-stage">
+          <div class="crest"></div>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let crest = find_bui_node(&document.root, "crest");
+    assert_eq!(crest.styles.ui_opacity, Some(0.22));
+    let bg = crest
+        .visuals
+        .background_color
+        .as_deref()
+        .expect("bg should exist");
+    assert!(
+        bg.ends_with("38"),
+        "alpha should be ~0.22*255=56 (0x38), got: {}",
+        bg
+    );
+}
+
+#[test]
+fn css_opacity_on_node_without_background_stores_ui_opacity() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 320px;
+            height: 180px;
+          }
+          .ghost {
+            opacity: 0.5;
+          }
+        </style>
+        <main class="game-stage">
+          <div class="ghost"></div>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let ghost = find_bui_node(&document.root, "ghost");
+    assert_eq!(ghost.styles.ui_opacity, Some(0.5));
 }

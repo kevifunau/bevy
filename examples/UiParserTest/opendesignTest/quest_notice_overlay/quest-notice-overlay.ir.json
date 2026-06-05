@@ -12,6 +12,10 @@
         "display": "flex",
         "width": "100%",
         "height": "100%",
+        "left": "0",
+        "right": "0",
+        "top": "0",
+        "bottom": "0",
         "padding": "24px",
         "justify_content": "center",
         "align_items": "center",
@@ -87,7 +91,7 @@
                         "content": "新的委托",
                         "font_size": 40.0,
                         "font_color": "#3b2818",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
@@ -108,7 +112,7 @@
                         "content": "村长正在寻找可靠的冒险者。",
                         "font_size": 15.0,
                         "font_color": "#79614b",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
@@ -155,7 +159,7 @@
                         "content": "修复东桥",
                         "font_size": 26.0,
                         "font_color": "#3b2818",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
@@ -176,7 +180,7 @@
                         "content": "收集木材并协助工匠修复通往果园的旧桥。",
                         "font_size": 15.0,
                         "font_color": "#79614b",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
@@ -218,7 +222,7 @@
                             "content": "完成奖励",
                             "font_size": 14.0,
                             "font_color": "#79614b",
-                            "font_path": "Hiragino Sans GB.ttc"
+                            "font_path": "Songti.ttc"
                           }
                         }
                       }
@@ -239,7 +243,7 @@
                             "content": "+240 金币",
                             "font_size": 28.0,
                             "font_color": "#d89a1f",
-                            "font_path": "Hiragino Sans GB.ttc"
+                            "font_path": "Songti.ttc"
                           }
                         }
                       }
@@ -293,14 +297,14 @@
                   }
                 },
                 "state_visuals": {
-                  "pressed": {
-                    "styles": {
-                      "ui_scale": "0.96 0.96"
-                    }
-                  },
                   "normal": {
                     "styles": {
                       "ui_scale": "1 1"
+                    }
+                  },
+                  "pressed": {
+                    "styles": {
+                      "ui_scale": "0.96 0.96"
                     }
                   }
                 },
@@ -313,7 +317,7 @@
                         "content": "稍后",
                         "font_size": 20.0,
                         "font_color": "#FFFFFF",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
@@ -368,7 +372,7 @@
                         "content": "接受",
                         "font_size": 20.0,
                         "font_color": "#FFFFFF",
-                        "font_path": "Hiragino Sans GB.ttc"
+                        "font_path": "Songti.ttc"
                       }
                     }
                   }
