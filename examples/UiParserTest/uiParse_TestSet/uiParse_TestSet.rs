@@ -283,31 +283,29 @@ fn parse_args() -> RunnerConfig {
 }
 
 fn ensure_example_binaries(workspace_root: &Path, target_dir: &Path, selected: &[UiParseCase]) {
-    let missing: Vec<&'static str> = selected
-        .iter()
-        .copied()
-        .filter(|case| !example_binary_path(target_dir, case.example_name).exists())
-        .map(|case| case.example_name)
-        .collect();
-
-    if missing.is_empty() {
-        return;
-    }
-
     let mut command = Command::new("cargo");
     command.arg("build");
-    for example_name in &missing {
-        command.arg("--example").arg(example_name);
+    for case in selected {
+        command.arg("--example").arg(case.example_name);
     }
     command.current_dir(workspace_root);
 
     let output = command
         .output()
-        .unwrap_or_else(|error| panic!("failed to build missing uiParse examples: {error}"));
+        .unwrap_or_else(|error| panic!("failed to build uiParse examples: {error}"));
 
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        panic!("failed to build missing uiParse examples:\n{stderr}");
+        panic!("failed to build uiParse examples:\n{stderr}");
+    }
+
+    for case in selected {
+        let executable = example_binary_path(target_dir, case.example_name);
+        assert!(
+            executable.exists(),
+            "compiled example binary is missing after build step: {}",
+            executable.display()
+        );
     }
 }
 
