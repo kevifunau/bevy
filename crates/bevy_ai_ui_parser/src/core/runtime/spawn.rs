@@ -4,7 +4,7 @@ use bevy_image::TextureAtlasLayout;
 use bevy_ui::{prelude::*, Checkable, Checked, FocusPolicy};
 
 use crate::core::{
-    legacy::{BuiTextInputProxy, BuiToggle},
+    interaction::components::{BuiTextInputProxy, BuiToggle},
     model::{BuiDocument, BuiNode, BuiNodeType},
     runtime::{
         image::{background_image_layout, build_image_node},

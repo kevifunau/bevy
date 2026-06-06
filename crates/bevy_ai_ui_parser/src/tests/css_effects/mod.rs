@@ -6,9 +6,8 @@ mod svg_fallback;
 use std::collections::HashMap;
 
 use super::shared::find_bui_node;
-use crate::core::model::{BuiNode, BuiNodeType, BuiStyles, BuiVisuals};
+use crate::core::model::{BuiNode, BuiNodeType, BuiStyles, BuiVisuals, bui_node};
 use crate::core::opendesign::{
-    build::bui_node,
     html::opendesign_html_to_bui_document,
     svg::{semantic_svg_fallback_spec, svg_fallback_icon},
 };

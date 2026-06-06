@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, BuiNodeType},
+    model::{BuiActionBinding, BuiNode, BuiNodeType, bui_node, text_node},
     opendesign::{
-        build::{apply_opendesign_styles, bui_node, text_node},
+        build::apply_opendesign_styles,
         stylesheet::OpenDesignStylesheet,
         svg::{is_svg_tag, svg_fallback_text_node},
     },

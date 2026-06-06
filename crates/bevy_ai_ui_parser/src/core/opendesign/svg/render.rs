@@ -1,7 +1,7 @@
 use crate::core::{
-    model::{BuiNode, BuiTextShadowConfig},
+    model::{BuiNode, BuiTextShadowConfig, text_node},
     opendesign::{
-        build::{apply_opendesign_styles, text_node},
+        build::apply_opendesign_styles,
         generic::apply_inherited_text_styles,
         stylesheet::OpenDesignStylesheet,
     },

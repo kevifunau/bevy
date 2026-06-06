@@ -2,7 +2,6 @@ use std::collections::HashSet;
 
 use crate::core::{
     model::{BuiNode, BuiNodeType},
-    runtime::node_spawn::build_node,
     style::css_parser::{parse_integer, parse_visibility},
 };
 
@@ -28,8 +27,8 @@ pub(super) fn validate_bui_node(
         return Err(format!("{path}: duplicate id '{}'.", node.id));
     }
 
-    build_node(&node.styles, &node.visuals).map_err(|error| format!("{path}: {error}"))?;
     validate_styles(&node.styles).map_err(|error| format!("{path}: {error}"))?;
+    validate_visuals(&node.visuals).map_err(|error| format!("{path}: {error}"))?;
     if let Some(value) = &node.styles.visibility {
         parse_visibility(value).map_err(|error| format!("{path}: {error}"))?;
     }

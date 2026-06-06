@@ -6,7 +6,7 @@ use bevy_image::TextureAtlasLayout;
 
 use crate::core::{
     interaction::types::{BuiBindingValue, BuiStateStore},
-    legacy::BuiListDefinition,
+    interaction::components::BuiListDefinition,
     model::{BuiNode, BuiTextConfig},
     runtime::spawn::spawn_bui_node,
 };

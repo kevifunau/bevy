@@ -6,8 +6,11 @@ pub mod style;
 pub mod visual;
 
 pub(crate) use bui::{
+    bui_node,
+    ensure_state_visual,
     kind_to_node_type,
     node_type_to_kind,
+    text_node,
     BuiActionBinding,
     BuiBinding,
     BuiDocument,

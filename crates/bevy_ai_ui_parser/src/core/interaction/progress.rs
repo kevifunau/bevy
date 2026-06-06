@@ -3,7 +3,7 @@ use bevy_ui::prelude::*;
 
 use crate::core::{
     interaction::types::{BuiBindingValue, BuiStateStore},
-    legacy::{BuiProgressFill, BuiProgressGroup},
+    interaction::components::{BuiProgressFill, BuiProgressGroup},
 };
 
 pub(crate) fn sync_bui_progress_groups_system(

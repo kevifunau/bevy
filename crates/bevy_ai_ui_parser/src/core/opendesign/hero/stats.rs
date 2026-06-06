@@ -1,6 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType},
-    opendesign::build::{bui_node, text_node},
+    model::{BuiNode, BuiNodeType, bui_node, text_node},
 };
 
 pub(super) fn hero_game_ui_base_stats() -> [(&'static str, &'static str, &'static str, &'static str); 5] {

@@ -3,7 +3,7 @@ use bevy_ecs::prelude::*;
 use bevy_ui::prelude::*;
 use bevy_ui::Checked;
 
-use crate::core::legacy::{BuiToggle, PendingUiTargetCamera};
+use crate::core::interaction::components::{BuiToggle, PendingUiTargetCamera};
 
 fn set_toggle_box_color(
     children: &Children,

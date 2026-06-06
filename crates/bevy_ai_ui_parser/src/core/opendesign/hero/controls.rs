@@ -1,9 +1,6 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType},
-    opendesign::{
-        build::bui_node,
-        hero::{ensure_state_visual, first_direct_text_child_mut},
-    },
+    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, ensure_state_visual, bui_node},
+    opendesign::hero::first_direct_text_child_mut,
     support::tree::find_bui_node_mut,
 };
 

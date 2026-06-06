@@ -3,7 +3,7 @@ use bevy_ui::prelude::*;
 
 use crate::core::{
     interaction::types::{BuiBindingValue, BuiStateSet, BuiStateStore},
-    legacy::{BuiDisabled, BuiTabGroupDefinition, BuiTabItem, BuiVisualState},
+    interaction::components::{BuiDisabled, BuiTabGroupDefinition, BuiTabItem, BuiVisualState},
 };
 
 pub(crate) fn dispatch_bui_tab_selection_system(

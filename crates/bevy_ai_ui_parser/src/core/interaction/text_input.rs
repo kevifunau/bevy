@@ -4,7 +4,7 @@ use bevy_text::EditableText;
 use bevy_ui::prelude::*;
 
 use crate::core::{
-    legacy::{BuiTextInput, BuiTextInputMirror, BuiTextInputProxy},
+    interaction::components::{BuiTextInput, BuiTextInputMirror, BuiTextInputProxy},
     model::BuiTextConfig,
 };
 

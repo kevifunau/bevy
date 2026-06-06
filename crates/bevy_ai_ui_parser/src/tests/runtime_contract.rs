@@ -1,6 +1,6 @@
 use super::shared::find_bui_node;
-use crate::core::model::BuiNodeType;
-use crate::core::opendesign::{build::bui_node, html::opendesign_html_to_bui_document};
+use crate::core::model::{BuiNodeType, bui_node};
+use crate::core::opendesign::html::opendesign_html_to_bui_document;
 use crate::core::style::css_parser::apply_css_transform;
 
 #[test]

@@ -10,7 +10,7 @@ use bevy_text::{
 use bevy_ui::{prelude::*, widget::TextShadow, FocusPolicy};
 
 use crate::core::{
-    legacy::{BuiTextInput, BuiTextInputMirror},
+    interaction::components::{BuiTextInput, BuiTextInputMirror},
     model::{BuiNode, BuiNodeType, BuiTextConfig},
     style::css_parser::{parse_color, parse_linebreak, parse_text_justify, parse_text_line_height},
 };

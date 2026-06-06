@@ -4,8 +4,8 @@ use bevy_text::{FontSize, LetterSpacing, LineHeight, TextBounds, TextColor, Text
 use bevy_ui::{prelude::*, widget::TextShadow};
 
 use crate::core::{
+    interaction::components::BuiBindings,
     interaction::types::{BuiBindingUpdate, BuiBindingValue},
-    legacy::BuiBindings,
     style::css_parser::{
         parse_color, parse_display, parse_rotation, parse_text_justify, parse_ui_rect,
         parse_val2, parse_vec2, parse_visibility,

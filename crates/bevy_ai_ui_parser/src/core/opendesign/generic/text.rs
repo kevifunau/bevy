@@ -1,7 +1,6 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType},
+    model::{BuiNode, BuiNodeType, ensure_state_visual},
     opendesign::{
-        build::ensure_state_visual,
         stylesheet::{css_declarations, OpenDesignStylesheet},
     },
     style::css_apply::{apply_opendesign_declaration, apply_opendesign_state_declaration},

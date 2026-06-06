@@ -5,8 +5,7 @@ mod shared;
 mod stops;
 
 use crate::core::{
-    model::{BuiNode, BuiNodeType},
-    opendesign::build::bui_node,
+    model::{BuiNode, BuiNodeType, bui_node},
 };
 
 pub(crate) use conic::css_simple_conic_gradient_overlays;

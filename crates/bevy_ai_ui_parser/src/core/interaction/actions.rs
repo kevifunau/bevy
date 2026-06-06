@@ -2,8 +2,9 @@ use bevy_ecs::prelude::*;
 use bevy_ui::prelude::*;
 
 use crate::core::{
+    interaction::components::{BuiActions, BuiDisabled},
     interaction::types::{BuiActionTrigger, BuiActionTriggered},
-    legacy::{BuiActions, BuiDisabled, BuiId},
+    runtime::components::BuiId,
     style::css_parser::normalize_token,
 };
 

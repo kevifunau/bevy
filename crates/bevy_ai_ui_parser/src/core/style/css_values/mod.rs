@@ -3,7 +3,8 @@ mod color;
 mod text;
 
 pub(crate) use background::{
-    css_background_base_color, css_simple_color, split_css_layers,
+    css_aspect_ratio, css_background_base_color, css_background_image_url, css_simple_color,
+    split_css_layers,
 };
 pub(crate) use color::{
     append_hex_alpha, blend_hex_colors, css_adjust_filter_color, css_color,

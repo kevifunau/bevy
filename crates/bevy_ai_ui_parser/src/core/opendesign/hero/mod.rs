@@ -4,7 +4,7 @@ mod panel;
 mod stats;
 
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, BuiStateVisual, BuiStyles, BuiVisuals},
+    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, text_node},
     opendesign::svg::{ensure_text_icon_child, is_decorative_icon_helper_node},
     support::tree::{find_bui_node_mut, find_bui_node_ref},
 };
@@ -31,7 +31,7 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
             .retain(|child| !child.custom_tags.iter().any(|tag| tag == "svg:fallback"));
         if stars.children.is_empty() {
             for index in 0..5 {
-                stars.children.push(crate::core::opendesign::build::text_node(
+                stars.children.push(text_node(
                     &format!("hero_star_text_{}", index + 1),
                     "★",
                     42.0,
@@ -137,16 +137,6 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
     ] {
         ensure_text_icon_child(root, semantic_icon_id);
     }
-}
-
-pub(super) fn ensure_state_visual<'a>(node: &'a mut BuiNode, state: &str) -> &'a mut BuiStateVisual {
-    node.state_visuals
-        .entry(state.to_string())
-        .or_insert_with(|| BuiStateVisual {
-            styles: BuiStyles::default(),
-            visuals: BuiVisuals::default(),
-            text_color: None,
-        })
 }
 
 pub(super) fn first_direct_text_child_mut(node: &mut BuiNode) -> Option<&mut BuiNode> {

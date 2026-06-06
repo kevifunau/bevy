@@ -6,7 +6,7 @@ use bevy_text::TextColor;
 use bevy_ui::prelude::*;
 use bevy_ui::Checked;
 
-use crate::core::legacy::{
+use crate::core::interaction::components::{
     BuiDisabled,
     BuiVisualState,
     BuiVisualStateDefinitions,

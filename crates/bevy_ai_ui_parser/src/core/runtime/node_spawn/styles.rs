@@ -6,7 +6,7 @@ use bevy_ui::{
 };
 
 use crate::core::{
-    legacy::PendingUiTargetCamera,
+    interaction::components::PendingUiTargetCamera,
     model::{BuiNode, BuiStyles, BuiVisuals},
     style::css_parser::{
         parse_align_content, parse_align_items, parse_align_self, parse_border_radius,

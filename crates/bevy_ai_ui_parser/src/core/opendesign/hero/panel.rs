@@ -1,6 +1,5 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType},
-    opendesign::build::bui_node,
+    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, bui_node},
 };
 
 pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {

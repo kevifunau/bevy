@@ -6,5 +6,4 @@ pub(crate) mod css_gradients;
 pub(crate) mod css_metadata;
 pub(crate) mod css_parser;
 pub(crate) mod css_sizing;
-pub mod css_svg {}
 pub(crate) mod css_values;

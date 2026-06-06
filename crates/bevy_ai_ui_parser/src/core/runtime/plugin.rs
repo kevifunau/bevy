@@ -24,7 +24,7 @@ use crate::core::{
         },
         types::{BuiActionTriggered, BuiBindingUpdate, BuiStateSet, BuiStateStore},
     },
-    legacy::BuiRootEntity,
+    runtime::components::BuiRootEntity,
     model::BuiDocument,
     opendesign::html::opendesign_html_to_bui_document,
     parse::document::parse_bui_document,

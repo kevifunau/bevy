@@ -1,12 +1,12 @@
 use bevy_ecs::prelude::*;
 
 use crate::core::{
-    legacy::{
-        BuiActions, BuiBindings, BuiDisabled, BuiId, BuiListDefinition, BuiLogicTags,
-        BuiProgressFill, BuiProgressGroup, BuiTabGroupDefinition, BuiTabItem,
-        BuiVisualStateDefinitions,
+    interaction::components::{
+        BuiActions, BuiBindings, BuiDisabled, BuiListDefinition, BuiProgressFill,
+        BuiProgressGroup, BuiTabGroupDefinition, BuiTabItem, BuiVisualStateDefinitions,
     },
     model::BuiNode,
+    runtime::components::{BuiId, BuiLogicTags},
 };
 
 pub(crate) fn insert_identity_components(entity_commands: &mut EntityCommands, node: &BuiNode) {

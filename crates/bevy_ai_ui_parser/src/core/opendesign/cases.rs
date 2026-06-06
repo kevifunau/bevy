@@ -1,7 +1,7 @@
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, BuiNodeType},
+    model::{BuiActionBinding, BuiNode, BuiNodeType, bui_node, text_node},
     opendesign::{
-        build::{apply_opendesign_styles, bui_node, text_node},
+        build::apply_opendesign_styles,
         dom::{first_text_by_class, has_class},
         preset::{OpenDesignPreset, apply_opendesign_preset},
         stylesheet::OpenDesignStylesheet,

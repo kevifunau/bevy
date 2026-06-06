@@ -2,7 +2,15 @@ use std::collections::HashMap;
 
 use bevy_ecs::prelude::*;
 
-use crate::core::{model::{BuiNode, BuiStateVisual},};
+use crate::core::model::{BuiActionBinding, BuiBinding, BuiNode, BuiStateVisual};
+
+/// Declarative action bindings copied from the BUI node's `actions` field.
+#[derive(Component, Debug, Clone)]
+pub struct BuiActions(pub Vec<BuiActionBinding>);
+
+/// Declarative data bindings copied from the BUI node's `bindings` field.
+#[derive(Component, Debug, Clone)]
+pub struct BuiBindings(pub Vec<BuiBinding>);
 
 #[derive(Component, Debug, Clone)]
 pub(crate) struct BuiTabGroupDefinition {

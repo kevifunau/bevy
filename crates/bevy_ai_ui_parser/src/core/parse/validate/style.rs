@@ -4,10 +4,10 @@ use crate::core::{
         BuiTextureSlicerConfig, BuiVisuals,
     },
     style::css_parser::{
-        parse_align_content, parse_align_items, parse_align_self, parse_color, parse_display,
-        parse_flex_direction, parse_flex_wrap, parse_grid_placement, parse_grid_tracks,
-        parse_integer, parse_justify_content, parse_justify_items, parse_justify_self,
-        parse_linebreak, parse_node_image_mode, parse_number, parse_overflow,
+        parse_align_content, parse_align_items, parse_align_self, parse_border_radius, parse_color,
+        parse_display, parse_flex_direction, parse_flex_wrap, parse_grid_placement,
+        parse_grid_tracks, parse_integer, parse_justify_content, parse_justify_items,
+        parse_justify_self, parse_linebreak, parse_node_image_mode, parse_number, parse_overflow,
         parse_overflow_clip_margin, parse_position_type, parse_tab_group, parse_text_line_height,
         parse_ui_rect, parse_val,
     },
@@ -19,6 +19,12 @@ pub(super) fn validate_visuals(visuals: &BuiVisuals) -> Result<(), String> {
     }
     if let Some(color) = &visuals.border_color {
         parse_color(color)?;
+    }
+    if let Some(border_width) = &visuals.border_width {
+        parse_ui_rect(border_width)?;
+    }
+    if let Some(border_radius) = &visuals.border_radius {
+        parse_border_radius(border_radius)?;
     }
     if let Some(box_shadow) = &visuals.box_shadow {
         validate_box_shadow(box_shadow)?;
@@ -187,6 +193,45 @@ pub(super) fn validate_styles(styles: &BuiStyles) -> Result<(), String> {
     }
     if let Some(value) = &styles.justify_self {
         parse_justify_self(value)?;
+    }
+    if let Some(value) = &styles.flex_grow {
+        parse_number(value)?;
+    }
+    if let Some(value) = &styles.flex_shrink {
+        parse_number(value)?;
+    }
+    if let Some(value) = &styles.flex_basis {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.row_gap {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.column_gap {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.margin_left {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.margin_right {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.margin_top {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.margin_bottom {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.padding_left {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.padding_right {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.padding_top {
+        parse_val(value)?;
+    }
+    if let Some(value) = &styles.padding_bottom {
+        parse_val(value)?;
     }
     Ok(())
 }

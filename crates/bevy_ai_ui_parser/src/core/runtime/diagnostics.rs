@@ -4,7 +4,7 @@ use bevy_log::info;
 use bevy_text::{TextColor, TextFont};
 use bevy_ui::prelude::*;
 
-use crate::core::legacy::BuiId;
+use crate::core::runtime::components::BuiId;
 
 /// Marker data for nodes that request a custom UI material shader.
 #[derive(Component, Debug, Clone)]

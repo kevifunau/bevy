@@ -1,6 +1,5 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, BuiTextShadowConfig},
-    opendesign::build::bui_node,
+    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, BuiTextShadowConfig, bui_node},
     style::{
         css_sizing::{css_size_tokens, is_simple_css_size},
         css_values::{css_color, split_css_layers},

@@ -1,6 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType},
-    opendesign::build::bui_node,
+    model::{BuiNode, BuiNodeType, bui_node},
     style::{
         css_gradients::css_gradient_stops,
         css_parser::normalize_token,

@@ -7,7 +7,7 @@ use crate::core::{
             apply_box_shadow_fallback, apply_clip_path_fallback, apply_css_border,
             apply_css_edge_border, apply_css_edge_border_color, apply_css_edge_border_width,
             apply_filter_blur_fallback, apply_filter_color_adjustment, apply_mask_image_fallback,
-            apply_mix_blend_mode_fallback, css_aspect_ratio, css_background_image_url,
+            apply_mix_blend_mode_fallback,
             css_filter_blur_radius, css_filter_color_adjustment, css_filter_drop_shadows,
             css_filter_shadow_length, css_text_shadow, node_has_shadow_casting_paint,
             push_box_shadow_layer, scale_helper_child_opacity,
@@ -20,7 +20,8 @@ use crate::core::{
         css_sizing::css_first_size,
         css_values::{
             adjust_font_path_for_content, append_hex_alpha, apply_css_white_space,
-            css_background_base_color, css_color, css_font_family_to_path, css_font_weight,
+            css_aspect_ratio, css_background_base_color, css_background_image_url, css_color,
+            css_font_family_to_path, css_font_weight,
         },
     },
 };
