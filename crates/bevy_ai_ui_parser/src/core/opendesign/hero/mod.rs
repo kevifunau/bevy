@@ -68,10 +68,11 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
     }
 
     if let Some(crest) = find_bui_node_mut(root, "crest") {
-        crest.visuals.background_color = Some("#2E394316".to_string());
-        crest.visuals.border_color = Some("#51617030".to_string());
-        crest.visuals.border_width = Some("2px".to_string());
+        crest.visuals.background_color = None;
+        crest.visuals.border_color = Some("#51617014".to_string());
+        crest.visuals.border_width = Some("1px".to_string());
         crest.visuals.border_radius = Some("50%".to_string());
+        crest.styles.ui_opacity = Some(0.12);
     }
 
     if let Some(overlay_root) = find_bui_node_mut(root, "overlay_root") {
@@ -90,16 +91,16 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
 
     if let Some(info_panel) = find_bui_node_mut(root, "info_panel") {
         inject_hero_info_panel_layers(info_panel);
-        info_panel.styles.top = Some("23.8%".to_string());
-        info_panel.styles.right = Some("4.2%".to_string());
-        info_panel.styles.bottom = Some("6.2%".to_string());
-        info_panel.styles.width = Some("38.5%".to_string());
-        info_panel.visuals.background_color = Some("#C6A784B2".to_string());
+        info_panel.styles.top = Some("25.4%".to_string());
+        info_panel.styles.right = Some("5.4%".to_string());
+        info_panel.styles.bottom = Some("7.5%".to_string());
+        info_panel.styles.width = Some("36.0%".to_string());
+        info_panel.visuals.background_color = Some("#BE9D7A86".to_string());
         info_panel.visuals.box_shadow = Some(BuiBoxShadowConfig {
             inset: false,
-            offset_x: Some("-14px".to_string()),
+            offset_x: Some("-10px".to_string()),
             offset_y: Some("0px".to_string()),
-            blur_radius: Some("54px".to_string()),
+            blur_radius: Some("42px".to_string()),
             spread_radius: Some("0px".to_string()),
             color: Some("#E2CAA130".to_string()),
         });
@@ -108,11 +109,9 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
     soften_hero_game_ui_effect_fallbacks(root);
     style_hero_game_ui_controls(root);
 
-    for hidden_overlay_id in ["popover", "toast"] {
-        if let Some(node) = find_bui_node_mut(root, hidden_overlay_id) {
-            node.styles.visibility = Some("hidden".to_string());
-        }
-    }
+    root.children.retain(|child| {
+        child.id != "popover" && child.id != "toast" && child.id != "paneltoggle"
+    });
 
     for meter_label_id in ["b", "b_2"] {
         if let Some(meter_label) = find_bui_node_mut(root, meter_label_id) {

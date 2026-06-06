@@ -43,7 +43,7 @@ pub(crate) fn semantic_svg_fallback_spec(
     if let Some(spec) = indexed_semantic_svg_fallback_spec(
         &parent.id,
         "bar_icon",
-        &["★", "★"],
+        &["★", "✦"],
         22.0,
         "#F5E6B8",
         Some("#3D2A1A8F"),
@@ -74,7 +74,7 @@ pub(crate) fn semantic_svg_fallback_spec(
     if let Some(spec) = indexed_semantic_svg_fallback_spec(
         &parent.id,
         "equip_slot",
-        &["➶", "⛨", "⟡", "♞", "◎"],
+        &["⚔", "⬢", "✦", "♞", "◎"],
         22.0,
         "#F3E3C6",
         None,
@@ -183,11 +183,11 @@ fn semantic_skill_icon_spec(skill: &str) -> Option<SemanticSvgFallbackSpec> {
 
 fn semantic_equip_icon_spec(equip: &str) -> Option<SemanticSvgFallbackSpec> {
     let icon = if equip.contains("弓") {
-        "➶"
+        "⚔"
     } else if equip.contains("盾") {
-        "⛨"
+        "⬢"
     } else if equip.contains("矛") {
-        "⟡"
+        "✦"
     } else if equip.contains("坐骑") || equip.contains("战马") || equip.contains("骑") {
         "♞"
     } else if equip.contains("徽章") || equip.contains("鹰眼") || equip.contains("徽") {

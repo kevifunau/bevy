@@ -1,4 +1,5 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 use bevy::app::AppExit;
 use bevy::asset::RenderAssetUsages;
@@ -216,6 +217,7 @@ fn auto_capture_screenshot_system(
     }
 
     let screenshot_path = screenshot_path.0.clone();
+    ensure_screenshot_parent_dir(&screenshot_path);
     if let Some(screenshot_target) = screenshot_target {
         let screenshot_image = screenshot_target.image.clone();
         commands.spawn(Screenshot::image(screenshot_image)).observe(
@@ -233,4 +235,25 @@ fn auto_capture_screenshot_system(
         );
     }
     state.requested = true;
+}
+
+fn ensure_screenshot_parent_dir(path: &Path) {
+    let Some(parent) = path.parent() else {
+        return;
+    };
+
+    if let Err(error) = create_screenshot_parent_dir(parent) {
+        warn!(
+            "Failed to create screenshot output directory '{}': {error}",
+            parent.display()
+        );
+    }
+}
+
+fn create_screenshot_parent_dir(parent: &Path) -> io::Result<()> {
+    if parent.as_os_str().is_empty() {
+        return Ok(());
+    }
+
+    fs::create_dir_all(parent)
 }

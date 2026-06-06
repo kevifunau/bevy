@@ -11,6 +11,8 @@ pub(super) fn style_hero_game_ui_controls(root: &mut BuiNode) {
     style_hero_tab_button(root, "tab_button", true);
     style_hero_tab_button(root, "tab_button_2", false);
     style_hero_tab_button(root, "tab_button_3", false);
+    style_hero_section_title(root, "section_title");
+    style_hero_section_title(root, "section_title_2");
 
     style_hero_action_button(root, "detailsbutton", false);
     style_hero_action_button(root, "upgradebutton", true);
@@ -30,6 +32,29 @@ pub(super) fn style_hero_game_ui_controls(root: &mut BuiNode) {
         "hero_stat_row_5",
     ] {
         style_hero_stat_row(root, row_id);
+    }
+}
+
+fn style_hero_section_title(root: &mut BuiNode, id: &str) {
+    let Some(title) = find_bui_node_mut(root, id) else {
+        return;
+    };
+
+    for child in &mut title.children {
+        match child.id.as_str() {
+            "section_title_border_bottom" | "section_title_2_border_bottom" => {
+                child.visuals.background_color = Some("#8B674F2B".to_string());
+            }
+            "section_title_text_1" | "section_title_2_text_1" => {
+                if let Some(text_config) = child.text_config.as_mut() {
+                    text_config.font_color = "#5C3113".to_string();
+                    if let Some(shadow) = &mut text_config.text_shadow {
+                        shadow.color = Some("#F6E2C233".to_string());
+                    }
+                }
+            }
+            _ => {}
+        }
     }
 }
 
@@ -156,6 +181,9 @@ fn style_hero_mobile_toggle(root: &mut BuiNode, id: &str) {
         return;
     };
 
+    button.styles.display = Some("none".to_string());
+    button.styles.visibility = Some("hidden".to_string());
+    button.styles.ui_opacity = Some(0.0);
     button.visuals.background_color = Some("#E7D8A9EB".to_string());
     button.visuals.border_color = Some("#EDD89DAD".to_string());
     button.visuals.border_width = Some("1px".to_string());
@@ -182,11 +210,11 @@ fn style_hero_equip_slot(root: &mut BuiNode, id: &str, selected: bool) {
     };
 
     slot.styles.position_type = Some("relative".to_string());
-    slot.visuals.background_color = Some("#5E566286".to_string());
+    slot.visuals.background_color = Some("#64524594".to_string());
     slot.visuals.border_color = Some(if selected {
         "#F0D48AA8".to_string()
     } else {
-        "#C9B59B7A".to_string()
+        "#C9B59B66".to_string()
     });
     slot.visuals.border_width = Some("2px".to_string());
     slot.visuals.box_shadow = Some(BuiBoxShadowConfig {

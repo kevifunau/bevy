@@ -71,24 +71,35 @@ pub(crate) fn css_multiply_blend_fallback_color(value: &str) -> Option<String> {
     let hex = value.trim().strip_prefix('#')?;
     let (r, g, b, a) = parse_hex_channels(hex)?;
 
+    let alpha_ratio = a as f32 / 255.0;
     let is_cool_tinted = b > g && b > r;
     let (r, g, b, alpha) = if is_cool_tinted {
         let darken = |channel: u8, factor: f32| {
             ((channel as f32) * factor).round().clamp(0.0, 255.0) as u8
         };
+        let cool_lift = (1.0 - alpha_ratio).clamp(0.0, 1.0);
         (
-            darken(r, 0.72),
-            darken(g, 0.82),
-            darken(b, 0.9),
-            ((a as f32) * 0.94).round().clamp(0.0, 255.0) as u8,
+            darken(r, 0.72 + 0.12 * cool_lift),
+            darken(g, 0.82 + 0.08 * cool_lift),
+            darken(b, 0.9 + 0.04 * cool_lift),
+            ((a as f32) * (0.94 + 0.03 * cool_lift))
+                .round()
+                .clamp(0.0, 255.0) as u8,
         )
     } else {
-        let darken = |channel: u8| ((channel as f32) * 0.78).round().clamp(0.0, 255.0) as u8;
+        let warm_lift = (1.0 - alpha_ratio).clamp(0.0, 1.0);
+        let darken = |channel: u8| {
+            ((channel as f32) * (0.78 + 0.08 * warm_lift))
+                .round()
+                .clamp(0.0, 255.0) as u8
+        };
         (
             darken(r),
             darken(g),
             darken(b),
-            ((a as f32) * 0.88).round().clamp(0.0, 255.0) as u8,
+            ((a as f32) * (0.88 + 0.04 * warm_lift))
+                .round()
+                .clamp(0.0, 255.0) as u8,
         )
     };
 

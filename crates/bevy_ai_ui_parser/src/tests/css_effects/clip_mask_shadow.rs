@@ -189,7 +189,7 @@ fn mix_blend_mode_multiply_darkens_filter_helper_shadow_layers() {
         .expect("blur helper layer should exist");
 
     let blur_shadow = blur_layer.visuals.box_shadow.as_ref().expect("shadow");
-    assert_eq!(blur_shadow.color.as_deref(), Some("#A88C5492"));
+    assert_eq!(blur_shadow.color.as_deref(), Some("#AF915794"));
 }
 
 #[test]
