@@ -154,12 +154,23 @@ fn bui_path(file_name: &str) -> PathBuf {
         .join("examples")
         .join("UiParserTest");
 
-    let nested = std::env::current_exe()
-        .ok()
-        .and_then(|path| path.file_stem().map(|stem| root.join(stem).join(file_name)));
+    let nested = std::env::current_exe().ok().and_then(|path| {
+        path.file_stem().map(|stem| {
+            let stem = stem.to_string_lossy();
+            root.join(&*stem).join(file_name)
+        })
+    });
+
+    let nested_in_testset = std::env::current_exe().ok().and_then(|path| {
+        path.file_stem().map(|stem| {
+            let stem = stem.to_string_lossy();
+            root.join("uiParse_TestSet").join(&*stem).join(file_name)
+        })
+    });
 
     nested
         .filter(|path| path.exists())
+        .or_else(|| nested_in_testset.filter(|path| path.exists()))
         .unwrap_or_else(|| root.join(file_name))
 }
 

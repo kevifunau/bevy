@@ -749,6 +749,7 @@ ron = "0.12"
 flate2 = "1.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.140"
+image = { version = "0.25", default-features = false, features = ["png"] }
 bytemuck = "1"
 bevy_ai_ui_parser = { path = "crates/bevy_ai_ui_parser", version = "0.1.0" }
 # The following explicit dependencies are needed for proc macros to work inside of examples as they are part of the bevy crate itself.
@@ -3961,7 +3962,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_image_node"
-path = "examples/UiParserTest/uiParse_image_node/uiParse_image_node.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_image_node/uiParse_image_node.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_image_node]
@@ -3972,7 +3973,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_image_node_resizing"
-path = "examples/UiParserTest/uiParse_image_node_resizing/uiParse_image_node_resizing.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_image_node_resizing/uiParse_image_node_resizing.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_image_node_resizing]
@@ -3983,7 +3984,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_texture_atlas"
-path = "examples/UiParserTest/uiParse_ui_texture_atlas/uiParse_ui_texture_atlas.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_texture_atlas/uiParse_ui_texture_atlas.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_texture_atlas]
@@ -3994,7 +3995,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_texture_atlas_slice"
-path = "examples/UiParserTest/uiParse_ui_texture_atlas_slice/uiParse_ui_texture_atlas_slice.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_texture_atlas_slice/uiParse_ui_texture_atlas_slice.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_texture_atlas_slice]
@@ -4005,7 +4006,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_texture_slice"
-path = "examples/UiParserTest/uiParse_ui_texture_slice/uiParse_ui_texture_slice.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_texture_slice/uiParse_ui_texture_slice.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_texture_slice]
@@ -4016,7 +4017,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_texture_slice_flip_and_tile"
-path = "examples/UiParserTest/uiParse_ui_texture_slice_flip_and_tile/uiParse_ui_texture_slice_flip_and_tile.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_texture_slice_flip_and_tile/uiParse_ui_texture_slice_flip_and_tile.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_texture_slice_flip_and_tile]
@@ -4027,7 +4028,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_anchor_layout"
-path = "examples/UiParserTest/uiParse_anchor_layout/uiParse_anchor_layout.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_anchor_layout/uiParse_anchor_layout.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_anchor_layout]
@@ -4038,7 +4039,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_flex_layout"
-path = "examples/UiParserTest/uiParse_flex_layout/uiParse_flex_layout.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_flex_layout/uiParse_flex_layout.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_flex_layout]
@@ -4049,7 +4050,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_display_and_visibility"
-path = "examples/UiParserTest/uiParse_display_and_visibility/uiParse_display_and_visibility.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_display_and_visibility/uiParse_display_and_visibility.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_display_and_visibility]
@@ -4060,7 +4061,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_z_index"
-path = "examples/UiParserTest/uiParse_z_index/uiParse_z_index.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_z_index/uiParse_z_index.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_z_index]
@@ -4071,7 +4072,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_grid"
-path = "examples/UiParserTest/uiParse_grid/uiParse_grid.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_grid/uiParse_grid.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_grid]
@@ -4082,7 +4083,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_size_constraints"
-path = "examples/UiParserTest/uiParse_size_constraints/uiParse_size_constraints.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_size_constraints/uiParse_size_constraints.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_size_constraints]
@@ -4093,7 +4094,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_fixed_node"
-path = "examples/UiParserTest/uiParse_fixed_node/uiParse_fixed_node.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_fixed_node/uiParse_fixed_node.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_fixed_node]
@@ -4104,7 +4105,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_transparency_ui"
-path = "examples/UiParserTest/uiParse_transparency_ui/uiParse_transparency_ui.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_transparency_ui/uiParse_transparency_ui.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_transparency_ui]
@@ -4115,7 +4116,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_window_fallthrough"
-path = "examples/UiParserTest/uiParse_window_fallthrough/uiParse_window_fallthrough.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_window_fallthrough/uiParse_window_fallthrough.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_window_fallthrough]
@@ -4126,7 +4127,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_relative_cursor_position"
-path = "examples/UiParserTest/uiParse_relative_cursor_position/uiParse_relative_cursor_position.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_relative_cursor_position/uiParse_relative_cursor_position.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_relative_cursor_position]
@@ -4137,7 +4138,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_scaling"
-path = "examples/UiParserTest/uiParse_ui_scaling/uiParse_ui_scaling.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_scaling/uiParse_ui_scaling.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_scaling]
@@ -4148,7 +4149,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_transform"
-path = "examples/UiParserTest/uiParse_ui_transform/uiParse_ui_transform.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_transform/uiParse_ui_transform.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_transform]
@@ -4159,7 +4160,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_button"
-path = "examples/UiParserTest/uiParse_button/uiParse_button.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_button/uiParse_button.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_button]
@@ -4170,7 +4171,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_ui_target_camera"
-path = "examples/UiParserTest/uiParse_ui_target_camera/uiParse_ui_target_camera.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_ui_target_camera/uiParse_ui_target_camera.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_ui_target_camera]
@@ -4181,7 +4182,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_overflow"
-path = "examples/UiParserTest/uiParse_overflow/uiParse_overflow.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_overflow/uiParse_overflow.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_overflow]
@@ -4192,7 +4193,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_overflow_clip_margin"
-path = "examples/UiParserTest/uiParse_overflow_clip_margin/uiParse_overflow_clip_margin.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_overflow_clip_margin/uiParse_overflow_clip_margin.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_overflow_clip_margin]
@@ -4203,7 +4204,7 @@ wasm = false
 
 [[example]]
 name = "uiParse_tab_navigation"
-path = "examples/UiParserTest/uiParse_tab_navigation/uiParse_tab_navigation.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_tab_navigation/uiParse_tab_navigation.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_tab_navigation]
@@ -4214,12 +4215,23 @@ wasm = false
 
 [[example]]
 name = "uiParse_text_input"
-path = "examples/UiParserTest/uiParse_text_input/uiParse_text_input.rs"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_text_input/uiParse_text_input.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.uiParse_text_input]
 name = "UI Parse Text Input"
 description = "Parses the official text_input example through BUI JSON"
+category = "UI (User Interface)"
+wasm = false
+
+[[example]]
+name = "uiParse_TestSet"
+path = "examples/UiParserTest/uiParse_TestSet/uiParse_TestSet.rs"
+doc-scrape-examples = true
+
+[package.metadata.example.uiParse_TestSet]
+name = "UI Parse Test Set"
+description = "Captures and compares official UI examples against the corresponding uiParse_* examples"
 category = "UI (User Interface)"
 wasm = false
 
