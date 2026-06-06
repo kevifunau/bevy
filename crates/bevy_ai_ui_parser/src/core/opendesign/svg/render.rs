@@ -28,7 +28,7 @@ pub(crate) fn ensure_text_icon_child(root: &mut BuiNode, id: &str) {
         return;
     }
     node.children
-        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "svg:fallback"));
+        .retain(|child| !child.markers.iter().any(|tag| tag == "svg:fallback"));
     let mut icon_node = text_node(
         &format!("{id}_icon_text"),
         spec.icon,
@@ -37,7 +37,7 @@ pub(crate) fn ensure_text_icon_child(root: &mut BuiNode, id: &str) {
         Some(spec.font_path),
     );
     if let Some(text_shadow) = spec.text_shadow()
-        && let Some(text_config) = icon_node.text_config.as_mut()
+        && let Some(text_config) = icon_node.content.text.as_mut()
     {
         text_config.text_shadow = Some(text_shadow);
     }
@@ -45,7 +45,7 @@ pub(crate) fn ensure_text_icon_child(root: &mut BuiNode, id: &str) {
 }
 
 pub(crate) fn is_decorative_icon_helper_node(node: &BuiNode) -> bool {
-    node.custom_tags.iter().any(|tag| {
+    node.markers.iter().any(|tag| {
         tag == "pseudo:before"
             || tag == "pseudo:after"
             || tag == "class:cooldown"
@@ -78,11 +78,11 @@ pub(crate) fn svg_fallback_text_node(
         Some(fallback_style.font_path),
     );
     if let Some(text_shadow) = fallback_style.text_shadow
-        && let Some(text_config) = text_node.text_config.as_mut()
+        && let Some(text_config) = text_node.content.text.as_mut()
     {
         text_config.text_shadow = Some(text_shadow);
     }
-    text_node.custom_tags.push("svg:fallback".to_string());
+    text_node.markers.push("svg:fallback".to_string());
     Some(text_node)
 }
 
@@ -105,7 +105,7 @@ fn svg_fallback_style(parent: &BuiNode, icon: &str) -> SvgFallbackStyle {
 
     let has_class = |class_name: &str| {
         parent
-            .custom_tags
+            .markers
             .iter()
             .any(|tag| tag == &format!("class:{class_name}"))
     };
@@ -184,11 +184,11 @@ fn svg_fallback_font_size(
     let mut probe = text_node("svg_fallback_probe", "•", 16.0, "#FFFFFF", None);
     apply_inherited_text_styles(stylesheet, &mut probe, svg_node);
     apply_opendesign_styles(stylesheet, &mut probe, svg_node);
-    if let Some(text_config) = probe.text_config.as_ref() {
+    if let Some(text_config) = probe.content.text.as_ref() {
         return text_config.font_size.clamp(16.0, 28.0);
     }
     if parent
-        .custom_tags
+        .markers
         .iter()
         .any(|tag| tag == "class:star" || tag == "class:bar-icon")
     {

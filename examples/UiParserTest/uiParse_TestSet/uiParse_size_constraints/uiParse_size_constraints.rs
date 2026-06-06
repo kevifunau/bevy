@@ -24,7 +24,7 @@ fn main() {
     app.add_plugins(DefaultPlugins)
         .add_message::<ButtonActivated>()
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "size_constraints.json",
+            "size_constraints.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(

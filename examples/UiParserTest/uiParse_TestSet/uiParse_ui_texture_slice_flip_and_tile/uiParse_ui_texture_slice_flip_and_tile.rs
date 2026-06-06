@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("ui_texture_slice_flip_and_tile.json");
+    common::run_with_json("ui_texture_slice_flip_and_tile.ir.json");
 }

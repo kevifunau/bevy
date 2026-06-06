@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType, bui_node},
+    model::{BuiNode, bui_node},
     style::{
         css_gradients::css_gradient_stops,
         css_parser::normalize_token,
@@ -39,7 +39,7 @@ pub(crate) struct ClipPolygonContourSpec {
 pub(crate) fn apply_mask_image_fallback(node: &mut BuiNode, value: &str) {
     if normalize_token(value) == "none" {
         node.children
-            .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-mask-fade"));
+            .retain(|child| !child.markers.iter().any(|tag| tag == "css-mask-fade"));
         return;
     }
 
@@ -47,8 +47,8 @@ pub(crate) fn apply_mask_image_fallback(node: &mut BuiNode, value: &str) {
         return;
     };
 
-    if node.styles.position_type.is_none() {
-        node.styles.position_type = Some("relative".to_string());
+    if node.layout.styles.position_type.is_none() {
+        node.layout.styles.position_type = Some("relative".to_string());
     }
 
     let band_count = 20usize;
@@ -62,37 +62,37 @@ pub(crate) fn apply_mask_image_fallback(node: &mut BuiNode, value: &str) {
         let band_end = spec.fade_ratio * ((index + 1) as f32 / band_count as f32);
         let alpha = css_mask_fade_band_alpha(index, band_count);
 
-        let mut overlay = bui_node(&overlay_id, BuiNodeType::Node);
-        overlay.custom_tags.push("css-mask-fade".to_string());
-        overlay.styles.position_type = Some("absolute".to_string());
-        overlay.styles.z_index = Some("12".to_string());
-        overlay.visuals.background_color =
+        let mut overlay = bui_node(&overlay_id, "node");
+        overlay.markers.push("css-mask-fade".to_string());
+        overlay.layout.styles.position_type = Some("absolute".to_string());
+        overlay.layout.styles.z_index = Some("12".to_string());
+        overlay.style.visuals.background_color =
             append_hex_alpha("#47362B", alpha).or(Some("#47362B52".to_string()));
 
         match spec.direction {
             MaskFadeDirection::LeftToRight => {
-                overlay.styles.left = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
-                overlay.styles.top = Some("0".to_string());
-                overlay.styles.bottom = Some("0".to_string());
+                overlay.layout.styles.left = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.layout.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.top = Some("0".to_string());
+                overlay.layout.styles.bottom = Some("0".to_string());
             }
             MaskFadeDirection::RightToLeft => {
-                overlay.styles.right = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
-                overlay.styles.top = Some("0".to_string());
-                overlay.styles.bottom = Some("0".to_string());
+                overlay.layout.styles.right = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.layout.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.top = Some("0".to_string());
+                overlay.layout.styles.bottom = Some("0".to_string());
             }
             MaskFadeDirection::TopToBottom => {
-                overlay.styles.top = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
-                overlay.styles.left = Some("0".to_string());
-                overlay.styles.right = Some("0".to_string());
+                overlay.layout.styles.top = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.layout.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.left = Some("0".to_string());
+                overlay.layout.styles.right = Some("0".to_string());
             }
             MaskFadeDirection::BottomToTop => {
-                overlay.styles.bottom = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
-                overlay.styles.left = Some("0".to_string());
-                overlay.styles.right = Some("0".to_string());
+                overlay.layout.styles.bottom = Some(format!("{:.1}%", band_start * 100.0));
+                overlay.layout.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.left = Some("0".to_string());
+                overlay.layout.styles.right = Some("0".to_string());
             }
         }
 
@@ -114,13 +114,13 @@ pub(crate) fn apply_clip_path_fallback(node: &mut BuiNode, value: &str) {
         return;
     };
 
-    if node.styles.position_type.is_none() {
-        node.styles.position_type = Some("relative".to_string());
+    if node.layout.styles.position_type.is_none() {
+        node.layout.styles.position_type = Some("relative".to_string());
     }
 
     if node.children.iter().any(|child| {
         child
-            .custom_tags
+            .markers
             .iter()
             .any(|tag| tag == "css-clip-contour")
     }) {
@@ -129,92 +129,94 @@ pub(crate) fn apply_clip_path_fallback(node: &mut BuiNode, value: &str) {
 
     for child in &mut node.children {
         if !child
-            .custom_tags
+            .markers
             .iter()
             .any(|tag| tag == "css-filter-drop-shadow")
         {
             continue;
         }
 
-        child.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
-        child.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
-        child.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
-        child.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
-        child.visuals.border_radius = Some("44%".to_string());
+        child.layout.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
+        child.layout.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
+        child.layout.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
+        child.layout.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
+        child.style.visuals.border_radius = Some("44%".to_string());
     }
 
-    let fill_color = node.visuals.background_color.clone();
-    let contour_color = node.visuals.border_color.clone().or_else(|| {
-        node.visuals
+    let fill_color = node.style.visuals.background_color.clone();
+    let contour_color = node.style.visuals.border_color.clone().or_else(|| {
+        node.style
+            .visuals
             .background_color
             .as_deref()
             .and_then(|color| append_hex_alpha(color, 42.0))
     });
     let accent_color = node
+        .style
         .visuals
         .background_color
         .as_deref()
         .and_then(|color| append_hex_alpha(color, 58.0));
 
     if fill_color.is_none() && contour_color.is_none() && accent_color.is_none() {
-        let mut guide = bui_node(&format!("{}_clip_bounds", node.id), BuiNodeType::Node);
-        guide.custom_tags.push("css-clip-contour".to_string());
-        guide.styles.position_type = Some("absolute".to_string());
-        guide.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
-        guide.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
-        guide.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
-        guide.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
-        guide.styles.z_index = Some("0".to_string());
-        guide.visuals.background_color = Some("transparent".to_string());
-        guide.visuals.border_radius = Some("46%".to_string());
+        let mut guide = bui_node(&format!("{}_clip_bounds", node.id), "node");
+        guide.markers.push("css-clip-contour".to_string());
+        guide.layout.styles.position_type = Some("absolute".to_string());
+        guide.layout.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
+        guide.layout.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
+        guide.layout.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
+        guide.layout.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
+        guide.layout.styles.z_index = Some("0".to_string());
+        guide.style.visuals.background_color = Some("transparent".to_string());
+        guide.style.visuals.border_radius = Some("46%".to_string());
         node.children.push(guide);
         return;
     }
 
     if fill_color.is_some() {
-        let mut fill = bui_node(&format!("{}_clip_fill", node.id), BuiNodeType::Node);
-        fill.custom_tags.push("css-clip-contour".to_string());
-        fill.styles.position_type = Some("absolute".to_string());
-        fill.styles.left = Some(format!("{:.1}%", spec.fill_left * 100.0));
-        fill.styles.right = Some(format!("{:.1}%", spec.fill_right * 100.0));
-        fill.styles.top = Some(format!("{:.1}%", spec.fill_top * 100.0));
-        fill.styles.bottom = Some(format!("{:.1}%", spec.fill_bottom * 100.0));
-        fill.styles.z_index = Some("1".to_string());
-        fill.visuals.background_color = fill_color;
-        fill.visuals.border_radius = Some("42%".to_string());
+        let mut fill = bui_node(&format!("{}_clip_fill", node.id), "node");
+        fill.markers.push("css-clip-contour".to_string());
+        fill.layout.styles.position_type = Some("absolute".to_string());
+        fill.layout.styles.left = Some(format!("{:.1}%", spec.fill_left * 100.0));
+        fill.layout.styles.right = Some(format!("{:.1}%", spec.fill_right * 100.0));
+        fill.layout.styles.top = Some(format!("{:.1}%", spec.fill_top * 100.0));
+        fill.layout.styles.bottom = Some(format!("{:.1}%", spec.fill_bottom * 100.0));
+        fill.layout.styles.z_index = Some("1".to_string());
+        fill.style.visuals.background_color = fill_color;
+        fill.style.visuals.border_radius = Some("42%".to_string());
         node.children.push(fill);
 
-        node.visuals.background_color = Some("transparent".to_string());
-        node.visuals.border_color = Some("transparent".to_string());
+        node.style.visuals.background_color = Some("transparent".to_string());
+        node.style.visuals.border_color = Some("transparent".to_string());
     }
 
     if let Some(contour_color) = contour_color {
-        let mut outer = bui_node(&format!("{}_clip_contour", node.id), BuiNodeType::Node);
-        outer.custom_tags.push("css-clip-contour".to_string());
-        outer.styles.position_type = Some("absolute".to_string());
-        outer.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
-        outer.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
-        outer.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
-        outer.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
-        outer.styles.z_index = Some("3".to_string());
-        outer.visuals.background_color = Some("transparent".to_string());
-        outer.visuals.border_color = Some(contour_color);
-        outer.visuals.border_width = Some("1px".to_string());
-        outer.visuals.border_radius = Some("46%".to_string());
+        let mut outer = bui_node(&format!("{}_clip_contour", node.id), "node");
+        outer.markers.push("css-clip-contour".to_string());
+        outer.layout.styles.position_type = Some("absolute".to_string());
+        outer.layout.styles.left = Some(format!("{:.1}%", spec.left * 100.0));
+        outer.layout.styles.right = Some(format!("{:.1}%", spec.right * 100.0));
+        outer.layout.styles.top = Some(format!("{:.1}%", spec.top * 100.0));
+        outer.layout.styles.bottom = Some(format!("{:.1}%", spec.bottom * 100.0));
+        outer.layout.styles.z_index = Some("3".to_string());
+        outer.style.visuals.background_color = Some("transparent".to_string());
+        outer.style.visuals.border_color = Some(contour_color);
+        outer.style.visuals.border_width = Some("1px".to_string());
+        outer.style.visuals.border_radius = Some("46%".to_string());
         node.children.push(outer);
     }
 
     if let Some(accent_color) = accent_color {
-        let mut accent = bui_node(&format!("{}_clip_contour_accent", node.id), BuiNodeType::Node);
-        accent.custom_tags.push("css-clip-contour".to_string());
-        accent.styles.position_type = Some("absolute".to_string());
-        accent.styles.left = Some(format!("{:.1}%", spec.accent_left * 100.0));
-        accent.styles.top = Some(format!("{:.1}%", spec.accent_top * 100.0));
-        accent.styles.width = Some(format!("{:.1}%", spec.accent_width * 100.0));
-        accent.styles.height = Some(format!("{:.1}%", spec.accent_height * 100.0));
-        accent.styles.z_index = Some("4".to_string());
-        accent.visuals.background_color = Some(accent_color);
-        accent.visuals.border_radius = Some("40%".to_string());
+        let mut accent = bui_node(&format!("{}_clip_contour_accent", node.id), "node");
+        accent.markers.push("css-clip-contour".to_string());
+        accent.layout.styles.position_type = Some("absolute".to_string());
+        accent.layout.styles.left = Some(format!("{:.1}%", spec.accent_left * 100.0));
+        accent.layout.styles.top = Some(format!("{:.1}%", spec.accent_top * 100.0));
+        accent.layout.styles.width = Some(format!("{:.1}%", spec.accent_width * 100.0));
+        accent.layout.styles.height = Some(format!("{:.1}%", spec.accent_height * 100.0));
+        accent.layout.styles.z_index = Some("4".to_string());
+        accent.style.visuals.background_color = Some(accent_color);
+        accent.style.visuals.border_radius = Some("40%".to_string());
         node.children.push(accent);
     }
 }

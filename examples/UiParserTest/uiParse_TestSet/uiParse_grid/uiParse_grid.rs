@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("grid.json");
+    common::run_with_json("grid.ir.json");
 }

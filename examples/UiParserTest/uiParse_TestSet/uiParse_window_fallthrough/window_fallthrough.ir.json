@@ -1,0 +1,32 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "WindowFallthrough",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "window_fallthrough_root",
+    "kind": "node",
+    "children": [
+      {
+        "id": "window_fallthrough_text",
+        "kind": "text",
+        "layout": {
+          "styles": {
+            "position_type": "absolute",
+            "bottom": "5px",
+            "right": "10px"
+          }
+        },
+        "content": {
+          "text": {
+            "content": "Hit 'P' then scroll/click around!",
+            "font_size": 83,
+            "font_color": "#FFFFFF",
+            "font_path": "fonts/FiraSans-Bold.ttf"
+          }
+        }
+      }
+    ]
+  }
+}

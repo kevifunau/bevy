@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("image_node.json");
+    common::run_with_json("image_node.ir.json");
 }

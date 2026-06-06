@@ -15,7 +15,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "ui_texture_atlas.json",
+            "ui_texture_atlas.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, increment_atlas_index);

@@ -92,7 +92,7 @@ pub(crate) fn semantic_svg_fallback_spec(
 
     let has_class = |class_name: &str| {
         parent
-            .custom_tags
+            .markers
             .iter()
             .any(|tag| tag == &format!("class:{class_name}"))
     };
@@ -134,7 +134,7 @@ pub(crate) fn semantic_svg_fallback_spec(
 fn semantic_svg_fallback_spec_from_tags(parent: &BuiNode) -> Option<SemanticSvgFallbackSpec> {
     let find_tag_value = |prefix: &str| {
         parent
-            .custom_tags
+            .markers
             .iter()
             .find_map(|tag| tag.strip_prefix(prefix))
     };

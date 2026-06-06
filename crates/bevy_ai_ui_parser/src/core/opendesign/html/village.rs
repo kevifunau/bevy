@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, BuiNodeType, bui_node, text_node},
+    model::{BuiActionBinding, BuiNode, bui_node, text_node},
     opendesign::{
         build::apply_opendesign_styles,
         cases::{shop_card_node, stabilize_village_shop_overlay_defaults},
@@ -71,19 +71,19 @@ pub(super) fn compile_village_shop_overlay_document(
     let title = first_text_by_class(overlay, "title-text").unwrap_or_else(|| "UI".to_string());
     let footer = first_text_by_class(overlay, "foot-hint").unwrap_or_default();
 
-    let mut root = bui_node("overlay_root", BuiNodeType::Node);
+    let mut root = bui_node("overlay_root", "node");
     apply_opendesign_preset(&mut root, OpenDesignPreset::OverlayRoot);
     apply_opendesign_styles(stylesheet, &mut root, overlay);
 
-    let mut panel = bui_node("panel", BuiNodeType::Node);
+    let mut panel = bui_node("panel", "node");
     apply_opendesign_preset(&mut panel, OpenDesignPreset::Panel);
     apply_opendesign_styles(stylesheet, &mut panel, panel_source);
 
-    let mut panel_header = bui_node("panel_header", BuiNodeType::Node);
+    let mut panel_header = bui_node("panel_header", "node");
     apply_opendesign_preset(&mut panel_header, OpenDesignPreset::PanelHeader);
     apply_opendesign_styles(stylesheet, &mut panel_header, panel_header_source);
 
-    let mut title_board = bui_node("title_board", BuiNodeType::Node);
+    let mut title_board = bui_node("title_board", "node");
     apply_opendesign_preset(&mut title_board, OpenDesignPreset::TitleBoard);
     apply_opendesign_styles(stylesheet, &mut title_board, title_board_source);
     let mut title_text = text_node(
@@ -96,8 +96,8 @@ pub(super) fn compile_village_shop_overlay_document(
     apply_opendesign_styles(stylesheet, &mut title_text, title_text_source);
     title_board.children.push(title_text);
 
-    let mut close_btn = bui_node("close_btn", BuiNodeType::Button);
-    close_btn.custom_tags.push("Action_Close_Shop".to_string());
+    let mut close_btn = bui_node("close_btn", "button");
+    close_btn.markers.push("Action_Close_Shop".to_string());
     close_btn.actions.push(BuiActionBinding {
         event: "press".to_string(),
         emit: "close_shop_overlay".to_string(),
@@ -115,11 +115,11 @@ pub(super) fn compile_village_shop_overlay_document(
     panel_header.children.push(title_board);
     panel_header.children.push(close_btn);
 
-    let mut shop_body = bui_node("shop_body", BuiNodeType::Node);
+    let mut shop_body = bui_node("shop_body", "node");
     apply_opendesign_preset(&mut shop_body, OpenDesignPreset::ShopBody);
     apply_opendesign_styles(stylesheet, &mut shop_body, shop_body_source);
 
-    let mut shop_scroll = bui_node("shop_scroll", BuiNodeType::Node);
+    let mut shop_scroll = bui_node("shop_scroll", "node");
     apply_opendesign_preset(&mut shop_scroll, OpenDesignPreset::ShopScroll);
     apply_opendesign_styles(stylesheet, &mut shop_scroll, shop_scroll_source);
 
@@ -132,7 +132,7 @@ pub(super) fn compile_village_shop_overlay_document(
 
     shop_body.children.push(shop_scroll);
 
-    let mut foot_hint = bui_node("foot_hint", BuiNodeType::Node);
+    let mut foot_hint = bui_node("foot_hint", "node");
     apply_opendesign_preset(&mut foot_hint, OpenDesignPreset::FootHint);
     if let Some(foot_hint_source) = foot_hint_source {
         apply_opendesign_styles(stylesheet, &mut foot_hint, foot_hint_source);

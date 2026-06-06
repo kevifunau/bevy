@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType, bui_node, text_node},
+    model::{BuiNode, bui_node, text_node},
 };
 
 pub(super) fn hero_game_ui_base_stats() -> [(&'static str, &'static str, &'static str, &'static str); 5] {
@@ -19,22 +19,22 @@ pub(super) fn hero_game_ui_stat_row(
     base: &str,
     bonus: &str,
 ) -> BuiNode {
-    let mut row = bui_node(&format!("hero_stat_row_{index}"), BuiNodeType::Node);
-    row.custom_tags.push("class:stat-row".to_string());
-    row.styles.display = Some("grid".to_string());
-    row.styles.grid_template_columns = Some("flex(1) auto auto".to_string());
-    row.styles.align_items = Some("center".to_string());
-    row.styles.column_gap = Some("10px".to_string());
-    row.styles.padding = Some("0 8px".to_string());
-    row.styles.min_height = Some("40px".to_string());
-    row.visuals.background_color = Some("#6D5A6333".to_string());
+    let mut row = bui_node(&format!("hero_stat_row_{index}"), "node");
+    row.markers.push("class:stat-row".to_string());
+    row.layout.styles.display = Some("grid".to_string());
+    row.layout.styles.grid_template_columns = Some("flex(1) auto auto".to_string());
+    row.layout.styles.align_items = Some("center".to_string());
+    row.layout.styles.column_gap = Some("10px".to_string());
+    row.layout.styles.padding = Some("0 8px".to_string());
+    row.layout.styles.min_height = Some("40px".to_string());
+    row.style.visuals.background_color = Some("#6D5A6333".to_string());
 
-    let mut label_node = bui_node(&format!("hero_stat_label_{index}"), BuiNodeType::Node);
-    label_node.custom_tags.push("class:stat-label".to_string());
-    label_node.styles.display = Some("flex".to_string());
-    label_node.styles.align_items = Some("center".to_string());
-    label_node.styles.column_gap = Some("11px".to_string());
-    label_node.styles.min_width = Some("0".to_string());
+    let mut label_node = bui_node(&format!("hero_stat_label_{index}"), "node");
+    label_node.markers.push("class:stat-label".to_string());
+    label_node.layout.styles.display = Some("flex".to_string());
+    label_node.layout.styles.align_items = Some("center".to_string());
+    label_node.layout.styles.column_gap = Some("11px".to_string());
+    label_node.layout.styles.min_width = Some("0".to_string());
     label_node.children.push(text_node(
         &format!("hero_stat_icon_text_{index}"),
         icon,
@@ -50,11 +50,11 @@ pub(super) fn hero_game_ui_stat_row(
         Some("Hiragino Sans GB.ttc"),
     ));
 
-    let mut base_node = bui_node(&format!("hero_stat_base_{index}"), BuiNodeType::Node);
-    base_node.custom_tags.push("class:stat-base".to_string());
-    base_node.styles.display = Some("flex".to_string());
-    base_node.styles.justify_content = Some("flex-end".to_string());
-    base_node.styles.align_items = Some("center".to_string());
+    let mut base_node = bui_node(&format!("hero_stat_base_{index}"), "node");
+    base_node.markers.push("class:stat-base".to_string());
+    base_node.layout.styles.display = Some("flex".to_string());
+    base_node.layout.styles.justify_content = Some("flex-end".to_string());
+    base_node.layout.styles.align_items = Some("center".to_string());
     base_node.children.push(text_node(
         &format!("hero_stat_base_text_{index}"),
         base,
@@ -63,11 +63,11 @@ pub(super) fn hero_game_ui_stat_row(
         Some("Palatino.ttc"),
     ));
 
-    let mut bonus_node = bui_node(&format!("hero_stat_bonus_{index}"), BuiNodeType::Node);
-    bonus_node.custom_tags.push("class:stat-bonus".to_string());
-    bonus_node.styles.display = Some("flex".to_string());
-    bonus_node.styles.justify_content = Some("flex-end".to_string());
-    bonus_node.styles.align_items = Some("center".to_string());
+    let mut bonus_node = bui_node(&format!("hero_stat_bonus_{index}"), "node");
+    bonus_node.markers.push("class:stat-bonus".to_string());
+    bonus_node.layout.styles.display = Some("flex".to_string());
+    bonus_node.layout.styles.justify_content = Some("flex-end".to_string());
+    bonus_node.layout.styles.align_items = Some("center".to_string());
     bonus_node.children.push(text_node(
         &format!("hero_stat_bonus_text_{index}"),
         bonus,

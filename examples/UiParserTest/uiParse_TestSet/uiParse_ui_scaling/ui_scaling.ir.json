@@ -1,0 +1,87 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "UiScaling",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "ui_scaling_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "50%",
+        "height": "50%",
+        "position_type": "absolute",
+        "left": "25%",
+        "top": "25%",
+        "justify_content": "space_around",
+        "align_items": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#FAEBD7"
+      }
+    },
+    "children": [
+      {
+        "id": "red_box",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "width": "40px",
+            "height": "40px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#FF0000"
+          }
+        },
+        "children": [
+          {
+            "id": "red_box_text",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "Size!",
+                "font_size": 13,
+                "font_color": "#000000"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "blue_box",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "width": "15%",
+            "height": "15%"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#0000FF"
+          }
+        }
+      },
+      {
+        "id": "icon_image",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "30px",
+            "height": "30px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "branding/icon.png"
+          }
+        }
+      }
+    ]
+  }
+}

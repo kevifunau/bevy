@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("overflow_clip_margin.json");
+    common::run_with_json("overflow_clip_margin.ir.json");
 }

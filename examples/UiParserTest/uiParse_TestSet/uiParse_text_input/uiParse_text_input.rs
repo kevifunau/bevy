@@ -19,7 +19,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(TabNavigationPlugin)
-        .add_plugins(AiUiPlugin::from_path(bui_json_path("text_input.json")))
+        .add_plugins(AiUiPlugin::from_path(bui_json_path("text_input.ir.json")))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, text_submission);
     auto_screenshot::install(&mut app);

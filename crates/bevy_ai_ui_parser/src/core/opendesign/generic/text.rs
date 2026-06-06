@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType, ensure_state_visual},
+    model::{BuiNode, ensure_state_visual},
     opendesign::{
         stylesheet::{css_declarations, OpenDesignStylesheet},
     },
@@ -10,7 +10,7 @@ pub(crate) fn propagate_direct_text_state_visuals(node: &mut BuiNode) {
     let Some(text_index) = node
         .children
         .iter()
-        .position(|child| matches!(child.node_type, BuiNodeType::Text))
+        .position(|child| child.kind == "text")
     else {
         return;
     };
@@ -42,7 +42,7 @@ pub(crate) fn apply_inherited_text_styles(
     bui_node: &mut BuiNode,
     dom_node: roxmltree::Node<'_, '_>,
 ) {
-    if !matches!(bui_node.node_type, BuiNodeType::Text) {
+    if bui_node.kind != "text" {
         return;
     }
 

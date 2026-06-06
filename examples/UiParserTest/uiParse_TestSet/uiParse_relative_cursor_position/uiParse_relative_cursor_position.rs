@@ -15,7 +15,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "relative_cursor_position.json",
+            "relative_cursor_position.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, relative_cursor_position_system);

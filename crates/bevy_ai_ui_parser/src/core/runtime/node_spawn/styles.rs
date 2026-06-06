@@ -23,11 +23,11 @@ pub(crate) fn insert_style_components(
     entity_commands: &mut EntityCommands,
     node: &BuiNode,
 ) -> Result<(), String> {
-    if let Some(value) = &node.styles.visibility {
+    if let Some(value) = &node.layout.styles.visibility {
         entity_commands.insert(parse_visibility(value)?);
     }
-    insert_ui_transform(entity_commands, &node.styles)?;
-    if !has_ui_transform_styles(&node.styles)
+    insert_ui_transform(entity_commands, &node.layout.styles)?;
+    if !has_ui_transform_styles(&node.layout.styles)
         && node
             .state_visuals
             .values()
@@ -35,30 +35,30 @@ pub(crate) fn insert_style_components(
     {
         entity_commands.insert(UiTransform::default());
     }
-    if node.styles.relative_cursor_position.unwrap_or(false) {
+    if node.layout.styles.relative_cursor_position.unwrap_or(false) {
         entity_commands.insert(RelativeCursorPosition::default());
     }
-    if let Some(target_name) = &node.styles.ui_target_camera {
+    if let Some(target_name) = &node.layout.styles.ui_target_camera {
         entity_commands.insert(PendingUiTargetCamera {
             target_name: target_name.clone(),
         });
     }
-    if let Some(value) = &node.styles.tab_group {
+    if let Some(value) = &node.layout.styles.tab_group {
         entity_commands.insert(parse_tab_group(value)?);
     }
-    if let Some(value) = &node.styles.tab_index {
+    if let Some(value) = &node.layout.styles.tab_index {
         entity_commands.insert(TabIndex(parse_integer(value)?));
     }
-    if node.styles.auto_focus.unwrap_or(false) {
+    if node.layout.styles.auto_focus.unwrap_or(false) {
         entity_commands.insert(AutoFocus);
     }
-    if node.styles.fixed_node.unwrap_or(false) {
+    if node.layout.styles.fixed_node.unwrap_or(false) {
         entity_commands.insert(FixedNode);
     }
-    if let Some(value) = &node.styles.z_index {
+    if let Some(value) = &node.layout.styles.z_index {
         entity_commands.insert(ZIndex(parse_integer(value)?));
     }
-    if let Some(value) = &node.styles.global_z_index {
+    if let Some(value) = &node.layout.styles.global_z_index {
         entity_commands.insert(GlobalZIndex(parse_integer(value)?));
     }
 

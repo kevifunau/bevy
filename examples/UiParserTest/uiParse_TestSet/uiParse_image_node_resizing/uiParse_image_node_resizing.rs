@@ -36,7 +36,7 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "image_node_resizing.json",
+            "image_node_resizing.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, resize_image_groups);

@@ -16,7 +16,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "ui_target_camera.json",
+            "ui_target_camera.ir.json",
         )))
         .add_systems(Startup, setup_cameras)
         .add_systems(Update, install_press_observers_system);

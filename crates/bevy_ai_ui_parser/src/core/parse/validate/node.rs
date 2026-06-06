@@ -27,18 +27,18 @@ pub(super) fn validate_bui_node(
         return Err(format!("{path}: duplicate id '{}'.", node.id));
     }
 
-    validate_styles(&node.styles).map_err(|error| format!("{path}: {error}"))?;
-    validate_visuals(&node.visuals).map_err(|error| format!("{path}: {error}"))?;
-    if let Some(value) = &node.styles.visibility {
+    validate_styles(&node.layout.styles).map_err(|error| format!("{path}: {error}"))?;
+    validate_visuals(&node.style.visuals).map_err(|error| format!("{path}: {error}"))?;
+    if let Some(value) = &node.layout.styles.visibility {
         parse_visibility(value).map_err(|error| format!("{path}: {error}"))?;
     }
-    if let Some(value) = &node.styles.z_index {
+    if let Some(value) = &node.layout.styles.z_index {
         parse_integer(value).map_err(|error| format!("{path}: {error}"))?;
     }
-    if let Some(value) = &node.styles.global_z_index {
+    if let Some(value) = &node.layout.styles.global_z_index {
         parse_integer(value).map_err(|error| format!("{path}: {error}"))?;
     }
-    validate_visuals(&node.visuals).map_err(|error| format!("{path}: {error}"))?;
+    validate_visuals(&node.style.visuals).map_err(|error| format!("{path}: {error}"))?;
     validate_actions(&node.actions).map_err(|error| format!("{path}: {error}"))?;
     validate_bindings(&node.bindings).map_err(|error| format!("{path}: {error}"))?;
     validate_state_visuals(&node.state_visuals).map_err(|error| format!("{path}: {error}"))?;
@@ -46,42 +46,45 @@ pub(super) fn validate_bui_node(
     validate_progress_semantics(node).map_err(|error| format!("{path}: {error}"))?;
     validate_list_semantics(node).map_err(|error| format!("{path}: {error}"))?;
 
-    match node.node_type {
+    match node.node_type() {
         BuiNodeType::Node | BuiNodeType::Button | BuiNodeType::Toggle => {
-            reject_config(node.text_config.is_some(), path, "text_config")?;
-            if !matches!(node.node_type, BuiNodeType::Node | BuiNodeType::Button) {
-                reject_config(node.image_config.is_some(), path, "image_config")?;
+            reject_config(node.content.text.is_some(), path, "text_config")?;
+            if !matches!(node.node_type(), BuiNodeType::Node | BuiNodeType::Button) {
+                reject_config(node.content.image.is_some(), path, "image_config")?;
             }
-            if let Some(image_config) = &node.image_config {
+            if let Some(image_config) = &node.content.image {
                 validate_image_config(image_config).map_err(|error| format!("{path}: {error}"))?;
             }
         }
         BuiNodeType::Text => {
             let text_config = node
-                .text_config
+                .content
+                .text
                 .as_ref()
                 .ok_or_else(|| format!("{path}: Text requires text_config."))?;
             validate_text_config(text_config).map_err(|error| format!("{path}: {error}"))?;
             reject_config(text_config.placeholder.is_some(), path, "text_config.placeholder")?;
-            reject_config(node.image_config.is_some(), path, "image_config")?;
+            reject_config(node.content.image.is_some(), path, "image_config")?;
             reject_children(node, path)?;
         }
         BuiNodeType::TextInput => {
             let text_config = node
-                .text_config
+                .content
+                .text
                 .as_ref()
                 .ok_or_else(|| format!("{path}: TextInput requires text_config."))?;
             validate_text_config(text_config).map_err(|error| format!("{path}: {error}"))?;
-            reject_config(node.image_config.is_some(), path, "image_config")?;
+            reject_config(node.content.image.is_some(), path, "image_config")?;
             reject_children(node, path)?;
         }
         BuiNodeType::Image => {
             let image_config = node
-                .image_config
+                .content
+                .image
                 .as_ref()
                 .ok_or_else(|| format!("{path}: Image requires image_config."))?;
             validate_image_config(image_config).map_err(|error| format!("{path}: {error}"))?;
-            reject_config(node.text_config.is_some(), path, "text_config")?;
+            reject_config(node.content.text.is_some(), path, "text_config")?;
             reject_children(node, path)?;
         }
     }

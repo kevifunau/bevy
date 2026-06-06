@@ -1,0 +1,53 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "UnsupportedTextInputNavigation",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "text_input_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "align_items": "center",
+        "flex_direction": "column",
+        "padding": "20px",
+        "row_gap": "16px",
+        "margin": "auto"
+      }
+    },
+    "children": [
+      {
+        "id": "input_container",
+        "kind": "node",
+        "markers": [
+          "AutoFocus",
+          "TabGroup_0"
+        ],
+        "layout": {
+          "styles": {
+            "column_gap": "16px"
+          }
+        },
+        "children": [
+          {
+            "id": "left_input",
+            "kind": "text_input",
+            "layout": {
+              "styles": {
+                "tab_index": "0"
+              }
+            },
+            "content": {
+              "text": {
+                "content": "",
+                "font_size": 24,
+                "font_color": "#FFFFFF"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

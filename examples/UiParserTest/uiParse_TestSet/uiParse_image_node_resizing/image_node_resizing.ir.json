@@ -1,0 +1,203 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "ImageNodeResizing",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "image_node_resizing_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "display": "grid",
+        "width": "100%",
+        "height": "100%",
+        "grid_template_rows": "min_content(1) flex(1,1)"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#FFFFFF"
+      }
+    },
+    "children": [
+      {
+        "id": "resize_status_text",
+        "kind": "text",
+        "layout": {
+          "styles": {
+            "grid_row": "span(1)",
+            "padding": "6px"
+          }
+        },
+        "content": {
+          "text": {
+            "content": "Compare NodeImageMode(Auto, Stretch) press `Up`/`Down` to resize height, press `Left`/`Right` to resize width\nheight : 30%, width : 75%",
+            "font_size": 14,
+            "font_color": "#000000"
+          }
+        }
+      },
+      {
+        "id": "image_groups_container",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "display": "flex",
+            "grid_row": "span(1)",
+            "flex_direction": "column",
+            "justify_content": "space_around",
+            "padding": "10px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#000000"
+          }
+        },
+        "children": [
+          {
+            "id": "auto_image_group",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "width": "75%",
+                "height": "30%",
+                "justify_content": "start"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#DBEAFE"
+              }
+            },
+            "children": [
+              {
+                "id": "auto_icon_1",
+                "kind": "image",
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "auto"
+                  }
+                }
+              },
+              {
+                "id": "auto_icon_2",
+                "kind": "image",
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "auto"
+                  }
+                }
+              },
+              {
+                "id": "auto_icon_3",
+                "kind": "image",
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "auto"
+                  }
+                }
+              },
+              {
+                "id": "auto_icon_4",
+                "kind": "image",
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "auto"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "stretch_image_group",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "width": "75%",
+                "height": "30%",
+                "justify_content": "start"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#DBEAFE"
+              }
+            },
+            "children": [
+              {
+                "id": "stretch_icon_10",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "width": "10%",
+                    "height": "100%"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "stretch"
+                  }
+                }
+              },
+              {
+                "id": "stretch_icon_20",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "width": "20%",
+                    "height": "100%"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "stretch"
+                  }
+                }
+              },
+              {
+                "id": "stretch_icon_30",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "width": "30%",
+                    "height": "100%"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "stretch"
+                  }
+                }
+              },
+              {
+                "id": "stretch_icon_40",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "width": "40%",
+                    "height": "100%"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "branding/icon.png",
+                    "image_mode": "stretch"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

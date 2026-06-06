@@ -24,7 +24,7 @@ fn main() {
             ..default()
         }))
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "window_fallthrough.json",
+            "window_fallthrough.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, toggle_mouse_passthrough);

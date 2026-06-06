@@ -27,7 +27,8 @@ fn opendesign_inherited_line_height_applies_to_text_nodes() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 
@@ -59,7 +60,8 @@ fn opendesign_inherited_unitless_line_height_preserves_relative_value() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 
@@ -98,7 +100,8 @@ fn opendesign_inherited_white_space_nowrap_sets_no_wrap_linebreak() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 
@@ -128,7 +131,8 @@ fn opendesign_inherited_white_space_normal_enables_wrapping() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 
@@ -158,7 +162,8 @@ fn opendesign_inherited_font_weight_preserves_numeric_weight() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 
@@ -187,7 +192,8 @@ fn opendesign_inherited_font_weight_maps_bold_keyword() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let text_node = find_bui_node(&document.root, "span_text_1");
     let text_config = text_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .expect("span text should have text config");
 

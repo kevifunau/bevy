@@ -3,71 +3,89 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    kind_to_node_type,
-    node_type_to_kind,
-    BuiActionBinding,
-    BuiBinding,
-    BuiDocument,
     BuiImageConfig,
-    BuiNode,
-    BuiStateVisual,
     BuiStyles,
     BuiTextConfig,
     BuiVisuals,
 };
 
-const EXPECTED_VERSION: &str = "2.0";
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub(crate) enum BuiNodeType {
+    Node,
+    Text,
+    TextInput,
+    Toggle,
+    Button,
+    Image,
+}
+
+pub(crate) fn kind_to_node_type(kind: &str) -> Result<BuiNodeType, String> {
+    match kind {
+        "node" => Ok(BuiNodeType::Node),
+        "text" => Ok(BuiNodeType::Text),
+        "text_input" => Ok(BuiNodeType::TextInput),
+        "toggle" => Ok(BuiNodeType::Toggle),
+        "button" => Ok(BuiNodeType::Button),
+        "image" => Ok(BuiNodeType::Image),
+        other => Err(format!("Unsupported BUI kind '{other}'.")),
+    }
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrDocument {
+pub struct BuiActionBinding {
+    pub(crate) event: String,
+    pub(crate) emit: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct BuiBinding {
+    pub target: String,
+    pub source: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct BuiStateVisual {
+    #[serde(default, skip_serializing_if = "BuiStyles::is_empty")]
+    pub(crate) styles: BuiStyles,
+    #[serde(default, skip_serializing_if = "BuiVisuals::is_empty")]
+    pub(crate) visuals: BuiVisuals,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) text_color: Option<String>,
+}
+
+impl BuiStateVisual {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.styles.is_empty() && self.visuals.is_empty() && self.text_color.is_none()
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct BuiDocument {
     pub(crate) version: String,
     pub(crate) scene_name: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) imports: Vec<String>,
-    #[serde(default, skip_serializing_if = "BuiIrStateModel::is_empty")]
-    state_model: BuiIrStateModel,
-    #[serde(default, skip_serializing_if = "BuiIrResources::is_empty")]
-    resources: BuiIrResources,
-    pub(crate) root: BuiIrNode,
+    #[serde(default, skip_serializing_if = "BuiStateModel::is_empty")]
+    pub(crate) state_model: BuiStateModel,
+    #[serde(default, skip_serializing_if = "BuiResources::is_empty")]
+    pub(crate) resources: BuiResources,
+    pub(crate) root: BuiNode,
 }
 
-impl BuiIrDocument {
-    pub(crate) fn from_compat_document(document: &BuiDocument) -> Self {
-        Self {
-            version: "3.0-ir".to_string(),
-            scene_name: document.scene_name.clone(),
-            imports: Vec::new(),
-            state_model: BuiIrStateModel::default(),
-            resources: BuiIrResources::default(),
-            root: BuiIrNode::from_compat_node(&document.root),
-        }
-    }
 
-    pub(crate) fn into_compat_document(self) -> Result<BuiDocument, String> {
-        if self.version != "3.0-ir" {
-            return Err(format!(
-                "Unsupported BUI IR version '{}'. This parser expects version 3.0-ir.",
-                self.version
-            ));
-        }
-
-        Ok(BuiDocument {
-            version: EXPECTED_VERSION.to_string(),
-            scene_name: self.scene_name,
-            root: self.root.into_compat_node()?,
-        })
-    }
-}
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-struct BuiIrStateModel {
+pub(crate) struct BuiStateModel {
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     values: HashMap<String, String>,
 }
 
-impl BuiIrStateModel {
+impl BuiStateModel {
     fn is_empty(&self) -> bool {
         self.values.is_empty()
     }
@@ -75,12 +93,12 @@ impl BuiIrStateModel {
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-struct BuiIrResources {
+pub(crate) struct BuiResources {
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     values: HashMap<String, String>,
 }
 
-impl BuiIrResources {
+impl BuiResources {
     fn is_empty(&self) -> bool {
         self.values.is_empty()
     }
@@ -88,7 +106,7 @@ impl BuiIrResources {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrNode {
+pub(crate) struct BuiNode {
     pub(crate) id: String,
     pub(crate) kind: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -99,84 +117,34 @@ pub(crate) struct BuiIrNode {
     pub(crate) actions: Vec<BuiActionBinding>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) bindings: Vec<BuiBinding>,
-    #[serde(default, skip_serializing_if = "BuiIrLayout::is_empty")]
-    pub(crate) layout: BuiIrLayout,
-    #[serde(default, skip_serializing_if = "BuiIrStyle::is_empty")]
-    pub(crate) style: BuiIrStyle,
-    #[serde(default, skip_serializing_if = "BuiIrContent::is_empty")]
-    pub(crate) content: BuiIrContent,
-    #[serde(default, skip_serializing_if = "BuiIrSemantics::is_empty")]
-    pub(crate) semantics: BuiIrSemantics,
+    #[serde(default, skip_serializing_if = "BuiLayout::is_empty")]
+    pub(crate) layout: BuiLayout,
+    #[serde(default, skip_serializing_if = "BuiStyle::is_empty")]
+    pub(crate) style: BuiStyle,
+    #[serde(default, skip_serializing_if = "BuiContent::is_empty")]
+    pub(crate) content: BuiContent,
+    #[serde(default, skip_serializing_if = "BuiSemantics::is_empty")]
+    pub(crate) semantics: BuiSemantics,
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub(crate) state_visuals: HashMap<String, BuiStateVisual>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub(crate) children: Vec<BuiIrNode>,
+    pub(crate) children: Vec<BuiNode>,
 }
 
-impl BuiIrNode {
-    fn from_compat_node(node: &BuiNode) -> Self {
-        Self {
-            id: node.id.clone(),
-            kind: node_type_to_kind(&node.node_type).to_string(),
-            markers: node.custom_tags.clone(),
-            classes: Vec::new(),
-            actions: node.actions.clone(),
-            bindings: node.bindings.clone(),
-            layout: BuiIrLayout {
-                styles: node.styles.clone(),
-            },
-            style: BuiIrStyle {
-                visuals: node.visuals.clone(),
-            },
-            content: BuiIrContent::from_compat_node(node),
-            semantics: BuiIrSemantics::from_compat_node(node),
-            state_visuals: node.state_visuals.clone(),
-            children: node
-                .children
-                .iter()
-                .map(BuiIrNode::from_compat_node)
-                .collect(),
-        }
-    }
-
-    fn into_compat_node(self) -> Result<BuiNode, String> {
-        let mut custom_tags = self.markers;
-        custom_tags.extend(self.classes.into_iter().map(|class| format!("class:{class}")));
-
-        Ok(BuiNode {
-            id: self.id,
-            node_type: kind_to_node_type(&self.kind)?,
-            custom_tags,
-            actions: self.actions,
-            bindings: self.bindings,
-            tab_group_name: self.semantics.tab_group_name,
-            tab_binding_source: self.semantics.tab_binding_source,
-            tab_value: self.semantics.tab_value,
-            progress_binding_source: self.semantics.progress_binding_source,
-            progress_fill: self.semantics.progress_fill,
-            list_binding_source: self.semantics.list_binding_source,
-            state_visuals: self.state_visuals,
-            styles: self.layout.styles,
-            visuals: self.style.visuals,
-            text_config: self.content.text,
-            image_config: self.content.image,
-            children: self
-                .children
-                .into_iter()
-                .map(BuiIrNode::into_compat_node)
-                .collect::<Result<Vec<_>, _>>()?,
-        })
+impl BuiNode {
+    pub(crate) fn node_type(&self) -> BuiNodeType {
+        kind_to_node_type(&self.kind).unwrap_or(BuiNodeType::Node)
     }
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrLayout {
+pub(crate) struct BuiLayout {
     #[serde(default, skip_serializing_if = "BuiStyles::is_empty")]
     pub(crate) styles: BuiStyles,
 }
 
-impl BuiIrLayout {
+impl BuiLayout {
     fn is_empty(&self) -> bool {
         self.styles.is_empty()
     }
@@ -184,12 +152,12 @@ impl BuiIrLayout {
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrStyle {
+pub(crate) struct BuiStyle {
     #[serde(default, skip_serializing_if = "BuiVisuals::is_empty")]
     pub(crate) visuals: BuiVisuals,
 }
 
-impl BuiIrStyle {
+impl BuiStyle {
     fn is_empty(&self) -> bool {
         self.visuals.is_empty()
     }
@@ -197,21 +165,14 @@ impl BuiIrStyle {
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrContent {
+pub(crate) struct BuiContent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) text: Option<BuiTextConfig>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) image: Option<BuiImageConfig>,
 }
 
-impl BuiIrContent {
-    fn from_compat_node(node: &BuiNode) -> Self {
-        Self {
-            text: node.text_config.clone(),
-            image: node.image_config.clone(),
-        }
-    }
-
+impl BuiContent {
     pub(crate) fn is_empty(&self) -> bool {
         self.text.is_none() && self.image.is_none()
     }
@@ -219,33 +180,22 @@ impl BuiIrContent {
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct BuiIrSemantics {
+pub(crate) struct BuiSemantics {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    tab_group_name: Option<String>,
+    pub(crate) tab_group_name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    tab_binding_source: Option<String>,
+    pub(crate) tab_binding_source: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    tab_value: Option<String>,
+    pub(crate) tab_value: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    progress_binding_source: Option<String>,
+    pub(crate) progress_binding_source: Option<String>,
     #[serde(default, skip_serializing_if = "is_false")]
-    progress_fill: bool,
+    pub(crate) progress_fill: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    list_binding_source: Option<String>,
+    pub(crate) list_binding_source: Option<String>,
 }
 
-impl BuiIrSemantics {
-    fn from_compat_node(node: &BuiNode) -> Self {
-        Self {
-            tab_group_name: node.tab_group_name.clone(),
-            tab_binding_source: node.tab_binding_source.clone(),
-            tab_value: node.tab_value.clone(),
-            progress_binding_source: node.progress_binding_source.clone(),
-            progress_fill: node.progress_fill,
-            list_binding_source: node.list_binding_source.clone(),
-        }
-    }
-
+impl BuiSemantics {
     fn is_empty(&self) -> bool {
         self.tab_group_name.is_none()
             && self.tab_binding_source.is_none()
@@ -258,4 +208,60 @@ impl BuiIrSemantics {
 
 fn is_false(value: &bool) -> bool {
     !*value
+}
+
+pub(crate) fn bui_node(id: &str, kind: &str) -> BuiNode {
+    BuiNode {
+        id: id.to_string(),
+        kind: kind.to_string(),
+        markers: Vec::new(),
+        classes: Vec::new(),
+        actions: Vec::new(),
+        bindings: Vec::new(),
+        layout: BuiLayout::default(),
+        style: BuiStyle::default(),
+        content: BuiContent::default(),
+        semantics: BuiSemantics::default(),
+        state_visuals: HashMap::new(),
+        children: Vec::new(),
+    }
+}
+
+pub(crate) fn text_node(
+    id: &str,
+    content: impl Into<String>,
+    font_size: f32,
+    font_color: &str,
+    font_path: Option<&str>,
+) -> BuiNode {
+    let mut node = bui_node(id, "text");
+    node.content.text = Some(BuiTextConfig {
+        content: content.into(),
+        placeholder: None,
+        font_size,
+        font_color: font_color.to_string(),
+        font_path: font_path.map(str::to_string),
+        font_weight: None,
+        line_height: None,
+        letter_spacing: None,
+        text_align: None,
+        text_shadow: None,
+        linebreak: None,
+        visible_width: None,
+        allow_newlines: None,
+    });
+    node
+}
+
+pub(crate) fn ensure_state_visual<'a>(
+    node: &'a mut BuiNode,
+    state: &str,
+) -> &'a mut BuiStateVisual {
+    node.state_visuals
+        .entry(state.to_string())
+        .or_insert_with(|| BuiStateVisual {
+            styles: BuiStyles::default(),
+            visuals: BuiVisuals::default(),
+            text_color: None,
+        })
 }

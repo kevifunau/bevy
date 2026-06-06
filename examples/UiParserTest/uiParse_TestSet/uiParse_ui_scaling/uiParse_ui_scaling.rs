@@ -22,7 +22,7 @@ fn main() {
             target_scale: 1.0,
             target_time: Timer::new(Duration::from_millis(SCALE_TIME), TimerMode::Once),
         })
-        .add_plugins(AiUiPlugin::from_path(bui_json_path("ui_scaling.json")))
+        .add_plugins(AiUiPlugin::from_path(bui_json_path("ui_scaling.ir.json")))
         .add_systems(Startup, setup_camera)
         .add_systems(
             Update,

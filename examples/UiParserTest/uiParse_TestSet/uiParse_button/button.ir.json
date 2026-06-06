@@ -1,0 +1,56 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "ButtonWidget",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "button_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    },
+    "children": [
+      {
+        "id": "main_button",
+        "kind": "button",
+        "layout": {
+          "styles": {
+            "width": "150px",
+            "height": "65px",
+            "justify_content": "center",
+            "align_items": "center"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#000000",
+            "border_color": "#FFFFFF",
+            "border_width": "5px",
+            "border_radius": "9999px"
+          }
+        },
+        "children": [
+          {
+            "id": "main_button_text",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "Button",
+                "font_size": 33,
+                "font_color": "#E6E6E6",
+                "font_path": "fonts/FiraSans-Bold.ttf",
+                "text_shadow": {}
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -7,17 +7,17 @@ fn opendesign_media_query_rules_resolve_into_bui_styles() {
         opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     let panel = find_bui_node(&document.root, "panel");
-    assert_eq!(panel.styles.width.as_deref(), Some("720px"));
+    assert_eq!(panel.layout.styles.width.as_deref(), Some("720px"));
 
     let card = find_bui_node(&document.root, "shop_card_hut");
     assert_eq!(
-        card.styles.grid_template_columns.as_deref(),
+        card.layout.styles.grid_template_columns.as_deref(),
         Some("flex(1) px(140)")
     );
 
     let item_main = find_bui_node(&document.root, "item_main_hut");
     assert_eq!(
-        item_main.styles.grid_template_columns.as_deref(),
+        item_main.layout.styles.grid_template_columns.as_deref(),
         Some("px(104) flex(1)")
     );
 }
@@ -67,7 +67,8 @@ fn opendesign_text_nodes_do_not_inherit_button_transform_styles() {
     }
     assert_eq!(
         buy_text
-            .text_config
+            .content
+            .text
             .as_ref()
             .map(|config| config.font_color.as_str()),
         Some("#ffffff")
@@ -81,15 +82,15 @@ fn unsupported_pseudo_element_selectors_do_not_leak_into_node_styles() {
 
     let scroll = find_bui_node(&document.root, "shop_scroll");
     assert_eq!(
-        scroll.visuals.background_color, None,
+        scroll.style.visuals.background_color, None,
         "::-webkit-scrollbar-thumb background should not leak into shop_scroll"
     );
     assert_eq!(
-        scroll.visuals.border_radius, None,
+        scroll.style.visuals.border_radius, None,
         "::-webkit-scrollbar-thumb border-radius should not leak into shop_scroll"
     );
     assert_eq!(
-        scroll.styles.width, None,
+        scroll.layout.styles.width, None,
         "::-webkit-scrollbar width should not leak into shop_scroll"
     );
 }

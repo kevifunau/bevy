@@ -60,24 +60,24 @@ pub(super) fn validate_state_visuals(states: &HashMap<String, BuiStateVisual>) -
 }
 
 pub(super) fn validate_tab_semantics(node: &BuiNode) -> Result<(), String> {
-    if let Some(group) = &node.tab_group_name
+    if let Some(group) = &node.semantics.tab_group_name
         && group.trim().is_empty()
     {
         return Err("tab_group_name must not be empty when present.".to_string());
     }
-    if let Some(source) = &node.tab_binding_source {
+    if let Some(source) = &node.semantics.tab_binding_source {
         if source.trim().is_empty() {
             return Err("tab_binding_source must not be empty when present.".to_string());
         }
-        if node.tab_group_name.is_none() {
+        if node.semantics.tab_group_name.is_none() {
             return Err("tab_binding_source requires tab_group_name.".to_string());
         }
     }
-    if let Some(value) = &node.tab_value {
+    if let Some(value) = &node.semantics.tab_value {
         if value.trim().is_empty() {
             return Err("tab_value must not be empty when present.".to_string());
         }
-        if node.tab_group_name.is_none() {
+        if node.semantics.tab_group_name.is_none() {
             return Err("tab_value requires tab_group_name.".to_string());
         }
     }
@@ -85,23 +85,23 @@ pub(super) fn validate_tab_semantics(node: &BuiNode) -> Result<(), String> {
 }
 
 pub(super) fn validate_progress_semantics(node: &BuiNode) -> Result<(), String> {
-    if let Some(source) = &node.progress_binding_source
+    if let Some(source) = &node.semantics.progress_binding_source
         && source.trim().is_empty()
     {
         return Err("progress_binding_source must not be empty when present.".to_string());
     }
-    if node.progress_fill && !matches!(node.node_type, BuiNodeType::Node) {
+    if node.semantics.progress_fill && !matches!(node.node_type(), BuiNodeType::Node) {
         return Err("progress_fill is only supported on Node nodes.".to_string());
     }
     Ok(())
 }
 
 pub(super) fn validate_list_semantics(node: &BuiNode) -> Result<(), String> {
-    if let Some(source) = &node.list_binding_source {
+    if let Some(source) = &node.semantics.list_binding_source {
         if source.trim().is_empty() {
             return Err("list_binding_source must not be empty when present.".to_string());
         }
-        if !matches!(node.node_type, BuiNodeType::Node) {
+        if !matches!(node.node_type(), BuiNodeType::Node) {
             return Err("list_binding_source is only supported on Node nodes.".to_string());
         }
         if node.children.is_empty() {

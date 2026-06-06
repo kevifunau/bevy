@@ -1,24 +1,22 @@
 //! Core BUI/IR data model modules.
 
-pub mod bui;
 pub mod ir;
 pub mod style;
 pub mod visual;
 
-pub(crate) use bui::{
+pub(crate) use ir::{
     bui_node,
     ensure_state_visual,
-    kind_to_node_type,
-    node_type_to_kind,
     text_node,
     BuiActionBinding,
     BuiBinding,
     BuiDocument,
     BuiNode,
     BuiNodeType,
+    BuiResources,
+    BuiStateModel,
     BuiStateVisual,
 };
-pub(crate) use ir::BuiIrDocument;
 pub(crate) use style::BuiStyles;
 pub(crate) use visual::{
     BuiBackgroundImageLayout,

@@ -1,0 +1,470 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "AnchorLayout",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "anchor_layout_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "padding": "12px",
+        "row_gap": "12px",
+        "column_gap": "12px",
+        "display": "grid",
+        "grid_template_columns": "fr(3,1)",
+        "grid_template_rows": "fr(3,1)"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#000000"
+      }
+    },
+    "children": [
+      {
+        "id": "cell_left_top",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_left_top",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "left": "10px",
+                "top": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_left_top",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "left: 10px\ntop: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_center_top",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_center_top",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "margin": "0px auto",
+                "top": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_center_top",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "center: 10px\ntop: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_right_top",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_right_top",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "right": "10px",
+                "top": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_right_top",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "right: 10px\ntop: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_left_center",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_left_center",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "left": "10px",
+                "margin": "auto 0px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_left_center",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "left: 10px\ncenter: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_center_center",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_center_center",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "margin": "auto"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_center_center",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "center: 10px\ncenter: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_right_center",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_right_center",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "right": "10px",
+                "margin": "auto 0px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_right_center",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "right: 10px\ncenter: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_left_bottom",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_left_bottom",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "left": "10px",
+                "bottom": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_left_bottom",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "left: 10px\nbottom: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_center_bottom",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_center_bottom",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "margin": "0px auto",
+                "bottom": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_center_bottom",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "center: 10px\nbottom: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cell_right_bottom",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "grid_column": "span(1)",
+            "grid_row": "span(1)"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#404040"
+          }
+        },
+        "children": [
+          {
+            "id": "label_right_bottom",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "display": "block",
+                "padding": "1px 5px",
+                "position_type": "absolute",
+                "right": "10px",
+                "bottom": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FF1159"
+              }
+            },
+            "children": [
+              {
+                "id": "text_right_bottom",
+                "kind": "text",
+                "content": {
+                  "text": {
+                    "content": "right: 10px\nbottom: 10px",
+                    "font_size": 14,
+                    "font_color": "#000000",
+                    "font_path": "fonts/FiraSans-Bold.ttf"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

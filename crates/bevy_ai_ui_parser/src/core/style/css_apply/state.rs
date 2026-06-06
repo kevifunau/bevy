@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiNode, BuiNodeType, BuiStateVisual, BuiStyles, BuiVisuals},
+    model::{BuiNode, BuiStateVisual, BuiStyles, BuiVisuals},
     style::{
         css_effects::{
             apply_state_filter_color_adjustment, apply_state_opacity_fallback,
@@ -17,8 +17,8 @@ use super::helpers::normalize_css_value;
 
 fn direct_text_child_font_color(node: &BuiNode) -> Option<&str> {
     node.children.iter().find_map(|child| {
-        matches!(child.node_type, BuiNodeType::Text)
-            .then_some(child.text_config.as_ref())
+        (child.kind == "text")
+            .then_some(child.content.text.as_ref())
             .flatten()
             .map(|text_config| text_config.font_color.as_str())
     })
@@ -45,17 +45,18 @@ pub(crate) fn apply_opendesign_state_declaration(
     if value.is_empty() || value.contains("!important") {
         return;
     }
-    if matches!(bui_node.node_type, BuiNodeType::Text)
+    if bui_node.kind == "text"
         && !matches!(name, "color" | "opacity" | "filter")
     {
         return;
     }
 
     let mut needs_normal_scale_reset = false;
-    let base_background_color = bui_node.visuals.background_color.clone();
-    let base_border_color = bui_node.visuals.border_color.clone();
+    let base_background_color = bui_node.style.visuals.background_color.clone();
+    let base_border_color = bui_node.style.visuals.border_color.clone();
     let base_text_color = bui_node
-        .text_config
+        .content
+        .text
         .as_ref()
         .map(|text_config| text_config.font_color.clone())
         .or_else(|| direct_text_child_font_color(bui_node).map(ToString::to_string));

@@ -86,17 +86,17 @@ pub(crate) fn apply_css_transform(bui_node: &mut BuiNode, value: &str) {
         match func.name {
             "translate" | "translateX" | "translateY" => {
                 if let Some(translation) = css_transform_translation(func) {
-                    bui_node.styles.ui_translation = Some(translation);
+                    bui_node.layout.styles.ui_translation = Some(translation);
                 }
             }
             "rotate" => {
                 if let Some(rotation) = css_transform_rotation(func) {
-                    bui_node.styles.ui_rotation = Some(rotation);
+                    bui_node.layout.styles.ui_rotation = Some(rotation);
                 }
             }
             "scale" => {
                 if let Some(scale) = css_transform_scale(&func.raw) {
-                    bui_node.styles.ui_scale = Some(scale);
+                    bui_node.layout.styles.ui_scale = Some(scale);
                 }
             }
             _ => {}

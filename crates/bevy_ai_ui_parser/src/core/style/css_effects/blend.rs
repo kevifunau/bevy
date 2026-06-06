@@ -9,7 +9,7 @@ use crate::core::{
 pub(crate) fn scale_helper_child_opacity(node: &mut BuiNode, opacity: f32) {
     let opacity = opacity.clamp(0.0, 1.0);
     for child in &mut node.children {
-        let is_effect_helper = child.custom_tags.iter().any(|tag| {
+        let is_effect_helper = child.markers.iter().any(|tag| {
             tag == "css-gradient-overlay"
                 || tag == "css-box-shadow-layer"
                 || tag == "css-filter-drop-shadow"
@@ -20,17 +20,17 @@ pub(crate) fn scale_helper_child_opacity(node: &mut BuiNode, opacity: f32) {
             continue;
         }
 
-        if let Some(color) = &mut child.visuals.background_color
+        if let Some(color) = &mut child.style.visuals.background_color
             && let Some(scaled) = scale_hex_alpha(color, opacity)
         {
             *color = scaled;
         }
-        if let Some(color) = &mut child.visuals.border_color
+        if let Some(color) = &mut child.style.visuals.border_color
             && let Some(scaled) = scale_hex_alpha(color, opacity)
         {
             *color = scaled;
         }
-        if let Some(box_shadow) = &mut child.visuals.box_shadow
+        if let Some(box_shadow) = &mut child.style.visuals.box_shadow
             && let Some(color) = &mut box_shadow.color
             && let Some(scaled) = scale_hex_alpha(color, opacity)
         {
@@ -45,19 +45,19 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
         return;
     }
 
-    if let Some(color) = &mut bui_node.visuals.background_color
+    if let Some(color) = &mut bui_node.style.visuals.background_color
         && let Some(mixed) = css_multiply_blend_fallback_color(color)
     {
         *color = mixed;
     }
 
-    if let Some(color) = &mut bui_node.visuals.border_color
+    if let Some(color) = &mut bui_node.style.visuals.border_color
         && let Some(mixed) = css_multiply_blend_fallback_color(color)
     {
         *color = mixed;
     }
 
-    if let Some(box_shadow) = &mut bui_node.visuals.box_shadow
+    if let Some(box_shadow) = &mut bui_node.style.visuals.box_shadow
         && let Some(color) = &mut box_shadow.color
         && let Some(mixed) = css_multiply_blend_fallback_color(color)
     {
@@ -65,7 +65,7 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
     }
 
     for child in &mut bui_node.children {
-        let is_effect_helper = child.custom_tags.iter().any(|tag| {
+        let is_effect_helper = child.markers.iter().any(|tag| {
             tag == "css-gradient-overlay"
                 || tag == "css-box-shadow-layer"
                 || tag == "css-filter-drop-shadow"
@@ -76,7 +76,7 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
         }
 
         let soften_scene_wash_overlay = should_soften_multiply_scene_wash_overlay(child);
-        if let Some(color) = &mut child.visuals.background_color
+        if let Some(color) = &mut child.style.visuals.background_color
             && let Some(mixed) = css_multiply_blend_fallback_color(color)
         {
             *color = mixed;
@@ -84,12 +84,12 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
                 *color = softened;
             }
         }
-        if let Some(color) = &mut child.visuals.border_color
+        if let Some(color) = &mut child.style.visuals.border_color
             && let Some(mixed) = css_multiply_blend_fallback_color(color)
         {
             *color = mixed;
         }
-        if let Some(box_shadow) = &mut child.visuals.box_shadow
+        if let Some(box_shadow) = &mut child.style.visuals.box_shadow
             && let Some(color) = &mut box_shadow.color
             && let Some(mixed) = css_multiply_blend_fallback_color(color)
         {
@@ -99,11 +99,11 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
 }
 
 fn should_soften_multiply_scene_wash_overlay(node: &BuiNode) -> bool {
-    if node.styles.ui_rotation.is_some() {
+    if node.layout.styles.ui_rotation.is_some() {
         return false;
     }
 
-    let Some(color) = node.visuals.background_color.as_deref() else {
+    let Some(color) = node.style.visuals.background_color.as_deref() else {
         return false;
     };
     let Some((_, _, _, alpha)) = css_hex_rgba(color) else {
@@ -113,23 +113,23 @@ fn should_soften_multiply_scene_wash_overlay(node: &BuiNode) -> bool {
         return false;
     }
 
-    if matches!(node.visuals.border_radius.as_deref(), Some("50%") | Some("999px")) {
+    if matches!(node.style.visuals.border_radius.as_deref(), Some("50%") | Some("999px")) {
         return false;
     }
 
     let horizontal_full_span =
-        style_is_zero(node.styles.left.as_deref()) && style_is_zero(node.styles.right.as_deref());
+        style_is_zero(node.layout.styles.left.as_deref()) && style_is_zero(node.layout.styles.right.as_deref());
     let vertical_full_span =
-        style_is_zero(node.styles.top.as_deref()) && style_is_zero(node.styles.bottom.as_deref());
+        style_is_zero(node.layout.styles.top.as_deref()) && style_is_zero(node.layout.styles.bottom.as_deref());
     let width_coverage = overlay_axis_coverage(
-        node.styles.left.as_deref(),
-        node.styles.right.as_deref(),
-        node.styles.width.as_deref(),
+        node.layout.styles.left.as_deref(),
+        node.layout.styles.right.as_deref(),
+        node.layout.styles.width.as_deref(),
     );
     let height_coverage = overlay_axis_coverage(
-        node.styles.top.as_deref(),
-        node.styles.bottom.as_deref(),
-        node.styles.height.as_deref(),
+        node.layout.styles.top.as_deref(),
+        node.layout.styles.bottom.as_deref(),
+        node.layout.styles.height.as_deref(),
     );
 
     (vertical_full_span && width_coverage >= 0.28)

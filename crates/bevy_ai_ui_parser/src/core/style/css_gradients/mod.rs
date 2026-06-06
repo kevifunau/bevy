@@ -5,7 +5,7 @@ mod shared;
 mod stops;
 
 use crate::core::{
-    model::{BuiNode, BuiNodeType, bui_node},
+    model::{BuiNode, bui_node},
 };
 
 pub(crate) use conic::css_simple_conic_gradient_overlays;
@@ -33,8 +33,8 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
         return;
     }
 
-    if node.styles.position_type.is_none() {
-        node.styles.position_type = Some("relative".to_string());
+    if node.layout.styles.position_type.is_none() {
+        node.layout.styles.position_type = Some("relative".to_string());
     }
 
     for (index, spec) in specs.into_iter().enumerate().rev() {
@@ -43,11 +43,11 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
             continue;
         }
 
-        let mut overlay = bui_node(&overlay_id, BuiNodeType::Node);
-        overlay.custom_tags.push("css-gradient-overlay".to_string());
-        overlay.styles.position_type = Some("absolute".to_string());
-        overlay.styles.z_index = Some(format!("-{}", index + 1));
-        overlay.visuals.background_color = Some(spec.color.clone());
+        let mut overlay = bui_node(&overlay_id, "node");
+        overlay.markers.push("css-gradient-overlay".to_string());
+        overlay.layout.styles.position_type = Some("absolute".to_string());
+        overlay.layout.styles.z_index = Some(format!("-{}", index + 1));
+        overlay.style.visuals.background_color = Some(spec.color.clone());
 
         match spec.kind {
             SimpleGradientOverlayKind::Linear {
@@ -58,28 +58,28 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
             } => {
                 match direction {
                     SimpleGradientOverlayDirection::LeftToRight => {
-                        overlay.styles.left = Some(format!("{:.0}%", start_ratio * 100.0));
-                        overlay.styles.right = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
-                        overlay.styles.top = Some("0".to_string());
-                        overlay.styles.bottom = Some("0".to_string());
+                        overlay.layout.styles.left = Some(format!("{:.0}%", start_ratio * 100.0));
+                        overlay.layout.styles.right = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.top = Some("0".to_string());
+                        overlay.layout.styles.bottom = Some("0".to_string());
                     }
                     SimpleGradientOverlayDirection::RightToLeft => {
-                        overlay.styles.left = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
-                        overlay.styles.right = Some(format!("{:.0}%", start_ratio * 100.0));
-                        overlay.styles.top = Some("0".to_string());
-                        overlay.styles.bottom = Some("0".to_string());
+                        overlay.layout.styles.left = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.right = Some(format!("{:.0}%", start_ratio * 100.0));
+                        overlay.layout.styles.top = Some("0".to_string());
+                        overlay.layout.styles.bottom = Some("0".to_string());
                     }
                     SimpleGradientOverlayDirection::TopToBottom => {
-                        overlay.styles.left = Some("0".to_string());
-                        overlay.styles.right = Some("0".to_string());
-                        overlay.styles.top = Some(format!("{:.0}%", start_ratio * 100.0));
-                        overlay.styles.bottom = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.left = Some("0".to_string());
+                        overlay.layout.styles.right = Some("0".to_string());
+                        overlay.layout.styles.top = Some(format!("{:.0}%", start_ratio * 100.0));
+                        overlay.layout.styles.bottom = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
                     }
                     SimpleGradientOverlayDirection::BottomToTop => {
-                        overlay.styles.left = Some("0".to_string());
-                        overlay.styles.right = Some("0".to_string());
-                        overlay.styles.top = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
-                        overlay.styles.bottom = Some(format!("{:.0}%", start_ratio * 100.0));
+                        overlay.layout.styles.left = Some("0".to_string());
+                        overlay.layout.styles.right = Some("0".to_string());
+                        overlay.layout.styles.top = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.bottom = Some(format!("{:.0}%", start_ratio * 100.0));
                     }
                 }
                 if let Some(css_angle) = diagonal_angle {
@@ -90,7 +90,7 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                         SimpleGradientOverlayDirection::BottomToTop => 0.0,
                     };
                     let rotation = css_angle - dominant_axis_degrees;
-                    overlay.styles.ui_rotation = Some(format!("{:.1}deg", rotation));
+                    overlay.layout.styles.ui_rotation = Some(format!("{:.1}deg", rotation));
                 }
             }
             SimpleGradientOverlayKind::Radial {
@@ -99,11 +99,11 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 width,
                 height,
             } => {
-                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
-                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
-                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
-                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
-                overlay.visuals.border_radius = Some("50%".to_string());
+                overlay.layout.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.layout.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.layout.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.layout.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.style.visuals.border_radius = Some("50%".to_string());
             }
             SimpleGradientOverlayKind::RadialRing {
                 left,
@@ -112,14 +112,14 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 height,
                 border_width,
             } => {
-                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
-                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
-                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
-                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
-                overlay.visuals.background_color = Some("transparent".to_string());
-                overlay.visuals.border_color = Some(spec.color.clone());
-                overlay.visuals.border_width = Some(format!("{:.1}%", border_width * 100.0));
-                overlay.visuals.border_radius = Some("50%".to_string());
+                overlay.layout.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.layout.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.layout.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.layout.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.style.visuals.background_color = Some("transparent".to_string());
+                overlay.style.visuals.border_color = Some(spec.color.clone());
+                overlay.style.visuals.border_width = Some(format!("{:.1}%", border_width * 100.0));
+                overlay.style.visuals.border_radius = Some("50%".to_string());
             }
             SimpleGradientOverlayKind::ConicArc {
                 left,
@@ -128,12 +128,12 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 height,
                 rotation_degrees,
             } => {
-                overlay.styles.left = Some(format!("{:.0}%", left * 100.0));
-                overlay.styles.top = Some(format!("{:.0}%", top * 100.0));
-                overlay.styles.width = Some(format!("{:.0}%", width * 100.0));
-                overlay.styles.height = Some(format!("{:.0}%", height * 100.0));
-                overlay.styles.ui_rotation = Some(format!("{rotation_degrees:.1}deg"));
-                overlay.visuals.border_radius = Some("999px".to_string());
+                overlay.layout.styles.left = Some(format!("{:.0}%", left * 100.0));
+                overlay.layout.styles.top = Some(format!("{:.0}%", top * 100.0));
+                overlay.layout.styles.width = Some(format!("{:.0}%", width * 100.0));
+                overlay.layout.styles.height = Some(format!("{:.0}%", height * 100.0));
+                overlay.layout.styles.ui_rotation = Some(format!("{rotation_degrees:.1}deg"));
+                overlay.style.visuals.border_radius = Some("999px".to_string());
             }
         }
 

@@ -27,7 +27,8 @@ use crate::core::{
     runtime::components::BuiRootEntity,
     model::BuiDocument,
     opendesign::html::opendesign_html_to_bui_document,
-    parse::document::parse_bui_document,
+    parse::ir::parse_bui_document,
+    parse::validate::validate_bui_document,
     runtime::{
         diagnostics::{material_shader_notice_system, spawn_error_text},
         spawn::{spawn_bui_tree, sync_background_image_layout_system},
@@ -54,14 +55,14 @@ impl AiUiPlugin {
         }
     }
 
-    /// Load an OpenDesign HTML artifact from a file path and compile it into BUI IR.
+    /// Load an OpenDesign HTML artifact from a file path and compile it into BUI.
     pub fn from_html_path(path: impl Into<PathBuf>) -> Self {
         Self {
             source: BuiSource::HtmlPath(path.into()),
         }
     }
 
-    /// Load an OpenDesign HTML artifact from an in-memory string and compile it into BUI IR.
+    /// Load an OpenDesign HTML artifact from an in-memory string and compile it into BUI.
     pub fn from_html(html: impl Into<String>) -> Self {
         Self {
             source: BuiSource::HtmlInline(html.into()),
@@ -148,9 +149,15 @@ pub(crate) fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, Strin
             let raw = fs::read_to_string(path).map_err(|error| {
                 format!("Failed to read BUI JSON '{}': {error}", path.display())
             })?;
-            parse_bui_document(&raw)
+            let document = parse_bui_document(&raw)?;
+            validate_bui_document(&document)?;
+            Ok(document)
         }
-        BuiSource::Inline(json) => parse_bui_document(json),
+        BuiSource::Inline(json) => {
+            let document = parse_bui_document(json)?;
+            validate_bui_document(&document)?;
+            Ok(document)
+        }
         BuiSource::HtmlPath(path) => {
             let raw = fs::read_to_string(path).map_err(|error| {
                 format!(

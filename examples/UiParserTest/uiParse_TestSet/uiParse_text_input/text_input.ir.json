@@ -1,0 +1,132 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "TextInput",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "text_input_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "align_items": "center",
+        "flex_direction": "column",
+        "padding": "20px",
+        "row_gap": "16px",
+        "margin": "auto"
+      }
+    },
+    "children": [
+      {
+        "id": "text_input_instructions",
+        "kind": "text",
+        "content": {
+          "text": {
+            "content": "Enter to submit text\nTab to switch inputs",
+            "font_size": 25,
+            "font_color": "#FFFFFF",
+            "font_path": "fonts/FiraSans-Bold.ttf"
+          }
+        }
+      },
+      {
+        "id": "text_input_container",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "column_gap": "16px",
+            "auto_focus": true,
+            "tab_group": "0"
+          }
+        },
+        "children": [
+          {
+            "id": "text_input_left",
+            "kind": "text_input",
+            "layout": {
+              "styles": {
+                "tab_index": "0"
+              }
+            },
+            "style": {
+              "visuals": {
+                "border_color": "#CBD5E1",
+                "border_width": "2px",
+                "background_color": "#A9A9A9"
+              }
+            },
+            "content": {
+              "text": {
+                "content": "",
+                "font_size": 24,
+                "font_color": "#FFFFFF",
+                "visible_width": 10,
+                "allow_newlines": false,
+                "linebreak": "no_wrap"
+              }
+            }
+          },
+          {
+            "id": "text_input_right",
+            "kind": "text_input",
+            "layout": {
+              "styles": {
+                "tab_index": "1"
+              }
+            },
+            "style": {
+              "visuals": {
+                "border_color": "#CBD5E1",
+                "border_width": "2px",
+                "background_color": "#A9A9A9"
+              }
+            },
+            "content": {
+              "text": {
+                "content": "",
+                "font_size": 24,
+                "font_color": "#FFFFFF",
+                "visible_width": 10,
+                "allow_newlines": false,
+                "linebreak": "no_wrap"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "text_output_box",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "width": "400px",
+            "padding": "8px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_color": "#CBD5E1",
+            "border_width": "2px"
+          }
+        },
+        "children": [
+          {
+            "id": "text_output_text",
+            "kind": "text",
+            "markers": [
+              "TextOutput"
+            ],
+            "content": {
+              "text": {
+                "content": "",
+                "font_size": 24,
+                "font_color": "#FFFFFF",
+                "linebreak": "word_or_character"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

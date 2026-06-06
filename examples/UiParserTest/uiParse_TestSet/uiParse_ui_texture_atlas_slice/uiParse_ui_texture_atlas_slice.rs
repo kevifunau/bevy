@@ -18,7 +18,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "ui_texture_atlas_slice.json",
+            "ui_texture_atlas_slice.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, button_system);

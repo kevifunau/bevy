@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("flex_layout.json");
+    common::run_with_json("flex_layout.ir.json");
 }

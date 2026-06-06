@@ -40,9 +40,9 @@ pub(crate) fn spawn_bui_node(
         insert_style_components(&mut entity_commands, node)?;
     }
 
-    let base_node = build_node(&node.styles, &node.visuals)?;
+    let base_node = build_node(&node.layout.styles, &node.style.visuals)?;
 
-    match node.node_type {
+    match node.node_type() {
         BuiNodeType::Node => {
             let mut entity_commands = commands.entity(entity);
             entity_commands.insert((base_node, FocusPolicy::Pass));
@@ -66,7 +66,7 @@ pub(crate) fn spawn_bui_node(
         BuiNodeType::Toggle => {
             let mut entity_commands = commands.entity(entity);
             entity_commands.insert((Button, Checkable, BuiToggle, base_node));
-            if node.custom_tags.iter().any(|tag| tag == "State_Checked") {
+            if node.markers.iter().any(|tag| tag == "State_Checked") {
                 entity_commands.insert(Checked);
             }
         }
@@ -83,7 +83,8 @@ pub(crate) fn spawn_bui_node(
         }
         BuiNodeType::Image => {
             let image_config = node
-                .image_config
+                .content
+                .image
                 .as_ref()
                 .ok_or_else(|| format!("Image node '{}' is missing image_config.", node.id))?;
             let image_node = build_image_node(asset_server, texture_atlases, image_config)?;
@@ -95,12 +96,12 @@ pub(crate) fn spawn_bui_node(
         }
     }
 
-    if !matches!(node.node_type, BuiNodeType::TextInput) && node.list_binding_source.is_none() {
+    if !matches!(node.node_type(), BuiNodeType::TextInput) && node.semantics.list_binding_source.is_none() {
         let mut first_text_input_child = None;
 
         for child in &node.children {
             let child_entity = spawn_bui_node(commands, asset_server, texture_atlases, child)?;
-            if first_text_input_child.is_none() && matches!(child.node_type, BuiNodeType::TextInput)
+            if first_text_input_child.is_none() && matches!(child.node_type(), BuiNodeType::TextInput)
             {
                 first_text_input_child = Some(child_entity);
             }
@@ -125,7 +126,7 @@ fn insert_optional_background_image(
     texture_atlases: &mut Assets<TextureAtlasLayout>,
     node: &BuiNode,
 ) -> Result<(), String> {
-    let Some(image_config) = &node.image_config else {
+    let Some(image_config) = &node.content.image else {
         return Ok(());
     };
 

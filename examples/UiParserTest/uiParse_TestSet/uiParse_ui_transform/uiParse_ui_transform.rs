@@ -18,7 +18,7 @@ const PRESSED_BUTTON: Color = Color::srgba(1.0, 0.0, 0.0, 1.0);
 fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
-        .add_plugins(AiUiPlugin::from_path(bui_json_path("ui_transform.json")))
+        .add_plugins(AiUiPlugin::from_path(bui_json_path("ui_transform.ir.json")))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, (button_system, translation_system));
     auto_screenshot::install(&mut app);

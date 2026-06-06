@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("transparency_ui.json");
+    common::run_with_json("transparency_ui.ir.json");
 }

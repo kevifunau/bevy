@@ -23,7 +23,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .init_resource::<InputFocus>()
-        .add_plugins(AiUiPlugin::from_path(bui_json_path("button.json")))
+        .add_plugins(AiUiPlugin::from_path(bui_json_path("button.ir.json")))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, button_system);
     auto_screenshot::install(&mut app);

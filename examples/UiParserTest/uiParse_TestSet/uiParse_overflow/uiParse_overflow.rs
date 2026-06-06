@@ -15,7 +15,7 @@ mod auto_screenshot;
 fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
-        .add_plugins(AiUiPlugin::from_path(bui_json_path("overflow.json")))
+        .add_plugins(AiUiPlugin::from_path(bui_json_path("overflow.ir.json")))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, update_highlight_borders);
     auto_screenshot::install(&mut app);

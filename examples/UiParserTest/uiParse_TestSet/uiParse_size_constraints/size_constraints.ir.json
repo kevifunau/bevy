@@ -1,0 +1,1829 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "SizeConstraints",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "size_constraints_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "justify_content": "center",
+        "align_items": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#000000"
+      }
+    },
+    "children": [
+      {
+        "id": "content_column",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "flex_direction": "column",
+            "align_items": "center",
+            "justify_content": "center"
+          }
+        },
+        "children": [
+          {
+            "id": "title_text",
+            "kind": "text",
+            "layout": {
+              "styles": {
+                "margin_bottom": "25px"
+              }
+            },
+            "content": {
+              "text": {
+                "content": "Size Constraints Example",
+                "font_size": 33,
+                "font_color": "#E6E6E6",
+                "font_path": "fonts/FiraSans-Bold.ttf"
+              }
+            }
+          },
+          {
+            "id": "bar_wrapper",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "flex_basis": "100%",
+                "align_self": "stretch",
+                "padding": "10px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FFFF00"
+              }
+            },
+            "children": [
+              {
+                "id": "bar_track",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "align_items": "stretch",
+                    "width": "100%",
+                    "height": "100px",
+                    "padding": "4px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#000000"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "bar_fill",
+                    "kind": "node",
+                    "style": {
+                      "visuals": {
+                        "background_color": "#FFFFFF"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "controls_panel",
+            "kind": "node",
+            "layout": {
+              "styles": {
+                "flex_direction": "column",
+                "align_items": "stretch",
+                "padding": "10px",
+                "margin_top": "50px"
+              }
+            },
+            "style": {
+              "visuals": {
+                "background_color": "#FFFF00"
+              }
+            },
+            "children": [
+              {
+                "id": "row_min_width_outer",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "flex_direction": "column",
+                    "padding": "2px",
+                    "align_items": "stretch"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#000000"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "row_min_width_inner",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "flex_direction": "row",
+                        "justify_content": "end",
+                        "padding": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "row_min_width_label_box",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "min_width": "200px",
+                            "max_width": "200px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "row_min_width_label",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "min_size",
+                                "font_size": 33,
+                                "font_color": "#E6E6E6",
+                                "font_path": "fonts/FiraSans-Bold.ttf"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "row_min_width_buttons",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "btn_min_width_auto",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Auto"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#FAEBD7"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_auto_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#FFFFFF"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_auto_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Auto",
+                                        "font_size": 33,
+                                        "font_color": "#000000",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_0",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_0"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_0_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_0_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "0%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_25",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_25"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_25_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_25_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "25%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_50",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_50"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_50_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_50_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "50%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_75",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_75"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_75_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_75_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "75%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_100",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_100"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_100_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_100_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "100%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_min_width_125",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MinWidth",
+                              "Value_Percent_125"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_min_width_125_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_min_width_125_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "125%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "row_flex_basis_outer",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "flex_direction": "column",
+                    "padding": "2px",
+                    "align_items": "stretch"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#000000"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "row_flex_basis_inner",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "flex_direction": "row",
+                        "justify_content": "end",
+                        "padding": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "row_flex_basis_label_box",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "min_width": "200px",
+                            "max_width": "200px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "row_flex_basis_label",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "flex_basis",
+                                "font_size": 33,
+                                "font_color": "#E6E6E6",
+                                "font_path": "fonts/FiraSans-Bold.ttf"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "row_flex_basis_buttons",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "btn_flex_basis_auto",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Auto"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#FAEBD7"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_auto_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#FFFFFF"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_auto_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Auto",
+                                        "font_size": 33,
+                                        "font_color": "#000000",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_0",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_0"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_0_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_0_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "0%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_25",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_25"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_25_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_25_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "25%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_50",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_50"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_50_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_50_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "50%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_75",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_75"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_75_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_75_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "75%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_100",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_100"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_100_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_100_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "100%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_flex_basis_125",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_FlexBasis",
+                              "Value_Percent_125"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_flex_basis_125_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_flex_basis_125_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "125%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "row_width_outer",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "flex_direction": "column",
+                    "padding": "2px",
+                    "align_items": "stretch"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#000000"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "row_width_inner",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "flex_direction": "row",
+                        "justify_content": "end",
+                        "padding": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "row_width_label_box",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "min_width": "200px",
+                            "max_width": "200px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "row_width_label",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "size",
+                                "font_size": 33,
+                                "font_color": "#E6E6E6",
+                                "font_path": "fonts/FiraSans-Bold.ttf"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "row_width_buttons",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "btn_width_auto",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Auto"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#FAEBD7"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_auto_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#FFFFFF"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_auto_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Auto",
+                                        "font_size": 33,
+                                        "font_color": "#000000",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_0",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_0"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_0_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_0_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "0%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_25",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_25"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_25_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_25_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "25%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_50",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_50"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_50_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_50_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "50%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_75",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_75"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_75_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_75_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "75%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_100",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_100"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_100_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_100_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "100%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_width_125",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_Width",
+                              "Value_Percent_125"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_width_125_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_width_125_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "125%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "row_max_width_outer",
+                "kind": "node",
+                "layout": {
+                  "styles": {
+                    "flex_direction": "column",
+                    "padding": "2px",
+                    "align_items": "stretch"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#000000"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "row_max_width_inner",
+                    "kind": "node",
+                    "layout": {
+                      "styles": {
+                        "flex_direction": "row",
+                        "justify_content": "end",
+                        "padding": "2px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "row_max_width_label_box",
+                        "kind": "node",
+                        "layout": {
+                          "styles": {
+                            "min_width": "200px",
+                            "max_width": "200px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "row_max_width_label",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "max_size",
+                                "font_size": 33,
+                                "font_color": "#E6E6E6",
+                                "font_path": "fonts/FiraSans-Bold.ttf"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "row_max_width_buttons",
+                        "kind": "node",
+                        "children": [
+                          {
+                            "id": "btn_max_width_auto",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Auto"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#FAEBD7"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_auto_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#FFFFFF"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_auto_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Auto",
+                                        "font_size": 33,
+                                        "font_color": "#000000",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_0",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_0"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_0_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_0_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "0%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_25",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_25"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_25_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_25_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "25%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_50",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_50"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_50_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_50_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "50%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_75",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_75"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_75_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_75_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "75%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_100",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_100"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_100_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_100_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "100%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "btn_max_width_125",
+                            "kind": "button",
+                            "markers": [
+                              "Constraint_MaxWidth",
+                              "Value_Percent_125"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "align_items": "center",
+                                "justify_content": "center",
+                                "margin": "0px 2px"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "2px",
+                                "border_color": "#000000"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "btn_max_width_125_inner",
+                                "kind": "node",
+                                "layout": {
+                                  "styles": {
+                                    "width": "100px",
+                                    "justify_content": "center"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "background_color": "#000080"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "btn_max_width_125_text",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "125%",
+                                        "font_size": 33,
+                                        "font_color": "#808080",
+                                        "font_path": "fonts/FiraSans-Bold.ttf"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

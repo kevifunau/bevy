@@ -1,0 +1,504 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "UiTextureSliceFlipAndTile",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "ui_texture_slice_flip_and_tile_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "justify_content": "center",
+        "align_content": "center",
+        "flex_wrap": "wrap",
+        "column_gap": "10px",
+        "row_gap": "10px"
+      }
+    },
+    "children": [
+      {
+        "id": "tile_3_3_ff",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "48px",
+            "height": "48px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_3_3_ft",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "48px",
+            "height": "48px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_3_3_tf",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "48px",
+            "height": "48px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_3_3_tt",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "48px",
+            "height": "48px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_4_ff",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_4_ft",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_4_tf",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_4_tt",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_4_ff",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_4_ft",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_4_tf",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_4_tt",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "64px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_5_ff",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_5_ft",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_5_tf",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_4_5_tt",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "64px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_5_ff",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_5_ft",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": false,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_5_tf",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": false,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      },
+      {
+        "id": "tile_5_5_tt",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "80px",
+            "height": "80px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/numbered_slices.png",
+            "image_mode": "sliced",
+            "flip_x": true,
+            "flip_y": true,
+            "slicer": {
+              "border": 16,
+              "center_scale_mode": "tile",
+              "sides_scale_mode": "tile",
+              "stretch_value": 1
+            }
+          }
+        }
+      }
+    ]
+  }
+}

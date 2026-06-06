@@ -91,9 +91,9 @@ pub(crate) fn apply_filter_blur_fallback(bui_node: &mut BuiNode, blur_radius: f3
 
     bui_node
         .children
-        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-filter-blur"));
+        .retain(|child| !child.markers.iter().any(|tag| tag == "css-filter-blur"));
 
-    if let Some(text_config) = &mut bui_node.text_config {
+    if let Some(text_config) = &mut bui_node.content.text {
         if text_config.text_shadow.is_none() {
             text_config.text_shadow = Some(BuiTextShadowConfig {
                 offset_x: Some(0.0),
@@ -110,6 +110,7 @@ pub(crate) fn apply_filter_blur_fallback(bui_node: &mut BuiNode, blur_radius: f3
     let blur_px = format!("{}px", (blur_radius * 4.0).round());
     let spread_px = format!("{}px", (blur_radius * 1.5).round());
     let fallback_color = bui_node
+        .style
         .visuals
         .background_color
         .as_deref()
@@ -129,23 +130,23 @@ pub(crate) fn apply_filter_color_adjustment(
     bui_node: &mut BuiNode,
     adjustment: CssFilterColorAdjustment,
 ) {
-    if let Some(color) = &mut bui_node.visuals.background_color
+    if let Some(color) = &mut bui_node.style.visuals.background_color
         && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
     {
         *color = adjusted;
     }
-    if let Some(color) = &mut bui_node.visuals.border_color
+    if let Some(color) = &mut bui_node.style.visuals.border_color
         && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
     {
         *color = adjusted;
     }
-    if let Some(box_shadow) = &mut bui_node.visuals.box_shadow
+    if let Some(box_shadow) = &mut bui_node.style.visuals.box_shadow
         && let Some(color) = &mut box_shadow.color
         && let Some(adjusted) = css_adjust_filter_color(color, adjustment)
     {
         *color = adjusted;
     }
-    if let Some(text_config) = &mut bui_node.text_config {
+    if let Some(text_config) = &mut bui_node.content.text {
         if let Some(adjusted) = css_adjust_filter_color(&text_config.font_color, adjustment) {
             text_config.font_color = adjusted;
         }

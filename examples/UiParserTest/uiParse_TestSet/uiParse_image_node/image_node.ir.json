@@ -1,0 +1,43 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "ImageNode",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "image_node_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    },
+    "children": [
+      {
+        "id": "bevy_icon_image",
+        "kind": "image",
+        "layout": {
+          "styles": {
+            "width": "256px",
+            "height": "256px",
+            "padding": "10px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_width": "5px",
+            "border_color": "#FFFFFF"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "branding/icon.png"
+          }
+        }
+      }
+    ]
+  }
+}

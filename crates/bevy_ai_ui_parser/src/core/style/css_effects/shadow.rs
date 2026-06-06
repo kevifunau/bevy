@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiNodeType, BuiTextShadowConfig, bui_node},
+    model::{BuiBoxShadowConfig, BuiNode, BuiTextShadowConfig, bui_node},
     style::{
         css_sizing::{css_size_tokens, is_simple_css_size},
         css_values::{css_color, split_css_layers},
@@ -162,23 +162,23 @@ pub(crate) fn css_box_shadow_layers(value: &str) -> Vec<BuiBoxShadowConfig> {
 
 pub(crate) fn apply_box_shadow_fallback(node: &mut BuiNode, value: &str) {
     node.children
-        .retain(|child| !child.custom_tags.iter().any(|tag| tag == "css-box-shadow-layer"));
+        .retain(|child| !child.markers.iter().any(|tag| tag == "css-box-shadow-layer"));
 
     let shadows = css_box_shadow_layers(value);
     if shadows.is_empty() {
-        node.visuals.box_shadow = None;
+        node.style.visuals.box_shadow = None;
         return;
     }
 
     let primary_index = shadows.iter().position(|shadow| !shadow.inset).unwrap_or(0);
-    node.visuals.box_shadow = Some(shadows[primary_index].clone());
+    node.style.visuals.box_shadow = Some(shadows[primary_index].clone());
 
     if shadows.len() == 1 {
         return;
     }
 
-    if node.styles.position_type.is_none() {
-        node.styles.position_type = Some("relative".to_string());
+    if node.layout.styles.position_type.is_none() {
+        node.layout.styles.position_type = Some("relative".to_string());
     }
 
     for (index, shadow) in shadows.into_iter().enumerate() {
@@ -200,8 +200,8 @@ pub(crate) fn push_box_shadow_layer(
     custom_tag: &str,
     id_suffix: &str,
 ) {
-    if node.styles.position_type.is_none() {
-        node.styles.position_type = Some("relative".to_string());
+    if node.layout.styles.position_type.is_none() {
+        node.layout.styles.position_type = Some("relative".to_string());
     }
 
     let layer_count = node
@@ -209,47 +209,48 @@ pub(crate) fn push_box_shadow_layer(
         .iter()
         .filter(|child| {
             child
-                .custom_tags
+                .markers
                 .iter()
                 .any(|tag| tag == "css-box-shadow-layer" || tag == "css-filter-drop-shadow")
         })
         .count();
 
-    let mut layer = bui_node(&format!("{}_{}", node.id, id_suffix), BuiNodeType::Node);
-    layer.custom_tags.push(custom_tag.to_string());
-    layer.styles.position_type = Some("absolute".to_string());
-    layer.styles.z_index = Some(format!("-{}", layer_count + 1));
-    layer.visuals.box_shadow = Some(shadow);
-    layer.visuals.border_radius = node.visuals.border_radius.clone();
+    let mut layer = bui_node(&format!("{}_{}", node.id, id_suffix), "node");
+    layer.markers.push(custom_tag.to_string());
+    layer.layout.styles.position_type = Some("absolute".to_string());
+    layer.layout.styles.z_index = Some(format!("-{}", layer_count + 1));
+    layer.style.visuals.box_shadow = Some(shadow);
+    layer.style.visuals.border_radius = node.style.visuals.border_radius.clone();
 
     if let Some((left, right, top, bottom, border_radius)) = clip_contour_shadow_bounds(node) {
-        layer.styles.left = Some(left);
-        layer.styles.right = Some(right);
-        layer.styles.top = Some(top);
-        layer.styles.bottom = Some(bottom);
-        layer.visuals.border_radius = Some(border_radius);
+        layer.layout.styles.left = Some(left);
+        layer.layout.styles.right = Some(right);
+        layer.layout.styles.top = Some(top);
+        layer.layout.styles.bottom = Some(bottom);
+        layer.style.visuals.border_radius = Some(border_radius);
     } else {
-        layer.styles.left = Some("0".to_string());
-        layer.styles.right = Some("0".to_string());
-        layer.styles.top = Some("0".to_string());
-        layer.styles.bottom = Some("0".to_string());
+        layer.layout.styles.left = Some("0".to_string());
+        layer.layout.styles.right = Some("0".to_string());
+        layer.layout.styles.top = Some("0".to_string());
+        layer.layout.styles.bottom = Some("0".to_string());
     }
 
     node.children.insert(0, layer);
 }
 
 pub(crate) fn node_has_shadow_casting_paint(node: &BuiNode) -> bool {
-    if let Some(color) = node.visuals.background_color.as_deref() && !color_is_fully_transparent(color) {
+    if let Some(color) = node.style.visuals.background_color.as_deref() && !color_is_fully_transparent(color) {
         return true;
     }
 
-    if node.image_config.is_some() {
+    if node.content.image.is_some() {
         return true;
     }
 
-    if let Some(color) = node.visuals.border_color.as_deref()
+    if let Some(color) = node.style.visuals.border_color.as_deref()
         && !color_is_fully_transparent(color)
         && node
+            .style
             .visuals
             .border_width
             .as_deref()
@@ -281,19 +282,20 @@ fn color_is_fully_transparent(color: &str) -> bool {
 
 fn clip_contour_shadow_bounds(node: &BuiNode) -> Option<(String, String, String, String, String)> {
     let contour = node.children.iter().find(|child| {
-        child.custom_tags.iter().any(|tag| tag == "css-clip-contour")
-            && child.styles.left.is_some()
-            && child.styles.right.is_some()
-            && child.styles.top.is_some()
-            && child.styles.bottom.is_some()
+        child.markers.iter().any(|tag| tag == "css-clip-contour")
+            && child.layout.styles.left.is_some()
+            && child.layout.styles.right.is_some()
+            && child.layout.styles.top.is_some()
+            && child.layout.styles.bottom.is_some()
     })?;
 
     Some((
-        contour.styles.left.clone()?,
-        contour.styles.right.clone()?,
-        contour.styles.top.clone()?,
-        contour.styles.bottom.clone()?,
+        contour.layout.styles.left.clone()?,
+        contour.layout.styles.right.clone()?,
+        contour.layout.styles.top.clone()?,
+        contour.layout.styles.bottom.clone()?,
         contour
+            .style
             .visuals
             .border_radius
             .clone()

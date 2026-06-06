@@ -7,7 +7,7 @@ use crate::core::{
         generic::opendesign_html_to_generic_bui_document,
         stylesheet::OpenDesignStylesheet,
     },
-    parse::validate::{EXPECTED_VERSION, validate_bui_document},
+    parse::validate::validate_bui_document,
     support::viewport::OpenDesignViewport,
 };
 
@@ -107,8 +107,11 @@ pub(crate) fn opendesign_html_to_bui_document(html: &str) -> Result<BuiDocument,
 
 fn finalize_document(root: crate::core::model::BuiNode) -> Result<BuiDocument, String> {
     let document = BuiDocument {
-        version: EXPECTED_VERSION.to_string(),
+        version: "3.0-ir".to_string(),
         scene_name: "OpenDesignHtmlScene".to_string(),
+        imports: Vec::new(),
+        state_model: crate::core::model::BuiStateModel::default(),
+        resources: crate::core::model::BuiResources::default(),
         root,
     };
     validate_bui_document(&document)?;

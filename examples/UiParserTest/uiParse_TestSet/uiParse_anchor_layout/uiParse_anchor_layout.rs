@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("anchor_layout.json");
+    common::run_with_json("anchor_layout.ir.json");
 }

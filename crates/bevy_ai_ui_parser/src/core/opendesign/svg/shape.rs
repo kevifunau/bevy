@@ -29,7 +29,7 @@ pub(crate) fn svg_fallback_icon(
     let signature = svg_signature(svg_node);
 
     if parent
-        .custom_tags
+        .markers
         .iter()
         .any(|tag| tag == "class:round-button")
         || signature.contains("M38 13 19 32l19 19")
@@ -94,7 +94,7 @@ fn svg_shape_fallback_icon(
 ) -> Option<&'static str> {
     let has_class = |class_name: &str| {
         parent
-            .custom_tags
+            .markers
             .iter()
             .any(|tag| tag == &format!("class:{class_name}"))
     };

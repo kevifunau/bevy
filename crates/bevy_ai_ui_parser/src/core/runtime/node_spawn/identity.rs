@@ -12,8 +12,8 @@ use crate::core::{
 pub(crate) fn insert_identity_components(entity_commands: &mut EntityCommands, node: &BuiNode) {
     entity_commands.insert((Name::new(node.id.clone()), BuiId(node.id.clone())));
 
-    if !node.custom_tags.is_empty() {
-        entity_commands.insert(BuiLogicTags(node.custom_tags.clone()));
+    if !node.markers.is_empty() {
+        entity_commands.insert(BuiLogicTags(node.markers.clone()));
     }
     if !node.actions.is_empty() {
         entity_commands.insert(BuiActions(node.actions.clone()));
@@ -26,30 +26,30 @@ pub(crate) fn insert_identity_components(entity_commands: &mut EntityCommands, n
             states: node.state_visuals.clone(),
         });
     }
-    if node.custom_tags.iter().any(|tag| tag == "State_Disabled") {
+    if node.markers.iter().any(|tag| tag == "State_Disabled") {
         entity_commands.insert(BuiDisabled);
     }
-    if let (Some(group), Some(source)) = (&node.tab_group_name, &node.tab_binding_source) {
+    if let (Some(group), Some(source)) = (&node.semantics.tab_group_name, &node.semantics.tab_binding_source) {
         entity_commands.insert(BuiTabGroupDefinition {
             group: group.clone(),
             source: source.clone(),
         });
     }
-    if let (Some(group), Some(value)) = (&node.tab_group_name, &node.tab_value) {
+    if let (Some(group), Some(value)) = (&node.semantics.tab_group_name, &node.semantics.tab_value) {
         entity_commands.insert(BuiTabItem {
             group: group.clone(),
             value: value.clone(),
         });
     }
-    if let Some(source) = &node.progress_binding_source {
+    if let Some(source) = &node.semantics.progress_binding_source {
         entity_commands.insert(BuiProgressGroup {
             source: source.clone(),
         });
     }
-    if node.progress_fill {
+    if node.semantics.progress_fill {
         entity_commands.insert(BuiProgressFill);
     }
-    if let Some(source) = &node.list_binding_source
+    if let Some(source) = &node.semantics.list_binding_source
         && let Some(template) = node.children.first()
     {
         entity_commands.insert(BuiListDefinition {

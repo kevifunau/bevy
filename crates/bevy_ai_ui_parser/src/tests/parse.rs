@@ -1,22 +1,20 @@
 use super::shared::*;
-use crate::{opendesign_html_to_bui_ir_json_str, validate_bui_ir_json_str};
-use crate::core::model::BuiNodeType;
-use crate::core::parse::validate::EXPECTED_VERSION;
-use crate::core::parse::document::parse_bui_document;
+use crate::{opendesign_html_to_bui_json_str, validate_bui_json_str};
+use crate::core::parse::ir::parse_bui_document;
 
 #[test]
 fn opendesign_ir_snapshot_can_load_through_runtime_parser() {
-    let ir_json = opendesign_html_to_bui_ir_json_str(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile to IR");
-    let document = parse_bui_document(&ir_json).expect("BUI IR should parse for runtime");
+    let bui_json = opendesign_html_to_bui_json_str(VILLAGE_SHOP_HTML)
+        .expect("OpenDesign HTML should compile to BUI JSON");
+    let document = parse_bui_document(&bui_json).expect("BUI JSON should parse for runtime");
 
-    assert_eq!(document.version, EXPECTED_VERSION);
+    assert_eq!(document.version, "3.0-ir");
 
     let panel = find_bui_node(&document.root, "panel");
-    assert_eq!(panel.styles.max_height.as_deref(), Some("648px"));
+    assert_eq!(panel.layout.styles.max_height.as_deref(), Some("648px"));
 
     let buy_button = find_bui_node(&document.root, "buy_btn_hut");
-    assert!(matches!(buy_button.node_type, BuiNodeType::Button));
+    assert!(buy_button.kind == "button");
     assert_eq!(
         buy_button
             .state_visuals
@@ -25,5 +23,5 @@ fn opendesign_ir_snapshot_can_load_through_runtime_parser() {
         Some("0.95 0.95")
     );
 
-    validate_bui_ir_json_str(&ir_json).expect("BUI IR validator should accept generated IR");
+    validate_bui_json_str(&bui_json).expect("BUI validator should accept generated BUI JSON");
 }

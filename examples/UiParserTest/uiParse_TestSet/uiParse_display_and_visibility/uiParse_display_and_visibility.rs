@@ -21,7 +21,7 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "display_and_visibility.json",
+            "display_and_visibility.ir.json",
         )))
         .add_systems(Startup, setup_camera)
         .add_systems(Update, (toggle_target_system, button_hover_system));

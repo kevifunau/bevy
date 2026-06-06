@@ -11,7 +11,7 @@ use bevy_ui::{prelude::*, widget::TextShadow, FocusPolicy};
 
 use crate::core::{
     interaction::components::{BuiTextInput, BuiTextInputMirror},
-    model::{BuiNode, BuiNodeType, BuiTextConfig},
+    model::{BuiNode, BuiTextConfig},
     style::css_parser::{parse_color, parse_linebreak, parse_text_justify, parse_text_line_height},
 };
 
@@ -22,7 +22,8 @@ pub(crate) fn spawn_text_node(
     base_node: Node,
 ) -> Result<(), String> {
     let text_config = node
-        .text_config
+        .content
+        .text
         .as_ref()
         .ok_or_else(|| format!("Text node '{}' is missing text_config.", node.id))?;
     if text_config.placeholder.is_some() {
@@ -138,15 +139,15 @@ fn insert_optional_text_style_components(
 }
 
 fn text_input_config(node: &BuiNode) -> Result<&BuiTextConfig, String> {
-    if let Some(text_config) = &node.text_config {
+    if let Some(text_config) = &node.content.text {
         return Ok(text_config);
     }
 
     node.children
         .iter()
         .find_map(|child| {
-            matches!(child.node_type, BuiNodeType::Text)
-                .then_some(child.text_config.as_ref())
+            (child.kind == "text")
+                .then_some(child.content.text.as_ref())
                 .flatten()
         })
         .ok_or_else(|| {

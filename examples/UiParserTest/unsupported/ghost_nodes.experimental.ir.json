@@ -1,0 +1,30 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "UnsupportedGhostNodes",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "ghost_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "ghost_node": true
+      }
+    },
+    "children": [
+      {
+        "id": "ghost_label",
+        "kind": "text",
+        "content": {
+          "text": {
+            "content": "Ghost nodes are intentionally unsupported in the strict BUI contract.",
+            "font_size": 18,
+            "font_color": "#FFFFFF",
+            "font_path": "fonts/FiraSans-Bold.ttf"
+          }
+        }
+      }
+    ]
+  }
+}

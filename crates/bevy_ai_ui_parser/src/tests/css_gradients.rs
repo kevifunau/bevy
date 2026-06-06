@@ -297,7 +297,7 @@ fn opendesign_inline_custom_properties_resolve_inside_background_gradients() {
     let meter_fill = find_bui_node(&document.root, "meter_fill");
 
     assert_eq!(
-        meter_fill.visuals.background_color.as_deref(),
+        meter_fill.style.visuals.background_color.as_deref(),
         Some("#31C4A4")
     );
     let overlay_colors = meter_fill
@@ -305,11 +305,11 @@ fn opendesign_inline_custom_properties_resolve_inside_background_gradients() {
         .iter()
         .filter(|child| {
             child
-                .custom_tags
+                .markers
                 .iter()
                 .any(|tag| tag == "css-gradient-overlay")
         })
-        .filter_map(|child| child.visuals.background_color.as_deref())
+        .filter_map(|child| child.style.visuals.background_color.as_deref())
         .collect::<Vec<_>>();
     assert!(
         overlay_colors.contains(&"#96E4E1"),

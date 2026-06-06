@@ -26,7 +26,7 @@ fn instantiate_list_item_template_text(template: &BuiNode, index: usize, item: &
     let mut node = template.clone();
     node.id = format!("{}__item_{index}", node.id);
 
-    if let Some(text_config) = &mut node.text_config {
+    if let Some(text_config) = &mut node.content.text {
         text_config.content = text_config.content.replace("{{item}}", item);
     }
 
@@ -47,7 +47,7 @@ fn instantiate_list_item_template_object(
     let mut node = template.clone();
     node.id = format!("{}__item_{index}", node.id);
 
-    if let Some(BuiTextConfig { content, .. }) = &mut node.text_config {
+    if let Some(BuiTextConfig { content, .. }) = &mut node.content.text {
         *content = replace_template_tokens(content, item);
     }
 

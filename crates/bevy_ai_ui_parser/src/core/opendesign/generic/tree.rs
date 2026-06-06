@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, BuiNodeType, bui_node, text_node},
+    model::{BuiActionBinding, BuiNode, bui_node, text_node},
     opendesign::{
         build::apply_opendesign_styles,
         stylesheet::OpenDesignStylesheet,
@@ -20,8 +20,8 @@ pub(crate) fn generic_append_children(
 ) {
     let before_decls = stylesheet.matching_pseudo_declarations(dom_node, "before");
     if !before_decls.is_empty() {
-        let mut pseudo_node = bui_node(&format!("{}_pseudo_before", parent.id), BuiNodeType::Node);
-        pseudo_node.custom_tags.push("pseudo:before".to_string());
+        let mut pseudo_node = bui_node(&format!("{}_pseudo_before", parent.id), "node");
+        pseudo_node.markers.push("pseudo:before".to_string());
         for (name, value) in &before_decls {
             let value = stylesheet.resolve_value(value);
             crate::core::style::css_apply::apply_opendesign_declaration(&mut pseudo_node, name, &value);
@@ -47,8 +47,8 @@ pub(crate) fn generic_append_children(
                 continue;
             }
             let id = generic_dom_id(child, id_counts);
-            let node_type = generic_node_type(child);
-            let mut child_node = generic_element_node(&id, node_type, stylesheet, child);
+            let kind = generic_node_kind(child);
+            let mut child_node = generic_element_node(&id, kind, stylesheet, child);
             generic_append_children(&mut child_node, child, stylesheet, id_counts);
             parent.children.push(child_node);
         } else if let Some(text) = child.text().map(str::trim).filter(|text| !text.is_empty()) {
@@ -70,8 +70,8 @@ pub(crate) fn generic_append_children(
 
     let after_decls = stylesheet.matching_pseudo_declarations(dom_node, "after");
     if !after_decls.is_empty() {
-        let mut pseudo_node = bui_node(&format!("{}_pseudo_after", parent.id), BuiNodeType::Node);
-        pseudo_node.custom_tags.push("pseudo:after".to_string());
+        let mut pseudo_node = bui_node(&format!("{}_pseudo_after", parent.id), "node");
+        pseudo_node.markers.push("pseudo:after".to_string());
         for (name, value) in &after_decls {
             let value = stylesheet.resolve_value(value);
             crate::core::style::css_apply::apply_opendesign_declaration(&mut pseudo_node, name, &value);
@@ -82,14 +82,14 @@ pub(crate) fn generic_append_children(
 
 pub(crate) fn generic_element_node(
     id: &str,
-    node_type: BuiNodeType,
+    kind: &str,
     stylesheet: &OpenDesignStylesheet,
     dom_node: roxmltree::Node<'_, '_>,
 ) -> BuiNode {
-    let mut node = bui_node(id, node_type);
+    let mut node = bui_node(id, kind);
 
     if let Some(classes) = dom_node.attribute("class") {
-        node.custom_tags.extend(
+        node.markers.extend(
             classes
                 .split_whitespace()
                 .filter(|class| !class.is_empty())
@@ -101,25 +101,25 @@ pub(crate) fn generic_element_node(
         .attribute("data-skill")
         .filter(|value| !value.trim().is_empty())
     {
-        node.custom_tags.push(format!("data-skill:{value}"));
+        node.markers.push(format!("data-skill:{value}"));
     }
     if let Some(value) = dom_node
         .attribute("data-equip")
         .filter(|value| !value.trim().is_empty())
     {
-        node.custom_tags.push(format!("data-equip:{value}"));
+        node.markers.push(format!("data-equip:{value}"));
     }
     if let Some(value) = dom_node
         .attribute("data-tab")
         .filter(|value| !value.trim().is_empty())
     {
-        node.custom_tags.push(format!("data-tab:{value}"));
+        node.markers.push(format!("data-tab:{value}"));
     }
     if let Some(value) = dom_node
         .attribute("aria-label")
         .filter(|value| !value.trim().is_empty())
     {
-        node.custom_tags.push(format!("aria-label:{value}"));
+        node.markers.push(format!("aria-label:{value}"));
     }
 
     if let Some(action) = dom_node.attribute("data-action") {
@@ -134,7 +134,7 @@ pub(crate) fn generic_element_node(
     node
 }
 
-fn generic_node_type(dom_node: roxmltree::Node<'_, '_>) -> BuiNodeType {
+fn generic_node_kind(dom_node: roxmltree::Node<'_, '_>) -> &'static str {
     let tag = dom_node.tag_name().name();
     if tag == "button"
         || dom_node.attribute("role") == Some("button")
@@ -142,10 +142,10 @@ fn generic_node_type(dom_node: roxmltree::Node<'_, '_>) -> BuiNodeType {
             .attribute("class")
             .is_some_and(|classes| classes.split_whitespace().any(is_button_like_class))
     {
-        return BuiNodeType::Button;
+        return "button";
     }
 
-    BuiNodeType::Node
+    "node"
 }
 
 fn is_button_like_class(class_name: &str) -> bool {
@@ -154,17 +154,17 @@ fn is_button_like_class(class_name: &str) -> bool {
 
 fn suppress_decorative_gradient_fallbacks(node: &mut BuiNode) {
     let has_class = |class_name: &str| {
-        node.custom_tags
+        node.markers
             .iter()
             .any(|tag| tag == &format!("class:{class_name}"))
     };
 
     if has_class("image-layer") {
-        node.visuals.background_color = None;
+        node.style.visuals.background_color = None;
     }
 
     if has_class("hero-glow") {
-        node.visuals.background_color = None;
+        node.style.visuals.background_color = None;
     }
 }
 

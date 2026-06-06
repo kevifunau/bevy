@@ -4,20 +4,19 @@ use std::{
     path::Path,
 };
 
-use crate::core::model::{BuiDocument, BuiNode, BuiNodeType};
+use crate::core::model::{BuiDocument, BuiNode};
 
 use super::{
     node::validate_bui_node,
 };
 use crate::core::parse::{
-    document::parse_bui_document,
-    ir::parse_bui_ir_document,
+    ir::parse_bui_document,
 };
 
-pub(crate) const EXPECTED_VERSION: &str = "2.0";
-
 pub(crate) fn validate_bui_json_str(json: &str) -> Result<(), String> {
-    parse_bui_document(json).map(|_| ())
+    parse_bui_document(json).and_then(|document| {
+        validate_bui_document(&document)
+    })
 }
 
 pub(crate) fn validate_bui_json_file(path: impl AsRef<Path>) -> Result<(), String> {
@@ -28,25 +27,10 @@ pub(crate) fn validate_bui_json_file(path: impl AsRef<Path>) -> Result<(), Strin
     validate_bui_json_str(&raw).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-pub(crate) fn validate_bui_ir_json_str(json: &str) -> Result<(), String> {
-    parse_bui_ir_document(json).and_then(|document| {
-        let compat = document.into_compat_document()?;
-        validate_bui_document(&compat)
-    })
-}
-
-pub(crate) fn validate_bui_ir_json_file(path: impl AsRef<Path>) -> Result<(), String> {
-    let path = path.as_ref();
-    let raw = fs::read_to_string(path)
-        .map_err(|error| format!("Failed to read BUI IR JSON '{}': {error}", path.display()))?;
-
-    validate_bui_ir_json_str(&raw).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 pub(crate) fn validate_bui_document(document: &BuiDocument) -> Result<(), String> {
-    if document.version != EXPECTED_VERSION {
+    if document.version != "3.0-ir" {
         return Err(format!(
-            "Unsupported BUI version '{}'. This parser expects version {EXPECTED_VERSION}.",
+            "Unsupported BUI version '{}'. This parser expects version 3.0-ir.",
             document.version
         ));
     }
@@ -55,7 +39,7 @@ pub(crate) fn validate_bui_document(document: &BuiDocument) -> Result<(), String
         return Err("BUI scene_name must not be empty.".to_string());
     }
 
-    if !matches!(document.root.node_type, BuiNodeType::Node) {
+    if document.root.kind != "node" {
         return Err("BUI root must be a Node.".to_string());
     }
 
@@ -67,7 +51,7 @@ pub(super) fn reject_children(node: &BuiNode, path: &str) -> Result<(), String> 
     if !node.children.is_empty() {
         return Err(format!(
             "{path}: {:?} nodes cannot have children.",
-            node.node_type
+            node.node_type()
         ));
     }
     Ok(())

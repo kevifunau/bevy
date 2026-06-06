@@ -1,0 +1,159 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "UiTextureAtlasSlice",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "ui_texture_atlas_slice_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    },
+    "children": [
+      {
+        "id": "sliced_button_0",
+        "kind": "button",
+        "layout": {
+          "styles": {
+            "width": "150px",
+            "height": "150px",
+            "justify_content": "center",
+            "align_items": "center",
+            "margin": "20px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/border_sheet.png",
+            "image_mode": "sliced",
+            "atlas": {
+              "tile_width": 50,
+              "tile_height": 50,
+              "columns": 6,
+              "rows": 6,
+              "padding_x": 2,
+              "padding_y": 2,
+              "index": 0
+            },
+            "slicer": {
+              "border": 24,
+              "max_corner_scale": 1
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "sliced_button_0_text",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "Button",
+                "font_size": 33,
+                "font_color": "#E6E6E6",
+                "font_path": "fonts/FiraSans-Bold.ttf"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "sliced_button_7",
+        "kind": "button",
+        "layout": {
+          "styles": {
+            "width": "300px",
+            "height": "150px",
+            "justify_content": "center",
+            "align_items": "center",
+            "margin": "20px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/border_sheet.png",
+            "image_mode": "sliced",
+            "atlas": {
+              "tile_width": 50,
+              "tile_height": 50,
+              "columns": 6,
+              "rows": 6,
+              "padding_x": 2,
+              "padding_y": 2,
+              "index": 7
+            },
+            "slicer": {
+              "border": 24,
+              "max_corner_scale": 1
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "sliced_button_7_text",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "Button",
+                "font_size": 33,
+                "font_color": "#E6E6E6",
+                "font_path": "fonts/FiraSans-Bold.ttf"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "sliced_button_13",
+        "kind": "button",
+        "layout": {
+          "styles": {
+            "width": "150px",
+            "height": "300px",
+            "justify_content": "center",
+            "align_items": "center",
+            "margin": "20px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "textures/fantasy_ui_borders/border_sheet.png",
+            "image_mode": "sliced",
+            "atlas": {
+              "tile_width": 50,
+              "tile_height": 50,
+              "columns": 6,
+              "rows": 6,
+              "padding_x": 2,
+              "padding_y": 2,
+              "index": 13
+            },
+            "slicer": {
+              "border": 24,
+              "max_corner_scale": 1
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "sliced_button_13_text",
+            "kind": "text",
+            "content": {
+              "text": {
+                "content": "Button",
+                "font_size": 33,
+                "font_color": "#E6E6E6",
+                "font_path": "fonts/FiraSans-Bold.ttf"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

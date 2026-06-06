@@ -1,0 +1,42 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "FixedNode",
+  "imports": [],
+  "state_model": {},
+  "resources": {},
+  "root": {
+    "id": "fixed_node_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#0000FF"
+      }
+    },
+    "children": [
+      {
+        "id": "fixed_square",
+        "kind": "node",
+        "layout": {
+          "styles": {
+            "fixed_node": true,
+            "width": "100px",
+            "height": "100px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#FFFF00"
+          }
+        }
+      }
+    ]
+  }
+}

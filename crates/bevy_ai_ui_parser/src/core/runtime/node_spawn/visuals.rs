@@ -13,19 +13,19 @@ pub(crate) fn insert_visual_components(
     entity_commands: &mut EntityCommands,
     node: &BuiNode,
 ) -> Result<(), String> {
-    if let Some(color) = &node.visuals.background_color {
+    if let Some(color) = &node.style.visuals.background_color {
         entity_commands.insert(BackgroundColor(parse_color(color)?));
     }
 
-    if let Some(color) = &node.visuals.border_color {
+    if let Some(color) = &node.style.visuals.border_color {
         entity_commands.insert(BorderColor::all(parse_color(color)?));
     }
 
-    if let Some(box_shadow) = &node.visuals.box_shadow {
+    if let Some(box_shadow) = &node.style.visuals.box_shadow {
         entity_commands.insert(build_box_shadow(box_shadow)?);
     }
 
-    if let Some(shader_path) = &node.visuals.material_shader {
+    if let Some(shader_path) = &node.style.visuals.material_shader {
         entity_commands.insert(BuiMaterialShader {
             path: shader_path.clone(),
         });

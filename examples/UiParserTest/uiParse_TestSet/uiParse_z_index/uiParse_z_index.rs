@@ -7,5 +7,5 @@
 mod common;
 
 fn main() {
-    common::run_with_json("z_index.json");
+    common::run_with_json("z_index.ir.json");
 }

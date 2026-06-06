@@ -1,5 +1,5 @@
 use super::shared::find_bui_node;
-use crate::core::model::{BuiNodeType, bui_node};
+use crate::core::model::bui_node;
 use crate::core::opendesign::html::opendesign_html_to_bui_document;
 use crate::core::style::css_parser::apply_css_transform;
 
@@ -68,7 +68,7 @@ fn opendesign_hover_opacity_compiles_to_hovered_state_alpha_colors() {
     let text_child = button
         .children
         .iter()
-        .find(|child| matches!(child.node_type, BuiNodeType::Text))
+        .find(|child| child.kind == "text")
         .expect("button should have a direct text child");
     let hovered_text = text_child
         .state_visuals
@@ -109,7 +109,7 @@ fn direct_text_children_inherit_parent_hover_text_color_state() {
     let text_child = button
         .children
         .iter()
-        .find(|child| matches!(child.node_type, BuiNodeType::Text))
+        .find(|child| child.kind == "text")
         .expect("button should have a direct text child");
 
     let hovered = text_child
@@ -145,7 +145,7 @@ fn direct_text_children_inherit_parent_hover_opacity_text_state() {
     let text_child = button
         .children
         .iter()
-        .find(|child| matches!(child.node_type, BuiNodeType::Text))
+        .find(|child| child.kind == "text")
         .expect("button should have a direct text child");
 
     let hovered = text_child
@@ -158,17 +158,18 @@ fn direct_text_children_inherit_parent_hover_opacity_text_state() {
 
 #[test]
 fn css_transform_translate_parses_composite_values() {
-    let mut node = bui_node("test", BuiNodeType::Node);
+    let mut node = bui_node("test", "node");
     apply_css_transform(&mut node, "translate(-34%, -36%) rotate(12deg)");
-    assert_eq!(node.styles.ui_translation.as_deref(), Some("-34% -36%"));
-    assert_eq!(node.styles.ui_rotation.as_deref(), Some("12.0deg"));
+    assert_eq!(node.layout.styles.ui_translation.as_deref(), Some("-34% -36%"));
+    assert_eq!(node.layout.styles.ui_rotation.as_deref(), Some("12.0deg"));
 }
 
 #[test]
 fn css_transform_translate_parses_single_axis() {
-    let mut node = bui_node("test", BuiNodeType::Node);
+    let mut node = bui_node("test", "node");
     apply_css_transform(&mut node, "translateY(14px)");
     let translation = node
+        .layout
         .styles
         .ui_translation
         .as_deref()
@@ -238,7 +239,7 @@ fn diagonal_gradient_overlay_sets_ui_rotation_on_band() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let overlay = find_bui_node(&document.root, "box_gradient_overlay");
     assert_eq!(
-        overlay.styles.ui_rotation.as_deref(),
+        overlay.layout.styles.ui_rotation.as_deref(),
         Some("45.0deg"),
         "135deg gradient should rotate overlay by 45deg (135 - 90)"
     );
@@ -264,7 +265,7 @@ fn diagonal_keyword_gradient_sets_ui_rotation() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let overlay = find_bui_node(&document.root, "box_gradient_overlay");
     assert_eq!(
-        overlay.styles.ui_rotation.as_deref(),
+        overlay.layout.styles.ui_rotation.as_deref(),
         Some("45.0deg"),
         "to bottom right keyword should produce 135deg equivalent rotation (135 - 90)"
     );
@@ -290,8 +291,9 @@ fn css_opacity_stores_ui_opacity_and_adjusts_colors() {
 
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let crest = find_bui_node(&document.root, "crest");
-    assert_eq!(crest.styles.ui_opacity, Some(0.22));
+    assert_eq!(crest.layout.styles.ui_opacity, Some(0.22));
     let bg = crest
+        .style
         .visuals
         .background_color
         .as_deref()
@@ -322,5 +324,5 @@ fn css_opacity_on_node_without_background_stores_ui_opacity() {
 
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let ghost = find_bui_node(&document.root, "ghost");
-    assert_eq!(ghost.styles.ui_opacity, Some(0.5));
+    assert_eq!(ghost.layout.styles.ui_opacity, Some(0.5));
 }
