@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "od-design-system-project/v1",
+  "id": "bevy-ui",
+  "name": "Bevy UI",
+  "category": "Themed & Unique",
+  "description": "Game engine UI for the Bevy ECS framework. Three-tier CSS capability model (P0 Native / P1 HelperLayer / P2 Approximation). Dark-mode only. No CSS animation timeline — motion is ECS-driven.",
+  "source": {
+    "type": "github",
+    "url": "https://github.com/kevifunau/bevy"
+  },
+  "files": {
+    "design": "DESIGN.md",
+    "tokens": "tokens.css"
+  },
+  "craft": {
+    "applies": ["anti-ai-slop", "color", "accessibility-baseline"],
+    "suggested": ["state-coverage", "animation-discipline"],
+    "exemptions": ["animation-discipline", "typography-hierarchy"]
+  }
+}

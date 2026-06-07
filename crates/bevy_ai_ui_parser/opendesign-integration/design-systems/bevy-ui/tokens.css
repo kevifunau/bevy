@@ -1,0 +1,109 @@
+/*
+ * Bevy UI Design Tokens
+ *
+ * Derived from the Bevy BUI IR parser source code.
+ * Dark-mode only. Game HUD / menu system.
+ *
+ * IMPORTANT — Bevy-specific overrides:
+ *
+ *   --elev-flat   → none
+ *   --elev-ring   → 0 0 0 1px var(--border)   (ring outline, NO blur shadow)
+ *   --elev-raised → 0 0 0 1px var(--border)   (ring outline, NO blur shadow)
+ *
+ *   Bevy UI has no native box-shadow blur rendering.
+ *   Elevation is achieved via border outlines only.
+ *   Any box-shadow here uses ZERO blur radius (ring outlines).
+ *
+ *   --focus-ring  → 0 0 0 2px var(--accent)   (ring outline, NO blur shadow)
+ *
+ *   For P0-only output, prefer border-color changes for focus
+ *   instead of box-shadow rings.
+ */
+
+:root {
+  /* ── Surface (Background) ── */
+  --bg:                  #111111;
+  --surface:             #1c1c1c;
+  --surface-warm:        var(--surface);
+
+  /* ── Foreground ── */
+  --fg:                  #ffffff;
+  --fg-2:                var(--fg);
+  --muted:               #888888;
+  --meta:                var(--muted);
+
+  /* ── Border ── */
+  --border:              #333333;
+  --border-soft:         var(--border);
+
+  /* ── Accent (Interactive) ── */
+  --accent:              #f97316;
+  --accent-on:           #000000;
+  --accent-hover:        #e8790e;
+  --accent-active:       #d97006;
+
+  /* ── Semantic ── */
+  --success:             #22c55e;
+  --warn:                #fbbf24;
+  --danger:              #ef4444;
+
+  /* ── Font Families ── */
+  --font-display:        "Inter", "Helvetica", "Arial", sans-serif;
+  --font-body:           "Inter", "Helvetica", "Arial", sans-serif;
+  --font-mono:           ui-monospace, "Menlo", "Monaco", "Courier", monospace;
+
+  /* ── Type Scale ── */
+  --text-xs:             12px;
+  --text-sm:             14px;
+  --text-base:           16px;
+  --text-lg:             20px;
+  --text-xl:             24px;
+  --text-2xl:            32px;
+  --text-3xl:            36px;
+  --text-4xl:            48px;
+
+  /* ── Leading & Tracking ── */
+  --leading-body:        1.4;
+  --leading-tight:       1.0;
+  --tracking-display:    0;
+
+  /* ── Spacing ── */
+  --space-1:             4px;
+  --space-2:             8px;
+  --space-3:             12px;
+  --space-4:             16px;
+  --space-5:             20px;
+  --space-6:             24px;
+  --space-8:             32px;
+  --space-12:            48px;
+
+  /* ── Section Vertical Padding (Responsive) ── */
+  --section-y-desktop:   48px;
+  --section-y-tablet:    32px;
+  --section-y-phone:     24px;
+
+  /* ── Radius ── */
+  --radius-sm:           6px;
+  --radius-md:           8px;
+  --radius-lg:           12px;
+  --radius-pill:         9999px;
+
+  /* ── Elevation (NO blur shadow — Bevy UI renders ring outlines only) ── */
+  --elev-flat:           none;
+  --elev-ring:           0 0 0 1px var(--border);
+  --elev-raised:         0 0 0 1px var(--border);
+
+  /* ── Focus (NO blur shadow — ring outline only) ── */
+  --focus-ring:          0 0 0 2px var(--accent);
+
+  /* ── Motion (ECS-driven, not CSS animation) ── */
+  --motion-fast:         150ms;
+  --motion-base:         200ms;
+  --ease-standard:       cubic-bezier(0.2, 0, 0, 1);
+
+  /* ── Layout ── */
+  --container-max:                1920px;
+  --container-gutter-desktop:     24px;
+  --container-gutter-tablet:      16px;
+  --container-gutter-phone:       12px;
+}

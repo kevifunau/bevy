@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bevy UI — Component Showcase</title>
+<style>
+:root {
+  /* ── Surface (Background) ── */
+  --bg:                  #111111;
+  --surface:             #1c1c1c;
+  --surface-warm:        var(--surface);
+
+  /* ── Foreground ── */
+  --fg:                  #ffffff;
+  --fg-2:                var(--fg);
+  --muted:               #888888;
+  --meta:                var(--muted);
+
+  /* ── Border ── */
+  --border:              #333333;
+  --border-soft:         var(--border);
+
+  /* ── Accent (Interactive) ── */
+  --accent:              #f97316;
+  --accent-on:           #000000;
+  --accent-hover:        #e8790e;
+  --accent-active:       #d97006;
+
+  /* ── Semantic ── */
+  --success:             #22c55e;
+  --warn:                #fbbf24;
+  --danger:              #ef4444;
+
+  /* ── Font Families ── */
+  --font-display:        "Inter", "Helvetica", "Arial", sans-serif;
+  --font-body:           "Inter", "Helvetica", "Arial", sans-serif;
+  --font-mono:           ui-monospace, "Menlo", "Monaco", "Courier", monospace;
+
+  /* ── Type Scale ── */
+  --text-2xs:            10px;
+  --text-xs:             12px;
+  --text-sm:             14px;
+  --text-base:           16px;
+  --text-lg:             18px;
+  --text-xl:             20px;
+  --text-2xl:            24px;
+  --text-3xl:            36px;
+  --text-4xl:            48px;
+
+  /* ── Leading & Tracking ── */
+  --leading-body:        1.4;
+  --leading-tight:       1.0;
+  --tracking-display:    0;
+
+  /* ── Spacing ── */
+  --space-1:             4px;
+  --space-2:             8px;
+  --space-3:             12px;
+  --space-4:             16px;
+  --space-5:             20px;
+  --space-6:             24px;
+  --space-8:             32px;
+  --space-10:            40px;
+  --space-12:            48px;
+
+  /* ── Section Vertical Padding (Responsive) ── */
+  --section-y-desktop:   48px;
+  --section-y-tablet:    32px;
+  --section-y-phone:     24px;
+
+  /* ── Radius ── */
+  --radius-sm:           6px;
+  --radius-md:           8px;
+  --radius-lg:           12px;
+  --radius-pill:         9999px;
+
+  /* ── Elevation (NO blur shadow — Bevy UI renders ring outlines only) ── */
+  --elev-flat:           none;
+  --elev-ring:           0 0 0 1px var(--border);
+  --elev-raised:         0 0 0 1px var(--border);
+
+  /* ── Focus (NO blur shadow — ring outline only) ── */
+  --focus-ring:          0 0 0 2px var(--accent);
+
+  /* ── Motion (ECS-driven, not CSS animation) ── */
+  --motion-fast:         150ms;
+  --motion-base:         200ms;
+  --ease-standard:       cubic-bezier(0.2, 0, 0, 1);
+
+  /* ── Layout ── */
+  --container-max:                1920px;
+  --container-gutter-desktop:     24px;
+  --container-gutter-tablet:      16px;
+  --container-gutter-phone:       12px;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  margin: 0;
+  padding: var(--space-6);
+}
+
+.section {
+  margin-bottom: var(--space-10);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-2);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* ── 1. Buttons ── */
+
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-on);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  cursor: pointer;
+}
+
+.btn-primary[data-action]:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn-primary[data-action]:active {
+  background-color: var(--accent-active);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  cursor: pointer;
+}
+
+.btn-ghost[data-action]:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-disabled {
+  background-color: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  cursor: not-allowed;
+}
+
+/* ── 2. Panel / Card ── */
+
+.panel {
+  background-color: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  color: var(--fg);
+  margin-bottom: var(--space-3);
+}
+
+.panel-body {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+  color: var(--muted);
+}
+
+/* ── 3. Health Bar ── */
+
+.health-bar-track {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 200px;
+  height: var(--space-3);
+  overflow: hidden;
+}
+
+.health-bar-fill {
+  background-color: var(--success);
+  height: var(--space-3);
+  width: 72%;
+}
+
+.health-bar-fill--danger {
+  background-color: var(--danger);
+  height: var(--space-3);
+  width: 25%;
+}
+
+.health-bar-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+  margin-bottom: var(--space-1);
+}
+
+/* ── 4. Tab Navigation ── */
+
+.tab-nav {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-item {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+}
+
+.tab-item[data-tab]:hover {
+  color: var(--fg);
+}
+
+.tab-item--selected {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── 5. Data Readout ── */
+
+.data-readout {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+
+.data-readout-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+  letter-spacing: var(--tracking-display);
+}
+
+.data-readout-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--leading-tight);
+  color: var(--fg);
+  letter-spacing: var(--tracking-display);
+}
+
+/* ── 6. Toggle ── */
+
+.toggle-track {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  width: 36px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding: var(--space-1);
+  cursor: pointer;
+}
+
+.toggle-track--checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle-knob {
+  background-color: var(--fg);
+  border-radius: var(--radius-pill);
+  width: 12px;
+  height: 12px;
+}
+
+.toggle-track--checked .toggle-knob {
+  background-color: var(--accent-on);
+  margin-left: auto;
+}
+
+.toggle-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+}
+
+/* ── 7. Typography ── */
+
+.typo-display {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg);
+}
+
+.typo-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg);
+}
+
+.typo-body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--fg-2);
+}
+
+.typo-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+}
+
+.typo-micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-tight);
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- ── 1. Buttons ── -->
+<section class="section">
+  <h2 class="section-title">Buttons</h2>
+  <div class="row">
+    <button class="btn-primary" data-action="click-primary">Primary</button>
+    <button class="btn-ghost" data-action="click-ghost">Ghost</button>
+    <button class="btn-disabled" data-action="click-disabled" disabled>Disabled</button>
+  </div>
+</section>
+
+<!-- ── 2. Panel / Card ── -->
+<section class="section">
+  <h2 class="section-title">Panel / Card</h2>
+  <div class="panel">
+    <div class="panel-title">System Status</div>
+    <div class="panel-body">All subsystems operational. No anomalies detected in the last 12 cycles.</div>
+  </div>
+</section>
+
+<!-- ── 3. Health Bar ── -->
+<section class="section">
+  <h2 class="section-title">Health Bar</h2>
+  <div>
+    <div class="health-bar-label">HP 72/100</div>
+    <div class="health-bar-track">
+      <div class="health-bar-fill"></div>
+    </div>
+  </div>
+  <div>
+    <div class="health-bar-label">HP 25/100</div>
+    <div class="health-bar-track">
+      <div class="health-bar-fill--danger"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. Tab Navigation ── -->
+<section class="section">
+  <h2 class="section-title">Tab Navigation</h2>
+  <nav class="tab-nav">
+    <button class="tab-item tab-item--selected" data-tab="main_nav" data-action="select-tab">Overview</button>
+    <button class="tab-item" data-tab="main_nav" data-action="select-tab">Inventory</button>
+    <button class="tab-item" data-tab="main_nav" data-action="select-tab">Settings</button>
+  </nav>
+</section>
+
+<!-- ── 5. Data Readout ── -->
+<section class="section">
+  <h2 class="section-title">Data Readout</h2>
+  <div class="row">
+    <div class="data-readout">
+      <span class="data-readout-label">FPS</span>
+      <span class="data-readout-value">60</span>
+    </div>
+    <div class="data-readout">
+      <span class="data-readout-label">MEM</span>
+      <span class="data-readout-value">2.4 GB</span>
+    </div>
+    <div class="data-readout">
+      <span class="data-readout-label">CPU</span>
+      <span class="data-readout-value">34%</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. Toggle ── -->
+<section class="section">
+  <h2 class="section-title">Toggle</h2>
+  <div class="row">
+    <div class="toggle-track" data-action="toggle-audio">
+      <div class="toggle-knob"></div>
+    </div>
+    <span class="toggle-label">Audio Off</span>
+    <div class="toggle-track toggle-track--checked" data-action="toggle-shadows">
+      <div class="toggle-knob"></div>
+    </div>
+    <span class="toggle-label">Shadows On</span>
+  </div>
+</section>
+
+<!-- ── 7. Typography ── -->
+<section class="section">
+  <h2 class="section-title">Typography</h2>
+  <div class="typo-display">Display — 48px</div>
+  <div class="typo-heading">Heading — 24px</div>
+  <div class="typo-body">Body — 16px. The primary reading size for in-game dialogue, item descriptions, and panel content.</div>
+  <div class="typo-label">Label — 12px</div>
+  <div class="typo-micro">Micro — 10px</div>
+</section>
+
+</body>
+</html>
