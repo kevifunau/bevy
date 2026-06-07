@@ -34,11 +34,51 @@ src/core/
   runtime/          — 运行时层
     spawn.rs, node_spawn/, plugin.rs, text.rs
   interaction/      — 交互层
-    components.rs, list.rs
+    components.rs, list.rs, schedule.rs, state_init.rs
+    actions.rs, bindings.rs, progress.rs, state.rs, state_visual.rs, tabs.rs, text_input.rs, toggle.rs, types.rs
   support/          — 辅助工具层
     tree.rs         — find_bui_node_ref/mut
   api.rs            — 公共 API 导出
 ```
+
+## 系统管线架构 (架构优化重构后)
+```
+Update schedule:
+  ┌─ 无依赖系统 ──────────────────────────────────────────────┐
+  │  material_shader_notice_system                            │
+  │  sync_background_image_layout_system                     │
+  │  dispatch_bui_actions_system                             │
+  │  text_input_proxy_focus_system                           │
+  │  sync_text_input_mirror_system                           │
+  │  resolve_ui_target_camera_system                         │
+  └───────────────────────────────────────────────────────────┘
+
+  ┌─ BuiSystems::DataUpdate (.before UiSystems::Prepare) ───┐
+  │  emit_initial_bui_binding_updates_system (首帧初始化)    │
+  │  → dispatch_bui_tab_selection_system                    │
+  │  → apply_bui_state_updates_system                       │
+  │     BuiStateSet → BuiStateStore → BuiBindingUpdate     │
+  └───────────────────────────────────────────────────────────┘
+
+  ┌─ BuiSystems::BindingSync (.before UiSystems::Prepare) ──┐
+  │  apply_bui_binding_updates_system                       │
+  │  sync_bui_list_groups_system (增量 diff)                │
+  │  sync_bui_progress_groups_system                        │
+  │  sync_bui_tab_selected_state_system                     │
+  └───────────────────────────────────────────────────────────┘
+
+  ┌─ BuiSystems::VisualResolve (.before UiSystems::Prepare) ┐
+  │  toggle_interaction_system                              │
+  │  → apply_bui_visual_states_system                      │
+  │  → update_toggle_visual_system                         │
+  └───────────────────────────────────────────────────────────┘
+
+PostUpdate schedule (Bevy native):
+  UiSystems::Prepare → Propagate → Content → Layout → PostLayout → Stack
+```
+
+Startup:
+  spawn_bui_scene → seed_state_model (注入 state_model 默认值到 BuiStateStore)
 
 ## 数据模型 (BuiDocument — 3.0-IR 格式)
 ```
@@ -82,3 +122,8 @@ pub fn validate_bui_json_file(path: &str) -> Result<(), String>
 - BuiNodeType enum 保留为运行时辅助 (从 kind 字段映射)，不作为 serde 类型
 - node_type() 方法提供 enum 匹配，kind 字段用于字符串比较
 - 新 BuiNode 结构与旧 2.x 完全不同 (有 layout/style/content/semantics 子结构)
+- BuiSystems 三阶段管线: DataUpdate → BindingSync → VisualResolve, 全部 .before(UiSystems::Prepare)
+- state_model 默认值在 spawn 时注入 BuiStateStore (String→BuiBindingValue::Text)
+- emit_initial_bui_binding_updates_system 首帧发出初始 BuiBindingUpdate 消息
+- list sync 增量 diff: 保留已有子实体+更新 Text, 只 despawn/spawn 差量
+- schema 目录: bui.schema.json (IR 契约, 唯一格式)

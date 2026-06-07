@@ -8,6 +8,7 @@ use bevy_asset::{AssetServer, Assets};
 use bevy_ecs::prelude::*;
 use bevy_image::TextureAtlasLayout;
 use bevy_log::{error, info};
+use bevy_ui::UiSystems;
 
 use crate::core::{
     interaction::{
@@ -15,14 +16,16 @@ use crate::core::{
         bindings::apply_bui_binding_updates_system,
         list::sync_bui_list_groups_system,
         progress::sync_bui_progress_groups_system,
+        schedule::{configure_bui_system_sets, BuiSystems},
         state::apply_bui_state_updates_system,
+        state_init::emit_initial_bui_binding_updates_system,
         state_visual::apply_bui_visual_states_system,
         tabs::{dispatch_bui_tab_selection_system, sync_bui_tab_selected_state_system},
         text_input::{sync_text_input_mirror_system, text_input_proxy_focus_system},
         toggle::{
             resolve_ui_target_camera_system, toggle_interaction_system, update_toggle_visual_system,
         },
-        types::{BuiActionTriggered, BuiBindingUpdate, BuiStateSet, BuiStateStore},
+        types::{BuiActionTriggered, BuiBindingUpdate, BuiBindingValue, BuiStateSet, BuiStateStore},
     },
     runtime::components::BuiRootEntity,
     model::BuiDocument,
@@ -72,6 +75,8 @@ impl AiUiPlugin {
 
 impl Plugin for AiUiPlugin {
     fn build(&self, app: &mut App) {
+        configure_bui_system_sets(app);
+
         app.insert_resource(AiUiSource(self.source.clone()))
             .init_resource::<BuiStateStore>()
             .add_message::<BuiActionTriggered>()
@@ -83,21 +88,46 @@ impl Plugin for AiUiPlugin {
                 (
                     material_shader_notice_system,
                     sync_background_image_layout_system,
+                    dispatch_bui_actions_system,
                     text_input_proxy_focus_system,
                     sync_text_input_mirror_system,
-                    dispatch_bui_tab_selection_system,
-                    sync_bui_tab_selected_state_system,
-                    sync_bui_progress_groups_system,
-                    sync_bui_list_groups_system,
-                    toggle_interaction_system,
-                    update_toggle_visual_system,
-                    apply_bui_visual_states_system,
-                    dispatch_bui_actions_system,
-                    apply_bui_state_updates_system,
-                    apply_bui_binding_updates_system,
                     resolve_ui_target_camera_system,
                 ),
+            )
+            .add_systems(
+                Update,
+                (
+                    emit_initial_bui_binding_updates_system,
+                    dispatch_bui_tab_selection_system,
+                    apply_bui_state_updates_system,
+                )
+                    .chain()
+                    .in_set(BuiSystems::DataUpdate),
+            )
+            .add_systems(
+                Update,
+                (
+                    apply_bui_binding_updates_system,
+                    sync_bui_list_groups_system,
+                    sync_bui_progress_groups_system,
+                    sync_bui_tab_selected_state_system,
+                )
+                    .in_set(BuiSystems::BindingSync),
+            )
+            .add_systems(
+                Update,
+                (
+                    toggle_interaction_system,
+                    apply_bui_visual_states_system,
+                    update_toggle_visual_system,
+                )
+                    .chain()
+                    .in_set(BuiSystems::VisualResolve),
             );
+
+        app.configure_sets(Update, BuiSystems::DataUpdate.before(UiSystems::Prepare));
+        app.configure_sets(Update, BuiSystems::BindingSync.before(UiSystems::Prepare));
+        app.configure_sets(Update, BuiSystems::VisualResolve.before(UiSystems::Prepare));
     }
 }
 
@@ -116,11 +146,15 @@ pub(crate) fn spawn_bui_scene(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
+    mut state_store: ResMut<BuiStateStore>,
     source: Res<AiUiSource>,
 ) {
     match load_bui_document(&source.0) {
         Ok(document) => {
             info!("Spawning BUI scene '{}'.", document.scene_name);
+
+            seed_state_model(&document, &mut state_store);
+
             match spawn_bui_tree(
                 &mut commands,
                 &asset_server,
@@ -140,6 +174,14 @@ pub(crate) fn spawn_bui_scene(
             error!("{error}");
             spawn_error_text(&mut commands, error);
         }
+    }
+}
+
+fn seed_state_model(document: &BuiDocument, state_store: &mut BuiStateStore) {
+    for (key, value) in &document.state_model.values {
+        state_store
+            .0
+            .insert(key.clone(), BuiBindingValue::Text(value.clone()));
     }
 }
 

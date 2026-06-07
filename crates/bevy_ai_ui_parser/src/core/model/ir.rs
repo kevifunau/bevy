@@ -82,7 +82,7 @@ pub(crate) struct BuiDocument {
 #[serde(deny_unknown_fields)]
 pub(crate) struct BuiStateModel {
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
-    values: HashMap<String, String>,
+    pub(crate) values: HashMap<String, String>,
 }
 
 impl BuiStateModel {
