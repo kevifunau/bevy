@@ -1,0 +1,801 @@
+<!doctype html>
+<!--
+  Bevy UI prototype. P1 usage: the illustrated background and logo are inline SVG/CSS stand-ins
+  for later asset replacement; glow is represented with solid rings and translucent overlay bands.
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>战记之歌 · 登录界面</title>
+  <style>
+    /*
+     * Bevy UI Design Tokens
+     *
+     * Derived from the Bevy BUI IR parser source code.
+     * Dark-mode only. Game HUD / menu system.
+     *
+     * IMPORTANT — Bevy-specific overrides:
+     *
+     *   --elev-flat   → none
+     *   --elev-ring   → 0 0 0 1px var(--border)   (ring outline, NO blur shadow)
+     *   --elev-raised → 0 0 0 1px var(--border)   (ring outline, NO blur shadow)
+     *
+     *   Bevy UI has no native box-shadow blur rendering.
+     *   Elevation is achieved via border outlines only.
+     *   Any box-shadow here uses ZERO blur radius (ring outlines).
+     *
+     *   --focus-ring  → 0 0 0 2px var(--accent)   (ring outline, NO blur shadow)
+     *
+     *   For P0-only output, prefer border-color changes for focus
+     *   instead of box-shadow rings.
+     */
+
+    :root {
+      /* ── Surface (Background) ── */
+      --bg:                  #111111;
+      --surface:             #1c1c1c;
+      --surface-warm:        var(--surface);
+
+      /* ── Foreground ── */
+      --fg:                  #ffffff;
+      --fg-2:                var(--fg);
+      --muted:               #888888;
+      --meta:                var(--muted);
+
+      /* ── Border ── */
+      --border:              #333333;
+      --border-soft:         var(--border);
+
+      /* ── Accent (Interactive) ── */
+      --accent:              #f97316;
+      --accent-on:           #000000;
+      --accent-hover:        #e8790e;
+      --accent-active:       #d97006;
+
+      /* ── Semantic ── */
+      --success:             #22c55e;
+      --warn:                #fbbf24;
+      --danger:              #ef4444;
+
+      /* ── Font Families ── */
+      --font-display:        "Inter", "Helvetica", "Arial", sans-serif;
+      --font-body:           "Inter", "Helvetica", "Arial", sans-serif;
+      --font-mono:           ui-monospace, "Menlo", "Monaco", "Courier", monospace;
+
+      /* ── Type Scale ── */
+      --text-2xs:            10px;
+      --text-xs:             12px;
+      --text-sm:             14px;
+      --text-base:           16px;
+      --text-lg:             20px;
+      --text-xl:             24px;
+      --text-2xl:            32px;
+      --text-3xl:            36px;
+      --text-4xl:            48px;
+
+      /* ── Leading & Tracking ── */
+      --leading-body:        1.4;
+      --leading-tight:       1.0;
+      --tracking-display:    0;
+
+      /* ── Spacing ── */
+      --space-1:             4px;
+      --space-2:             8px;
+      --space-3:             12px;
+      --space-4:             16px;
+      --space-5:             20px;
+      --space-6:             24px;
+      --space-8:             32px;
+      --space-10:            40px;
+      --space-12:            48px;
+
+      /* ── Section Vertical Padding (Responsive) ── */
+      --section-y-desktop:   48px;
+      --section-y-tablet:    32px;
+      --section-y-phone:     24px;
+
+      /* ── Radius ── */
+      --radius-sm:           6px;
+      --radius-md:           8px;
+      --radius-lg:           12px;
+      --radius-pill:         9999px;
+
+      /* ── Elevation (NO blur shadow — Bevy UI renders ring outlines only) ── */
+      --elev-flat:           none;
+      --elev-ring:           0 0 0 1px var(--border);
+      --elev-raised:         0 0 0 1px var(--border);
+
+      /* ── Focus (NO blur shadow — ring outline only) ── */
+      --focus-ring:          0 0 0 2px var(--accent);
+
+      /* ── Motion (ECS-driven, not CSS animation) ── */
+      --motion-fast:         150ms;
+      --motion-base:         200ms;
+      --ease-standard:       cubic-bezier(0.2, 0, 0, 1);
+
+      /* ── Layout ── */
+      --container-max:                1920px;
+      --container-gutter-desktop:     24px;
+      --container-gutter-tablet:      16px;
+      --container-gutter-phone:       12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { width: 100%; min-height: 100%; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-body);
+      overflow-x: hidden;
+    }
+    button, input { font: inherit; }
+    button { border: 0; }
+    svg { display: flex; max-width: 100%; }
+
+    .bevy-ui-root {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg);
+    }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background-color: var(--bg);
+    }
+    .sky-band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 44vh;
+      background-color: color-mix(in oklch, var(--bg) 70%, var(--accent) 30%);
+      opacity: 0.42;
+    }
+    .moon {
+      position: absolute;
+      right: 12vw;
+      top: 8vh;
+      width: 74px;
+      height: 74px;
+      border: 3px solid color-mix(in oklch, var(--fg) 82%, var(--warn) 18%);
+      border-left-color: transparent;
+      border-radius: var(--radius-pill);
+      opacity: 0.88;
+      transform: rotate(-18deg);
+    }
+    .floating-castle {
+      position: absolute;
+      left: 50%;
+      top: 13vh;
+      width: 210px;
+      height: 142px;
+      transform: translate(-50%, 0);
+      opacity: 0.64;
+    }
+    .city {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 20vh;
+      height: 34vh;
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-2);
+      padding-inline: 4vw;
+      opacity: 0.74;
+    }
+    .tower {
+      flex: 1 1 44px;
+      min-width: 24px;
+      background-color: color-mix(in oklch, var(--surface) 78%, var(--fg) 22%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .tower:nth-child(2n) { height: 72%; }
+    .tower:nth-child(3n) { height: 54%; }
+    .tower:nth-child(4n) { height: 86%; }
+    .tower:nth-child(5n) { height: 42%; }
+    .airship {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      opacity: 0.76;
+    }
+    .airship.one { left: 10vw; top: 17vh; }
+    .airship.two { right: 20vw; top: 25vh; transform: scale(0.76); }
+    .airship-body {
+      width: 118px;
+      height: 30px;
+      border: 2px solid color-mix(in oklch, var(--warn) 70%, var(--fg) 30%);
+      border-radius: var(--radius-pill);
+      background-color: color-mix(in oklch, var(--surface) 62%, var(--warn) 38%);
+    }
+    .airship-cabin {
+      width: 46px;
+      height: 22px;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .platform {
+      position: absolute;
+      left: 50%;
+      bottom: 9vh;
+      width: 54vw;
+      max-width: 780px;
+      min-width: 360px;
+      height: 112px;
+      transform: translate(-50%, 0);
+      border: 2px solid color-mix(in oklch, var(--border) 55%, var(--fg) 45%);
+      border-radius: var(--radius-pill);
+      background-color: color-mix(in oklch, var(--surface) 82%, var(--fg) 18%);
+      opacity: 0.88;
+    }
+    .party {
+      position: absolute;
+      left: 50%;
+      bottom: 13vh;
+      width: min(760px, 72vw);
+      height: 310px;
+      transform: translate(-50%, 0);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: end;
+      gap: var(--space-5);
+      opacity: 0.96;
+    }
+    .hero-figure {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+      height: 100%;
+    }
+    .hero-head {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--fg);
+      background-color: color-mix(in oklch, var(--warn) 44%, var(--fg) 56%);
+    }
+    .hero-body {
+      width: 58px;
+      height: 132px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-sm);
+      background-color: var(--surface);
+    }
+    .archer .hero-body { background-color: color-mix(in oklch, var(--success) 24%, var(--surface) 76%); height: 124px; }
+    .knight .hero-body { background-color: color-mix(in oklch, var(--fg) 18%, var(--surface) 82%); height: 154px; border-color: color-mix(in oklch, var(--fg) 65%, var(--border) 35%); }
+    .warrior .hero-body { background-color: color-mix(in oklch, var(--warn) 22%, var(--surface) 78%); height: 146px; }
+    .wizard .hero-body { background-color: color-mix(in oklch, var(--danger) 26%, var(--surface) 74%); height: 136px; }
+    .weapon {
+      position: absolute;
+      width: 5px;
+      height: 150px;
+      bottom: 20px;
+      background-color: color-mix(in oklch, var(--fg) 76%, var(--border) 24%);
+      border-radius: var(--radius-pill);
+      transform: rotate(18deg);
+    }
+    .archer .weapon { left: 24%; height: 166px; transform: rotate(-20deg); }
+    .warrior .weapon { right: 18%; height: 178px; transform: rotate(28deg); }
+    .wizard .weapon { right: 24%; height: 164px; transform: rotate(8deg); background-color: color-mix(in oklch, var(--danger) 54%, var(--fg) 46%); }
+    .scene-dim {
+      position: fixed;
+      inset: 0;
+      background-color: var(--bg);
+      opacity: 0.38;
+      z-index: 1;
+    }
+
+    .game-header {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 4;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-6) var(--container-gutter-desktop);
+    }
+    .brand-lockup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: min(420px, 52vw);
+      margin-left: auto;
+      margin-right: auto;
+      color: var(--warn);
+    }
+    .title-svg {
+      width: 100%;
+      height: auto;
+      border-bottom: 2px solid color-mix(in oklch, var(--warn) 82%, var(--accent) 18%);
+    }
+    .subtitle {
+      margin-top: var(--space-2);
+      color: var(--fg);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-align: center;
+    }
+    .top-actions {
+      position: absolute;
+      right: var(--container-gutter-desktop);
+      top: var(--space-6);
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-3);
+    }
+    .icon-btn {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fg);
+      background-color: color-mix(in oklch, var(--surface) 84%, transparent);
+      border: 1px solid color-mix(in oklch, var(--border) 52%, var(--fg) 48%);
+      border-radius: var(--radius-md);
+    }
+    .icon-btn:hover,
+    .icon-btn:focus-visible {
+      border-color: var(--accent);
+      background-color: color-mix(in oklch, var(--surface) 72%, var(--accent) 28%);
+      outline: none;
+    }
+    .icon-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .login-stage {
+      position: relative;
+      z-index: 3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 176px var(--container-gutter-desktop) 96px;
+    }
+    .login-panel {
+      position: relative;
+      width: min(520px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      padding: var(--space-8);
+      background-color: color-mix(in oklch, var(--surface) 78%, transparent);
+      border: 2px solid color-mix(in oklch, var(--accent) 62%, var(--fg) 38%);
+      border-radius: var(--radius-lg);
+    }
+    .side-rune {
+      position: absolute;
+      top: var(--space-8);
+      width: 46px;
+      height: 168px;
+      border: 2px solid color-mix(in oklch, var(--accent) 70%, var(--fg) 30%);
+      border-radius: var(--radius-pill);
+      opacity: 0.72;
+    }
+    .side-rune.left { left: -28px; }
+    .side-rune.right { right: -28px; }
+    .panel-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: center;
+    }
+    .rune-ring {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-pill);
+      color: var(--accent);
+      background-color: color-mix(in oklch, var(--surface) 74%, var(--accent) 26%);
+    }
+    h1 {
+      margin: 0;
+      color: var(--fg);
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-display);
+    }
+    .panel-copy {
+      margin: 0;
+      max-width: 34ch;
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+    .field-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .field {
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 0 var(--space-4);
+      background-color: color-mix(in oklch, var(--bg) 54%, transparent);
+      border: 1px solid color-mix(in oklch, var(--accent) 54%, var(--border) 46%);
+      border-radius: var(--radius-pill);
+    }
+    .field-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      background-color: var(--surface);
+    }
+    .field-control {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .field label {
+      color: var(--muted);
+      font-size: var(--text-2xs);
+      font-weight: 700;
+      line-height: var(--leading-tight);
+    }
+    .field input {
+      width: 100%;
+      min-width: 0;
+      color: var(--fg);
+      background-color: transparent;
+      border: 0;
+      outline: none;
+      font-size: var(--text-base);
+    }
+    .field input::placeholder {
+      color: var(--muted);
+      opacity: 1;
+    }
+    .primary-action {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-on);
+      background-color: var(--accent);
+      border: 2px solid color-mix(in oklch, var(--accent) 72%, var(--fg) 28%);
+      border-radius: var(--radius-pill);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .primary-action:hover,
+    .primary-action:focus-visible {
+      background-color: var(--accent-hover);
+      border-color: var(--fg);
+      outline: none;
+    }
+    .primary-action:active {
+      background-color: var(--accent-active);
+      transform: translate(0, 2px);
+    }
+    .secondary-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+    .secondary-action {
+      min-height: 46px;
+      color: var(--fg);
+      background-color: color-mix(in oklch, var(--surface) 86%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+    .secondary-action:hover,
+    .secondary-action:focus-visible {
+      border-color: var(--accent);
+      background-color: color-mix(in oklch, var(--surface) 72%, var(--accent) 28%);
+      outline: none;
+    }
+    .server-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .server-state {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--fg);
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: var(--radius-pill);
+      background-color: var(--success);
+    }
+    .age-note {
+      position: fixed;
+      left: var(--container-gutter-desktop);
+      right: var(--container-gutter-desktop);
+      bottom: var(--space-5);
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      color: var(--muted);
+      font-size: var(--text-xs);
+      font-family: var(--font-mono);
+    }
+
+    @media (max-width: 920px) {
+      .game-header {
+        padding: var(--space-5) var(--container-gutter-tablet);
+      }
+      .brand-lockup {
+        width: min(360px, 58vw);
+      }
+      .top-actions {
+        right: var(--container-gutter-tablet);
+        top: var(--space-5);
+      }
+      .login-stage {
+        padding: 150px var(--container-gutter-tablet) 86px;
+      }
+      .party {
+        width: 88vw;
+        gap: var(--space-2);
+        opacity: 0.56;
+      }
+      .platform {
+        width: 82vw;
+        min-width: 0;
+      }
+      .age-note {
+        left: var(--container-gutter-tablet);
+        right: var(--container-gutter-tablet);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .game-header {
+        justify-content: center;
+        padding: var(--space-4) var(--container-gutter-phone);
+      }
+      .brand-lockup {
+        width: 250px;
+      }
+      .subtitle {
+        font-size: var(--text-2xs);
+      }
+      .top-actions {
+        top: auto;
+        right: var(--container-gutter-phone);
+        bottom: -58px;
+      }
+      .icon-btn {
+        width: 44px;
+        height: 44px;
+      }
+      .login-stage {
+        align-items: flex-end;
+        padding: 170px var(--container-gutter-phone) 84px;
+      }
+      .login-panel {
+        padding: var(--space-5);
+        gap: var(--space-4);
+      }
+      .side-rune {
+        display: none;
+      }
+      h1 {
+        font-size: var(--text-xl);
+      }
+      .panel-copy {
+        font-size: var(--text-xs);
+      }
+      .field {
+        min-height: 52px;
+        grid-template-columns: 36px 1fr;
+      }
+      .primary-action {
+        min-height: 56px;
+        font-size: var(--text-lg);
+      }
+      .secondary-actions {
+        grid-template-columns: 1fr;
+      }
+      .city {
+        bottom: 28vh;
+        height: 28vh;
+      }
+      .party {
+        bottom: 26vh;
+        height: 190px;
+        width: 94vw;
+        opacity: 0.34;
+      }
+      .hero-head {
+        width: 22px;
+        height: 22px;
+      }
+      .hero-body {
+        width: 36px;
+        height: 92px;
+      }
+      .knight .hero-body,
+      .warrior .hero-body,
+      .wizard .hero-body,
+      .archer .hero-body {
+        height: 96px;
+      }
+      .weapon {
+        height: 110px;
+      }
+      .platform {
+        bottom: 23vh;
+        height: 66px;
+      }
+      .age-note {
+        left: var(--container-gutter-phone);
+        right: var(--container-gutter-phone);
+        bottom: var(--space-3);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="bevy-ui-root" data-od-id="login-screen">
+    <section class="scene" data-od-id="fantasy-city-scene" aria-label="黄昏奇幻城市与四角色背景示意">
+      <div class="sky-band"></div>
+      <div class="moon"></div>
+      <svg class="floating-castle" viewBox="0 0 210 142" aria-hidden="true">
+        <path d="M104 134 L70 82 H140 Z" fill="var(--surface)" stroke="var(--border)" stroke-width="3"/>
+        <path d="M64 84 H146 V42 H64 Z" fill="var(--surface)" stroke="var(--border)" stroke-width="3"/>
+        <path d="M82 42 V18 H98 V42 M112 42 V8 H130 V42" fill="none" stroke="var(--fg)" stroke-width="3"/>
+        <path d="M54 94 H156" stroke="var(--accent)" stroke-width="3"/>
+      </svg>
+      <div class="airship one" aria-hidden="true"><div class="airship-body"></div><div class="airship-cabin"></div></div>
+      <div class="airship two" aria-hidden="true"><div class="airship-body"></div><div class="airship-cabin"></div></div>
+      <div class="city" aria-hidden="true">
+        <div class="tower" style="height:58%;"></div><div class="tower" style="height:74%;"></div><div class="tower" style="height:48%;"></div><div class="tower" style="height:88%;"></div>
+        <div class="tower" style="height:62%;"></div><div class="tower" style="height:80%;"></div><div class="tower" style="height:52%;"></div><div class="tower" style="height:96%;"></div>
+        <div class="tower" style="height:68%;"></div><div class="tower" style="height:44%;"></div><div class="tower" style="height:72%;"></div><div class="tower" style="height:56%;"></div>
+        <div class="tower" style="height:84%;"></div><div class="tower" style="height:49%;"></div><div class="tower" style="height:78%;"></div><div class="tower" style="height:63%;"></div>
+      </div>
+      <div class="platform" aria-hidden="true"></div>
+      <div class="party" aria-hidden="true">
+        <div class="hero-figure archer"><div class="weapon"></div><div class="hero-head"></div><div class="hero-body"></div></div>
+        <div class="hero-figure knight"><div class="hero-head"></div><div class="hero-body"></div></div>
+        <div class="hero-figure warrior"><div class="weapon"></div><div class="hero-head"></div><div class="hero-body"></div></div>
+        <div class="hero-figure wizard"><div class="weapon"></div><div class="hero-head"></div><div class="hero-body"></div></div>
+      </div>
+    </section>
+    <div class="scene-dim" aria-hidden="true"></div>
+
+    <header class="game-header" data-od-id="top-bar">
+      <div class="brand-lockup" aria-label="战记之歌 STRATEGY AND LEGEND">
+        <svg class="title-svg" viewBox="0 0 520 112" role="img" aria-label="战记之歌">
+          <text x="260" y="76" text-anchor="middle" font-family="STKaiti, Songti, Palatino, serif" font-size="70" font-weight="700" fill="var(--warn)" stroke="var(--accent)" stroke-width="2">战记之歌</text>
+        </svg>
+        <div class="subtitle">STRATEGY &amp; LEGEND</div>
+      </div>
+      <div class="top-actions" aria-label="顶部功能">
+        <button class="icon-btn" type="button" data-action="open_settings" aria-label="设置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" type="button" data-action="open_announcements" aria-label="公告">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 5h14v12H8l-3 3V5Z"></path>
+            <path d="M8 9h8M8 13h5"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="login-stage" data-od-id="login-panel">
+      <form class="login-panel" aria-label="账号登录">
+        <div class="side-rune left" aria-hidden="true"></div>
+        <div class="side-rune right" aria-hidden="true"></div>
+        <div class="panel-top">
+          <div class="rune-ring" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="24" cy="24" r="15"></circle>
+              <path d="M24 4v8M24 36v8M4 24h8M36 24h8M14 14l20 20M34 14L14 34"></path>
+            </svg>
+          </div>
+          <h1>远征者登录</h1>
+          <p class="panel-copy">输入通行凭证，进入浮空城战役大厅。远征队已在暮星港集结，等待新的军令。</p>
+        </div>
+
+        <div class="field-stack">
+          <div class="field">
+            <div class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21c1.7-4 4.4-6 8-6s6.3 2 8 6"></path>
+              </svg>
+            </div>
+            <div class="field-control">
+              <label for="account">账号</label>
+              <input id="account" name="account" type="text" placeholder="账号 / 邮箱" autocomplete="username" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+            </div>
+            <div class="field-control">
+              <label for="password">密码</label>
+              <input id="password" name="password" type="password" placeholder="密码" autocomplete="current-password" />
+            </div>
+          </div>
+        </div>
+
+        <button class="primary-action" type="button" data-action="login_start">登 录</button>
+        <div class="secondary-actions">
+          <button class="secondary-action" type="button" data-action="register_account">注 册</button>
+          <button class="secondary-action" type="button" data-action="recover_password">找回密码</button>
+        </div>
+        <div class="server-strip" aria-label="服务器状态">
+          <span class="server-state"><span class="status-dot"></span>暮星一服 · 顺畅</span>
+          <span>版本 --</span>
+        </div>
+      </form>
+    </section>
+
+    <footer class="age-note" data-od-id="footer">
+      <span>适龄提示：本游戏适合 12 周岁以上玩家体验</span>
+      <span>© 战记之歌项目组 · STRATEGY &amp; LEGEND</span>
+    </footer>
+  </main>
+</body>
+</html>

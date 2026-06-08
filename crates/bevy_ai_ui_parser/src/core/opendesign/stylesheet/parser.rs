@@ -1,7 +1,8 @@
 use super::media::media_query_matches;
 
 pub(crate) fn css_declarations(body: &str) -> Vec<(String, String)> {
-    body.split(';')
+    strip_css_comments(body)
+        .split(';')
         .filter_map(|declaration| {
             let (name, value) = declaration.split_once(':')?;
             let name = name.trim();
@@ -34,6 +35,7 @@ pub(super) fn style_blocks(html: &str) -> Vec<&str> {
 }
 
 pub(super) fn css_rules(css: &str) -> Vec<(String, Vec<(String, String)>)> {
+    let css = strip_css_comments(css);
     let mut rules = Vec::new();
     let bytes = css.as_bytes();
     let mut index = 0;
@@ -82,4 +84,26 @@ pub(super) fn css_rules(css: &str) -> Vec<(String, Vec<(String, String)>)> {
     }
 
     rules
+}
+
+fn strip_css_comments(css: &str) -> String {
+    let mut out = String::with_capacity(css.len());
+    let bytes = css.as_bytes();
+    let mut index = 0;
+
+    while index < bytes.len() {
+        if index + 1 < bytes.len() && bytes[index] == b'/' && bytes[index + 1] == b'*' {
+            index += 2;
+            while index + 1 < bytes.len() && !(bytes[index] == b'*' && bytes[index + 1] == b'/') {
+                index += 1;
+            }
+            index = (index + 2).min(bytes.len());
+            continue;
+        }
+
+        out.push(bytes[index] as char);
+        index += 1;
+    }
+
+    out
 }

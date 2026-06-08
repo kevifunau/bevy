@@ -3,6 +3,8 @@ use bevy_math::{Rot2, Vec2};
 use bevy_text::{Justify, LineBreak, LineHeight};
 use bevy_ui::prelude::*;
 
+use crate::core::style::css_sizing::{css_eval_length_function, css_size_to_px};
+
 use super::normalize_token;
 
 pub(crate) fn parse_number(value: &str) -> Result<f32, String> {
@@ -32,6 +34,18 @@ pub(crate) fn parse_val(value: &str) -> Result<Val, String> {
 
     if let Some(number) = value.strip_suffix('%') {
         return parse_number(number).map(Val::Percent);
+    }
+
+    if value.ends_with("vw") || value.ends_with("vh") {
+        return css_size_to_px(value)
+            .map(Val::Px)
+            .ok_or_else(|| format!("Invalid viewport length '{value}'."));
+    }
+
+    if let Some(px) = css_eval_length_function(value)
+        .and_then(|resolved| resolved.strip_suffix("px").map(str::to_string))
+    {
+        return parse_number(&px).map(Val::Px);
     }
 
     parse_number(value).map(Val::Px)

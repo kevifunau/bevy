@@ -1,0 +1,3451 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "markers": [
+      "class:bevy-ui-root"
+    ],
+    "layout": {
+      "styles": {
+        "display": "flex",
+        "width": "100%",
+        "height": "100vh",
+        "flex_direction": "column",
+        "justify_content": "center",
+        "align_items": "center",
+        "position_type": "relative"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#3B281862"
+      }
+    },
+    "children": [
+      {
+        "id": "overlay_root_pseudo_before",
+        "kind": "node",
+        "markers": [
+          "pseudo:before"
+        ]
+      },
+      {
+        "id": "hud_overlay",
+        "kind": "node",
+        "markers": [
+          "class:hud-overlay"
+        ],
+        "layout": {
+          "styles": {
+            "display": "flex",
+            "left": "0",
+            "right": "0",
+            "bottom": "0",
+            "padding": "16px",
+            "flex_direction": "row",
+            "justify_content": "space-between",
+            "align_items": "flex-end",
+            "position_type": "absolute",
+            "fixed_node": true,
+            "z_index": "10"
+          }
+        },
+        "children": [
+          {
+            "id": "hud_overlay_pseudo_before",
+            "kind": "node",
+            "markers": [
+              "pseudo:before"
+            ]
+          },
+          {
+            "id": "hud_left",
+            "kind": "node",
+            "markers": [
+              "class:hud-left"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "flex_direction": "column",
+                "row_gap": "8px",
+                "column_gap": "8px"
+              }
+            },
+            "children": [
+              {
+                "id": "hud_left_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "health_bar",
+                "kind": "node",
+                "markers": [
+                  "class:health-bar",
+                  "aria-label:Health"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "flex_direction": "column",
+                    "row_gap": "4px",
+                    "column_gap": "4px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "health_bar_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "health_bar_label",
+                    "kind": "node",
+                    "markers": [
+                      "class:health-bar-label"
+                    ],
+                    "children": [
+                      {
+                        "id": "health_bar_label_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "health_bar_label_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "HP 75/100",
+                            "font_size": 12.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1",
+                            "letter_spacing": 0.0
+                          }
+                        }
+                      },
+                      {
+                        "id": "health_bar_label_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "health_bar_track",
+                    "kind": "node",
+                    "markers": [
+                      "class:health-bar-track"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "200px",
+                        "height": "12px",
+                        "overflow": "clip",
+                        "flex_direction": "row"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#333333",
+                        "border_radius": "9999px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "health_bar_track_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "health_bar_fill",
+                        "kind": "node",
+                        "markers": [
+                          "class:health-bar-fill"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "75%",
+                            "height": "100%"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#22c55e",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "health_bar_fill_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "health_bar_fill_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "health_bar_track_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "health_bar_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ammo_counter",
+                "kind": "node",
+                "markers": [
+                  "class:ammo-counter"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "8px 12px",
+                    "flex_direction": "row",
+                    "row_gap": "8px",
+                    "column_gap": "8px",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#1c1c1c",
+                    "border_color": "#333333",
+                    "border_width": "1px",
+                    "border_radius": "8px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "ammo_counter_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "ammo_counter_icon",
+                    "kind": "node",
+                    "markers": [
+                      "class:ammo-counter-icon"
+                    ],
+                    "children": [
+                      {
+                        "id": "ammo_counter_icon_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "ammo_counter_icon_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "AMMO",
+                            "font_size": 12.0,
+                            "font_color": "#f97316",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 700,
+                            "line_height": "1"
+                          }
+                        }
+                      },
+                      {
+                        "id": "ammo_counter_icon_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ammo_counter_value",
+                    "kind": "node",
+                    "markers": [
+                      "class:ammo-counter-value"
+                    ],
+                    "children": [
+                      {
+                        "id": "ammo_counter_value_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "ammo_counter_value_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "24 / 30",
+                            "font_size": 14.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Menlo.ttc",
+                            "font_weight": 400,
+                            "line_height": "1.4"
+                          }
+                        }
+                      },
+                      {
+                        "id": "ammo_counter_value_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ammo_counter_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "hud_left_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "hud_right",
+            "kind": "node",
+            "markers": [
+              "class:hud-right"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "flex_direction": "column",
+                "row_gap": "8px",
+                "column_gap": "8px",
+                "align_items": "flex-end"
+              }
+            },
+            "children": [
+              {
+                "id": "hud_right_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "skill_bar",
+                "kind": "node",
+                "markers": [
+                  "class:skill-bar"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "flex_direction": "row",
+                    "row_gap": "12px",
+                    "column_gap": "12px",
+                    "align_items": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "skill_bar_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "skill_btn",
+                    "kind": "button",
+                    "markers": [
+                      "class:skill-btn",
+                      "data-skill:fireball",
+                      "aria-label:Fireball"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "cast_fireball"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "48px",
+                        "height": "48px",
+                        "aspect_ratio": "1",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#1c1c1c",
+                        "border_color": "#333333",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#d97006",
+                          "border_color": "#d97006"
+                        }
+                      },
+                      "focused": {
+                        "visuals": {
+                          "border_color": "#f97316"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#f97316",
+                          "border_color": "#f97316"
+                        },
+                        "text_color": "#000000"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "skill_btn_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "skill_btn_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "1",
+                            "font_size": 12.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1"
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#000000"
+                          }
+                        }
+                      },
+                      {
+                        "id": "skill_btn_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "skill_btn_2",
+                    "kind": "button",
+                    "markers": [
+                      "class:skill-btn",
+                      "data-skill:shield",
+                      "aria-label:Shield"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "cast_shield"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "48px",
+                        "height": "48px",
+                        "aspect_ratio": "1",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#1c1c1c",
+                        "border_color": "#333333",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#f97316",
+                          "border_color": "#f97316"
+                        },
+                        "text_color": "#000000"
+                      },
+                      "focused": {
+                        "visuals": {
+                          "border_color": "#f97316"
+                        }
+                      },
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#d97006",
+                          "border_color": "#d97006"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "skill_btn_2_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "skill_btn_2_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "2",
+                            "font_size": 12.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1"
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#000000"
+                          }
+                        }
+                      },
+                      {
+                        "id": "skill_btn_2_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "skill_btn_3",
+                    "kind": "button",
+                    "markers": [
+                      "class:skill-btn",
+                      "data-skill:heal",
+                      "aria-label:Heal"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "cast_heal"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "48px",
+                        "height": "48px",
+                        "aspect_ratio": "1",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#1c1c1c",
+                        "border_color": "#333333",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "focused": {
+                        "visuals": {
+                          "border_color": "#f97316"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#f97316",
+                          "border_color": "#f97316"
+                        },
+                        "text_color": "#000000"
+                      },
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#d97006",
+                          "border_color": "#d97006"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "skill_btn_3_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "skill_btn_3_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "3",
+                            "font_size": 12.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1"
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#000000"
+                          }
+                        }
+                      },
+                      {
+                        "id": "skill_btn_3_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "skill_btn_4",
+                    "kind": "button",
+                    "markers": [
+                      "class:skill-btn",
+                      "data-skill:dash",
+                      "aria-label:Dash"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "cast_dash"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "48px",
+                        "height": "48px",
+                        "aspect_ratio": "1",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#1c1c1c",
+                        "border_color": "#333333",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#f97316",
+                          "border_color": "#f97316"
+                        },
+                        "text_color": "#000000"
+                      },
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#d97006",
+                          "border_color": "#d97006"
+                        }
+                      },
+                      "focused": {
+                        "visuals": {
+                          "border_color": "#f97316"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "skill_btn_4_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "skill_btn_4_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "4",
+                            "font_size": 12.0,
+                            "font_color": "#ffffff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1"
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#000000"
+                          }
+                        }
+                      },
+                      {
+                        "id": "skill_btn_4_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "skill_btn_5",
+                    "kind": "button",
+                    "markers": [
+                      "class:skill-btn",
+                      "class:disabled",
+                      "data-skill:ult",
+                      "aria-label:Ultimate"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "cast_ult"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "width": "48px",
+                        "height": "48px",
+                        "aspect_ratio": "1",
+                        "justify_content": "center",
+                        "align_items": "center",
+                        "ui_opacity": 0.5
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#1C1C1C80",
+                        "border_color": "#33333380",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "focused": {
+                        "visuals": {
+                          "border_color": "#888888"
+                        }
+                      },
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#d97006",
+                          "border_color": "#d97006"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#1c1c1c",
+                          "border_color": "#333333"
+                        },
+                        "text_color": "#888888"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "skill_btn_5_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "skill_btn_5_text_1",
+                        "kind": "text",
+                        "layout": {
+                          "styles": {
+                            "ui_opacity": 0.5
+                          }
+                        },
+                        "content": {
+                          "text": {
+                            "content": "5",
+                            "font_size": 12.0,
+                            "font_color": "#888888",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 600,
+                            "line_height": "1"
+                          }
+                        },
+                        "state_visuals": {
+                          "hovered": {
+                            "text_color": "#888888"
+                          }
+                        }
+                      },
+                      {
+                        "id": "skill_btn_5_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "skill_bar_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "hud_right_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "hud_overlay_pseudo_after",
+            "kind": "node",
+            "markers": [
+              "pseudo:after"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "settings_panel",
+        "kind": "node",
+        "markers": [
+          "class:settings-panel"
+        ],
+        "layout": {
+          "styles": {
+            "display": "flex",
+            "width": "480px",
+            "max_height": "80vh",
+            "left": "50%",
+            "top": "50%",
+            "overflow": "clip",
+            "flex_direction": "column",
+            "ui_translation": "-50% -50%",
+            "position_type": "absolute",
+            "fixed_node": true,
+            "z_index": "20"
+          }
+        },
+        "style": {
+          "visuals": {
+            "background_color": "#1c1c1c",
+            "border_color": "#333333",
+            "border_width": "1px",
+            "border_radius": "12px"
+          }
+        },
+        "children": [
+          {
+            "id": "settings_panel_pseudo_before",
+            "kind": "node",
+            "markers": [
+              "pseudo:before"
+            ]
+          },
+          {
+            "id": "settings_panel_header",
+            "kind": "node",
+            "markers": [
+              "class:settings-panel-header"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "padding": "16px",
+                "flex_direction": "row",
+                "justify_content": "space-between",
+                "align_items": "center",
+                "position_type": "relative"
+              }
+            },
+            "children": [
+              {
+                "id": "settings_panel_header_border_bottom",
+                "kind": "node",
+                "markers": [
+                  "css-edge-border:bottom"
+                ],
+                "layout": {
+                  "styles": {
+                    "height": "1px",
+                    "left": "0",
+                    "right": "0",
+                    "bottom": "0",
+                    "position_type": "absolute"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#333333"
+                  }
+                }
+              },
+              {
+                "id": "settings_panel_header_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "settings_panel_title",
+                "kind": "node",
+                "markers": [
+                  "class:settings-panel-title"
+                ],
+                "children": [
+                  {
+                    "id": "settings_panel_title_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "settings_panel_title_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Settings",
+                        "font_size": 24.0,
+                        "font_color": "#ffffff",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 600,
+                        "line_height": "1",
+                        "letter_spacing": 0.0
+                      }
+                    }
+                  },
+                  {
+                    "id": "settings_panel_title_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "close_btn",
+                "kind": "button",
+                "markers": [
+                  "class:close-btn",
+                  "aria-label:Close settings"
+                ],
+                "actions": [
+                  {
+                    "event": "press",
+                    "emit": "close_settings"
+                  }
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "width": "32px",
+                    "height": "32px",
+                    "justify_content": "center",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "transparent",
+                    "border_color": "#333333",
+                    "border_width": "1px",
+                    "border_radius": "6px"
+                  }
+                },
+                "state_visuals": {
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#ef4444",
+                      "border_color": "#ef4444"
+                    },
+                    "text_color": "#ffffff"
+                  },
+                  "pressed": {
+                    "visuals": {
+                      "background_color": "#cc3333",
+                      "border_color": "#cc3333"
+                    }
+                  },
+                  "focused": {
+                    "visuals": {
+                      "border_color": "#f97316"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "id": "close_btn_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "close_btn_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "X",
+                        "font_size": 14.0,
+                        "font_color": "#888888",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 700,
+                        "line_height": "1"
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  {
+                    "id": "close_btn_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "settings_panel_header_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "tab_bar",
+            "kind": "node",
+            "markers": [
+              "class:tab-bar"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "flex_direction": "row",
+                "row_gap": "0",
+                "column_gap": "0",
+                "position_type": "relative"
+              }
+            },
+            "children": [
+              {
+                "id": "tab_bar_border_bottom",
+                "kind": "node",
+                "markers": [
+                  "css-edge-border:bottom"
+                ],
+                "layout": {
+                  "styles": {
+                    "height": "1px",
+                    "left": "0",
+                    "right": "0",
+                    "bottom": "0",
+                    "position_type": "absolute"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#333333"
+                  }
+                }
+              },
+              {
+                "id": "tab_bar_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "tab_item",
+                "kind": "node",
+                "markers": [
+                  "class:tab-item",
+                  "class:active",
+                  "data-tab:graphics"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "8px 16px",
+                    "justify_content": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "semantics": {
+                  "tab_group_name": "settings",
+                  "tab_value": "graphics"
+                },
+                "state_visuals": {
+                  "focused": {
+                    "visuals": {
+                      "border_color": "#f97316"
+                    }
+                  },
+                  "hovered": {
+                    "text_color": "#ffffff"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_item_border_bottom",
+                    "kind": "node",
+                    "markers": [
+                      "css-edge-border:bottom"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "height": "2px",
+                        "left": "0",
+                        "right": "0",
+                        "bottom": "0",
+                        "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#f97316"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "tab_item_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Graphics",
+                        "font_size": 14.0,
+                        "font_color": "#ffffff",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 600,
+                        "line_height": "1",
+                        "letter_spacing": 0.0
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_item_2",
+                "kind": "node",
+                "markers": [
+                  "class:tab-item",
+                  "data-tab:audio"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "8px 16px",
+                    "justify_content": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "semantics": {
+                  "tab_group_name": "settings",
+                  "tab_value": "audio"
+                },
+                "state_visuals": {
+                  "focused": {
+                    "visuals": {
+                      "border_color": "#f97316"
+                    }
+                  },
+                  "hovered": {
+                    "text_color": "#ffffff"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_item_2_border_bottom",
+                    "kind": "node",
+                    "markers": [
+                      "css-edge-border:bottom"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "height": "2px",
+                        "left": "0",
+                        "right": "0",
+                        "bottom": "0",
+                        "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "transparent"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_2_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "tab_item_2_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Audio",
+                        "font_size": 14.0,
+                        "font_color": "#888888",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 600,
+                        "line_height": "1",
+                        "letter_spacing": 0.0
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_2_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_item_3",
+                "kind": "node",
+                "markers": [
+                  "class:tab-item",
+                  "data-tab:controls"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "8px 16px",
+                    "justify_content": "center",
+                    "align_items": "center",
+                    "position_type": "relative"
+                  }
+                },
+                "semantics": {
+                  "tab_group_name": "settings",
+                  "tab_value": "controls"
+                },
+                "state_visuals": {
+                  "focused": {
+                    "visuals": {
+                      "border_color": "#f97316"
+                    }
+                  },
+                  "hovered": {
+                    "text_color": "#ffffff"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_item_3_border_bottom",
+                    "kind": "node",
+                    "markers": [
+                      "css-edge-border:bottom"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "height": "2px",
+                        "left": "0",
+                        "right": "0",
+                        "bottom": "0",
+                        "position_type": "absolute"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "transparent"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_3_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "tab_item_3_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Controls",
+                        "font_size": 14.0,
+                        "font_color": "#888888",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 600,
+                        "line_height": "1",
+                        "letter_spacing": 0.0
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  {
+                    "id": "tab_item_3_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_bar_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "tab_content",
+            "kind": "node",
+            "markers": [
+              "class:tab-content"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "overflow": "scroll_y",
+                "padding": "16px",
+                "flex_direction": "column",
+                "row_gap": "16px",
+                "column_gap": "16px"
+              }
+            },
+            "children": [
+              {
+                "id": "tab_content_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "tab_panel",
+                "kind": "node",
+                "markers": [
+                  "class:tab-panel"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "flex_direction": "column",
+                    "row_gap": "16px",
+                    "column_gap": "16px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_panel_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "settings_row",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Resolution",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "1920x1080",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_2",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_2_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_2_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_2_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Fullscreen",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "toggle_btn",
+                        "kind": "button",
+                        "markers": [
+                          "class:toggle-btn",
+                          "class:on",
+                          "aria-label:Toggle fullscreen"
+                        ],
+                        "actions": [
+                          {
+                            "event": "press",
+                            "emit": "toggle_fullscreen"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "48px",
+                            "height": "24px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#f97316",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "state_visuals": {
+                          "focused": {
+                            "visuals": {
+                              "border_color": "#f97316",
+                              "border_width": "2px"
+                            }
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "toggle_btn_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "toggle_btn_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "ON",
+                                "font_size": 10.0,
+                                "font_color": "transparent",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "line_height": "1"
+                              }
+                            }
+                          },
+                          {
+                            "id": "toggle_btn_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_2_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_3",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_3_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_3_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_3_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_3_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Render Quality",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_3_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slider_track",
+                        "kind": "node",
+                        "markers": [
+                          "class:slider-track"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "120px",
+                            "height": "6px",
+                            "overflow": "clip",
+                            "flex_direction": "row"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "slider_track_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "slider_fill",
+                            "kind": "node",
+                            "markers": [
+                              "class:slider-fill"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "70%",
+                                "height": "100%"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f97316",
+                                "border_radius": "9999px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "slider_fill_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "slider_fill_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "slider_track_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_3_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_4",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_4_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_4_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_4_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_4_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Anti-Aliasing",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_4_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "toggle_btn_2",
+                        "kind": "button",
+                        "markers": [
+                          "class:toggle-btn",
+                          "class:on",
+                          "aria-label:Toggle anti-aliasing"
+                        ],
+                        "actions": [
+                          {
+                            "event": "press",
+                            "emit": "toggle_aa"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "48px",
+                            "height": "24px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#f97316",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "state_visuals": {
+                          "focused": {
+                            "visuals": {
+                              "border_color": "#f97316",
+                              "border_width": "2px"
+                            }
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "toggle_btn_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "toggle_btn_2_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "ON",
+                                "font_size": 10.0,
+                                "font_color": "transparent",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "line_height": "1"
+                              }
+                            }
+                          },
+                          {
+                            "id": "toggle_btn_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_4_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_panel_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_panel_2",
+                "kind": "node",
+                "markers": [
+                  "class:tab-panel"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "none",
+                    "flex_direction": "column",
+                    "row_gap": "16px",
+                    "column_gap": "16px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_panel_2_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "settings_row_5",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_5_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_5_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_5",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_5_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_5_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Master Volume",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_5_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slider_track_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:slider-track"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "120px",
+                            "height": "6px",
+                            "overflow": "clip",
+                            "flex_direction": "row"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "slider_track_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "slider_fill_2",
+                            "kind": "node",
+                            "markers": [
+                              "class:slider-fill"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "80%",
+                                "height": "100%"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f97316",
+                                "border_radius": "9999px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "slider_fill_2_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "slider_fill_2_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "slider_track_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_5_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_6",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_6_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_6_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_6",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_6_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_6_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Music Volume",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_6_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slider_track_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:slider-track"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "120px",
+                            "height": "6px",
+                            "overflow": "clip",
+                            "flex_direction": "row"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "slider_track_3_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "slider_fill_3",
+                            "kind": "node",
+                            "markers": [
+                              "class:slider-fill"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "60%",
+                                "height": "100%"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f97316",
+                                "border_radius": "9999px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "slider_fill_3_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "slider_fill_3_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "slider_track_3_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_6_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_7",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_7_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_7_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_7",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_7_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_7_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "SFX Volume",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_7_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slider_track_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:slider-track"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "120px",
+                            "height": "6px",
+                            "overflow": "clip",
+                            "flex_direction": "row"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "slider_track_4_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "slider_fill_4",
+                            "kind": "node",
+                            "markers": [
+                              "class:slider-fill"
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "width": "90%",
+                                "height": "100%"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "background_color": "#f97316",
+                                "border_radius": "9999px"
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "slider_fill_4_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "slider_fill_4_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "slider_track_4_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_7_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_8",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_8_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_8_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_8",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_8_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_8_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Mute",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_8_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "toggle_btn_3",
+                        "kind": "button",
+                        "markers": [
+                          "class:toggle-btn",
+                          "aria-label:Toggle mute"
+                        ],
+                        "actions": [
+                          {
+                            "event": "press",
+                            "emit": "toggle_mute"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "width": "48px",
+                            "height": "24px",
+                            "justify_content": "center",
+                            "align_items": "center"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333",
+                            "border_radius": "9999px"
+                          }
+                        },
+                        "state_visuals": {
+                          "focused": {
+                            "visuals": {
+                              "border_color": "#f97316",
+                              "border_width": "2px"
+                            }
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "toggle_btn_3_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "toggle_btn_3_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "OFF",
+                                "font_size": 10.0,
+                                "font_color": "transparent",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "line_height": "1"
+                              }
+                            }
+                          },
+                          {
+                            "id": "toggle_btn_3_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_8_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_panel_2_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_panel_3",
+                "kind": "node",
+                "markers": [
+                  "class:tab-panel"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "none",
+                    "flex_direction": "column",
+                    "row_gap": "16px",
+                    "column_gap": "16px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "tab_panel_3_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "settings_row_9",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_9_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_9_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_9",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_9_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_9_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Move Forward",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_9_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_2_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "W",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_9_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_10",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_10_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_10_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_10",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_10_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_10_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Move Back",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_10_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_3_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_3_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "S",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_3_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_10_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_11",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_11_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_11_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_11",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_11_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_11_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Move Left",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_11_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_4_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_4_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "A",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_4_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_11_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_12",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_12_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_12_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_12",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_12_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_12_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Move Right",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_12_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value_5",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_5_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_5_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "D",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_5_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_12_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "settings_row_13",
+                    "kind": "node",
+                    "markers": [
+                      "class:settings-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "padding": "8px 0",
+                        "flex_direction": "row",
+                        "justify_content": "space-between",
+                        "align_items": "center",
+                        "position_type": "relative"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "settings_row_13_border_bottom",
+                        "kind": "node",
+                        "markers": [
+                          "css-edge-border:bottom"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "height": "1px",
+                            "left": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "position_type": "absolute"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#333333"
+                          }
+                        }
+                      },
+                      {
+                        "id": "settings_row_13_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "settings_row_label_13",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-label"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_label_13_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_label_13_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Interact",
+                                "font_size": 16.0,
+                                "font_color": "#ffffff",
+                                "font_path": "Hiragino Sans GB.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_label_13_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_value_6",
+                        "kind": "node",
+                        "markers": [
+                          "class:settings-row-value"
+                        ],
+                        "children": [
+                          {
+                            "id": "settings_row_value_6_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "settings_row_value_6_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "E",
+                                "font_size": 14.0,
+                                "font_color": "#888888",
+                                "font_path": "Menlo.ttc",
+                                "font_weight": 400,
+                                "line_height": "1.4"
+                              }
+                            }
+                          },
+                          {
+                            "id": "settings_row_value_6_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "settings_row_13_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tab_panel_3_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "tab_content_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "settings_panel_pseudo_after",
+            "kind": "node",
+            "markers": [
+              "pseudo:after"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overlay_root_pseudo_after",
+        "kind": "node",
+        "markers": [
+          "pseudo:after"
+        ]
+      }
+    ]
+  }
+}

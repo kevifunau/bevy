@@ -21,7 +21,7 @@ pub(crate) fn opendesign_html_to_generic_bui_document(
     let mut root = generic_element_node("overlay_root", "node", stylesheet, overlay);
     apply_opendesign_preset(
         &mut root,
-        if has_class(overlay, "game-stage") {
+        if has_class(overlay, "game-stage") || has_class(overlay, "bevy-ui-root") {
             OpenDesignPreset::GameStageRoot
         } else {
             OpenDesignPreset::OverlayRoot

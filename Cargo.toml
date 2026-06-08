@@ -3845,6 +3845,21 @@ name = "hero_game_ui_json"
 path = "examples/UiParserTest/opendesignTest/hero_game_ui/hero_game_ui_json.rs"
 doc-scrape-examples = true
 
+[[example]]
+name = "bevy_ui_example"
+path = "examples/UiParserTest/opendesignTest/bevy_ui_example/bevy_ui_example.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "bevy_ui_example_html"
+path = "examples/UiParserTest/opendesignTest/bevy_ui_example/bevy_ui_example_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "slg_ui_html"
+path = "examples/UiParserTest/opendesignTest/slg_ui/slg_ui_html.rs"
+doc-scrape-examples = true
+
 [package.metadata.example.login_ui_parser_test]
 name = "Login UI Parser Test"
 description = "Parses the login screen BUI JSON into a native Bevy UI ECS tree"
@@ -3902,6 +3917,18 @@ wasm = false
 [package.metadata.example.hero_game_ui_json]
 name = "Hero Game UI JSON"
 description = "Parses the hero game UI BUI 2.x compatibility JSON into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.bevy_ui_example]
+name = "Bevy UI Example"
+description = "Parses the Bevy UI example BUI 3.0-ir fixture into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.bevy_ui_example_html]
+name = "Bevy UI Example HTML"
+description = "Compiles the Bevy UI example OpenDesign HTML at runtime into a native Bevy UI ECS tree"
 category = "UI (User Interface)"
 wasm = false
 

@@ -20,10 +20,14 @@ struct OpenDesignRootNodes<'a, 'input> {
 pub(crate) fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
     let overlay_start = html.find("<div class=\"overlay");
     let main_start = html.find("<main class=\"game-stage");
+    let bevy_ui_root_div_start = html.find("<div class=\"bevy-ui-root");
+    let bevy_ui_root_main_start = html.find("<main class=\"bevy-ui-root");
 
     let start = overlay_start
         .or(main_start)
-        .ok_or_else(|| "OpenDesign HTML does not contain a recognized root container ('<div class=\"overlay' or '<main class=\"game-stage').".to_string())?;
+        .or(bevy_ui_root_div_start)
+        .or(bevy_ui_root_main_start)
+        .ok_or_else(|| "OpenDesign HTML does not contain a recognized root container ('<div class=\"overlay', '<main class=\"game-stage', or class 'bevy-ui-root').".to_string())?;
 
     let visually_hidden_end = html[start..]
         .find("<p class=\"visually-hidden\"")
@@ -32,8 +36,20 @@ pub(crate) fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
     let closing_main_end = html[start..]
         .find("</main>")
         .map(|offset| start + offset + "</main>".len());
+    let closing_bevy_root_end = if bevy_ui_root_div_start == Some(start) {
+        html.rfind("</div>").map(|offset| offset + "</div>".len())
+    } else if bevy_ui_root_main_start == Some(start) {
+        html[start..]
+            .find("</main>")
+            .map(|offset| start + offset + "</main>".len())
+    } else {
+        None
+    };
 
-    let end = visually_hidden_end.or(closing_main_end).ok_or_else(|| {
+    let end = visually_hidden_end
+        .or(closing_main_end)
+        .or(closing_bevy_root_end)
+        .ok_or_else(|| {
         "OpenDesign HTML does not contain the expected closing marker after the root container."
             .to_string()
     })?;
@@ -75,8 +91,13 @@ fn find_opendesign_root_nodes<'a, 'input>(
                 .descendants()
                 .find(|node| has_class(*node, "game-stage"))
         })
+        .or_else(|| {
+            parsed
+                .descendants()
+                .find(|node| has_class(*node, "bevy-ui-root"))
+        })
         .ok_or_else(|| {
-            "OpenDesign HTML is missing a recognized root container (.overlay or .game-stage)."
+            "OpenDesign HTML is missing a recognized root container (.overlay, .game-stage, or .bevy-ui-root)."
                 .to_string()
         })?;
 
@@ -85,8 +106,8 @@ fn find_opendesign_root_nodes<'a, 'input>(
 
 pub(crate) fn opendesign_html_to_bui_document(html: &str) -> Result<BuiDocument, String> {
     let fragment = extract_opendesign_fragment(html)?;
-    let wrapped = format!("<bui_root>{fragment}</bui_root>");
-    let parsed = roxmltree::Document::parse(&wrapped)
+    let wrapped_storage = format!("<bui_root>{fragment}</bui_root>");
+    let parsed = roxmltree::Document::parse(&wrapped_storage)
         .map_err(|error| format!("Failed to parse OpenDesign HTML fragment: {error}"))?;
     let root_nodes = find_opendesign_root_nodes(&parsed)?;
     let viewport = opendesign_compile_viewport(root_nodes.root);

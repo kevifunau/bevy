@@ -51,6 +51,8 @@ pub(crate) fn generic_append_children(
             let mut child_node = generic_element_node(&id, kind, stylesheet, child);
             generic_append_children(&mut child_node, child, stylesheet, id_counts);
             parent.children.push(child_node);
+        } else if child.node_type() == roxmltree::NodeType::Comment {
+            continue;
         } else if let Some(text) = child.text().map(str::trim).filter(|text| !text.is_empty()) {
             direct_text_index += 1;
             let mut text_child = text_node(
@@ -129,6 +131,18 @@ pub(crate) fn generic_element_node(
         });
     }
 
+    if let Some(group) = dom_node
+        .attribute("data-tab-group")
+        .filter(|value| !value.trim().is_empty())
+    {
+        node.semantics.tab_group_name = Some(group.to_string());
+    }
+    if let Some(value) = dom_node
+        .attribute("data-tab")
+        .filter(|value| !value.trim().is_empty())
+    {
+        node.semantics.tab_value = Some(value.to_string());
+    }
     apply_opendesign_styles(stylesheet, &mut node, dom_node);
     suppress_decorative_gradient_fallbacks(&mut node);
     node

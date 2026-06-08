@@ -39,6 +39,9 @@ pub(super) const HERO_GAME_UI_HTML: &str = include_str!(
 pub(super) const HERO_GAME_UI_IR: &str = include_str!(
     "../../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.ir.json"
 );
+pub(super) const BEVY_UI_EXAMPLE_HTML: &str = include_str!(
+    "../../../../examples/UiParserTest/opendesignTest/bevy_ui_example/bevy-ui-example.html"
+);
 
 pub(super) fn find_bui_node<'a>(node: &'a BuiNode, id: &str) -> &'a BuiNode {
     find_bui_node_optional(node, id).unwrap_or_else(|| panic!("IR node '{id}' should exist"))
