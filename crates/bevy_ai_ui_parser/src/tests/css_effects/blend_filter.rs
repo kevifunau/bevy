@@ -100,6 +100,48 @@ fn multiply_scene_wash_linear_overlays_stay_conservative() {
 }
 
 #[test]
+fn multiply_scene_wash_round_overlays_also_soften() {
+    let html = r#"
+    <style>
+      .game-stage { width: 320px; height: 160px; position: relative; }
+      .wash {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 18% 12%, oklch(84% 0.072 235 / 0.72), transparent 25%),
+          linear-gradient(90deg, oklch(86% 0.064 230 / 0.16) 0 48%, transparent 59%);
+        mix-blend-mode: multiply;
+      }
+    </style>
+    <main class="game-stage"><div class="wash"></div></main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let wash = find_bui_node(&document.root, "wash");
+
+    let softened_round_alphas = wash
+        .children
+        .iter()
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
+        .filter(|child| child.style.visuals.border_radius.as_deref() == Some("50%"))
+        .filter_map(|child| child.style.visuals.background_color.as_deref())
+        .filter_map(css_hex_rgba)
+        .map(|(_, _, _, alpha)| alpha)
+        .collect::<Vec<_>>();
+
+    assert!(
+        !softened_round_alphas.is_empty(),
+        "expected round radial overlays"
+    );
+    assert!(softened_round_alphas.iter().all(|alpha| *alpha <= 0.06));
+}
+
+#[test]
 fn css_adjust_filter_color_applies_brightness_contrast_and_saturation() {
     let adjusted = css_adjust_filter_color(
         "#7A6A5A80",

@@ -245,9 +245,16 @@ fn css_simple_radial_gradient_overlays_expand_into_soft_layers() {
         overlays.len() >= 3,
         "expected radial gradient to emit multiple soft layers"
     );
-    assert!(overlays
-        .iter()
-        .all(|overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })));
+    assert!(overlays.iter().all(
+        |overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })
+    ));
+    assert!(overlays.iter().all(|overlay| matches!(
+        overlay.kind,
+        SimpleGradientOverlayKind::Radial {
+            preserve_circle: true,
+            ..
+        }
+    )));
 }
 
 #[test]
@@ -257,14 +264,52 @@ fn css_simple_radial_gradient_large_scene_wash_stays_more_conservative() {
     );
 
     assert_eq!(overlays.len(), 3);
-    assert!(overlays
-        .iter()
-        .all(|overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })));
+    assert!(overlays.iter().all(
+        |overlay| matches!(overlay.kind, SimpleGradientOverlayKind::Radial { .. })
+    ));
     let alphas = overlays
         .iter()
         .filter_map(|overlay| css_hex_rgba(&overlay.color).map(|(_, _, _, alpha)| alpha))
         .collect::<Vec<_>>();
     assert!(alphas.iter().all(|alpha| *alpha <= 0.08));
+}
+
+#[test]
+fn opendesign_circle_radial_overlays_keep_geometry_in_wide_containers() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 640px;
+        aspect-ratio: 2;
+        position: relative;
+      }
+      .wash {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 24% 16%, #B7D5EC33 0%, transparent 32%);
+      }
+    </style>
+    <main class="game-stage">
+      <div class="wash"></div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let wash = find_bui_node(&document.root, "wash");
+    let radial_overlay = wash
+        .children
+        .iter()
+        .find(|child| child.id == "wash_gradient_overlay")
+        .expect("expected radial overlay");
+
+    assert!(radial_overlay
+        .markers
+        .iter()
+        .any(|tag| tag == "css-radial-circle"));
+    assert_eq!(radial_overlay.layout.styles.width.as_deref(), Some("69%"));
+    assert_eq!(radial_overlay.layout.styles.height.as_deref(), Some("138%"));
+    assert_eq!(radial_overlay.layout.styles.left.as_deref(), Some("-11%"));
+    assert_eq!(radial_overlay.layout.styles.top.as_deref(), Some("-53.5%"));
 }
 
 #[test]

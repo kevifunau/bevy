@@ -43,6 +43,7 @@ pub(crate) fn css_simple_radial_gradient_overlays(value: &str) -> Vec<SimpleGrad
                     top,
                     width,
                     height,
+                    preserve_circle: radial.preserve_circle,
                 },
             })
         })
@@ -89,6 +90,7 @@ fn css_simple_radial_gradient_overlay(value: &str) -> Option<SimpleRadialGradien
 
     let color = color?;
     let stop_ratio = stop_ratio.unwrap_or(0.5_f32).clamp(0.12, 0.72);
+    let preserve_circle = descriptor.contains("circle");
     let ellipse_scale_x = if descriptor.contains("ellipse") {
         1.35
     } else {
@@ -106,6 +108,7 @@ fn css_simple_radial_gradient_overlay(value: &str) -> Option<SimpleRadialGradien
         center_y,
         width,
         height,
+        preserve_circle,
         color,
     })
 }
@@ -165,6 +168,7 @@ pub(crate) fn css_simple_radial_gradient_ring_overlay(
         return None;
     }
 
+    let preserve_circle = descriptor.contains("circle");
     let ellipse_scale_x = if descriptor.contains("ellipse") {
         1.35
     } else {
@@ -188,6 +192,7 @@ pub(crate) fn css_simple_radial_gradient_ring_overlay(
         width,
         height,
         border_width,
+        preserve_circle,
         color,
     })
 }

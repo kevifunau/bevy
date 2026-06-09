@@ -9,6 +9,7 @@ use crate::core::{
         stylesheet::OpenDesignStylesheet,
     },
     parse::validate::validate_bui_document,
+    style::css_gradients::preserve_radial_circle_geometry,
 };
 
 use super::tree::{generic_append_children, generic_element_node};
@@ -29,6 +30,7 @@ pub(crate) fn opendesign_html_to_generic_bui_document(
     );
     generic_append_children(&mut root, overlay, stylesheet, &mut id_counts);
     enhance_hero_game_ui_defaults(&mut root);
+    preserve_radial_circle_geometry(&mut root);
 
     let document = BuiDocument {
         version: "3.0-ir".to_string(),

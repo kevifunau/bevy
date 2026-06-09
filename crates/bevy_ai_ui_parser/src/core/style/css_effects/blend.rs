@@ -75,12 +75,21 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
             continue;
         }
 
-        let soften_scene_wash_overlay = should_soften_multiply_scene_wash_overlay(child);
+        let soften_scene_wash_factor = child
+            .style
+            .visuals
+            .background_color
+            .as_deref()
+            .and_then(css_multiply_blend_fallback_color)
+            .and_then(|mixed| multiply_scene_wash_soften_factor(child, &mixed));
+
         if let Some(color) = &mut child.style.visuals.background_color
             && let Some(mixed) = css_multiply_blend_fallback_color(color)
         {
             *color = mixed;
-            if soften_scene_wash_overlay && let Some(softened) = scale_hex_alpha(color, 0.55) {
+            if let Some(factor) = soften_scene_wash_factor
+                && let Some(softened) = scale_hex_alpha(color, factor)
+            {
                 *color = softened;
             }
         }
@@ -98,27 +107,22 @@ pub(crate) fn apply_mix_blend_mode_fallback(bui_node: &mut BuiNode, value: &str)
     }
 }
 
-fn should_soften_multiply_scene_wash_overlay(node: &BuiNode) -> bool {
+fn multiply_scene_wash_soften_factor(node: &BuiNode, color: &str) -> Option<f32> {
     if node.layout.styles.ui_rotation.is_some() {
-        return false;
+        return None;
     }
 
-    let Some(color) = node.style.visuals.background_color.as_deref() else {
-        return false;
-    };
     let Some((_, _, _, alpha)) = css_hex_rgba(color) else {
-        return false;
+        return None;
     };
-    if alpha > 0.16 {
-        return false;
+    if alpha > 0.18 {
+        return None;
     }
 
-    if matches!(
+    let is_round_overlay = matches!(
         node.style.visuals.border_radius.as_deref(),
         Some("50%") | Some("999px")
-    ) {
-        return false;
-    }
+    );
 
     let horizontal_full_span = style_is_zero(node.layout.styles.left.as_deref())
         && style_is_zero(node.layout.styles.right.as_deref());
@@ -135,8 +139,41 @@ fn should_soften_multiply_scene_wash_overlay(node: &BuiNode) -> bool {
         node.layout.styles.height.as_deref(),
     );
 
-    (vertical_full_span && width_coverage >= 0.28)
-        || (horizontal_full_span && height_coverage >= 0.24)
+    let dominant_coverage = if is_round_overlay {
+        width_coverage.max(height_coverage)
+    } else if vertical_full_span {
+        width_coverage
+    } else if horizontal_full_span {
+        height_coverage
+    } else {
+        return None;
+    };
+    if dominant_coverage < 0.24 || (is_round_overlay && width_coverage < 0.14) {
+        return None;
+    }
+
+    let base_factor = if is_round_overlay && dominant_coverage >= 0.46 {
+        0.18_f32
+    } else if is_round_overlay && dominant_coverage >= 0.34 {
+        0.26_f32
+    } else if is_round_overlay {
+        0.38_f32
+    } else if dominant_coverage >= 0.44 {
+        0.32_f32
+    } else if dominant_coverage >= 0.34 {
+        0.40_f32
+    } else {
+        0.55_f32
+    };
+    let alpha_bias = if alpha <= 0.08 {
+        0.88_f32
+    } else if alpha <= 0.12 {
+        0.94_f32
+    } else {
+        1.0_f32
+    };
+
+    Some((base_factor * alpha_bias).clamp(0.24_f32, 0.55_f32))
 }
 
 fn style_is_zero(value: Option<&str>) -> bool {

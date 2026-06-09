@@ -97,12 +97,16 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 top,
                 width,
                 height,
+                preserve_circle,
             } => {
                 overlay.layout.styles.left = Some(format!("{:.0}%", left * 100.0));
                 overlay.layout.styles.top = Some(format!("{:.0}%", top * 100.0));
                 overlay.layout.styles.width = Some(format!("{:.0}%", width * 100.0));
                 overlay.layout.styles.height = Some(format!("{:.0}%", height * 100.0));
                 overlay.style.visuals.border_radius = Some("50%".to_string());
+                if preserve_circle {
+                    overlay.markers.push("css-radial-circle".to_string());
+                }
             }
             SimpleGradientOverlayKind::RadialRing {
                 left,
@@ -110,6 +114,7 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 width,
                 height,
                 border_width,
+                preserve_circle,
             } => {
                 overlay.layout.styles.left = Some(format!("{:.0}%", left * 100.0));
                 overlay.layout.styles.top = Some(format!("{:.0}%", top * 100.0));
@@ -119,6 +124,9 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 overlay.style.visuals.border_color = Some(spec.color.clone());
                 overlay.style.visuals.border_width = Some(format!("{:.1}%", border_width * 100.0));
                 overlay.style.visuals.border_radius = Some("50%".to_string());
+                if preserve_circle {
+                    overlay.markers.push("css-radial-circle".to_string());
+                }
             }
             SimpleGradientOverlayKind::ConicArc {
                 left,
@@ -169,11 +177,121 @@ fn css_simple_gradient_overlay_layer(layer: &str) -> Vec<SimpleGradientOverlaySp
                 width: ring.width,
                 height: ring.height,
                 border_width: ring.border_width,
+                preserve_circle: ring.preserve_circle,
             },
         }];
     }
 
     css_simple_radial_gradient_overlays(layer)
+}
+
+pub(crate) fn preserve_radial_circle_geometry(root: &mut BuiNode) {
+    let root_aspect_ratio = node_aspect_ratio(root, None);
+    preserve_radial_circle_geometry_with_parent(root, root_aspect_ratio);
+}
+
+fn preserve_radial_circle_geometry_with_parent(
+    node: &mut BuiNode,
+    parent_aspect_ratio: Option<f32>,
+) {
+    let node_aspect_ratio = node_aspect_ratio(node, parent_aspect_ratio);
+
+    for child in &mut node.children {
+        if child.markers.iter().any(|tag| tag == "css-radial-circle") {
+            preserve_circle_overlay_geometry(child, node_aspect_ratio);
+        }
+        preserve_radial_circle_geometry_with_parent(child, node_aspect_ratio);
+    }
+}
+
+fn preserve_circle_overlay_geometry(node: &mut BuiNode, parent_aspect_ratio: Option<f32>) {
+    let Some(parent_aspect_ratio) = parent_aspect_ratio.filter(|ratio| ratio.is_finite()) else {
+        return;
+    };
+
+    let width_ratio = percent_ratio(node.layout.styles.width.as_deref());
+    let height_ratio = percent_ratio(node.layout.styles.height.as_deref());
+    let left_ratio = percent_ratio(node.layout.styles.left.as_deref());
+    let top_ratio = percent_ratio(node.layout.styles.top.as_deref());
+
+    let (Some(width_ratio), Some(height_ratio), Some(left_ratio), Some(top_ratio)) =
+        (width_ratio, height_ratio, left_ratio, top_ratio)
+    else {
+        return;
+    };
+
+    let center_x = left_ratio + width_ratio * 0.5;
+    let center_y = top_ratio + height_ratio * 0.5;
+
+    let (new_width_ratio, new_height_ratio) = if parent_aspect_ratio >= 1.0 {
+        (width_ratio, width_ratio * parent_aspect_ratio)
+    } else {
+        (height_ratio / parent_aspect_ratio.max(0.001), height_ratio)
+    };
+
+    let new_left_ratio = center_x - new_width_ratio * 0.5;
+    let new_top_ratio = center_y - new_height_ratio * 0.5;
+
+    node.layout.styles.left = Some(format_percent(new_left_ratio));
+    node.layout.styles.top = Some(format_percent(new_top_ratio));
+    node.layout.styles.width = Some(format_percent(new_width_ratio));
+    node.layout.styles.height = Some(format_percent(new_height_ratio));
+}
+
+fn node_aspect_ratio(node: &BuiNode, fallback: Option<f32>) -> Option<f32> {
+    if let Some(aspect_ratio) = node
+        .layout
+        .styles
+        .aspect_ratio
+        .as_deref()
+        .and_then(|value| value.trim().parse::<f32>().ok())
+        .filter(|ratio| ratio.is_finite() && *ratio > 0.0)
+    {
+        return Some(aspect_ratio);
+    }
+
+    let width_px = px_ratio(node.layout.styles.width.as_deref());
+    let height_px = px_ratio(node.layout.styles.height.as_deref());
+    if let (Some(width_px), Some(height_px)) = (width_px, height_px)
+        && height_px > 0.0
+    {
+        return Some(width_px / height_px);
+    }
+
+    let fills_parent = style_is_zero(node.layout.styles.left.as_deref())
+        && style_is_zero(node.layout.styles.right.as_deref())
+        && style_is_zero(node.layout.styles.top.as_deref())
+        && style_is_zero(node.layout.styles.bottom.as_deref());
+    if fills_parent {
+        return fallback;
+    }
+
+    fallback
+}
+
+fn style_is_zero(value: Option<&str>) -> bool {
+    matches!(value.map(str::trim), Some("0") | Some("0%") | Some("0px"))
+}
+
+fn px_ratio(value: Option<&str>) -> Option<f32> {
+    let value = value?.trim();
+    let px = value.strip_suffix("px")?.trim().parse::<f32>().ok()?;
+    Some(px)
+}
+
+fn percent_ratio(value: Option<&str>) -> Option<f32> {
+    let value = value?.trim();
+    let percent = value.strip_suffix('%')?.trim().parse::<f32>().ok()?;
+    Some(percent / 100.0)
+}
+
+fn format_percent(value: f32) -> String {
+    let percent = value * 100.0;
+    if (percent - percent.round()).abs() < 0.05 {
+        format!("{:.0}%", percent)
+    } else {
+        format!("{percent:.1}%")
+    }
 }
 
 fn gradient_overlay_id(node_id: &str, index: usize) -> String {

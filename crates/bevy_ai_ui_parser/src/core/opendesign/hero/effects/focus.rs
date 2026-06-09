@@ -1,30 +1,38 @@
 use crate::core::{
     model::BuiNode,
-    style::{css_effects::scale_helper_child_opacity, css_values::scale_hex_alpha},
+    style::css_effects::scale_helper_child_opacity,
     support::tree::find_bui_node_mut,
 };
 
 pub(super) fn soften_hero_glow(root: &mut BuiNode) {
     if let Some(node) = find_bui_node_mut(root, "hero_glow") {
-        scale_helper_child_opacity(node, 0.025);
+        scale_helper_child_opacity(node, 0.04);
         for child in &mut node.children {
             if child.markers.iter().any(|tag| tag == "css-filter-blur")
                 && let Some(box_shadow) = &mut child.style.visuals.box_shadow
-                && let Some(color) = &mut box_shadow.color
-                && let Some(scaled) = scale_hex_alpha(color, 0.18)
             {
-                *color = scaled;
+                box_shadow.color = Some("#CDA66110".to_string());
+                box_shadow.blur_radius = Some("34px".to_string());
+                box_shadow.spread_radius = Some("10px".to_string());
             }
 
             match child.id.as_str() {
                 "hero_glow_gradient_overlay" => {
-                    child.style.visuals.background_color = Some("#D8C58F01".to_string());
+                    child.style.visuals.background_color = Some("#D7BD7408".to_string());
+                    child.layout.styles.width = Some("88%".to_string());
+                    child.layout.styles.height = Some("66%".to_string());
+                    child.layout.styles.left = Some("8%".to_string());
+                    child.layout.styles.top = Some("24%".to_string());
                 }
                 "hero_glow_gradient_overlay_2" => {
-                    child.style.visuals.background_color = Some("#D6C08A02".to_string());
+                    child.style.visuals.background_color = Some("#D5B26A0C".to_string());
+                    child.layout.styles.width = Some("68%".to_string());
+                    child.layout.styles.height = Some("52%".to_string());
+                    child.layout.styles.left = Some("18%".to_string());
+                    child.layout.styles.top = Some("30%".to_string());
                 }
                 "hero_glow_gradient_overlay_3" => {
-                    child.style.visuals.background_color = Some("#C9AE7602".to_string());
+                    child.style.visuals.background_color = Some("#C59B6207".to_string());
                 }
                 _ => {}
             }

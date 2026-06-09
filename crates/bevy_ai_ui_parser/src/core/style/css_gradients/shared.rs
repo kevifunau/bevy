@@ -29,6 +29,7 @@ pub(crate) enum SimpleGradientOverlayKind {
         top: f32,
         width: f32,
         height: f32,
+        preserve_circle: bool,
     },
     RadialRing {
         left: f32,
@@ -36,6 +37,7 @@ pub(crate) enum SimpleGradientOverlayKind {
         width: f32,
         height: f32,
         border_width: f32,
+        preserve_circle: bool,
     },
     ConicArc {
         left: f32,
@@ -52,6 +54,7 @@ pub(crate) struct SimpleRadialGradientRingOverlay {
     pub(crate) width: f32,
     pub(crate) height: f32,
     pub(crate) border_width: f32,
+    pub(crate) preserve_circle: bool,
     pub(crate) color: String,
 }
 
@@ -67,6 +70,7 @@ pub(crate) struct SimpleRadialGradientOverlay {
     pub(crate) center_y: f32,
     pub(crate) width: f32,
     pub(crate) height: f32,
+    pub(crate) preserve_circle: bool,
     pub(crate) color: String,
 }
 
