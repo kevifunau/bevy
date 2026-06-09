@@ -31,15 +31,15 @@ struct ImageGroupSize {
 fn main() {
     let mut app = App::new();
     app.insert_resource(ImageGroupSize {
-            height: IMAGE_GROUP_BOX_INIT_HEIGHT,
-            width: IMAGE_GROUP_BOX_INIT_WIDTH,
-        })
-        .add_plugins(DefaultPlugins)
-        .add_plugins(AiUiPlugin::from_path(bui_json_path(
-            "image_node_resizing.ir.json",
-        )))
-        .add_systems(Startup, setup_camera)
-        .add_systems(Update, resize_image_groups);
+        height: IMAGE_GROUP_BOX_INIT_HEIGHT,
+        width: IMAGE_GROUP_BOX_INIT_WIDTH,
+    })
+    .add_plugins(DefaultPlugins)
+    .add_plugins(AiUiPlugin::from_path(bui_json_path(
+        "image_node_resizing.ir.json",
+    )))
+    .add_systems(Startup, setup_camera)
+    .add_systems(Update, resize_image_groups);
     auto_screenshot::install(&mut app);
     app.run();
 }

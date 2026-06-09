@@ -46,7 +46,10 @@ fn css_effect_fallback_registry_documents_all_fallback_entries() {
         .iter()
         .find(|e| e.css_property == "background (gradient)");
     assert!(gradient_entry.is_some());
-    assert_eq!(gradient_entry.expect("gradient entry").helper_tag, "css-gradient-overlay");
+    assert_eq!(
+        gradient_entry.expect("gradient entry").helper_tag,
+        "css-gradient-overlay"
+    );
     let mask_entry = registry
         .iter()
         .find(|e| e.css_property == "mask-image: linear-gradient(...)");
@@ -56,5 +59,8 @@ fn css_effect_fallback_registry_documents_all_fallback_entries() {
         .iter()
         .find(|e| e.css_property == "clip-path: polygon(...)");
     assert!(clip_entry.is_some());
-    assert_eq!(clip_entry.expect("clip entry").helper_tag, "css-clip-contour");
+    assert_eq!(
+        clip_entry.expect("clip entry").helper_tag,
+        "css-clip-contour"
+    );
 }

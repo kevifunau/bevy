@@ -71,11 +71,13 @@ fn spawn_interaction_ui(
 
             let bg_color = match comp.visual_style.as_str() {
                 "GHOST_LINE" => GHOST_LINE_BG,
-                _ => if is_condition_blocked {
-                    CAPSULE_BG_DISABLED
-                } else {
-                    CAPSULE_BG
-                },
+                _ => {
+                    if is_condition_blocked {
+                        CAPSULE_BG_DISABLED
+                    } else {
+                        CAPSULE_BG
+                    }
+                }
             };
             let border_color = if is_condition_blocked {
                 Color::srgb(0.2, 0.2, 0.2)
@@ -112,24 +114,26 @@ fn spawn_interaction_ui(
                 btn.insert(InteractionDisabled);
             }
 
-            let btn_entity = btn.with_children(|b| {
-                b.spawn((
-                    Text::new(if is_condition_blocked {
-                        format!("{} [条件未满足]", comp.content.text)
-                    } else {
-                        comp.content.text.clone()
-                    }),
-                    TextFont {
-                        font_size: FontSize::Px(22.0),
-                        ..default()
-                    },
-                    TextColor(if is_condition_blocked {
-                        Color::srgb(0.4, 0.4, 0.4)
-                    } else {
-                        Color::srgb(0.85, 0.85, 0.95)
-                    }),
-                ));
-            }).id();
+            let btn_entity = btn
+                .with_children(|b| {
+                    b.spawn((
+                        Text::new(if is_condition_blocked {
+                            format!("{} [条件未满足]", comp.content.text)
+                        } else {
+                            comp.content.text.clone()
+                        }),
+                        TextFont {
+                            font_size: FontSize::Px(22.0),
+                            ..default()
+                        },
+                        TextColor(if is_condition_blocked {
+                            Color::srgb(0.4, 0.4, 0.4)
+                        } else {
+                            Color::srgb(0.85, 0.85, 0.95)
+                        }),
+                    ));
+                })
+                .id();
 
             button_entities.push(btn_entity);
         }
@@ -143,7 +147,11 @@ fn spawn_interaction_ui(
 fn handle_interaction_button_click(
     mut interaction_query: Query<
         (&Interaction, &InteractionButtonComponent),
-        (Changed<Interaction>, With<Button>, With<InteractionButtonEntity>),
+        (
+            Changed<Interaction>,
+            With<Button>,
+            With<InteractionButtonEntity>,
+        ),
     >,
     mut ev_click: MessageWriter<OnComponentClickedMessage>,
     existing: Query<Entity, With<InteractionUIRoot>>,

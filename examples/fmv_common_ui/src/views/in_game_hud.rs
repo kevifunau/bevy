@@ -52,17 +52,15 @@ pub fn setup_in_game_hud(mut commands: Commands, current: Res<CurrentNodeResourc
         ))
         .with_children(|parent| {
             parent
-                .spawn((
-                    Node {
-                        width: percent(100),
-                        height: px(45),
-                        flex_direction: FlexDirection::Row,
-                        justify_content: JustifyContent::FlexStart,
-                        align_items: AlignItems::Center,
-                        padding: UiRect::left(px(20)),
-                        ..default()
-                    },
-                ))
+                .spawn((Node {
+                    width: percent(100),
+                    height: px(45),
+                    flex_direction: FlexDirection::Row,
+                    justify_content: JustifyContent::FlexStart,
+                    align_items: AlignItems::Center,
+                    padding: UiRect::left(px(20)),
+                    ..default()
+                },))
                 .with_children(|top_bar| {
                     top_bar
                         .spawn((
@@ -86,23 +84,22 @@ pub fn setup_in_game_hud(mut commands: Commands, current: Res<CurrentNodeResourc
                             ));
                         });
 
-                    top_bar.spawn((
-                        Node {
+                    top_bar
+                        .spawn((Node {
                             margin: UiRect::left(px(20)),
                             ..default()
-                        },
-                    ))
-                    .with_children(|area| {
-                        area.spawn((
-                            Text::new(title),
-                            TextFont {
-                                font_size: FontSize::Px(18.0),
-                                ..default()
-                            },
-                            TextColor(NODE_TITLE_COLOR),
-                            NodeTitleText,
-                        ));
-                    });
+                        },))
+                        .with_children(|area| {
+                            area.spawn((
+                                Text::new(title),
+                                TextFont {
+                                    font_size: FontSize::Px(18.0),
+                                    ..default()
+                                },
+                                TextColor(NODE_TITLE_COLOR),
+                                NodeTitleText,
+                            ));
+                        });
                 });
 
             parent
@@ -184,7 +181,14 @@ pub fn in_game_hud_interaction(
         (&Interaction, &mut BackgroundColor, Option<&BackButtonTag>),
         (Changed<Interaction>, With<Button>),
     >,
-    mut text_query: Query<&mut Text, Or<(With<VideoTimeText>, With<NodeTitleText>, With<BlackboardText>)>>,
+    mut text_query: Query<
+        &mut Text,
+        Or<(
+            With<VideoTimeText>,
+            With<NodeTitleText>,
+            With<BlackboardText>,
+        )>,
+    >,
     current: Res<CurrentNodeResource>,
     playback_query: Query<&VideoSimulatedPlayback>,
     bb: Res<BlackboardResource>,
@@ -208,7 +212,14 @@ pub fn in_game_hud_interaction(
     if current.is_changed() {
         if let Some(node_data) = &current.node_data {
             for mut text in &mut text_query {
-                if text.0.contains("Loading") || text.0.contains("初入宫廷") || text.0.contains("女帝选秀") || text.0.contains("深宫谍影") || text.0.contains("太子之路") || text.0.contains("暗中观望") || text.0.contains("皇后之路") {
+                if text.0.contains("Loading")
+                    || text.0.contains("初入宫廷")
+                    || text.0.contains("女帝选秀")
+                    || text.0.contains("深宫谍影")
+                    || text.0.contains("太子之路")
+                    || text.0.contains("暗中观望")
+                    || text.0.contains("皇后之路")
+                {
                     **text = node_data.node_title.clone();
                 }
             }
@@ -239,10 +250,7 @@ pub fn in_game_hud_interaction(
     }
 }
 
-pub fn cleanup_in_game_hud(
-    mut commands: Commands,
-    entities: Res<InGameHudEntities>,
-) {
+pub fn cleanup_in_game_hud(mut commands: Commands, entities: Res<InGameHudEntities>) {
     commands.entity(entities.root).despawn();
     commands.remove_resource::<InGameHudEntities>();
 }

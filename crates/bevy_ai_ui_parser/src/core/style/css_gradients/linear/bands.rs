@@ -20,7 +20,9 @@ pub(crate) fn css_simple_gradient_bands_from_stops(
         }
 
         if previous.color == "transparent" {
-            if let Some(next_stop) = stops.get(index + 2).filter(|stop| stop.color == "transparent")
+            if let Some(next_stop) = stops
+                .get(index + 2)
+                .filter(|stop| stop.color == "transparent")
             {
                 bands.push(SimpleGradientOverlayBand {
                     color: current.color.clone(),
@@ -105,8 +107,11 @@ pub(crate) fn css_simple_gradient_bands_from_stops(
         let span = transition_end - transition_start;
         let segments = adaptive_gradient_band_count(previous, current, span);
         for index in 0..segments {
-            let start_ratio =
-                lerp_ratio(transition_start, transition_end, index as f32 / segments as f32);
+            let start_ratio = lerp_ratio(
+                transition_start,
+                transition_end,
+                index as f32 / segments as f32,
+            );
             let end_ratio = lerp_ratio(
                 transition_start,
                 transition_end,
@@ -161,7 +166,10 @@ fn should_soften_transparent_leading_segment(
         return false;
     }
 
-    let Some(next_stop) = stops.get(index + 2).filter(|stop| stop.color != "transparent") else {
+    let Some(next_stop) = stops
+        .get(index + 2)
+        .filter(|stop| stop.color != "transparent")
+    else {
         return true;
     };
     let Some((_, _, _, next_alpha)) = css_hex_rgba(&next_stop.color) else {
@@ -188,7 +196,9 @@ fn css_transparent_transition_bands(
     }
 
     let mut segments = if span >= 0.2 { 4 } else { 3 };
-    let alpha = css_hex_rgba(color).map(|(_, _, _, alpha)| alpha).unwrap_or(1.0);
+    let alpha = css_hex_rgba(color)
+        .map(|(_, _, _, alpha)| alpha)
+        .unwrap_or(1.0);
     if alpha < 0.35 {
         segments += 1;
     }
@@ -227,8 +237,10 @@ fn css_transparent_transition_bands(
 }
 
 fn css_simple_solid_gradient_bands(stops: &[CssGradientStop]) -> Vec<SimpleGradientOverlayBand> {
-    let non_transparent: Vec<&CssGradientStop> =
-        stops.iter().filter(|stop| stop.color != "transparent").collect();
+    let non_transparent: Vec<&CssGradientStop> = stops
+        .iter()
+        .filter(|stop| stop.color != "transparent")
+        .collect();
 
     let mut bands = Vec::new();
     for window in non_transparent.windows(2) {
@@ -277,7 +289,9 @@ fn css_simple_solid_gradient_bands(stops: &[CssGradientStop]) -> Vec<SimpleGradi
         }
     }
 
-    if bands.is_empty() && let Some(stop) = non_transparent.last() {
+    if bands.is_empty()
+        && let Some(stop) = non_transparent.last()
+    {
         bands.push(SimpleGradientOverlayBand {
             color: stop.color.clone(),
             start_ratio: stop.start_ratio.clamp(0.0, 1.0),
@@ -288,7 +302,11 @@ fn css_simple_solid_gradient_bands(stops: &[CssGradientStop]) -> Vec<SimpleGradi
     bands
 }
 
-fn adaptive_gradient_band_count(previous: &CssGradientStop, current: &CssGradientStop, span: f32) -> usize {
+fn adaptive_gradient_band_count(
+    previous: &CssGradientStop,
+    current: &CssGradientStop,
+    span: f32,
+) -> usize {
     let span = span.clamp(0.0, 1.0);
     let alpha_delta = gradient_alpha_delta(&previous.color, &current.color);
     let color_delta = gradient_color_distance(&previous.color, &current.color);

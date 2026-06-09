@@ -75,7 +75,10 @@ fn register_optional_auto_screenshot(app: &mut App) {
 fn detect_auto_screenshot_profile() -> AutoScreenshotProfile {
     let example_name = std::env::current_exe()
         .ok()
-        .and_then(|path| path.file_stem().map(|stem| stem.to_string_lossy().to_string()))
+        .and_then(|path| {
+            path.file_stem()
+                .map(|stem| stem.to_string_lossy().to_string())
+        })
         .unwrap_or_default();
 
     if example_name.starts_with("hero_game_ui") {
@@ -189,17 +192,14 @@ fn auto_capture_screenshot_system(
         return;
     }
 
-    let Some((root, computed_root)) = root_nodes
-        .iter()
-        .find(|(entity, computed)| {
-            computed.size().x > 0.0
-                && computed.size().y > 0.0
-                && screenshot_target
-                    .as_ref()
-                    .map(|target| *entity != target.container)
-                    .unwrap_or(true)
-        })
-    else {
+    let Some((root, computed_root)) = root_nodes.iter().find(|(entity, computed)| {
+        computed.size().x > 0.0
+            && computed.size().y > 0.0
+            && screenshot_target
+                .as_ref()
+                .map(|target| *entity != target.container)
+                .unwrap_or(true)
+    }) else {
         state.frames_after_layout = 0;
         return;
     };

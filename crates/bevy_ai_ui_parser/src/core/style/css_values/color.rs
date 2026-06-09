@@ -74,9 +74,8 @@ pub(crate) fn css_multiply_blend_fallback_color(value: &str) -> Option<String> {
     let alpha_ratio = a as f32 / 255.0;
     let is_cool_tinted = b > g && b > r;
     let (r, g, b, alpha) = if is_cool_tinted {
-        let darken = |channel: u8, factor: f32| {
-            ((channel as f32) * factor).round().clamp(0.0, 255.0) as u8
-        };
+        let darken =
+            |channel: u8, factor: f32| ((channel as f32) * factor).round().clamp(0.0, 255.0) as u8;
         let cool_lift = (1.0 - alpha_ratio).clamp(0.0, 1.0);
         (
             darken(r, 0.72 + 0.12 * cool_lift),

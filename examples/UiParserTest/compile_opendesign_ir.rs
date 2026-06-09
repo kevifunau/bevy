@@ -5,7 +5,7 @@
 
 use std::{env, fs, process::ExitCode};
 
-use bevy_ai_ui_parser::opendesign_html_file_to_bui_ir_json;
+use bevy_ai_ui_parser::opendesign_html_file_to_bui_json;
 
 fn main() -> ExitCode {
     let mut args = env::args().skip(1);
@@ -22,7 +22,7 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     };
 
-    match opendesign_html_file_to_bui_ir_json(&input_path) {
+    match opendesign_html_file_to_bui_json(&input_path) {
         Ok(json) => match fs::write(&output_path, json) {
             Ok(()) => {
                 println!("Compiled OpenDesign HTML '{input_path}' to BUI IR '{output_path}'.");

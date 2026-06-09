@@ -1,6 +1,5 @@
 use crate::core::{
-    model::BuiNode,
-    style::css_effects::scale_helper_child_opacity,
+    model::BuiNode, style::css_effects::scale_helper_child_opacity,
     support::tree::find_bui_node_mut,
 };
 

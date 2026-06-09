@@ -4,8 +4,8 @@ use crate::core::parse::ir::parse_bui_document;
 
 #[test]
 fn opendesign_ir_export_uses_3_0_shape() {
-    let ir = opendesign_html_to_bui_document(VILLAGE_SHOP_HTML)
-        .expect("OpenDesign HTML should compile");
+    let ir =
+        opendesign_html_to_bui_document(VILLAGE_SHOP_HTML).expect("OpenDesign HTML should compile");
 
     assert_eq!(ir.version, "3.0-ir");
     assert_eq!(ir.root.kind, "node");

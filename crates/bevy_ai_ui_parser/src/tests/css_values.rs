@@ -1,7 +1,7 @@
 use super::shared::find_bui_node;
-use bevy_text::LineHeight;
-use crate::core::style::css_parser::parse_text_line_height;
 use crate::core::opendesign::html::opendesign_html_to_bui_document;
+use crate::core::style::css_parser::parse_text_line_height;
+use bevy_text::LineHeight;
 
 #[test]
 fn opendesign_inherited_line_height_applies_to_text_nodes() {

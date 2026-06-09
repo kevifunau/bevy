@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiNode, bui_node},
+    model::{bui_node, BuiNode},
     style::{
         css_gradients::css_gradient_stops,
         css_parser::normalize_token,
@@ -72,25 +72,29 @@ pub(crate) fn apply_mask_image_fallback(node: &mut BuiNode, value: &str) {
         match spec.direction {
             MaskFadeDirection::LeftToRight => {
                 overlay.layout.styles.left = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.layout.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.width =
+                    Some(format!("{:.1}%", (band_end - band_start) * 100.0));
                 overlay.layout.styles.top = Some("0".to_string());
                 overlay.layout.styles.bottom = Some("0".to_string());
             }
             MaskFadeDirection::RightToLeft => {
                 overlay.layout.styles.right = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.layout.styles.width = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.width =
+                    Some(format!("{:.1}%", (band_end - band_start) * 100.0));
                 overlay.layout.styles.top = Some("0".to_string());
                 overlay.layout.styles.bottom = Some("0".to_string());
             }
             MaskFadeDirection::TopToBottom => {
                 overlay.layout.styles.top = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.layout.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.height =
+                    Some(format!("{:.1}%", (band_end - band_start) * 100.0));
                 overlay.layout.styles.left = Some("0".to_string());
                 overlay.layout.styles.right = Some("0".to_string());
             }
             MaskFadeDirection::BottomToTop => {
                 overlay.layout.styles.bottom = Some(format!("{:.1}%", band_start * 100.0));
-                overlay.layout.styles.height = Some(format!("{:.1}%", (band_end - band_start) * 100.0));
+                overlay.layout.styles.height =
+                    Some(format!("{:.1}%", (band_end - band_start) * 100.0));
                 overlay.layout.styles.left = Some("0".to_string());
                 overlay.layout.styles.right = Some("0".to_string());
             }
@@ -118,12 +122,11 @@ pub(crate) fn apply_clip_path_fallback(node: &mut BuiNode, value: &str) {
         node.layout.styles.position_type = Some("relative".to_string());
     }
 
-    if node.children.iter().any(|child| {
-        child
-            .markers
-            .iter()
-            .any(|tag| tag == "css-clip-contour")
-    }) {
+    if node
+        .children
+        .iter()
+        .any(|child| child.markers.iter().any(|tag| tag == "css-clip-contour"))
+    {
         return;
     }
 

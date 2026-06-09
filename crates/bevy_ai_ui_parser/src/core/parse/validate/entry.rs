@@ -1,22 +1,12 @@
-use std::{
-    collections::HashSet,
-    fs,
-    path::Path,
-};
+use std::{collections::HashSet, fs, path::Path};
 
 use crate::core::model::{BuiDocument, BuiNode};
 
-use super::{
-    node::validate_bui_node,
-};
-use crate::core::parse::{
-    ir::parse_bui_document,
-};
+use super::node::validate_bui_node;
+use crate::core::parse::ir::parse_bui_document;
 
 pub(crate) fn validate_bui_json_str(json: &str) -> Result<(), String> {
-    parse_bui_document(json).and_then(|document| {
-        validate_bui_document(&document)
-    })
+    parse_bui_document(json).and_then(|document| validate_bui_document(&document))
 }
 
 pub(crate) fn validate_bui_json_file(path: impl AsRef<Path>) -> Result<(), String> {

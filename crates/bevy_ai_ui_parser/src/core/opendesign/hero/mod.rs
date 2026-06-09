@@ -4,7 +4,7 @@ mod panel;
 mod stats;
 
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, text_node},
+    model::{text_node, BuiBoxShadowConfig, BuiNode},
     opendesign::svg::{ensure_text_icon_child, is_decorative_icon_helper_node},
     support::tree::{find_bui_node_mut, find_bui_node_ref},
 };
@@ -109,9 +109,8 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
     soften_hero_game_ui_effect_fallbacks(root);
     style_hero_game_ui_controls(root);
 
-    root.children.retain(|child| {
-        child.id != "popover" && child.id != "toast" && child.id != "paneltoggle"
-    });
+    root.children
+        .retain(|child| child.id != "popover" && child.id != "toast" && child.id != "paneltoggle");
 
     for meter_label_id in ["b", "b_2"] {
         if let Some(meter_label) = find_bui_node_mut(root, meter_label_id) {
@@ -140,7 +139,5 @@ pub(crate) fn enhance_hero_game_ui_defaults(root: &mut BuiNode) {
 }
 
 pub(super) fn first_direct_text_child_mut(node: &mut BuiNode) -> Option<&mut BuiNode> {
-    node.children
-        .iter_mut()
-        .find(|child| child.kind == "text")
+    node.children.iter_mut().find(|child| child.kind == "text")
 }

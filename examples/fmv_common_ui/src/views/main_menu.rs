@@ -52,30 +52,26 @@ pub fn setup_main_menu(mut commands: Commands) {
         ))
         .with_children(|parent| {
             parent
-                .spawn((
-                    Node {
-                        width: percent(35),
-                        height: percent(100),
-                        flex_direction: FlexDirection::Column,
-                        padding: UiRect {
-                            left: percent(10),
-                            top: percent(8),
-                            bottom: percent(8),
-                            right: percent(10),
-                        },
-                        justify_content: JustifyContent::FlexStart,
-                        align_items: AlignItems::FlexStart,
-                        ..default()
+                .spawn((Node {
+                    width: percent(35),
+                    height: percent(100),
+                    flex_direction: FlexDirection::Column,
+                    padding: UiRect {
+                        left: percent(10),
+                        top: percent(8),
+                        bottom: percent(8),
+                        right: percent(10),
                     },
-                ))
+                    justify_content: JustifyContent::FlexStart,
+                    align_items: AlignItems::FlexStart,
+                    ..default()
+                },))
                 .with_children(|left_panel| {
                     left_panel
-                        .spawn((
-                            Node {
-                                margin: UiRect::bottom(px(40)),
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            margin: UiRect::bottom(px(40)),
+                            ..default()
+                        },))
                         .with_children(|title_area| {
                             title_area.spawn((
                                 Text::new("《华君传》"),
@@ -88,13 +84,11 @@ pub fn setup_main_menu(mut commands: Commands) {
                         });
 
                     left_panel
-                        .spawn((
-                            Node {
-                                flex_direction: FlexDirection::Column,
-                                width: percent(100),
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            flex_direction: FlexDirection::Column,
+                            width: percent(100),
+                            ..default()
+                        },))
                         .with_children(|menu_list| {
                             for (text, action) in &buttons_data {
                                 menu_list
@@ -195,10 +189,7 @@ pub fn main_menu_interaction(
     }
 }
 
-pub fn cleanup_main_menu(
-    mut commands: Commands,
-    entities: Res<MainMenuEntities>,
-) {
+pub fn cleanup_main_menu(mut commands: Commands, entities: Res<MainMenuEntities>) {
     commands.entity(entities.root).despawn();
     commands.remove_resource::<MainMenuEntities>();
 }

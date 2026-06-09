@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use bevy::picking::hover::Hovered;
+use bevy::prelude::*;
 use bevy::ui_widgets::{
     observe, Slider, SliderDragState, SliderRange, SliderThumb, SliderValue, TrackClick,
     ValueChange,
@@ -119,8 +119,7 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
             make_slider(master_val),
             MasterVolumeSliderMarker,
             observe(
-                |value_change: On<ValueChange<f32>>,
-                 mut settings: ResMut<SettingsResource>| {
+                |value_change: On<ValueChange<f32>>, mut settings: ResMut<SettingsResource>| {
                     settings.master_volume = value_change.value;
                 },
             ),
@@ -132,8 +131,7 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
             make_slider(music_val),
             MusicVolumeSliderMarker,
             observe(
-                |value_change: On<ValueChange<f32>>,
-                 mut settings: ResMut<SettingsResource>| {
+                |value_change: On<ValueChange<f32>>, mut settings: ResMut<SettingsResource>| {
                     settings.music_volume = value_change.value;
                 },
             ),
@@ -145,8 +143,7 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
             make_slider(sfx_val),
             SfxVolumeSliderMarker,
             observe(
-                |value_change: On<ValueChange<f32>>,
-                 mut settings: ResMut<SettingsResource>| {
+                |value_change: On<ValueChange<f32>>, mut settings: ResMut<SettingsResource>| {
                     settings.sfx_volume = value_change.value;
                 },
             ),
@@ -186,17 +183,15 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
                 ))
                 .with_children(|dialog| {
                     dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                height: px(40),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::SpaceBetween,
-                                align_items: AlignItems::Center,
-                                margin: UiRect::bottom(px(25)),
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            width: percent(100),
+                            height: px(40),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::SpaceBetween,
+                            align_items: AlignItems::Center,
+                            margin: UiRect::bottom(px(25)),
+                            ..default()
+                        },))
                         .with_children(|header| {
                             header.spawn((
                                 Text::new("SETTINGS"),
@@ -244,161 +239,144 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
                     ));
 
                     master_row = dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::SpaceBetween,
-                                align_items: AlignItems::Center,
-                                margin: UiRect::vertical(px(15)),
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            width: percent(100),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::SpaceBetween,
+                            align_items: AlignItems::Center,
+                            margin: UiRect::vertical(px(15)),
+                            ..default()
+                        },))
                         .with_children(|row| {
-                            row.spawn((
-                                Node {
-                                    width: percent(30),
-                                    ..default()
-                                },
-                            ))
-                            .with_children(|cell| {
-                                cell.spawn((
-                                    Text::new("MASTER VOLUME"),
-                                    TextFont {
-                                        font_size: FontSize::Px(14.0),
-                                        ..default()
-                                    },
-                                    TextColor(LABEL_COLOR),
-                                ));
-                            });
-                        })
-                        .id();
-
-                    music_row = dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::SpaceBetween,
-                                align_items: AlignItems::Center,
-                                margin: UiRect::vertical(px(15)),
+                            row.spawn((Node {
+                                width: percent(30),
                                 ..default()
-                            },
-                        ))
-                        .with_children(|row| {
-                            row.spawn((
-                                Node {
-                                    width: percent(30),
-                                    ..default()
-                                },
-                            ))
-                            .with_children(|cell| {
-                                cell.spawn((
-                                    Text::new("MUSIC VOLUME"),
-                                    TextFont {
-                                        font_size: FontSize::Px(14.0),
-                                        ..default()
-                                    },
-                                    TextColor(LABEL_COLOR),
-                                ));
-                            });
-                        })
-                        .id();
-
-                    sfx_row = dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::SpaceBetween,
-                                align_items: AlignItems::Center,
-                                margin: UiRect::vertical(px(15)),
-                                ..default()
-                            },
-                        ))
-                        .with_children(|row| {
-                            row.spawn((
-                                Node {
-                                    width: percent(30),
-                                    ..default()
-                                },
-                            ))
-                            .with_children(|cell| {
-                                cell.spawn((
-                                    Text::new("SFX VOLUME"),
-                                    TextFont {
-                                        font_size: FontSize::Px(14.0),
-                                        ..default()
-                                    },
-                                    TextColor(LABEL_COLOR),
-                                ));
-                            });
-                        })
-                        .id();
-
-                    dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::SpaceBetween,
-                                align_items: AlignItems::Center,
-                                margin: UiRect::vertical(px(15)),
-                                ..default()
-                            },
-                        ))
-                        .with_children(|row| {
-                            row.spawn((
-                                Node {
-                                    width: percent(30),
-                                    ..default()
-                                },
-                            ))
-                            .with_children(|cell| {
-                                cell.spawn((
-                                    Text::new("LANGUAGE"),
-                                    TextFont {
-                                        font_size: FontSize::Px(14.0),
-                                        ..default()
-                                    },
-                                    TextColor(LABEL_COLOR),
-                                ));
-                            });
-
-                            row
-                                .spawn((
-                                    Button,
-                                    Node {
-                                        width: percent(55),
-                                        height: px(35),
-                                        justify_content: JustifyContent::Center,
-                                        align_items: AlignItems::Center,
-                                        border: UiRect::all(px(2)),
-                                        border_radius: BorderRadius::all(px(8)),
-                                        ..default()
-                                    },
-                                    BackgroundColor(Color::srgb(0.06, 0.06, 0.10)),
-                                    BorderColor::all(Color::srgb(0.2, 0.3, 0.5)),
-                                    LanguageButtonTag,
-                                ))
-                                .with_children(|btn| {
-                                    btn.spawn((
-                                        Text::new(current_lang),
+                            },))
+                                .with_children(|cell| {
+                                    cell.spawn((
+                                        Text::new("MASTER VOLUME"),
                                         TextFont {
                                             font_size: FontSize::Px(14.0),
                                             ..default()
                                         },
                                         TextColor(LABEL_COLOR),
                                     ));
-                                    btn.spawn((
-                                        Text::new("  [▼]"),
+                                });
+                        })
+                        .id();
+
+                    music_row = dialog
+                        .spawn((Node {
+                            width: percent(100),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::SpaceBetween,
+                            align_items: AlignItems::Center,
+                            margin: UiRect::vertical(px(15)),
+                            ..default()
+                        },))
+                        .with_children(|row| {
+                            row.spawn((Node {
+                                width: percent(30),
+                                ..default()
+                            },))
+                                .with_children(|cell| {
+                                    cell.spawn((
+                                        Text::new("MUSIC VOLUME"),
                                         TextFont {
-                                            font_size: FontSize::Px(12.0),
+                                            font_size: FontSize::Px(14.0),
                                             ..default()
                                         },
-                                        TextColor(Color::srgb(0.5, 0.5, 0.6)),
+                                        TextColor(LABEL_COLOR),
                                     ));
                                 });
+                        })
+                        .id();
+
+                    sfx_row = dialog
+                        .spawn((Node {
+                            width: percent(100),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::SpaceBetween,
+                            align_items: AlignItems::Center,
+                            margin: UiRect::vertical(px(15)),
+                            ..default()
+                        },))
+                        .with_children(|row| {
+                            row.spawn((Node {
+                                width: percent(30),
+                                ..default()
+                            },))
+                                .with_children(|cell| {
+                                    cell.spawn((
+                                        Text::new("SFX VOLUME"),
+                                        TextFont {
+                                            font_size: FontSize::Px(14.0),
+                                            ..default()
+                                        },
+                                        TextColor(LABEL_COLOR),
+                                    ));
+                                });
+                        })
+                        .id();
+
+                    dialog
+                        .spawn((Node {
+                            width: percent(100),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::SpaceBetween,
+                            align_items: AlignItems::Center,
+                            margin: UiRect::vertical(px(15)),
+                            ..default()
+                        },))
+                        .with_children(|row| {
+                            row.spawn((Node {
+                                width: percent(30),
+                                ..default()
+                            },))
+                                .with_children(|cell| {
+                                    cell.spawn((
+                                        Text::new("LANGUAGE"),
+                                        TextFont {
+                                            font_size: FontSize::Px(14.0),
+                                            ..default()
+                                        },
+                                        TextColor(LABEL_COLOR),
+                                    ));
+                                });
+
+                            row.spawn((
+                                Button,
+                                Node {
+                                    width: percent(55),
+                                    height: px(35),
+                                    justify_content: JustifyContent::Center,
+                                    align_items: AlignItems::Center,
+                                    border: UiRect::all(px(2)),
+                                    border_radius: BorderRadius::all(px(8)),
+                                    ..default()
+                                },
+                                BackgroundColor(Color::srgb(0.06, 0.06, 0.10)),
+                                BorderColor::all(Color::srgb(0.2, 0.3, 0.5)),
+                                LanguageButtonTag,
+                            ))
+                            .with_children(|btn| {
+                                btn.spawn((
+                                    Text::new(current_lang),
+                                    TextFont {
+                                        font_size: FontSize::Px(14.0),
+                                        ..default()
+                                    },
+                                    TextColor(LABEL_COLOR),
+                                ));
+                                btn.spawn((
+                                    Text::new("  [▼]"),
+                                    TextFont {
+                                        font_size: FontSize::Px(12.0),
+                                        ..default()
+                                    },
+                                    TextColor(Color::srgb(0.5, 0.5, 0.6)),
+                                ));
+                            });
                         });
 
                     dialog.spawn((
@@ -412,14 +390,12 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
                     ));
 
                     dialog
-                        .spawn((
-                            Node {
-                                width: percent(100),
-                                flex_direction: FlexDirection::Row,
-                                justify_content: JustifyContent::FlexEnd,
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            width: percent(100),
+                            flex_direction: FlexDirection::Row,
+                            justify_content: JustifyContent::FlexEnd,
+                            ..default()
+                        },))
                         .with_children(|footer| {
                             footer
                                 .spawn((
@@ -519,15 +495,34 @@ pub fn setup_settings(mut commands: Commands, settings: Res<SettingsResource>) {
 pub fn settings_interaction(
     mut next_state: ResMut<NextState<FmvAppState>>,
     mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor, Option<&CloseButtonTag>, Option<&ApplyButtonTag>, Option<&LanguageButtonTag>),
+        (
+            &Interaction,
+            &mut BackgroundColor,
+            Option<&CloseButtonTag>,
+            Option<&ApplyButtonTag>,
+            Option<&LanguageButtonTag>,
+        ),
         (Changed<Interaction>, With<Button>),
     >,
     slider_query: Query<
-        (Entity, &SliderValue, &SliderRange, &Hovered, &SliderDragState),
-        Or<(With<MasterVolumeSliderMarker>, With<MusicVolumeSliderMarker>, With<SfxVolumeSliderMarker>)>,
+        (
+            Entity,
+            &SliderValue,
+            &SliderRange,
+            &Hovered,
+            &SliderDragState,
+        ),
+        Or<(
+            With<MasterVolumeSliderMarker>,
+            With<MusicVolumeSliderMarker>,
+            With<SfxVolumeSliderMarker>,
+        )>,
     >,
     children_query: Query<&Children>,
-    mut thumbs: Query<(&mut Node, &mut BackgroundColor, Has<DemoSliderThumb>), (Without<MasterVolumeSliderMarker>, Without<Button>)>,
+    mut thumbs: Query<
+        (&mut Node, &mut BackgroundColor, Has<DemoSliderThumb>),
+        (Without<MasterVolumeSliderMarker>, Without<Button>),
+    >,
     mut settings: ResMut<SettingsResource>,
 ) {
     for (slider_ent, value, range, hovered, drag_state) in &slider_query {
@@ -574,17 +569,13 @@ pub fn settings_interaction(
         }
         if lang_tag.is_some() {
             if *interaction == Interaction::Pressed {
-                settings.language_index =
-                    (settings.language_index + 1) % settings.languages.len();
+                settings.language_index = (settings.language_index + 1) % settings.languages.len();
             }
         }
     }
 }
 
-pub fn cleanup_settings(
-    mut commands: Commands,
-    entities: Res<SettingsEntities>,
-) {
+pub fn cleanup_settings(mut commands: Commands, entities: Res<SettingsEntities>) {
     commands.entity(entities.overlay).despawn();
     commands.remove_resource::<SettingsEntities>();
 }

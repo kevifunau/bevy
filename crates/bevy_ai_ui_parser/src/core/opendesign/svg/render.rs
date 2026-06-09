@@ -1,17 +1,13 @@
 use crate::core::{
-    model::{BuiNode, BuiTextShadowConfig, text_node},
+    model::{text_node, BuiNode, BuiTextShadowConfig},
     opendesign::{
-        build::apply_opendesign_styles,
-        generic::apply_inherited_text_styles,
+        build::apply_opendesign_styles, generic::apply_inherited_text_styles,
         stylesheet::OpenDesignStylesheet,
     },
     support::tree::find_bui_node_mut,
 };
 
-use super::{
-    semantic::semantic_svg_fallback_spec,
-    shape::svg_fallback_icon,
-};
+use super::{semantic::semantic_svg_fallback_spec, shape::svg_fallback_icon};
 
 pub(crate) fn ensure_text_icon_child(root: &mut BuiNode, id: &str) {
     let Some(node) = find_bui_node_mut(root, id) else {

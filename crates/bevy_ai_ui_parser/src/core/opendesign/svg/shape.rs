@@ -28,10 +28,7 @@ pub(crate) fn svg_fallback_icon(
 
     let signature = svg_signature(svg_node);
 
-    if parent
-        .markers
-        .iter()
-        .any(|tag| tag == "class:round-button")
+    if parent.markers.iter().any(|tag| tag == "class:round-button")
         || signature.contains("M38 13 19 32l19 19")
     {
         return Some("←");

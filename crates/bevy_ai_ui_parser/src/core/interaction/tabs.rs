@@ -2,8 +2,8 @@ use bevy_ecs::prelude::*;
 use bevy_ui::prelude::*;
 
 use crate::core::{
-    interaction::types::{BuiBindingValue, BuiStateSet, BuiStateStore},
     interaction::components::{BuiDisabled, BuiTabGroupDefinition, BuiTabItem, BuiVisualState},
+    interaction::types::{BuiBindingValue, BuiStateSet, BuiStateStore},
 };
 
 pub(crate) fn dispatch_bui_tab_selection_system(
@@ -16,7 +16,10 @@ pub(crate) fn dispatch_bui_tab_selection_system(
             continue;
         }
 
-        let Some(group) = tab_groups.iter().find(|group| group.group == tab_item.group) else {
+        let Some(group) = tab_groups
+            .iter()
+            .find(|group| group.group == tab_item.group)
+        else {
             continue;
         };
 
@@ -38,7 +41,10 @@ pub(crate) fn sync_bui_tab_selected_state_system(
     }
 
     for (entity, tab_item) in &tab_items {
-        let Some(group) = tab_groups.iter().find(|group| group.group == tab_item.group) else {
+        let Some(group) = tab_groups
+            .iter()
+            .find(|group| group.group == tab_item.group)
+        else {
             continue;
         };
 

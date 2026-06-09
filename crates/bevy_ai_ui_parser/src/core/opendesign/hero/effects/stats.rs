@@ -1,7 +1,4 @@
-use crate::core::{
-    model::BuiNode,
-    support::tree::find_bui_node_mut,
-};
+use crate::core::{model::BuiNode, support::tree::find_bui_node_mut};
 
 pub(super) fn soften_stat_rows(root: &mut BuiNode) {
     for (row_id, opacity) in [
@@ -30,23 +27,23 @@ pub(super) fn soften_stat_rows(root: &mut BuiNode) {
                 }
 
                 match child.id.as_str() {
-                    "hero_stat_label_1"
-                    | "hero_stat_label_2"
-                    | "hero_stat_label_3"
-                    | "hero_stat_label_4"
-                    | "hero_stat_label_5" => {
-                        if let Some(text) = child.children.iter_mut().find(|grandchild| grandchild.id.starts_with("hero_stat_label_text_"))
+                    "hero_stat_label_1" | "hero_stat_label_2" | "hero_stat_label_3"
+                    | "hero_stat_label_4" | "hero_stat_label_5" => {
+                        if let Some(text) = child
+                            .children
+                            .iter_mut()
+                            .find(|grandchild| grandchild.id.starts_with("hero_stat_label_text_"))
                             && let Some(text_config) = text.content.text.as_mut()
                         {
                             text_config.font_color = "#F0E3CC".to_string();
                         }
                     }
-                    "hero_stat_bonus_1"
-                    | "hero_stat_bonus_2"
-                    | "hero_stat_bonus_3"
-                    | "hero_stat_bonus_4"
-                    | "hero_stat_bonus_5" => {
-                        if let Some(text) = child.children.iter_mut().find(|grandchild| grandchild.id.starts_with("hero_stat_bonus_text_"))
+                    "hero_stat_bonus_1" | "hero_stat_bonus_2" | "hero_stat_bonus_3"
+                    | "hero_stat_bonus_4" | "hero_stat_bonus_5" => {
+                        if let Some(text) = child
+                            .children
+                            .iter_mut()
+                            .find(|grandchild| grandchild.id.starts_with("hero_stat_bonus_text_"))
                             && let Some(text_config) = text.content.text.as_mut()
                         {
                             text_config.font_color = "#A8D256".to_string();

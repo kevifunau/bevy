@@ -113,7 +113,9 @@ pub(crate) fn spawn_text_input_mirror(
             .insert(parse_text_line_height(line_height)?);
     }
     if let Some(letter_spacing) = spec.letter_spacing {
-        commands.entity(mirror).insert(LetterSpacing::Px(letter_spacing));
+        commands
+            .entity(mirror)
+            .insert(LetterSpacing::Px(letter_spacing));
     }
     if let Some(text_shadow) = spec.text_shadow {
         commands.entity(mirror).insert(text_shadow);

@@ -3,8 +3,7 @@ mod village;
 use crate::core::{
     model::BuiDocument,
     opendesign::{
-        dom::has_class,
-        generic::opendesign_html_to_generic_bui_document,
+        dom::has_class, generic::opendesign_html_to_generic_bui_document,
         stylesheet::OpenDesignStylesheet,
     },
     parse::validate::validate_bui_document,
@@ -50,9 +49,9 @@ pub(crate) fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
         .or(closing_main_end)
         .or(closing_bevy_root_end)
         .ok_or_else(|| {
-        "OpenDesign HTML does not contain the expected closing marker after the root container."
-            .to_string()
-    })?;
+            "OpenDesign HTML does not contain the expected closing marker after the root container."
+                .to_string()
+        })?;
 
     Ok(html[start..end].trim())
 }

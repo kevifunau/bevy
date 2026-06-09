@@ -4,22 +4,17 @@ mod radial;
 mod shared;
 mod stops;
 
-use crate::core::{
-    model::{BuiNode, bui_node},
-};
+use crate::core::model::{bui_node, BuiNode};
 
 pub(crate) use conic::css_simple_conic_gradient_overlays;
+pub(crate) use linear::css_simple_linear_gradient_overlays;
 #[cfg(test)]
 pub(crate) use linear::{
-    css_linear_gradient_direction_from_degrees,
-    css_simple_gradient_bands_from_stops,
-    css_simple_linear_gradient_bands,
-    css_simple_linear_gradient_direction,
+    css_linear_gradient_direction_from_degrees, css_simple_gradient_bands_from_stops,
+    css_simple_linear_gradient_bands, css_simple_linear_gradient_direction,
 };
-pub(crate) use linear::css_simple_linear_gradient_overlays;
 pub(crate) use radial::{
-    css_simple_radial_gradient_overlays,
-    css_simple_radial_gradient_ring_overlay,
+    css_simple_radial_gradient_overlays, css_simple_radial_gradient_ring_overlay,
 };
 pub(crate) use shared::{
     CssGradientStop, SimpleGradientOverlayBand, SimpleGradientOverlayDirection,
@@ -59,12 +54,14 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                 match direction {
                     SimpleGradientOverlayDirection::LeftToRight => {
                         overlay.layout.styles.left = Some(format!("{:.0}%", start_ratio * 100.0));
-                        overlay.layout.styles.right = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.right =
+                            Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
                         overlay.layout.styles.top = Some("0".to_string());
                         overlay.layout.styles.bottom = Some("0".to_string());
                     }
                     SimpleGradientOverlayDirection::RightToLeft => {
-                        overlay.layout.styles.left = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.left =
+                            Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
                         overlay.layout.styles.right = Some(format!("{:.0}%", start_ratio * 100.0));
                         overlay.layout.styles.top = Some("0".to_string());
                         overlay.layout.styles.bottom = Some("0".to_string());
@@ -73,12 +70,14 @@ pub(crate) fn apply_simple_gradient_overlays(node: &mut BuiNode, value: &str) {
                         overlay.layout.styles.left = Some("0".to_string());
                         overlay.layout.styles.right = Some("0".to_string());
                         overlay.layout.styles.top = Some(format!("{:.0}%", start_ratio * 100.0));
-                        overlay.layout.styles.bottom = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.bottom =
+                            Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
                     }
                     SimpleGradientOverlayDirection::BottomToTop => {
                         overlay.layout.styles.left = Some("0".to_string());
                         overlay.layout.styles.right = Some("0".to_string());
-                        overlay.layout.styles.top = Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
+                        overlay.layout.styles.top =
+                            Some(format!("{:.0}%", (1.0 - end_ratio) * 100.0));
                         overlay.layout.styles.bottom = Some(format!("{:.0}%", start_ratio * 100.0));
                     }
                 }

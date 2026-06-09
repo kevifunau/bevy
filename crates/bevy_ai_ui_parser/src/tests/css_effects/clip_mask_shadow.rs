@@ -37,7 +37,10 @@ fn opendesign_clip_path_polygon_adds_contour_children() {
         .collect::<Vec<_>>();
 
     assert_eq!(contour_children.len(), 3);
-    assert_eq!(cutout.style.visuals.background_color.as_deref(), Some("transparent"));
+    assert_eq!(
+        cutout.style.visuals.background_color.as_deref(),
+        Some("transparent")
+    );
 }
 
 #[test]
@@ -45,7 +48,10 @@ fn css_simple_mask_fade_supports_keyword_and_default_directions() {
     let left_fade =
         css_simple_mask_fade("linear-gradient(to right, transparent 0, black 11%, black 100%)")
             .expect("keyword mask fade should parse");
-    assert!(matches!(left_fade.direction, MaskFadeDirection::LeftToRight));
+    assert!(matches!(
+        left_fade.direction,
+        MaskFadeDirection::LeftToRight
+    ));
 
     let top_fade = css_simple_mask_fade("linear-gradient(transparent 0, black 18%, black 100%)")
         .expect("default-direction mask fade should parse");
@@ -105,7 +111,12 @@ fn apply_box_shadow_fallback_keeps_primary_shadow_and_adds_helper_layers() {
     let helper_layers = node
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-box-shadow-layer"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-box-shadow-layer")
+        })
         .collect::<Vec<_>>();
     assert_eq!(helper_layers.len(), 2);
 }
@@ -132,7 +143,12 @@ fn filter_drop_shadow_adds_a_helper_shadow_layer_without_overwriting_box_shadow(
     let helper_layers = icon
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-filter-drop-shadow"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
         .collect::<Vec<_>>();
     assert_eq!(helper_layers.len(), 1);
 }
@@ -188,7 +204,12 @@ fn mix_blend_mode_multiply_darkens_filter_helper_shadow_layers() {
         .find(|child| child.markers.iter().any(|tag| tag == "css-filter-blur"))
         .expect("blur helper layer should exist");
 
-    let blur_shadow = blur_layer.style.visuals.box_shadow.as_ref().expect("shadow");
+    let blur_shadow = blur_layer
+        .style
+        .visuals
+        .box_shadow
+        .as_ref()
+        .expect("shadow");
     assert_eq!(blur_shadow.color.as_deref(), Some("#AF915794"));
 }
 
@@ -213,7 +234,12 @@ fn filter_multiple_drop_shadows_add_multiple_helper_layers() {
     let helper_layers = cutout
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-filter-drop-shadow"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
         .collect::<Vec<_>>();
     assert_eq!(helper_layers.len(), 2);
 }
@@ -239,7 +265,12 @@ fn filter_drop_shadow_parses_oklch_color_functions() {
     let helper_layers = cutout
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-filter-drop-shadow"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
         .collect::<Vec<_>>();
     assert_eq!(helper_layers.len(), 2);
 }
@@ -263,7 +294,12 @@ fn filter_drop_shadow_on_fully_transparent_node_does_not_create_fake_silhouette_
     let helper_layers = cutout
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-filter-drop-shadow"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-filter-drop-shadow")
+        })
         .collect::<Vec<_>>();
     assert!(helper_layers.is_empty());
 }

@@ -7,9 +7,7 @@ use bevy_ui::prelude::*;
 use bevy_ui::Checked;
 
 use crate::core::interaction::components::{
-    BuiDisabled,
-    BuiVisualState,
-    BuiVisualStateDefinitions,
+    BuiDisabled, BuiVisualState, BuiVisualStateDefinitions,
 };
 use crate::core::style::css_parser::{
     parse_color, parse_rotation, parse_val2, parse_vec2, parse_visibility,
@@ -105,7 +103,12 @@ pub(crate) fn apply_bui_visual_states_system(
                     Interaction::None => Some("normal"),
                 })
             })
-            .or_else(|| definitions.states.contains_key("normal").then_some("normal"));
+            .or_else(|| {
+                definitions
+                    .states
+                    .contains_key("normal")
+                    .then_some("normal")
+            });
 
         let Some(state_name) =
             resolve_visual_state_name(definitions, base_state.as_deref(), auto_state)

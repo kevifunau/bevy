@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, bui_node, text_node},
+    model::{bui_node, text_node, BuiActionBinding, BuiNode},
     opendesign::{
         build::apply_opendesign_styles,
         stylesheet::OpenDesignStylesheet,
@@ -24,7 +24,11 @@ pub(crate) fn generic_append_children(
         pseudo_node.markers.push("pseudo:before".to_string());
         for (name, value) in &before_decls {
             let value = stylesheet.resolve_value(value);
-            crate::core::style::css_apply::apply_opendesign_declaration(&mut pseudo_node, name, &value);
+            crate::core::style::css_apply::apply_opendesign_declaration(
+                &mut pseudo_node,
+                name,
+                &value,
+            );
         }
         parent.children.push(pseudo_node);
     }
@@ -76,7 +80,11 @@ pub(crate) fn generic_append_children(
         pseudo_node.markers.push("pseudo:after".to_string());
         for (name, value) in &after_decls {
             let value = stylesheet.resolve_value(value);
-            crate::core::style::css_apply::apply_opendesign_declaration(&mut pseudo_node, name, &value);
+            crate::core::style::css_apply::apply_opendesign_declaration(
+                &mut pseudo_node,
+                name,
+                &value,
+            );
         }
         parent.children.push(pseudo_node);
     }
@@ -141,7 +149,9 @@ pub(crate) fn generic_element_node(
         .attribute("data-tab")
         .filter(|value| !value.trim().is_empty())
     {
-        node.semantics.tab_value = Some(value.to_string());
+        if node.semantics.tab_group_name.is_some() {
+            node.semantics.tab_value = Some(value.to_string());
+        }
     }
     apply_opendesign_styles(stylesheet, &mut node, dom_node);
     suppress_decorative_gradient_fallbacks(&mut node);

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bevy_asset::{AssetServer, Assets};
 use bevy_ecs::prelude::*;
 use bevy_image::TextureAtlasLayout;
@@ -21,17 +23,27 @@ pub(crate) fn spawn_bui_tree(
     asset_server: &AssetServer,
     texture_atlases: &mut Assets<TextureAtlasLayout>,
     document: &BuiDocument,
-) -> Result<Entity, String> {
-    spawn_bui_node(commands, asset_server, texture_atlases, &document.root)
+) -> Result<(Entity, HashMap<String, Entity>), String> {
+    let mut id_map = HashMap::new();
+    let root = spawn_bui_node_inner(
+        commands,
+        asset_server,
+        texture_atlases,
+        &document.root,
+        &mut id_map,
+    )?;
+    Ok((root, id_map))
 }
 
-pub(crate) fn spawn_bui_node(
+fn spawn_bui_node_inner(
     commands: &mut Commands,
     asset_server: &AssetServer,
     texture_atlases: &mut Assets<TextureAtlasLayout>,
     node: &BuiNode,
+    id_map: &mut HashMap<String, Entity>,
 ) -> Result<Entity, String> {
     let entity = commands.spawn_empty().id();
+    id_map.insert(node.id.clone(), entity);
 
     {
         let mut entity_commands = commands.entity(entity);
@@ -96,12 +108,16 @@ pub(crate) fn spawn_bui_node(
         }
     }
 
-    if !matches!(node.node_type(), BuiNodeType::TextInput) && node.semantics.list_binding_source.is_none() {
+    if !matches!(node.node_type(), BuiNodeType::TextInput)
+        && node.semantics.list_binding_source.is_none()
+    {
         let mut first_text_input_child = None;
 
         for child in &node.children {
-            let child_entity = spawn_bui_node(commands, asset_server, texture_atlases, child)?;
-            if first_text_input_child.is_none() && matches!(child.node_type(), BuiNodeType::TextInput)
+            let child_entity =
+                spawn_bui_node_inner(commands, asset_server, texture_atlases, child, id_map)?;
+            if first_text_input_child.is_none()
+                && matches!(child.node_type(), BuiNodeType::TextInput)
             {
                 first_text_input_child = Some(child_entity);
             }
@@ -118,6 +134,22 @@ pub(crate) fn spawn_bui_node(
     }
 
     Ok(entity)
+}
+
+/// Public spawn function used by list.rs (no id_map collection).
+pub(crate) fn spawn_bui_node(
+    commands: &mut Commands,
+    asset_server: &AssetServer,
+    texture_atlases: &mut Assets<TextureAtlasLayout>,
+    node: &BuiNode,
+) -> Result<Entity, String> {
+    spawn_bui_node_inner(
+        commands,
+        asset_server,
+        texture_atlases,
+        node,
+        &mut HashMap::new(),
+    )
 }
 
 fn insert_optional_background_image(

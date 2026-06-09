@@ -1,8 +1,7 @@
-use crate::core::{
-    model::{BuiNode, bui_node, text_node},
-};
+use crate::core::model::{bui_node, text_node, BuiNode};
 
-pub(super) fn hero_game_ui_base_stats() -> [(&'static str, &'static str, &'static str, &'static str); 5] {
+pub(super) fn hero_game_ui_base_stats(
+) -> [(&'static str, &'static str, &'static str, &'static str); 5] {
     [
         ("⚔", "武力", "136.28", "+18"),
         ("♞", "统帅", "136.2", "+186"),

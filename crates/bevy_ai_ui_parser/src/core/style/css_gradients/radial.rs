@@ -1,11 +1,8 @@
 use crate::core::style::css_values::{css_percentage_value, scale_hex_alpha, split_css_layers};
 
 use super::{
-    CssGradientStop,
-    SimpleGradientOverlayKind,
-    SimpleGradientOverlaySpec,
-    shared::SimpleRadialGradientOverlay,
-    SimpleRadialGradientRingOverlay,
+    shared::SimpleRadialGradientOverlay, CssGradientStop, SimpleGradientOverlayKind,
+    SimpleGradientOverlaySpec, SimpleRadialGradientRingOverlay,
 };
 
 pub(crate) fn css_simple_radial_gradient_overlays(value: &str) -> Vec<SimpleGradientOverlaySpec> {
@@ -92,8 +89,16 @@ fn css_simple_radial_gradient_overlay(value: &str) -> Option<SimpleRadialGradien
 
     let color = color?;
     let stop_ratio = stop_ratio.unwrap_or(0.5_f32).clamp(0.12, 0.72);
-    let ellipse_scale_x = if descriptor.contains("ellipse") { 1.35 } else { 1.0 };
-    let ellipse_scale_y = if descriptor.contains("ellipse") { 0.78 } else { 1.0 };
+    let ellipse_scale_x = if descriptor.contains("ellipse") {
+        1.35
+    } else {
+        1.0
+    };
+    let ellipse_scale_y = if descriptor.contains("ellipse") {
+        0.78
+    } else {
+        1.0
+    };
     let width = (stop_ratio * 2.0 * ellipse_scale_x).clamp(0.18, 1.25);
     let height = (stop_ratio * 2.0 * ellipse_scale_y).clamp(0.18, 1.1);
     Some(SimpleRadialGradientOverlay {
@@ -143,7 +148,11 @@ pub(crate) fn css_simple_radial_gradient_ring_overlay(
             && after.color == "transparent"
         {
             inner_ratio = Some(middle.start_ratio.max(before.end_ratio));
-            outer_ratio = Some(middle.end_ratio.min(after.start_ratio.max(middle.end_ratio)));
+            outer_ratio = Some(
+                middle
+                    .end_ratio
+                    .min(after.start_ratio.max(middle.end_ratio)),
+            );
             color = Some(middle.color.clone());
             break;
         }
@@ -156,8 +165,16 @@ pub(crate) fn css_simple_radial_gradient_ring_overlay(
         return None;
     }
 
-    let ellipse_scale_x = if descriptor.contains("ellipse") { 1.35 } else { 1.0 };
-    let ellipse_scale_y = if descriptor.contains("ellipse") { 0.78 } else { 1.0 };
+    let ellipse_scale_x = if descriptor.contains("ellipse") {
+        1.35
+    } else {
+        1.0
+    };
+    let ellipse_scale_y = if descriptor.contains("ellipse") {
+        0.78
+    } else {
+        1.0
+    };
     let width = (outer_ratio * 2.0 * ellipse_scale_x).clamp(0.18, 1.25);
     let height = (outer_ratio * 2.0 * ellipse_scale_y).clamp(0.18, 1.1);
     let left = (center_x - width * 0.5).clamp(-0.2, 1.0);

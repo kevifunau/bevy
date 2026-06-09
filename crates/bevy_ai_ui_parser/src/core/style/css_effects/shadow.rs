@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, BuiTextShadowConfig, bui_node},
+    model::{bui_node, BuiBoxShadowConfig, BuiNode, BuiTextShadowConfig},
     style::{
         css_sizing::{css_size_tokens, is_simple_css_size},
         css_values::{css_color, split_css_layers},
@@ -13,7 +13,9 @@ pub(crate) fn css_text_shadow(value: &str) -> Option<BuiTextShadowConfig> {
     let mut color = css_color(&layer);
 
     for token in css_size_tokens(&layer) {
-        if color.is_none() && let Some(parsed) = css_color(&token) {
+        if color.is_none()
+            && let Some(parsed) = css_color(&token)
+        {
             color = Some(parsed);
             continue;
         }
@@ -63,7 +65,9 @@ pub(crate) fn css_box_shadow(value: &str) -> Option<BuiBoxShadowConfig> {
 
     let mut sizes = Vec::new();
     for token in tokens {
-        if color.is_none() && let Some(parsed) = css_color(token) {
+        if color.is_none()
+            && let Some(parsed) = css_color(token)
+        {
             color = Some(parsed);
             continue;
         }
@@ -161,8 +165,12 @@ pub(crate) fn css_box_shadow_layers(value: &str) -> Vec<BuiBoxShadowConfig> {
 }
 
 pub(crate) fn apply_box_shadow_fallback(node: &mut BuiNode, value: &str) {
-    node.children
-        .retain(|child| !child.markers.iter().any(|tag| tag == "css-box-shadow-layer"));
+    node.children.retain(|child| {
+        !child
+            .markers
+            .iter()
+            .any(|tag| tag == "css-box-shadow-layer")
+    });
 
     let shadows = css_box_shadow_layers(value);
     if shadows.is_empty() {
@@ -239,7 +247,9 @@ pub(crate) fn push_box_shadow_layer(
 }
 
 pub(crate) fn node_has_shadow_casting_paint(node: &BuiNode) -> bool {
-    if let Some(color) = node.style.visuals.background_color.as_deref() && !color_is_fully_transparent(color) {
+    if let Some(color) = node.style.visuals.background_color.as_deref()
+        && !color_is_fully_transparent(color)
+    {
         return true;
     }
 

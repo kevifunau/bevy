@@ -1,10 +1,10 @@
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, bui_node, text_node},
+    model::{bui_node, text_node, BuiActionBinding, BuiNode},
     opendesign::{
         build::apply_opendesign_styles,
         cases::{shop_card_node, stabilize_village_shop_overlay_defaults},
         dom::{first_text_by_class, has_class},
-        preset::{OpenDesignPreset, apply_opendesign_preset},
+        preset::{apply_opendesign_preset, OpenDesignPreset},
         stylesheet::OpenDesignStylesheet,
     },
 };
@@ -127,7 +127,9 @@ pub(super) fn compile_village_shop_overlay_document(
         .descendants()
         .filter(|node| has_class(*node, "shop-card"))
     {
-        shop_scroll.children.push(shop_card_node(article, stylesheet)?);
+        shop_scroll
+            .children
+            .push(shop_card_node(article, stylesheet)?);
     }
 
     shop_body.children.push(shop_scroll);

@@ -12,7 +12,10 @@ fn semantic_svg_fallback_uses_parent_id_before_path_signature() {
 #[test]
 fn semantic_svg_fallback_uses_data_skill_tags() {
     let mut parent = bui_node("skill_button_dynamic", "button");
-    parent.markers = vec!["class:skill-button".to_string(), "data-skill:军团号令".to_string()];
+    parent.markers = vec![
+        "class:skill-button".to_string(),
+        "data-skill:军团号令".to_string(),
+    ];
 
     let spec = semantic_svg_fallback_spec(&parent).expect("semantic fallback should exist");
     assert_eq!(spec.icon, "♛");
@@ -21,7 +24,10 @@ fn semantic_svg_fallback_uses_data_skill_tags() {
 #[test]
 fn semantic_svg_fallback_uses_data_equip_tags() {
     let mut parent = bui_node("equip_slot_dynamic", "button");
-    parent.markers = vec!["class:equip-slot".to_string(), "data-equip:鹰眼徽章".to_string()];
+    parent.markers = vec![
+        "class:equip-slot".to_string(),
+        "data-equip:鹰眼徽章".to_string(),
+    ];
 
     let spec = semantic_svg_fallback_spec(&parent).expect("semantic fallback should exist");
     assert_eq!(spec.icon, "◎");

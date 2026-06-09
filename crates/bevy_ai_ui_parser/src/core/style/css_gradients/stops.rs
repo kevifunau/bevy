@@ -96,7 +96,8 @@ fn css_resolved_gradient_stop_positions(raw_positions: &[Vec<f32>]) -> Vec<f32> 
                     anchors[run_start] = Some(0.0);
                 } else {
                     for offset in 0..run_len {
-                        anchors[run_start + offset] = Some(right * (offset as f32 / run_len as f32));
+                        anchors[run_start + offset] =
+                            Some(right * (offset as f32 / run_len as f32));
                     }
                 }
             }

@@ -2,9 +2,7 @@ use bevy_ecs::prelude::*;
 use bevy_ui::prelude::*;
 
 use crate::core::{
-    model::BuiNode,
-    runtime::diagnostics::BuiMaterialShader,
-    style::css_parser::parse_color,
+    model::BuiNode, runtime::diagnostics::BuiMaterialShader, style::css_parser::parse_color,
 };
 
 use super::helpers::build_box_shadow;

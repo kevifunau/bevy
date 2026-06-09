@@ -45,9 +45,7 @@ pub(crate) fn apply_opendesign_state_declaration(
     if value.is_empty() || value.contains("!important") {
         return;
     }
-    if bui_node.kind == "text"
-        && !matches!(name, "color" | "opacity" | "filter")
-    {
+    if bui_node.kind == "text" && !matches!(name, "color" | "opacity" | "filter") {
         return;
     }
 

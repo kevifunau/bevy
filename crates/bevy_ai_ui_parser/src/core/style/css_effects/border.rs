@@ -1,9 +1,6 @@
 use crate::core::{
-    model::{BuiNode, bui_node},
-    style::{
-        css_sizing::css_first_size,
-        css_values::css_color,
-    },
+    model::{bui_node, BuiNode},
+    style::{css_sizing::css_first_size, css_values::css_color},
 };
 
 pub(crate) fn apply_css_border(bui_node: &mut BuiNode, value: &str) {
@@ -17,14 +14,20 @@ pub(crate) fn apply_css_border(bui_node: &mut BuiNode, value: &str) {
 
 pub(crate) fn apply_css_edge_border(bui_node: &mut BuiNode, edge: &str, value: &str) {
     if let Some(color) = css_color(value) {
-        ensure_edge_border_node(bui_node, edge).style.visuals.background_color = Some(color);
+        ensure_edge_border_node(bui_node, edge)
+            .style
+            .visuals
+            .background_color = Some(color);
     }
     apply_css_edge_border_width(bui_node, edge, value);
 }
 
 pub(crate) fn apply_css_edge_border_color(bui_node: &mut BuiNode, edge: &str, value: &str) {
     if let Some(color) = css_color(value) {
-        ensure_edge_border_node(bui_node, edge).style.visuals.background_color = Some(color);
+        ensure_edge_border_node(bui_node, edge)
+            .style
+            .visuals
+            .background_color = Some(color);
     }
 }
 

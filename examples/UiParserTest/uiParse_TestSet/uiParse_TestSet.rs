@@ -17,7 +17,10 @@ use std::process::{Command, Stdio};
 use image::{GenericImageView, ImageReader};
 
 const CASES: &[UiParseCase] = &[
-    UiParseCase::new("uiParse_anchor_layout", "examples/ui/layout/anchor_layout.rs"),
+    UiParseCase::new(
+        "uiParse_anchor_layout",
+        "examples/ui/layout/anchor_layout.rs",
+    ),
     UiParseCase::new("uiParse_button", "examples/ui/widgets/button.rs"),
     UiParseCase::new(
         "uiParse_display_and_visibility",
@@ -31,7 +34,10 @@ const CASES: &[UiParseCase] = &[
         "uiParse_image_node_resizing",
         "examples/ui/images/image_node_resizing.rs",
     ),
-    UiParseCase::new("uiParse_overflow", "examples/ui/scroll_and_overflow/overflow.rs"),
+    UiParseCase::new(
+        "uiParse_overflow",
+        "examples/ui/scroll_and_overflow/overflow.rs",
+    ),
     UiParseCase::new(
         "uiParse_overflow_clip_margin",
         "examples/ui/scroll_and_overflow/overflow_clip_margin.rs",
@@ -44,14 +50,20 @@ const CASES: &[UiParseCase] = &[
         "uiParse_size_constraints",
         "examples/ui/layout/size_constraints.rs",
     ),
-    UiParseCase::new("uiParse_tab_navigation", "examples/ui/widgets/tab_navigation.rs"),
+    UiParseCase::new(
+        "uiParse_tab_navigation",
+        "examples/ui/widgets/tab_navigation.rs",
+    ),
     UiParseCase::new("uiParse_text_input", "examples/ui/text/text_input.rs"),
     UiParseCase::new(
         "uiParse_transparency_ui",
         "examples/ui/styling/transparency_ui.rs",
     ),
     UiParseCase::new("uiParse_ui_scaling", "examples/ui/ui_scaling.rs"),
-    UiParseCase::new("uiParse_ui_target_camera", "examples/ui/ui_target_camera.rs"),
+    UiParseCase::new(
+        "uiParse_ui_target_camera",
+        "examples/ui/ui_target_camera.rs",
+    ),
     UiParseCase::new(
         "uiParse_ui_texture_atlas",
         "examples/ui/images/ui_texture_atlas.rs",
@@ -99,7 +111,9 @@ impl UiParseCase {
     }
 
     fn short_name(self) -> String {
-        self.example_name.trim_start_matches("uiParse_").replace('_', "-")
+        self.example_name
+            .trim_start_matches("uiParse_")
+            .replace('_', "-")
     }
 
     fn results_dir(workspace_root: &Path) -> PathBuf {
@@ -135,7 +149,10 @@ impl UiParseCase {
                 .join("assets")
                 .join("screenshots")
                 .join(format!("{}.png", self.example_name)),
-            case_dir.join("assets").join("screenshots").join("reference.png"),
+            case_dir
+                .join("assets")
+                .join("screenshots")
+                .join("reference.png"),
             case_dir.join("reference.png"),
         ]
     }
@@ -354,7 +371,10 @@ fn run_case(
                 reference: None,
                 changed_pixels: None,
                 dimensions: None,
-                note: format!("failed to start example binary {}: {error}", executable.display()),
+                note: format!(
+                    "failed to start example binary {}: {error}",
+                    executable.display()
+                ),
             };
         }
     };
@@ -395,7 +415,9 @@ fn run_case(
 
     match config.mode {
         RunMode::RefreshBevyReference => refresh_bevy_reference(case, workspace_root, &screenshot),
-        RunMode::Check => compare_against_reference(case, workspace_root, &screenshot, config.reference_kind),
+        RunMode::Check => {
+            compare_against_reference(case, workspace_root, &screenshot, config.reference_kind)
+        }
     }
 }
 
@@ -475,7 +497,10 @@ fn compare_against_reference(
             reference: None,
             changed_pixels: None,
             dimensions: None,
-            note: format!("no checked-in {} reference image yet", reference_kind.label()),
+            note: format!(
+                "no checked-in {} reference image yet",
+                reference_kind.label()
+            ),
         };
     };
 
@@ -493,7 +518,10 @@ fn compare_against_reference(
             changed_pixels: Some(changed_pixels),
             dimensions: Some(dimensions),
             note: if changed_pixels == 0 {
-                format!("pixel-perfect match against {} reference", reference_kind.label())
+                format!(
+                    "pixel-perfect match against {} reference",
+                    reference_kind.label()
+                )
             } else {
                 format!(
                     "pixel diff detected against {} reference: {changed_pixels}",
@@ -538,11 +566,21 @@ fn compare_pngs(reference: &Path, candidate: &Path) -> Result<(u64, (u32, u32)),
     let reference_image = ImageReader::open(reference)
         .map_err(|error| format!("failed to open reference {}: {error}", reference.display()))?
         .decode()
-        .map_err(|error| format!("failed to decode reference {}: {error}", reference.display()))?;
+        .map_err(|error| {
+            format!(
+                "failed to decode reference {}: {error}",
+                reference.display()
+            )
+        })?;
     let candidate_image = ImageReader::open(candidate)
         .map_err(|error| format!("failed to open candidate {}: {error}", candidate.display()))?
         .decode()
-        .map_err(|error| format!("failed to decode candidate {}: {error}", candidate.display()))?;
+        .map_err(|error| {
+            format!(
+                "failed to decode candidate {}: {error}",
+                candidate.display()
+            )
+        })?;
 
     if reference_image.dimensions() != candidate_image.dimensions() {
         return Err(format!(

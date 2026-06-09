@@ -128,16 +128,14 @@ pub fn setup_chapter_select(
                 ))
                 .with_children(|content| {
                     content
-                        .spawn((
-                            Node {
-                                width: percent(35),
-                                height: percent(100),
-                                flex_direction: FlexDirection::Column,
-                                padding: UiRect::all(px(15)),
-                                overflow: Overflow::scroll_y(),
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            width: percent(35),
+                            height: percent(100),
+                            flex_direction: FlexDirection::Column,
+                            padding: UiRect::all(px(15)),
+                            overflow: Overflow::scroll_y(),
+                            ..default()
+                        },))
                         .with_children(|list| {
                             for chapter in &story.chapters {
                                 let is_locked = chapter.status == "locked";
@@ -192,7 +190,10 @@ pub fn setup_chapter_select(
                                 btn.with_children(|item| {
                                     let ch_num = chapter.id.replace("chapter_", "");
                                     item.spawn((
-                                        Text::new(format!("{icon} 第{ch_num}章：{}", chapter.title)),
+                                        Text::new(format!(
+                                            "{icon} 第{ch_num}章：{}",
+                                            chapter.title
+                                        )),
                                         TextFont {
                                             font_size: FontSize::Px(16.0),
                                             ..default()
@@ -220,17 +221,15 @@ pub fn setup_chapter_select(
                         });
 
                     content
-                        .spawn((
-                            Node {
-                                width: percent(65),
-                                height: percent(100),
-                                flex_direction: FlexDirection::Column,
-                                padding: UiRect::all(px(20)),
-                                justify_content: JustifyContent::FlexStart,
-                                align_items: AlignItems::FlexStart,
-                                ..default()
-                            },
-                        ))
+                        .spawn((Node {
+                            width: percent(65),
+                            height: percent(100),
+                            flex_direction: FlexDirection::Column,
+                            padding: UiRect::all(px(20)),
+                            justify_content: JustifyContent::FlexStart,
+                            align_items: AlignItems::FlexStart,
+                            ..default()
+                        },))
                         .with_children(|right| {
                             right
                                 .spawn((
@@ -292,14 +291,12 @@ pub fn setup_chapter_select(
                                 });
 
                             right
-                                .spawn((
-                                    Node {
-                                        width: percent(100),
-                                        flex_direction: FlexDirection::Row,
-                                        justify_content: JustifyContent::Center,
-                                        ..default()
-                                    },
-                                ))
+                                .spawn((Node {
+                                    width: percent(100),
+                                    flex_direction: FlexDirection::Row,
+                                    justify_content: JustifyContent::Center,
+                                    ..default()
+                                },))
                                 .with_children(|buttons| {
                                     buttons
                                         .spawn((
@@ -370,7 +367,13 @@ pub fn setup_chapter_select(
 pub fn chapter_select_interaction(
     mut next_state: ResMut<NextState<FmvAppState>>,
     mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor, Option<&ChapterItemTag>, Option<&BackButtonTag>, Option<&EnterChapterButtonTag>),
+        (
+            &Interaction,
+            &mut BackgroundColor,
+            Option<&ChapterItemTag>,
+            Option<&BackButtonTag>,
+            Option<&EnterChapterButtonTag>,
+        ),
         (Changed<Interaction>, With<Button>),
     >,
     mut chapter_state: ResMut<ChapterSelectState>,
@@ -456,10 +459,7 @@ pub fn update_selection_highlight(
     }
 }
 
-pub fn cleanup_chapter_select(
-    mut commands: Commands,
-    state: Res<ChapterSelectState>,
-) {
+pub fn cleanup_chapter_select(mut commands: Commands, state: Res<ChapterSelectState>) {
     commands.entity(state.root).despawn();
     commands.remove_resource::<ChapterSelectState>();
 }

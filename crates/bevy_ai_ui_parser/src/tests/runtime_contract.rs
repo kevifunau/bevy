@@ -160,7 +160,10 @@ fn direct_text_children_inherit_parent_hover_opacity_text_state() {
 fn css_transform_translate_parses_composite_values() {
     let mut node = bui_node("test", "node");
     apply_css_transform(&mut node, "translate(-34%, -36%) rotate(12deg)");
-    assert_eq!(node.layout.styles.ui_translation.as_deref(), Some("-34% -36%"));
+    assert_eq!(
+        node.layout.styles.ui_translation.as_deref(),
+        Some("-34% -36%")
+    );
     assert_eq!(node.layout.styles.ui_rotation.as_deref(), Some("12.0deg"));
 }
 

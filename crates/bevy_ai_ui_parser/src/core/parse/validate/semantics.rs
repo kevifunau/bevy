@@ -2,9 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::{
     model::{BuiActionBinding, BuiBinding, BuiNode, BuiNodeType, BuiStateVisual},
-    style::css_parser::{
-        parse_color, parse_rotation, parse_val2, parse_vec2, parse_visibility,
-    },
+    style::css_parser::{parse_color, parse_rotation, parse_val2, parse_vec2, parse_visibility},
 };
 
 use super::style::{validate_styles, validate_visuals};
@@ -33,7 +31,9 @@ pub(super) fn validate_bindings(bindings: &[BuiBinding]) -> Result<(), String> {
     Ok(())
 }
 
-pub(super) fn validate_state_visuals(states: &HashMap<String, BuiStateVisual>) -> Result<(), String> {
+pub(super) fn validate_state_visuals(
+    states: &HashMap<String, BuiStateVisual>,
+) -> Result<(), String> {
     for (name, state) in states {
         if name.trim().is_empty() {
             return Err("state_visuals keys must not be empty.".to_string());

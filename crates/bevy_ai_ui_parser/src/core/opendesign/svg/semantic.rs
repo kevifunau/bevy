@@ -1,6 +1,4 @@
-use crate::core::{
-    model::{BuiNode, BuiTextShadowConfig},
-};
+use crate::core::model::{BuiNode, BuiTextShadowConfig};
 
 #[derive(Clone, Copy)]
 pub(crate) struct SemanticSvgFallbackSpec {
@@ -22,9 +20,7 @@ impl SemanticSvgFallbackSpec {
     }
 }
 
-pub(crate) fn semantic_svg_fallback_spec(
-    parent: &BuiNode,
-) -> Option<SemanticSvgFallbackSpec> {
+pub(crate) fn semantic_svg_fallback_spec(parent: &BuiNode) -> Option<SemanticSvgFallbackSpec> {
     if let Some(spec) = semantic_svg_fallback_spec_from_tags(parent) {
         return Some(spec);
     }

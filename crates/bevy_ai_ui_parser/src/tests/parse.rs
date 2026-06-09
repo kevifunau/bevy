@@ -1,6 +1,6 @@
 use super::shared::*;
-use crate::{opendesign_html_to_bui_json_str, validate_bui_json_str};
 use crate::core::parse::ir::parse_bui_document;
+use crate::{opendesign_html_to_bui_json_str, validate_bui_json_str};
 
 #[test]
 fn opendesign_ir_snapshot_can_load_through_runtime_parser() {

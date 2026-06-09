@@ -1,6 +1,4 @@
-use crate::core::{
-    model::{BuiNode, bui_node},
-};
+use crate::core::model::{bui_node, BuiNode};
 
 pub(super) fn ensure_hero_panel_band(
     node: &mut BuiNode,

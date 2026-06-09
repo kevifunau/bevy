@@ -1,6 +1,4 @@
-use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, bui_node},
-};
+use crate::core::model::{bui_node, BuiBoxShadowConfig, BuiNode};
 
 pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     if info_panel
@@ -42,7 +40,9 @@ pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     left_cut_3.style.visuals.background_color = Some("#A88A6512".to_string());
 
     let mut left_mask_soft = bui_node("info_panel_left_mask_soft", "node");
-    left_mask_soft.markers.push("hero-info-panel:decor".to_string());
+    left_mask_soft
+        .markers
+        .push("hero-info-panel:decor".to_string());
     left_mask_soft.layout.styles.position_type = Some("absolute".to_string());
     left_mask_soft.layout.styles.left = Some("12%".to_string());
     left_mask_soft.layout.styles.top = Some("0".to_string());
@@ -63,7 +63,9 @@ pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     top_gloss.style.visuals.border_radius = Some("999px".to_string());
 
     let mut left_inner_glow = bui_node("info_panel_left_inner_glow", "node");
-    left_inner_glow.markers.push("hero-info-panel:decor".to_string());
+    left_inner_glow
+        .markers
+        .push("hero-info-panel:decor".to_string());
     left_inner_glow.layout.styles.position_type = Some("absolute".to_string());
     left_inner_glow.layout.styles.left = Some("15%".to_string());
     left_inner_glow.layout.styles.top = Some("0".to_string());
@@ -83,7 +85,9 @@ pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     mid_warmth.style.visuals.background_color = Some("#E5C18A0D".to_string());
 
     let mut right_hotspot = bui_node("info_panel_right_hotspot", "node");
-    right_hotspot.markers.push("hero-info-panel:decor".to_string());
+    right_hotspot
+        .markers
+        .push("hero-info-panel:decor".to_string());
     right_hotspot.layout.styles.position_type = Some("absolute".to_string());
     right_hotspot.layout.styles.right = Some("5%".to_string());
     right_hotspot.layout.styles.top = Some("5%".to_string());
@@ -102,7 +106,9 @@ pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     });
 
     let mut right_sheen = bui_node("info_panel_right_sheen", "node");
-    right_sheen.markers.push("hero-info-panel:decor".to_string());
+    right_sheen
+        .markers
+        .push("hero-info-panel:decor".to_string());
     right_sheen.layout.styles.position_type = Some("absolute".to_string());
     right_sheen.layout.styles.right = Some("0".to_string());
     right_sheen.layout.styles.top = Some("0".to_string());
@@ -112,7 +118,9 @@ pub(super) fn inject_hero_info_panel_layers(info_panel: &mut BuiNode) {
     right_sheen.style.visuals.background_color = Some("#F0D4A206".to_string());
 
     let mut lower_ember = bui_node("info_panel_lower_ember", "node");
-    lower_ember.markers.push("hero-info-panel:decor".to_string());
+    lower_ember
+        .markers
+        .push("hero-info-panel:decor".to_string());
     lower_ember.layout.styles.position_type = Some("absolute".to_string());
     lower_ember.layout.styles.left = Some("18%".to_string());
     lower_ember.layout.styles.right = Some("4%".to_string());

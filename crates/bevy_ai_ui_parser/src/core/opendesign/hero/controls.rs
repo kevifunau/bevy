@@ -1,5 +1,5 @@
 use crate::core::{
-    model::{BuiBoxShadowConfig, BuiNode, ensure_state_visual, bui_node},
+    model::{bui_node, ensure_state_visual, BuiBoxShadowConfig, BuiNode},
     opendesign::hero::first_direct_text_child_mut,
     support::tree::find_bui_node_mut,
 };
@@ -59,6 +59,17 @@ fn style_hero_tab_button(root: &mut BuiNode, id: &str, selected: bool) {
     let Some(button) = find_bui_node_mut(root, id) else {
         return;
     };
+
+    button.semantics.tab_group_name = Some("hero_stats".to_string());
+    button.semantics.tab_value = Some(
+        match id {
+            "tab_button" => "base",
+            "tab_button_2" => "battle",
+            "tab_button_3" => "march",
+            _ => "unknown",
+        }
+        .to_string(),
+    );
 
     button.layout.styles.position_type = Some("relative".to_string());
     button.layout.styles.min_height = Some("38px".to_string());

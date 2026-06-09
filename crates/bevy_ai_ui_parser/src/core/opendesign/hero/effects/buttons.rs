@@ -1,7 +1,4 @@
-use crate::core::{
-    model::BuiNode,
-    support::tree::find_bui_node_mut,
-};
+use crate::core::{model::BuiNode, support::tree::find_bui_node_mut};
 
 pub(super) fn soften_skill_buttons(root: &mut BuiNode) {
     for skill_id in ["skill_button", "skill_button_2", "skill_button_3"] {
@@ -33,7 +30,13 @@ pub(super) fn soften_skill_buttons(root: &mut BuiNode) {
 }
 
 pub(super) fn soften_equip_slots(root: &mut BuiNode) {
-    for equip_id in ["equip_slot", "equip_slot_2", "equip_slot_3", "equip_slot_4", "equip_slot_5"] {
+    for equip_id in [
+        "equip_slot",
+        "equip_slot_2",
+        "equip_slot_3",
+        "equip_slot_4",
+        "equip_slot_5",
+    ] {
         if let Some(node) = find_bui_node_mut(root, equip_id) {
             if node.id == "equip_slot" {
                 node.style.visuals.background_color = Some("#6B57448A".to_string());

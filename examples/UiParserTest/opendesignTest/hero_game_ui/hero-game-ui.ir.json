@@ -721,14 +721,14 @@
                       "ui_scale": "0.98 0.98"
                     }
                   },
-                  "hovered": {
-                    "visuals": {
-                      "background_color": "#4B46535C"
-                    }
-                  },
                   "normal": {
                     "styles": {
                       "ui_scale": "1 1"
+                    }
+                  },
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#4B46535C"
                     }
                   }
                 },
@@ -2459,6 +2459,11 @@
                   }
                 },
                 "state_visuals": {
+                  "normal": {
+                    "styles": {
+                      "ui_scale": "1 1"
+                    }
+                  },
                   "hovered": {
                     "visuals": {
                       "background_color": "#5B5B6DF2",
@@ -2469,11 +2474,6 @@
                     "styles": {
                       "ui_translation": "0px 2px",
                       "ui_scale": "0.98 0.98"
-                    }
-                  },
-                  "normal": {
-                    "styles": {
-                      "ui_scale": "1 1"
                     }
                   }
                 },
@@ -2722,10 +2722,10 @@
                   }
                 },
                 "state_visuals": {
-                  "pressed": {
-                    "styles": {
-                      "ui_translation": "0px 2px",
-                      "ui_scale": "0.98 0.98"
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#5B5B6DF2",
+                      "border_color": "#CCE4FFB8"
                     }
                   },
                   "normal": {
@@ -2733,10 +2733,10 @@
                       "ui_scale": "1 1"
                     }
                   },
-                  "hovered": {
-                    "visuals": {
-                      "background_color": "#5B5B6DF2",
-                      "border_color": "#CCE4FFB8"
+                  "pressed": {
+                    "styles": {
+                      "ui_translation": "0px 2px",
+                      "ui_scale": "0.98 0.98"
                     }
                   }
                 },
@@ -2990,16 +2990,16 @@
                       "ui_scale": "1 1"
                     }
                   },
-                  "hovered": {
-                    "visuals": {
-                      "background_color": "#5B5B6DF2",
-                      "border_color": "#CCE4FFB8"
-                    }
-                  },
                   "pressed": {
                     "styles": {
                       "ui_translation": "0px 2px",
                       "ui_scale": "0.98 0.98"
+                    }
+                  },
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#5B5B6DF2",
+                      "border_color": "#CCE4FFB8"
                     }
                   }
                 },
@@ -4800,15 +4800,15 @@
                           "ui_scale": "0.98 0.98"
                         }
                       },
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
                       "hovered": {
                         "visuals": {
                           "background_color": "#57506094",
                           "border_color": "#B7A1A2BD"
-                        }
-                      },
-                      "normal": {
-                        "styles": {
-                          "ui_scale": "1 1"
                         }
                       }
                     },
@@ -5054,6 +5054,11 @@
                       }
                     },
                     "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
                       "hovered": {
                         "visuals": {
                           "background_color": "#57506094",
@@ -5064,11 +5069,6 @@
                         "styles": {
                           "ui_translation": "0px 2px",
                           "ui_scale": "0.98 0.98"
-                        }
-                      },
-                      "normal": {
-                        "styles": {
-                          "ui_scale": "1 1"
                         }
                       }
                     },
@@ -5314,12 +5314,6 @@
                       }
                     },
                     "state_visuals": {
-                      "hovered": {
-                        "visuals": {
-                          "background_color": "#57506094",
-                          "border_color": "#B7A1A2BD"
-                        }
-                      },
                       "pressed": {
                         "styles": {
                           "ui_translation": "0px 2px",
@@ -5329,6 +5323,12 @@
                       "normal": {
                         "styles": {
                           "ui_scale": "1 1"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#57506094",
+                          "border_color": "#B7A1A2BD"
                         }
                       }
                     },
@@ -5660,17 +5660,18 @@
                         }
                       }
                     },
+                    "semantics": {
+                      "tab_group_name": "hero_stats",
+                      "tab_value": "base"
+                    },
                     "state_visuals": {
-                      "pressed": {
+                      "normal": {
                         "styles": {
-                          "ui_translation": "0px 2px",
-                          "ui_scale": "0.98 0.98"
-                        }
-                      },
-                      "hovered": {
+                          "ui_scale": "1 1"
+                        },
                         "visuals": {
-                          "background_color": "#C0D6FF33",
-                          "border_color": "#4F475638"
+                          "background_color": "#BAA88A36",
+                          "border_color": "#6B564132"
                         }
                       },
                       "selected": {
@@ -5686,13 +5687,16 @@
                           }
                         }
                       },
-                      "normal": {
-                        "styles": {
-                          "ui_scale": "1 1"
-                        },
+                      "hovered": {
                         "visuals": {
-                          "background_color": "#BAA88A36",
-                          "border_color": "#6B564132"
+                          "background_color": "#C0D6FF33",
+                          "border_color": "#4F475638"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_translation": "0px 2px",
+                          "ui_scale": "0.98 0.98"
                         }
                       }
                     },
@@ -5900,17 +5904,15 @@
                         }
                       }
                     },
+                    "semantics": {
+                      "tab_group_name": "hero_stats",
+                      "tab_value": "battle"
+                    },
                     "state_visuals": {
                       "pressed": {
                         "styles": {
                           "ui_translation": "0px 2px",
                           "ui_scale": "0.98 0.98"
-                        }
-                      },
-                      "selected": {
-                        "visuals": {
-                          "background_color": "#E7D4A7B8",
-                          "border_color": "#E3D1A082"
                         }
                       },
                       "hovered": {
@@ -5926,6 +5928,12 @@
                         "visuals": {
                           "background_color": "#BAA88A36",
                           "border_color": "#6B564132"
+                        }
+                      },
+                      "selected": {
+                        "visuals": {
+                          "background_color": "#E7D4A7B8",
+                          "border_color": "#E3D1A082"
                         }
                       }
                     },
@@ -5979,13 +5987,11 @@
                         }
                       }
                     },
+                    "semantics": {
+                      "tab_group_name": "hero_stats",
+                      "tab_value": "march"
+                    },
                     "state_visuals": {
-                      "hovered": {
-                        "visuals": {
-                          "background_color": "#C0D6FF33",
-                          "border_color": "#4F475638"
-                        }
-                      },
                       "selected": {
                         "visuals": {
                           "background_color": "#E7D4A7B8",
@@ -5999,6 +6005,12 @@
                         "visuals": {
                           "background_color": "#BAA88A36",
                           "border_color": "#6B564132"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#C0D6FF33",
+                          "border_color": "#4F475638"
                         }
                       },
                       "pressed": {
@@ -6825,10 +6837,10 @@
                   }
                 },
                 "state_visuals": {
-                  "pressed": {
-                    "styles": {
-                      "ui_translation": "0px 2px",
-                      "ui_scale": "0.98 0.98"
+                  "hovered": {
+                    "visuals": {
+                      "background_color": "#392E3770",
+                      "border_color": "#D3F5FF6B"
                     }
                   },
                   "normal": {
@@ -6836,10 +6848,10 @@
                       "ui_scale": "1 1"
                     }
                   },
-                  "hovered": {
-                    "visuals": {
-                      "background_color": "#392E3770",
-                      "border_color": "#D3F5FF6B"
+                  "pressed": {
+                    "styles": {
+                      "ui_translation": "0px 2px",
+                      "ui_scale": "0.98 0.98"
                     }
                   }
                 },
@@ -6898,15 +6910,15 @@
                       "border_color": "#EBF0F5BD"
                     }
                   },
-                  "normal": {
-                    "styles": {
-                      "ui_scale": "1 1"
-                    }
-                  },
                   "pressed": {
                     "styles": {
                       "ui_translation": "0px 2px",
                       "ui_scale": "0.98 0.98"
+                    }
+                  },
+                  "normal": {
+                    "styles": {
+                      "ui_scale": "1 1"
                     }
                   }
                 },

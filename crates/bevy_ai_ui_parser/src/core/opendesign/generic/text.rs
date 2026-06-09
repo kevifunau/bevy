@@ -1,17 +1,11 @@
 use crate::core::{
-    model::{BuiNode, ensure_state_visual},
-    opendesign::{
-        stylesheet::{css_declarations, OpenDesignStylesheet},
-    },
+    model::{ensure_state_visual, BuiNode},
+    opendesign::stylesheet::{css_declarations, OpenDesignStylesheet},
     style::css_apply::{apply_opendesign_declaration, apply_opendesign_state_declaration},
 };
 
 pub(crate) fn propagate_direct_text_state_visuals(node: &mut BuiNode) {
-    let Some(text_index) = node
-        .children
-        .iter()
-        .position(|child| child.kind == "text")
-    else {
+    let Some(text_index) = node.children.iter().position(|child| child.kind == "text") else {
         return;
     };
 

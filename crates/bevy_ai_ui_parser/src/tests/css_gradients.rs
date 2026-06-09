@@ -1,16 +1,11 @@
 use super::shared::{css_simple_linear_gradient_overlay, find_bui_node};
 use crate::core::opendesign::html::opendesign_html_to_bui_document;
 use crate::core::style::css_gradients::{
-    SimpleGradientOverlayDirection,
-    SimpleGradientOverlayKind,
-    css_gradient_stops,
-    css_simple_gradient_bands_from_stops,
-    css_linear_gradient_direction_from_degrees,
-    css_simple_conic_gradient_overlays,
-    css_simple_linear_gradient_direction,
-    css_simple_linear_gradient_overlays,
-    css_simple_radial_gradient_overlays,
-    css_simple_radial_gradient_ring_overlay,
+    css_gradient_stops, css_linear_gradient_direction_from_degrees,
+    css_simple_conic_gradient_overlays, css_simple_gradient_bands_from_stops,
+    css_simple_linear_gradient_direction, css_simple_linear_gradient_overlays,
+    css_simple_radial_gradient_overlays, css_simple_radial_gradient_ring_overlay,
+    SimpleGradientOverlayDirection, SimpleGradientOverlayKind,
 };
 use crate::core::style::css_values::{blend_hex_colors, css_hex_rgba};
 
@@ -393,7 +388,9 @@ fn css_simple_gradient_bands_split_contiguous_non_transparent_color_stops() {
     assert_eq!(last.color, "#463C49A3");
     assert!(last.start_ratio < 1.0);
     assert_eq!(last.end_ratio, 1.0);
-    assert!(bands.windows(2).all(|pair| pair[1].start_ratio >= pair[0].start_ratio));
+    assert!(bands
+        .windows(2)
+        .all(|pair| pair[1].start_ratio >= pair[0].start_ratio));
 }
 
 #[test]

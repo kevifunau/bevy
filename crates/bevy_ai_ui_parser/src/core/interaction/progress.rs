@@ -2,8 +2,8 @@ use bevy_ecs::prelude::*;
 use bevy_ui::prelude::*;
 
 use crate::core::{
-    interaction::types::{BuiBindingValue, BuiStateStore},
     interaction::components::{BuiProgressFill, BuiProgressGroup},
+    interaction::types::{BuiBindingValue, BuiStateStore},
 };
 
 pub(crate) fn sync_bui_progress_groups_system(

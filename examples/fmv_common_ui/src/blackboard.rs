@@ -85,7 +85,12 @@ fn parse_mutation(expr: &str) -> Option<(String, MutationOp, f64)> {
             return Some((key.to_string(), MutationOp::Sub, val));
         }
     }
-    if expr.contains("=") && !expr.contains("+=") && !expr.contains("-=") && !expr.contains(">=") && !expr.contains("<=") {
+    if expr.contains("=")
+        && !expr.contains("+=")
+        && !expr.contains("-=")
+        && !expr.contains(">=")
+        && !expr.contains("<=")
+    {
         let parts: Vec<&str> = expr.splitn(2, '=').collect();
         if parts.len() == 2 {
             let key = parts[0].trim();

@@ -1,9 +1,9 @@
 use crate::core::{
-    model::{BuiActionBinding, BuiNode, bui_node, text_node},
+    model::{bui_node, text_node, BuiActionBinding, BuiNode},
     opendesign::{
         build::apply_opendesign_styles,
         dom::{first_text_by_class, has_class},
-        preset::{OpenDesignPreset, apply_opendesign_preset},
+        preset::{apply_opendesign_preset, OpenDesignPreset},
         stylesheet::OpenDesignStylesheet,
     },
     support::{
@@ -35,21 +35,27 @@ pub(crate) fn shop_card_node(
 
     let mut item_main = bui_node(&format!("item_main_{id}"), "node");
     apply_opendesign_preset(&mut item_main, OpenDesignPreset::ItemMain);
-    let item_main_source = article.descendants().find(|node| has_class(*node, "item-main"));
+    let item_main_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-main"));
     if let Some(source) = item_main_source {
         apply_opendesign_styles(stylesheet, &mut item_main, source);
     }
 
     let mut asset_stack = bui_node(&format!("asset_stack_{id}"), "node");
     apply_opendesign_preset(&mut asset_stack, OpenDesignPreset::AssetStack);
-    let asset_stack_source = article.descendants().find(|node| has_class(*node, "asset-stack"));
+    let asset_stack_source = article
+        .descendants()
+        .find(|node| has_class(*node, "asset-stack"));
     if let Some(source) = asset_stack_source {
         apply_opendesign_styles(stylesheet, &mut asset_stack, source);
     }
 
     let mut asset_slot = bui_node(&format!("asset_slot_{id}"), "node");
     apply_opendesign_preset(&mut asset_slot, OpenDesignPreset::AssetSlot);
-    let asset_slot_source = article.descendants().find(|node| has_class(*node, "asset-slot"));
+    let asset_slot_source = article
+        .descendants()
+        .find(|node| has_class(*node, "asset-slot"));
     if let Some(source) = asset_slot_source {
         apply_opendesign_styles(stylesheet, &mut asset_slot, source);
     }
@@ -90,11 +96,15 @@ pub(crate) fn shop_card_node(
 
     let mut item_copy = bui_node(&format!("item_copy_{id}"), "node");
     apply_opendesign_preset(&mut item_copy, OpenDesignPreset::ItemCopy);
-    let item_copy_source = article.descendants().find(|node| has_class(*node, "item-copy"));
+    let item_copy_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-copy"));
     if let Some(source) = item_copy_source {
         apply_opendesign_styles(stylesheet, &mut item_copy, source);
     }
-    let item_name_source = article.descendants().find(|node| has_class(*node, "item-name"));
+    let item_name_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-name"));
     let mut item_name_node = text_node(
         &format!("item_name_{id}"),
         item_name,
@@ -106,7 +116,9 @@ pub(crate) fn shop_card_node(
         apply_opendesign_styles(stylesheet, &mut item_name_node, source);
     }
     item_copy.children.push(item_name_node);
-    let item_meta_source = article.descendants().find(|node| has_class(*node, "item-meta"));
+    let item_meta_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-meta"));
     let mut item_meta_node = text_node(
         &format!("item_meta_{id}"),
         item_meta,
@@ -120,7 +132,9 @@ pub(crate) fn shop_card_node(
     item_copy.children.push(item_meta_node);
     let mut bonus = bui_node(&format!("item_bonus_{id}"), "node");
     apply_opendesign_preset(&mut bonus, OpenDesignPreset::ItemBonus);
-    let item_bonus_source = article.descendants().find(|node| has_class(*node, "item-bonus"));
+    let item_bonus_source = article
+        .descendants()
+        .find(|node| has_class(*node, "item-bonus"));
     if let Some(source) = item_bonus_source {
         apply_opendesign_styles(stylesheet, &mut bonus, source);
     }
@@ -151,14 +165,19 @@ pub(crate) fn shop_card_node(
 
     let mut price_tag = bui_node(&format!("price_tag_{id}"), "node");
     apply_opendesign_preset(&mut price_tag, OpenDesignPreset::PriceTag);
-    let price_tag_source = article.descendants().find(|node| has_class(*node, "price-tag"));
+    let price_tag_source = article
+        .descendants()
+        .find(|node| has_class(*node, "price-tag"));
     if let Some(source) = price_tag_source {
         apply_opendesign_styles(stylesheet, &mut price_tag, source);
     }
 
     let mut coin = bui_node(&format!("price_coin_{id}"), "node");
     apply_opendesign_preset(&mut coin, OpenDesignPreset::PriceCoin);
-    if let Some(source) = article.descendants().find(|node| has_class(*node, "price-coin")) {
+    if let Some(source) = article
+        .descendants()
+        .find(|node| has_class(*node, "price-coin"))
+    {
         apply_opendesign_styles(stylesheet, &mut coin, source);
     }
     price_tag.children.push(coin);
@@ -182,7 +201,9 @@ pub(crate) fn shop_card_node(
         emit: format!("buy_item_{id}"),
     });
     apply_opendesign_preset(&mut buy, OpenDesignPreset::BuyButton);
-    let buy_source = article.descendants().find(|node| has_class(*node, "buy-btn"));
+    let buy_source = article
+        .descendants()
+        .find(|node| has_class(*node, "buy-btn"));
     if let Some(source) = buy_source {
         apply_opendesign_styles(stylesheet, &mut buy, source);
     }

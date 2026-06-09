@@ -1,7 +1,4 @@
-use crate::core::{
-    model::BuiNode,
-    support::tree::find_bui_node_mut,
-};
+use crate::core::{model::BuiNode, support::tree::find_bui_node_mut};
 
 pub(super) fn soften_backbutton(root: &mut BuiNode) {
     if let Some(node) = find_bui_node_mut(root, "backbutton") {

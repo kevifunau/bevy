@@ -1,16 +1,18 @@
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
-use bevy::app::AppExit;
+use bevy::app::{AppExit, PostUpdate};
 use bevy::asset::RenderAssetUsages;
 use bevy::camera::RenderTarget;
-use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::ecs::hierarchy::ChildOf;
 use bevy::image::Image;
+use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::input_focus::InputFocus;
 use bevy::picking::hover::HoverMap;
 use bevy::render::render_resource::TextureFormat;
 use bevy::render::view::screenshot::{save_to_disk, Screenshot, ScreenshotCaptured};
 use bevy::text::EditableText;
+use bevy::text::{FontSize, FontSource, TextColor, TextFont};
 use bevy::{asset::io::AssetSourceBuilder, prelude::*};
 use bevy_ai_ui_parser::{AiUiPlugin, BuiId, BuiLogicTags, BuiRootEntity, BuiTextInput};
 
@@ -24,14 +26,20 @@ pub fn run_with_json(file_name: &str) {
 #[allow(dead_code)]
 pub fn run_with_json_without_button_feedback(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_plugin(&mut app, AiUiPlugin::from_path(bui_path(file_name)), false);
+    configure_editor_app_with_plugin(
+        &mut app,
+        AiUiPlugin::from_path_with_editor(bui_path(file_name)),
+    );
     app.run();
 }
 
 #[allow(dead_code)]
 pub fn run_with_bui_file_without_button_feedback(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_plugin(&mut app, AiUiPlugin::from_path(bui_path(file_name)), false);
+    configure_editor_app_with_plugin(
+        &mut app,
+        AiUiPlugin::from_path_with_editor(bui_path(file_name)),
+    );
     app.run();
 }
 
@@ -53,6 +61,16 @@ pub fn run_with_html_without_button_feedback(file_name: &str) {
         &mut app,
         AiUiPlugin::from_html_path(bui_path(file_name)),
         false,
+    );
+    app.run();
+}
+
+#[allow(dead_code)]
+pub fn run_with_bui_file_with_editor(file_name: &str) {
+    let mut app = App::new();
+    configure_editor_app_with_plugin(
+        &mut app,
+        AiUiPlugin::from_path_with_editor(bui_path(file_name)),
     );
     app.run();
 }
@@ -85,14 +103,30 @@ fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_
         (
             send_scroll_events_system,
             log_bui_root_system,
-            route_bui_root_to_auto_screenshot_target_system,
             log_text_input_focus_system,
             log_text_input_value_system,
+        ),
+    );
+    app.add_systems(
+        PostUpdate,
+        (
+            route_bui_root_to_auto_screenshot_target_system,
             auto_capture_screenshot_system,
         ),
     );
 
     app.add_observer(on_scroll_handler);
+}
+
+fn configure_editor_app_with_plugin(app: &mut App, plugin: AiUiPlugin) {
+    configure_app_with_plugin(app, plugin, false);
+    app.add_systems(
+        Startup,
+        (
+            spawn_editor_hotkey_overlay,
+            maybe_log_editor_auto_enable_system,
+        ),
+    );
 }
 
 fn register_optional_windows_fonts_source(app: &mut App) {
@@ -140,7 +174,10 @@ fn register_optional_auto_screenshot(app: &mut App) {
 fn detect_auto_screenshot_profile() -> AutoScreenshotProfile {
     let example_name = std::env::current_exe()
         .ok()
-        .and_then(|path| path.file_stem().map(|stem| stem.to_string_lossy().to_string()))
+        .and_then(|path| {
+            path.file_stem()
+                .map(|stem| stem.to_string_lossy().to_string())
+        })
         .unwrap_or_default();
 
     if example_name.starts_with("hero_game_ui") {
@@ -190,6 +227,44 @@ fn log_bui_root_system(root: Option<Res<BuiRootEntity>>, mut logged: Local<bool>
 
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2d);
+}
+
+fn spawn_editor_hotkey_overlay(mut commands: Commands) {
+    commands.spawn((
+        Text::new("Editor: F8 toggle | Hover border to reveal delete | Drag absolute nodes | F8 again to save/discard"),
+        TextFont {
+            font: FontSource::default(),
+            font_size: FontSize::Px(16.0),
+            ..TextFont::default()
+        },
+        TextColor(Color::srgb(0.95, 0.95, 0.88)),
+        Node {
+            position_type: PositionType::Absolute,
+            top: Val::Px(12.0),
+            left: Val::Px(12.0),
+            padding: UiRect::axes(Val::Px(10.0), Val::Px(6.0)),
+            border: UiRect::all(Val::Px(1.0)),
+            ..Node::default()
+        },
+        BackgroundColor(Color::srgba(0.08, 0.08, 0.1, 0.82)),
+        BorderColor::all(Color::srgba(0.92, 0.86, 0.65, 0.7)),
+        GlobalZIndex(10001),
+    ));
+}
+
+fn maybe_log_editor_auto_enable_system() {
+    const AUTO_ENABLE_ENV: &str = "BUI_EDITOR_AUTO_ENABLE";
+
+    let auto_enable = std::env::var(AUTO_ENABLE_ENV)
+        .map(|value| {
+            let normalized = value.trim().to_ascii_lowercase();
+            matches!(normalized.as_str(), "1" | "true" | "yes" | "on")
+        })
+        .unwrap_or(false);
+
+    if auto_enable {
+        info!("BUI editor will auto-enable on first frame via {AUTO_ENABLE_ENV}=1");
+    }
 }
 
 const SCROLL_LINE_HEIGHT: f32 = 21.0;
@@ -305,11 +380,6 @@ struct AutoScreenshotTarget {
 struct AutoScreenshotState {
     frames_after_layout: u8,
     requested: bool,
-}
-
-#[derive(Default)]
-struct AutoScreenshotTargetRoutingState {
-    routed: bool,
 }
 
 fn button_feedback_system(
@@ -437,12 +507,9 @@ fn route_bui_root_to_auto_screenshot_target_system(
     mut commands: Commands,
     screenshot_target: Option<Res<AutoScreenshotTarget>>,
     root: Option<Res<BuiRootEntity>>,
-    mut state: Local<AutoScreenshotTargetRoutingState>,
+    children_query: Query<&Children>,
+    root_ui_nodes: Query<Entity, (With<Node>, Without<ChildOf>)>,
 ) {
-    if state.routed {
-        return;
-    }
-
     let (Some(screenshot_target), Some(root)) = (screenshot_target, root) else {
         return;
     };
@@ -450,8 +517,54 @@ fn route_bui_root_to_auto_screenshot_target_system(
     commands
         .entity(screenshot_target.container)
         .insert(UiTargetCamera(screenshot_target.camera));
-    commands.entity(screenshot_target.container).add_child(root.0);
-    state.routed = true;
+
+    for entity in root_ui_nodes.iter() {
+        if entity == screenshot_target.container {
+            continue;
+        }
+
+        assign_ui_target_camera_recursive(
+            &mut commands,
+            &children_query,
+            entity,
+            screenshot_target.camera,
+        );
+
+        if entity != root.0 {
+            commands
+                .entity(screenshot_target.container)
+                .add_child(entity);
+            continue;
+        }
+
+        commands
+            .entity(screenshot_target.container)
+            .add_child(root.0);
+    }
+
+    assign_ui_target_camera_recursive(
+        &mut commands,
+        &children_query,
+        screenshot_target.container,
+        screenshot_target.camera,
+    );
+}
+
+fn assign_ui_target_camera_recursive(
+    commands: &mut Commands,
+    children_query: &Query<&Children>,
+    entity: Entity,
+    camera: Entity,
+) {
+    commands.entity(entity).insert(UiTargetCamera(camera));
+
+    let Ok(children) = children_query.get(entity) else {
+        return;
+    };
+
+    for child in children.iter() {
+        assign_ui_target_camera_recursive(commands, children_query, child, camera);
+    }
 }
 
 fn auto_capture_screenshot_system(

@@ -65,9 +65,7 @@ pub(crate) fn css_size_to_px(value: &str) -> Option<f32> {
             .ok()
             .map(|percent| viewport.width * percent / 100.0)
     } else if let Some(vw) = value.strip_suffix("vw") {
-        vw.parse::<f32>()
-            .ok()
-            .map(|vw| viewport.width * vw / 100.0)
+        vw.parse::<f32>().ok().map(|vw| viewport.width * vw / 100.0)
     } else if let Some(vh) = value.strip_suffix("vh") {
         vh.parse::<f32>()
             .ok()

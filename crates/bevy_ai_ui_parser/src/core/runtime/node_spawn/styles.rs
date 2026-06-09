@@ -1,9 +1,6 @@
 use bevy_ecs::prelude::*;
 use bevy_input_focus::{tab_navigation::TabIndex, AutoFocus};
-use bevy_ui::{
-    prelude::*,
-    RelativeCursorPosition,
-};
+use bevy_ui::{prelude::*, RelativeCursorPosition};
 
 use crate::core::{
     interaction::components::PendingUiTargetCamera,

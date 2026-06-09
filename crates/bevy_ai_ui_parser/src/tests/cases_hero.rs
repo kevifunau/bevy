@@ -4,14 +4,20 @@ use crate::core::parse::ir::parse_bui_document;
 
 #[test]
 fn hero_game_ui_html_compiles_to_bui_document() {
-    let document =
-        opendesign_html_to_bui_document(HERO_GAME_UI_HTML).expect("hero game UI HTML should compile");
+    let document = opendesign_html_to_bui_document(HERO_GAME_UI_HTML)
+        .expect("hero game UI HTML should compile");
 
     let root = find_bui_node(&document.root, "overlay_root");
-    assert_eq!(root.style.visuals.background_color.as_deref(), Some("#47362B"));
+    assert_eq!(
+        root.style.visuals.background_color.as_deref(),
+        Some("#47362B")
+    );
     assert_eq!(root.layout.styles.width.as_deref(), Some("1680px"));
     assert_eq!(root.layout.styles.height.as_deref(), None);
-    assert_eq!(root.layout.styles.aspect_ratio.as_deref(), Some("2.1383765"));
+    assert_eq!(
+        root.layout.styles.aspect_ratio.as_deref(),
+        Some("2.1383765")
+    );
 
     let page_title = find_bui_node(&document.root, "page_title_text_1");
     assert_eq!(

@@ -1,9 +1,6 @@
 use super::shared::*;
-use crate::{
-    opendesign_html_to_bui_json_str,
-    validate_bui_json_str,
-};
 use crate::core::opendesign::html::opendesign_html_to_bui_document;
+use crate::{opendesign_html_to_bui_json_str, validate_bui_json_str};
 
 #[test]
 fn generic_opendesign_overlay_compiles_without_shop_structure() {
@@ -12,7 +9,11 @@ fn generic_opendesign_overlay_compiles_without_shop_structure() {
 
     let title = find_bui_node(&document.root, "notice_title_text_1");
     assert_eq!(
-        title.content.text.as_ref().map(|text| text.content.as_str()),
+        title
+            .content
+            .text
+            .as_ref()
+            .map(|text| text.content.as_str()),
         Some("新的委托")
     );
 
@@ -54,8 +55,14 @@ fn generic_bevy_ui_root_compiles_without_overlay_wrapper() {
     );
 
     let graphics_tab = find_bui_node(&document.root, "tab_item");
-    assert_eq!(graphics_tab.semantics.tab_group_name.as_deref(), Some("settings"));
-    assert_eq!(graphics_tab.semantics.tab_value.as_deref(), Some("graphics"));
+    assert_eq!(
+        graphics_tab.semantics.tab_group_name.as_deref(),
+        Some("settings")
+    );
+    assert_eq!(
+        graphics_tab.semantics.tab_value.as_deref(),
+        Some("graphics")
+    );
 
     let fireball_skill = find_bui_node(&document.root, "skill_btn");
     assert!(fireball_skill.kind == "button");

@@ -6,8 +6,8 @@ use bevy_image::TextureAtlasLayout;
 use bevy_ui::prelude::*;
 
 use crate::core::{
-    interaction::types::{BuiBindingValue, BuiStateStore},
     interaction::components::BuiListDefinition,
+    interaction::types::{BuiBindingValue, BuiStateStore},
     model::{BuiNode, BuiTextConfig},
     runtime::spawn::spawn_bui_node,
 };
@@ -92,9 +92,7 @@ pub(crate) fn sync_bui_list_groups_system(
     }
 
     for (entity, list, existing_children) in &list_groups {
-        let current_count = existing_children
-            .map(|c| c.len())
-            .unwrap_or(0);
+        let current_count = existing_children.map(|c| c.len()).unwrap_or(0);
 
         match state_store.0.get(&list.source) {
             Some(BuiBindingValue::StringList(items)) => {
@@ -164,7 +162,8 @@ pub(crate) fn sync_bui_list_groups_system(
                                     index,
                                     item,
                                 );
-                                if let Some(BuiTextConfig { content, .. }) = &template.content.text {
+                                if let Some(BuiTextConfig { content, .. }) = &template.content.text
+                                {
                                     update_text_content_in_subtree(
                                         *child_entity,
                                         content,

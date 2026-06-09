@@ -113,14 +113,17 @@ fn should_soften_multiply_scene_wash_overlay(node: &BuiNode) -> bool {
         return false;
     }
 
-    if matches!(node.style.visuals.border_radius.as_deref(), Some("50%") | Some("999px")) {
+    if matches!(
+        node.style.visuals.border_radius.as_deref(),
+        Some("50%") | Some("999px")
+    ) {
         return false;
     }
 
-    let horizontal_full_span =
-        style_is_zero(node.layout.styles.left.as_deref()) && style_is_zero(node.layout.styles.right.as_deref());
-    let vertical_full_span =
-        style_is_zero(node.layout.styles.top.as_deref()) && style_is_zero(node.layout.styles.bottom.as_deref());
+    let horizontal_full_span = style_is_zero(node.layout.styles.left.as_deref())
+        && style_is_zero(node.layout.styles.right.as_deref());
+    let vertical_full_span = style_is_zero(node.layout.styles.top.as_deref())
+        && style_is_zero(node.layout.styles.bottom.as_deref());
     let width_coverage = overlay_axis_coverage(
         node.layout.styles.left.as_deref(),
         node.layout.styles.right.as_deref(),

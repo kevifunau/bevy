@@ -63,7 +63,11 @@ pub(super) fn validate_bui_node(
                 .as_ref()
                 .ok_or_else(|| format!("{path}: Text requires text_config."))?;
             validate_text_config(text_config).map_err(|error| format!("{path}: {error}"))?;
-            reject_config(text_config.placeholder.is_some(), path, "text_config.placeholder")?;
+            reject_config(
+                text_config.placeholder.is_some(),
+                path,
+                "text_config.placeholder",
+            )?;
             reject_config(node.content.image.is_some(), path, "image_config")?;
             reject_children(node, path)?;
         }

@@ -1,7 +1,4 @@
-use crate::core::{
-    model::BuiNode,
-    support::tree::find_bui_node_mut,
-};
+use crate::core::{model::BuiNode, support::tree::find_bui_node_mut};
 
 pub(super) fn soften_meters(root: &mut BuiNode) {
     for meter_id in ["meter", "meter_2"] {
@@ -99,7 +96,12 @@ pub(super) fn soften_xp_energy_fills(root: &mut BuiNode) {
         }
     }
 
-    for text_id in ["xptext_text_1", "energytext_text_1", "b_text_1", "b_2_text_1"] {
+    for text_id in [
+        "xptext_text_1",
+        "energytext_text_1",
+        "b_text_1",
+        "b_2_text_1",
+    ] {
         if let Some(text) = find_bui_node_mut(root, text_id)
             && let Some(text_config) = text.content.text.as_mut()
         {

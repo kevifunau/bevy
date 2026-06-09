@@ -10,13 +10,13 @@ use crate::core::opendesign::{
     svg::{semantic_svg_fallback_spec, svg_fallback_icon},
 };
 use crate::core::style::css_effects::{
-    MaskFadeDirection, apply_box_shadow_fallback, css_box_shadow_layers,
-    css_simple_clip_polygon_contour, css_simple_mask_fade,
+    apply_box_shadow_fallback, css_box_shadow_layers, css_simple_clip_polygon_contour,
+    css_simple_mask_fade, MaskFadeDirection,
 };
 use crate::core::style::css_metadata::{
-    CssPropertySupportLevel, css_effect_fallback_registry, css_property_info,
+    css_effect_fallback_registry, css_property_info, CssPropertySupportLevel,
 };
 use crate::core::style::css_values::{
-    CssFilterColorAdjustment, css_adjust_filter_color, css_hex_rgba,
-    css_multiply_blend_fallback_color,
+    css_adjust_filter_color, css_hex_rgba, css_multiply_blend_fallback_color,
+    CssFilterColorAdjustment,
 };

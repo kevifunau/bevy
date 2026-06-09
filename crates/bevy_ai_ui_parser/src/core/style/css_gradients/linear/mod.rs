@@ -6,9 +6,9 @@ use crate::core::style::css_gradients::{
 };
 
 pub(crate) use bands::css_simple_gradient_bands_from_stops;
-pub(crate) use direction::css_simple_linear_gradient_direction;
 #[cfg(test)]
 pub(crate) use direction::css_linear_gradient_direction_from_degrees;
+pub(crate) use direction::css_simple_linear_gradient_direction;
 
 pub(crate) fn css_simple_linear_gradient_overlays(
     layer: &str,

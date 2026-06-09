@@ -1,7 +1,4 @@
-use crate::core::{
-    model::BuiNode,
-    support::tree::find_bui_node_mut,
-};
+use crate::core::{model::BuiNode, support::tree::find_bui_node_mut};
 
 use super::bands::ensure_hero_panel_band;
 
@@ -16,8 +13,12 @@ pub(super) fn soften_info_panel(root: &mut BuiNode) {
 
         for child in &mut node.children {
             match child.id.as_str() {
-                "info_panel_gradient_overlay" => child.style.visuals.background_color = Some("#BD9B7234".to_string()),
-                "info_panel_gradient_overlay_2" => child.style.visuals.background_color = Some("#A27F5D28".to_string()),
+                "info_panel_gradient_overlay" => {
+                    child.style.visuals.background_color = Some("#BD9B7234".to_string())
+                }
+                "info_panel_gradient_overlay_2" => {
+                    child.style.visuals.background_color = Some("#A27F5D28".to_string())
+                }
                 "info_panel_gradient_overlay_3" => {
                     child.style.visuals.background_color = Some("#F0DEB206".to_string());
                     child.layout.styles.width = Some("38%".to_string());
@@ -32,7 +33,9 @@ pub(super) fn soften_info_panel(root: &mut BuiNode) {
                     child.layout.styles.left = Some("79%".to_string());
                     child.layout.styles.top = Some("22%".to_string());
                 }
-                "info_panel_gradient_overlay_5" => child.style.visuals.background_color = Some("#F0DEB20B".to_string()),
+                "info_panel_gradient_overlay_5" => {
+                    child.style.visuals.background_color = Some("#F0DEB20B".to_string())
+                }
                 "info_panel_gradient_overlay_6" => {
                     child.style.visuals.background_color = Some("#A9856420".to_string());
                     child.layout.styles.width = Some("56%".to_string());
@@ -47,14 +50,30 @@ pub(super) fn soften_info_panel(root: &mut BuiNode) {
                     child.layout.styles.left = Some("78%".to_string());
                     child.layout.styles.top = Some("24%".to_string());
                 }
-                "info_panel_gradient_overlay_8" => child.style.visuals.background_color = Some("#916F5624".to_string()),
-                "info_panel_gradient_overlay_9" => child.style.visuals.background_color = Some("#F0DEB204".to_string()),
-                "info_panel_gradient_overlay_10" => child.style.visuals.background_color = Some("#F0DEB205".to_string()),
-                "info_panel_left_cut_1" => child.style.visuals.background_color = Some("#261F270E".to_string()),
-                "info_panel_left_cut_2" => child.style.visuals.background_color = Some("#58493E10".to_string()),
-                "info_panel_left_cut_3" => child.style.visuals.background_color = Some("#AC8D680C".to_string()),
-                "info_panel_left_mask_soft" => child.style.visuals.background_color = Some("#D9B67E08".to_string()),
-                "info_panel_left_inner_glow" => child.style.visuals.background_color = Some("#F3D8A208".to_string()),
+                "info_panel_gradient_overlay_8" => {
+                    child.style.visuals.background_color = Some("#916F5624".to_string())
+                }
+                "info_panel_gradient_overlay_9" => {
+                    child.style.visuals.background_color = Some("#F0DEB204".to_string())
+                }
+                "info_panel_gradient_overlay_10" => {
+                    child.style.visuals.background_color = Some("#F0DEB205".to_string())
+                }
+                "info_panel_left_cut_1" => {
+                    child.style.visuals.background_color = Some("#261F270E".to_string())
+                }
+                "info_panel_left_cut_2" => {
+                    child.style.visuals.background_color = Some("#58493E10".to_string())
+                }
+                "info_panel_left_cut_3" => {
+                    child.style.visuals.background_color = Some("#AC8D680C".to_string())
+                }
+                "info_panel_left_mask_soft" => {
+                    child.style.visuals.background_color = Some("#D9B67E08".to_string())
+                }
+                "info_panel_left_inner_glow" => {
+                    child.style.visuals.background_color = Some("#F3D8A208".to_string())
+                }
                 "info_panel_top_gloss" => {
                     child.style.visuals.background_color = Some("#FFF3D10C".to_string());
                     child.layout.styles.width = Some("24%".to_string());
@@ -66,7 +85,9 @@ pub(super) fn soften_info_panel(root: &mut BuiNode) {
                     child.layout.styles.top = Some("11%".to_string());
                     child.layout.styles.bottom = Some("6%".to_string());
                 }
-                "info_panel_right_sheen" => child.style.visuals.background_color = Some("#F0D4A203".to_string()),
+                "info_panel_right_sheen" => {
+                    child.style.visuals.background_color = Some("#F0D4A203".to_string())
+                }
                 "info_panel_right_hotspot" => {
                     child.style.visuals.background_color = Some("#FFF0C804".to_string());
                     child.layout.styles.width = Some("10%".to_string());
@@ -95,9 +116,45 @@ pub(super) fn soften_info_panel(root: &mut BuiNode) {
             }
         }
 
-        ensure_hero_panel_band(node, "info_panel_bottom_veil_1", "0", "0", "36%", "0", "#47362B0A", "13");
-        ensure_hero_panel_band(node, "info_panel_bottom_veil_2", "0", "0", "48%", "0", "#47362B10", "14");
-        ensure_hero_panel_band(node, "info_panel_bottom_veil_3", "0", "0", "60%", "0", "#47362B16", "15");
-        ensure_hero_panel_band(node, "info_panel_bottom_veil_4", "0", "0", "72%", "0", "#47362B20", "16");
+        ensure_hero_panel_band(
+            node,
+            "info_panel_bottom_veil_1",
+            "0",
+            "0",
+            "36%",
+            "0",
+            "#47362B0A",
+            "13",
+        );
+        ensure_hero_panel_band(
+            node,
+            "info_panel_bottom_veil_2",
+            "0",
+            "0",
+            "48%",
+            "0",
+            "#47362B10",
+            "14",
+        );
+        ensure_hero_panel_band(
+            node,
+            "info_panel_bottom_veil_3",
+            "0",
+            "0",
+            "60%",
+            "0",
+            "#47362B16",
+            "15",
+        );
+        ensure_hero_panel_band(
+            node,
+            "info_panel_bottom_veil_4",
+            "0",
+            "0",
+            "72%",
+            "0",
+            "#47362B20",
+            "16",
+        );
     }
 }

@@ -94,10 +94,7 @@ fn load_story_data(mut commands: Commands) {
 #[derive(Resource)]
 pub struct StoryNodesMap(pub HashMap<String, StoryNodeData>);
 
-fn setup_current_node(
-    mut current: ResMut<CurrentNodeResource>,
-    story: Res<StoryData>,
-) {
+fn setup_current_node(mut current: ResMut<CurrentNodeResource>, story: Res<StoryData>) {
     let start_node = story.nodes.first().unwrap().node_id.clone();
     current.node_id = Some(start_node.clone());
     current.node_data = story.nodes.first().cloned();

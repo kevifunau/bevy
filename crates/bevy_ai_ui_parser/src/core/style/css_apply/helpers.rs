@@ -1,8 +1,6 @@
-use crate::core::style::{
-    css_sizing::{
-        css_eval_length_function, css_first_size, css_size_tokens, is_simple_css_size,
-        split_css_function_args,
-    },
+use crate::core::style::css_sizing::{
+    css_eval_length_function, css_first_size, css_size_tokens, is_simple_css_size,
+    split_css_function_args,
 };
 
 pub(super) fn normalize_css_value(value: &str) -> String {

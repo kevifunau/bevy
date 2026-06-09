@@ -7,8 +7,8 @@ use crate::core::{
     interaction::components::BuiBindings,
     interaction::types::{BuiBindingUpdate, BuiBindingValue},
     style::css_parser::{
-        parse_color, parse_display, parse_rotation, parse_text_justify, parse_ui_rect,
-        parse_val2, parse_vec2, parse_visibility,
+        parse_color, parse_display, parse_rotation, parse_text_justify, parse_ui_rect, parse_val2,
+        parse_vec2, parse_visibility,
     },
 };
 
@@ -112,8 +112,12 @@ pub(crate) fn apply_bui_binding_updates_system(
                     continue;
                 }
                 match (binding.target.as_str(), &update.value) {
-                    ("text_bounds.width", BuiBindingValue::Number(value)) => bounds.width = Some(*value),
-                    ("text_bounds.height", BuiBindingValue::Number(value)) => bounds.height = Some(*value),
+                    ("text_bounds.width", BuiBindingValue::Number(value)) => {
+                        bounds.width = Some(*value)
+                    }
+                    ("text_bounds.height", BuiBindingValue::Number(value)) => {
+                        bounds.height = Some(*value)
+                    }
                     _ => {}
                 }
             }
@@ -165,8 +169,12 @@ pub(crate) fn apply_bui_binding_updates_system(
                 }
 
                 match (binding.target.as_str(), &update.value) {
-                    ("text_shadow.offset_x", BuiBindingValue::Number(value)) => text_shadow.offset.x = *value,
-                    ("text_shadow.offset_y", BuiBindingValue::Number(value)) => text_shadow.offset.y = *value,
+                    ("text_shadow.offset_x", BuiBindingValue::Number(value)) => {
+                        text_shadow.offset.x = *value
+                    }
+                    ("text_shadow.offset_y", BuiBindingValue::Number(value)) => {
+                        text_shadow.offset.y = *value
+                    }
                     ("text_shadow.color", BuiBindingValue::Color(value)) => {
                         if let Ok(parsed) = parse_color(value) {
                             text_shadow.color = parsed;

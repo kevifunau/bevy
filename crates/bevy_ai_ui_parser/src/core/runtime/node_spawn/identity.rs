@@ -2,8 +2,8 @@ use bevy_ecs::prelude::*;
 
 use crate::core::{
     interaction::components::{
-        BuiActions, BuiBindings, BuiDisabled, BuiListDefinition, BuiProgressFill,
-        BuiProgressGroup, BuiTabGroupDefinition, BuiTabItem, BuiVisualStateDefinitions,
+        BuiActions, BuiBindings, BuiDisabled, BuiListDefinition, BuiProgressFill, BuiProgressGroup,
+        BuiTabGroupDefinition, BuiTabItem, BuiVisualStateDefinitions,
     },
     model::BuiNode,
     runtime::components::{BuiId, BuiLogicTags},
@@ -29,13 +29,17 @@ pub(crate) fn insert_identity_components(entity_commands: &mut EntityCommands, n
     if node.markers.iter().any(|tag| tag == "State_Disabled") {
         entity_commands.insert(BuiDisabled);
     }
-    if let (Some(group), Some(source)) = (&node.semantics.tab_group_name, &node.semantics.tab_binding_source) {
+    if let (Some(group), Some(source)) = (
+        &node.semantics.tab_group_name,
+        &node.semantics.tab_binding_source,
+    ) {
         entity_commands.insert(BuiTabGroupDefinition {
             group: group.clone(),
             source: source.clone(),
         });
     }
-    if let (Some(group), Some(value)) = (&node.semantics.tab_group_name, &node.semantics.tab_value) {
+    if let (Some(group), Some(value)) = (&node.semantics.tab_group_name, &node.semantics.tab_value)
+    {
         entity_commands.insert(BuiTabItem {
             group: group.clone(),
             value: value.clone(),

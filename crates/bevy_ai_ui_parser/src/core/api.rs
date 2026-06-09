@@ -1,7 +1,4 @@
-use std::{
-    fs,
-    path::Path,
-};
+use std::{fs, path::Path};
 
 use crate::core::{
     opendesign::html::opendesign_html_to_bui_document,

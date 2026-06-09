@@ -1,21 +1,17 @@
 use crate::core::{
-    model::{
-        BuiImageConfig, BuiNode, BuiTextShadowConfig,
-    },
+    model::{BuiImageConfig, BuiNode, BuiTextShadowConfig},
     style::{
         css_effects::{
             apply_box_shadow_fallback, apply_clip_path_fallback, apply_css_border,
             apply_css_edge_border, apply_css_edge_border_color, apply_css_edge_border_width,
             apply_filter_blur_fallback, apply_filter_color_adjustment, apply_mask_image_fallback,
-            apply_mix_blend_mode_fallback,
-            css_filter_blur_radius, css_filter_color_adjustment, css_filter_drop_shadows,
-            css_filter_shadow_length, css_text_shadow, node_has_shadow_casting_paint,
-            push_box_shadow_layer, scale_helper_child_opacity,
+            apply_mix_blend_mode_fallback, css_filter_blur_radius, css_filter_color_adjustment,
+            css_filter_drop_shadows, css_filter_shadow_length, css_text_shadow,
+            node_has_shadow_casting_paint, push_box_shadow_layer, scale_helper_child_opacity,
         },
         css_gradients::apply_simple_gradient_overlays,
         css_parser::{
-            apply_css_transform, css_font_size, css_letter_spacing, css_line_height,
-            css_text_align,
+            apply_css_transform, css_font_size, css_letter_spacing, css_line_height, css_text_align,
         },
         css_sizing::css_first_size,
         css_values::{
@@ -291,7 +287,8 @@ pub(crate) fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, v
             }
         }
         "text-align" => {
-            if let Some(text_config) = &mut bui_node.content.text && css_text_align(&value).is_some()
+            if let Some(text_config) = &mut bui_node.content.text
+                && css_text_align(&value).is_some()
             {
                 text_config.text_align = Some(value);
             }
@@ -391,7 +388,11 @@ pub(crate) fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, v
         "mix-blend-mode" => apply_mix_blend_mode_fallback(bui_node, &value),
         "clip-path" => apply_clip_path_fallback(bui_node, &value),
         "transform" => apply_css_transform(bui_node, &value),
-        "cursor" | "pointer-events" | "transition" | "content" | "isolation"
+        "cursor"
+        | "pointer-events"
+        | "transition"
+        | "content"
+        | "isolation"
         | "-webkit-tap-highlight-color" => {}
         _ => {}
     }

@@ -2,12 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use super::{
-    BuiImageConfig,
-    BuiStyles,
-    BuiTextConfig,
-    BuiVisuals,
-};
+use super::{BuiImageConfig, BuiStyles, BuiTextConfig, BuiVisuals};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub(crate) enum BuiNodeType {
@@ -75,8 +70,6 @@ pub(crate) struct BuiDocument {
     pub(crate) resources: BuiResources,
     pub(crate) root: BuiNode,
 }
-
-
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]

@@ -1,9 +1,6 @@
 use bevy_color::Color;
 use bevy_ecs::prelude::EntityCommands;
-use bevy_ui::{
-    prelude::*,
-    BoxShadow, ShadowStyle,
-};
+use bevy_ui::{prelude::*, BoxShadow, ShadowStyle};
 
 use crate::core::{
     model::{BuiBoxShadowConfig, BuiStyles},

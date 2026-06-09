@@ -1,7 +1,6 @@
 use crate::core::model::ir::BuiNode;
 use crate::core::style::css_gradients::{
-    SimpleGradientOverlayDirection,
-    css_simple_linear_gradient_bands,
+    css_simple_linear_gradient_bands, SimpleGradientOverlayDirection,
 };
 
 pub(super) fn css_simple_linear_gradient_overlay(
@@ -33,9 +32,8 @@ pub(super) const VILLAGE_SHOP_IR: &str = include_str!(
 pub(super) const QUEST_NOTICE_HTML: &str = include_str!(
     "../../../../examples/UiParserTest/opendesignTest/quest_notice_overlay/quest-notice-overlay.html"
 );
-pub(super) const HERO_GAME_UI_HTML: &str = include_str!(
-    "../../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.html"
-);
+pub(super) const HERO_GAME_UI_HTML: &str =
+    include_str!("../../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.html");
 pub(super) const HERO_GAME_UI_IR: &str = include_str!(
     "../../../../examples/UiParserTest/opendesignTest/hero_game_ui/hero-game-ui.ir.json"
 );

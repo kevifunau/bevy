@@ -9,10 +9,10 @@ mod stats;
 
 use crate::core::model::BuiNode;
 
-use atmosphere::{soften_crest, soften_image_layer_before, soften_image_layer_after};
-use buttons::{soften_skill_buttons, soften_equip_slots};
+use atmosphere::{soften_crest, soften_image_layer_after, soften_image_layer_before};
+use buttons::{soften_equip_slots, soften_skill_buttons};
 use controls::{soften_backbutton, soften_title_text};
-use focus::{soften_hero_glow, soften_hero_cutout};
+use focus::{soften_hero_cutout, soften_hero_glow};
 use meters::{soften_meters, soften_xp_energy_fills};
 use panel::soften_info_panel;
 use stats::soften_stat_rows;

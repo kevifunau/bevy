@@ -1,6 +1,6 @@
 use crate::core::{
     model::BuiNode,
-    opendesign::stylesheet::{OpenDesignStylesheet, css_declarations},
+    opendesign::stylesheet::{css_declarations, OpenDesignStylesheet},
     style::css_apply::{apply_opendesign_declaration, apply_opendesign_state_declaration},
 };
 

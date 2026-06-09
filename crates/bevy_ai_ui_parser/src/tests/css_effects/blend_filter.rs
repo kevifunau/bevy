@@ -78,17 +78,25 @@ fn multiply_scene_wash_linear_overlays_stay_conservative() {
     let conservative_linear_alphas = wash
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
         .filter(|child| child.style.visuals.border_radius.is_none())
         .filter(|child| {
-            child.layout.styles.top.as_deref() == Some("0") && child.layout.styles.bottom.as_deref() == Some("0")
+            child.layout.styles.top.as_deref() == Some("0")
+                && child.layout.styles.bottom.as_deref() == Some("0")
         })
         .filter_map(|child| child.style.visuals.background_color.as_deref())
         .filter_map(css_hex_rgba)
         .map(|(_, _, _, alpha)| alpha)
         .collect::<Vec<_>>();
 
-    assert!(conservative_linear_alphas.iter().any(|alpha| *alpha <= 0.16));
+    assert!(conservative_linear_alphas
+        .iter()
+        .any(|alpha| *alpha <= 0.16));
 }
 
 #[test]
@@ -128,11 +136,19 @@ fn opendesign_filter_color_adjustment_updates_node_and_overlay_colors() {
     let overlay_colors = panel
         .children
         .iter()
-        .filter(|child| child.markers.iter().any(|tag| tag == "css-gradient-overlay"))
+        .filter(|child| {
+            child
+                .markers
+                .iter()
+                .any(|tag| tag == "css-gradient-overlay")
+        })
         .filter_map(|child| child.style.visuals.background_color.as_deref())
         .collect::<Vec<_>>();
 
-    assert_eq!(panel.style.visuals.background_color.as_deref(), Some("#847260"));
+    assert_eq!(
+        panel.style.visuals.background_color.as_deref(),
+        Some("#847260")
+    );
     assert_eq!(panel.style.visuals.border_color.as_deref(), Some("#A79583"));
     assert!(overlay_colors.contains(&"#735E4C"));
 }
