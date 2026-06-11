@@ -1,6 +1,8 @@
+use bevy_asset::{AssetServer, Assets};
 use bevy_camera::visibility::Visibility;
 use bevy_ecs::hierarchy::ChildOf;
 use bevy_ecs::prelude::*;
+use bevy_image::TextureAtlasLayout;
 use bevy_input_focus::InputFocus;
 use bevy_text::TextColor;
 use bevy_ui::prelude::*;
@@ -9,6 +11,7 @@ use bevy_ui::Checked;
 use crate::core::interaction::components::{
     BuiDisabled, BuiVisualState, BuiVisualStateDefinitions,
 };
+use crate::core::runtime::image::build_image_node;
 use crate::core::style::css_parser::{
     parse_color, parse_rotation, parse_val2, parse_vec2, parse_visibility,
 };
@@ -69,6 +72,8 @@ fn resolve_visual_state_name(
 }
 
 pub(crate) fn apply_bui_visual_states_system(
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
     input_focus: Res<InputFocus>,
     child_of_query: Query<&ChildOf>,
     explicit_states: Query<&BuiVisualState>,
@@ -83,6 +88,7 @@ pub(crate) fn apply_bui_visual_states_system(
     mut backgrounds: Query<&mut BackgroundColor>,
     mut borders: Query<&mut BorderColor>,
     mut text_colors: Query<&mut TextColor>,
+    mut image_nodes: Query<&mut ImageNode>,
     mut ui_transforms: Query<&mut UiTransform>,
     mut visibilities: Query<&mut Visibility>,
 ) {
@@ -139,6 +145,13 @@ pub(crate) fn apply_bui_visual_states_system(
             && let Ok(parsed) = parse_color(color)
         {
             text_color.0 = parsed;
+        }
+
+        if let Some(image) = &state_visual.image
+            && let Ok(mut image_node) = image_nodes.get_mut(entity)
+            && let Ok(next_image) = build_image_node(&asset_server, &mut texture_atlases, image)
+        {
+            *image_node = next_image;
         }
 
         if let Ok(mut ui_transform) = ui_transforms.get_mut(entity) {

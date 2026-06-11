@@ -32,6 +32,7 @@ fn ensure_opendesign_normal_state(bui_node: &mut BuiNode) -> &mut BuiStateVisual
             styles: BuiStyles::default(),
             visuals: BuiVisuals::default(),
             text_color: None,
+            image: None,
         })
 }
 
@@ -67,6 +68,7 @@ pub(crate) fn apply_opendesign_state_declaration(
                 styles: BuiStyles::default(),
                 visuals: BuiVisuals::default(),
                 text_color: None,
+                image: None,
             });
 
         match name {

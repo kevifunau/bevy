@@ -3861,6 +3861,21 @@ path = "examples/UiParserTest/opendesignTest/bevy_ui_example/bevy_ui_example_htm
 doc-scrape-examples = true
 
 [[example]]
+name = "bevy_ui_asset_flow"
+path = "examples/UiParserTest/opendesignTest/bevy_ui_asset_flow/bevy_ui_asset_flow.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "bevy_ui_asset_flow_html"
+path = "examples/UiParserTest/opendesignTest/bevy_ui_asset_flow/bevy_ui_asset_flow_html.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "bevy_ui_text_baseline_html"
+path = "examples/UiParserTest/opendesignTest/bevy_ui_text_baseline/bevy_ui_text_baseline_html.rs"
+doc-scrape-examples = true
+
+[[example]]
 name = "slg_ui_html"
 path = "examples/UiParserTest/opendesignTest/slg_ui/slg_ui_html.rs"
 doc-scrape-examples = true
@@ -3934,6 +3949,24 @@ wasm = false
 [package.metadata.example.bevy_ui_example_html]
 name = "Bevy UI Example HTML"
 description = "Compiles the Bevy UI example OpenDesign HTML at runtime into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.bevy_ui_asset_flow]
+name = "Bevy UI Asset Flow"
+description = "Parses the Bevy UI asset-flow BUI 3.0-ir fixture into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.bevy_ui_asset_flow_html]
+name = "Bevy UI Asset Flow HTML"
+description = "Compiles the Bevy UI asset-flow OpenDesign HTML and manifest at runtime into a native Bevy UI ECS tree"
+category = "UI (User Interface)"
+wasm = false
+
+[package.metadata.example.bevy_ui_text_baseline_html]
+name = "Bevy UI Text Baseline HTML"
+description = "Compiles a pure HTML/CSS OpenDesign baseline without an asset manifest into a native Bevy UI ECS tree"
 category = "UI (User Interface)"
 wasm = false
 

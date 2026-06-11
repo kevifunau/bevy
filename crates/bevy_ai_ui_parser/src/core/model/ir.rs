@@ -49,11 +49,16 @@ pub(crate) struct BuiStateVisual {
     pub(crate) visuals: BuiVisuals,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) text_color: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) image: Option<BuiImageConfig>,
 }
 
 impl BuiStateVisual {
     pub(crate) fn is_empty(&self) -> bool {
-        self.styles.is_empty() && self.visuals.is_empty() && self.text_color.is_none()
+        self.styles.is_empty()
+            && self.visuals.is_empty()
+            && self.text_color.is_none()
+            && self.image.is_none()
     }
 }
 
@@ -256,5 +261,6 @@ pub(crate) fn ensure_state_visual<'a>(
             styles: BuiStyles::default(),
             visuals: BuiVisuals::default(),
             text_color: None,
+            image: None,
         })
 }

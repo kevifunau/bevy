@@ -1,0 +1,500 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "markers": [
+      "class:bevy-ui-root"
+    ],
+    "layout": {
+      "styles": {
+        "display": "flex",
+        "width": "100%",
+        "height": "100vh",
+        "justify_content": "center",
+        "align_items": "center",
+        "position_type": "relative"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#3B281862"
+      }
+    },
+    "children": [
+      {
+        "id": "overlay_root_pseudo_before",
+        "kind": "node",
+        "markers": [
+          "pseudo:before"
+        ]
+      },
+      {
+        "id": "settings_panel",
+        "kind": "node",
+        "markers": [
+          "class:settings-panel"
+        ],
+        "layout": {
+          "styles": {
+            "display": "flex",
+            "width": "420px",
+            "padding": "28px",
+            "flex_direction": "column",
+            "row_gap": "16px",
+            "column_gap": "16px"
+          }
+        },
+        "style": {
+          "visuals": {
+            "border_color": "#333333",
+            "border_width": "1px",
+            "border_radius": "12px"
+          }
+        },
+        "content": {
+          "image": {
+            "texture_path": "./assets/panels/settings_panel_bg.png",
+            "image_mode": "sliced",
+            "slicer": {
+              "border": 22.0,
+              "center_scale_mode": "stretch",
+              "sides_scale_mode": "stretch"
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "settings_panel_pseudo_before",
+            "kind": "node",
+            "markers": [
+              "pseudo:before"
+            ]
+          },
+          {
+            "id": "settings_header",
+            "kind": "node",
+            "markers": [
+              "class:settings-header"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "justify_content": "space-between",
+                "align_items": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "settings_header_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "title",
+                "kind": "node",
+                "markers": [
+                  "class:title"
+                ],
+                "children": [
+                  {
+                    "id": "title_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "title_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Asset-First Settings",
+                        "font_size": 24.0,
+                        "font_color": "#3B2818",
+                        "font_path": "Hiragino Sans GB.ttc",
+                        "font_weight": 700
+                      }
+                    }
+                  },
+                  {
+                    "id": "title_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "close_btn",
+                "kind": "button",
+                "markers": [
+                  "class:close-btn"
+                ],
+                "actions": [
+                  {
+                    "event": "press",
+                    "emit": "close_asset_panel"
+                  }
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "width": "40px",
+                    "height": "40px",
+                    "justify_content": "center",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_color": "#333333",
+                    "border_width": "1px",
+                    "border_radius": "6px"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "./assets/buttons/close_idle.png",
+                    "image_mode": "sliced",
+                    "slicer": {
+                      "border": 22.0,
+                      "center_scale_mode": "stretch",
+                      "sides_scale_mode": "stretch"
+                    }
+                  }
+                },
+                "state_visuals": {
+                  "pressed": {
+                    "image": {
+                      "texture_path": "./assets/buttons/close_pressed.png",
+                      "image_mode": "sliced",
+                      "slicer": {
+                        "border": 22.0,
+                        "center_scale_mode": "stretch",
+                        "sides_scale_mode": "stretch"
+                      }
+                    }
+                  },
+                  "normal": {
+                    "image": {
+                      "texture_path": "./assets/buttons/close_idle.png",
+                      "image_mode": "sliced",
+                      "slicer": {
+                        "border": 22.0,
+                        "center_scale_mode": "stretch",
+                        "sides_scale_mode": "stretch"
+                      }
+                    }
+                  },
+                  "hovered": {
+                    "image": {
+                      "texture_path": "./assets/buttons/close_hover.png",
+                      "image_mode": "sliced",
+                      "slicer": {
+                        "border": 22.0,
+                        "center_scale_mode": "stretch",
+                        "sides_scale_mode": "stretch"
+                      }
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "id": "close_btn_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "close_btn_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "X",
+                        "font_size": 16.0,
+                        "font_color": "#3B2818",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  },
+                  {
+                    "id": "close_btn_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "settings_header_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "loading_row",
+            "kind": "node",
+            "markers": [
+              "class:loading-row"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "row_gap": "12px",
+                "column_gap": "12px",
+                "align_items": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "loading_row_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "spinner_shell",
+                "kind": "node",
+                "markers": [
+                  "class:spinner-shell"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "width": "72px",
+                    "height": "72px",
+                    "justify_content": "center",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_radius": "8px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "spinner_shell_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "loading_spinner",
+                    "kind": "node",
+                    "content": {
+                      "image": {
+                        "texture_path": "./assets/atlas/loading_spinner.png",
+                        "image_mode": "stretch",
+                        "atlas": {
+                          "tile_width": 24,
+                          "tile_height": 24,
+                          "columns": 7,
+                          "rows": 1
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "loading_spinner_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "loading_spinner_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "spinner_shell_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "div",
+                "kind": "node",
+                "children": [
+                  {
+                    "id": "div_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "div_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Atlas-driven loading indicator",
+                        "font_size": 16.0,
+                        "font_color": "#3B2818",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  },
+                  {
+                    "id": "div_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "loading_row_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "icon_row",
+            "kind": "node",
+            "markers": [
+              "class:icon-row"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "row_gap": "12px",
+                "column_gap": "12px",
+                "align_items": "center"
+              }
+            },
+            "children": [
+              {
+                "id": "icon_row_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "skill_icon",
+                "kind": "node",
+                "markers": [
+                  "class:skill-icon",
+                  "data-skill:fireball",
+                  "aria-label:Fireball"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "width": "48px",
+                    "height": "48px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_radius": "8px"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "./assets/icons/fireball.png",
+                    "image_mode": "stretch"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "skill_icon_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "skill_icon_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "div_2",
+                "kind": "node",
+                "children": [
+                  {
+                    "id": "div_2_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "div_2_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "Semantic icon resolved from manifest",
+                        "font_size": 16.0,
+                        "font_color": "#3B2818",
+                        "font_path": "Hiragino Sans GB.ttc"
+                      }
+                    }
+                  },
+                  {
+                    "id": "div_2_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "icon_row_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "settings_panel_pseudo_after",
+            "kind": "node",
+            "markers": [
+              "pseudo:after"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overlay_root_pseudo_after",
+        "kind": "node",
+        "markers": [
+          "pseudo:after"
+        ]
+      }
+    ]
+  }
+}

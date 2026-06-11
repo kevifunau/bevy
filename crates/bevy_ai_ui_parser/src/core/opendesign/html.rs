@@ -4,6 +4,7 @@ use crate::core::{
     model::BuiDocument,
     opendesign::{
         dom::has_class, generic::opendesign_html_to_generic_bui_document,
+        manifest::{apply_manifest_to_document, OpenDesignAssetManifest},
         stylesheet::OpenDesignStylesheet,
     },
     parse::validate::validate_bui_document,
@@ -104,6 +105,14 @@ fn find_opendesign_root_nodes<'a, 'input>(
 }
 
 pub(crate) fn opendesign_html_to_bui_document(html: &str) -> Result<BuiDocument, String> {
+    opendesign_html_to_bui_document_with_manifest(html, None, None)
+}
+
+pub(crate) fn opendesign_html_to_bui_document_with_manifest(
+    html: &str,
+    manifest: Option<&OpenDesignAssetManifest>,
+    base_dir: Option<&std::path::Path>,
+) -> Result<BuiDocument, String> {
     let fragment = extract_opendesign_fragment(html)?;
     let wrapped_storage = format!("<bui_root>{fragment}</bui_root>");
     let parsed = roxmltree::Document::parse(&wrapped_storage)
@@ -114,14 +123,21 @@ pub(crate) fn opendesign_html_to_bui_document(html: &str) -> Result<BuiDocument,
     crate::core::support::viewport::with_opendesign_viewport(viewport, || {
         let stylesheet = OpenDesignStylesheet::parse(html);
 
-        if root_nodes.overlay.is_none() {
-            return opendesign_html_to_generic_bui_document(&stylesheet, root_nodes.root);
+        let mut document = if root_nodes.overlay.is_none() {
+            opendesign_html_to_generic_bui_document(&stylesheet, root_nodes.root)?
+        } else {
+            match village::compile_village_shop_overlay_document(&stylesheet, root_nodes.root) {
+                Ok(root) => finalize_document(root)?,
+                Err(_) => opendesign_html_to_generic_bui_document(&stylesheet, root_nodes.root)?,
+            }
+        };
+
+        if let Some(manifest) = manifest {
+            apply_manifest_to_document(&mut document, manifest, base_dir)?;
+            validate_bui_document(&document)?;
         }
 
-        match village::compile_village_shop_overlay_document(&stylesheet, root_nodes.root) {
-            Ok(root) => finalize_document(root),
-            Err(_) => opendesign_html_to_generic_bui_document(&stylesheet, root_nodes.root),
-        }
+        Ok(document)
     })
 }
 

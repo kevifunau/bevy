@@ -1,0 +1,73 @@
+{
+  "version": "bevy-ui-assets/v1",
+  "ui_root": "index.html",
+  "design_system": "bevy-ui",
+  "assets": [
+    {
+      "id": "settings_panel_bg",
+      "kind": "panel",
+      "path": "./assets/panels/settings_panel_bg.png",
+      "usage": "background"
+    },
+    {
+      "id": "close_button_idle",
+      "kind": "button",
+      "path": "./assets/buttons/close_idle.png",
+      "usage": "state-idle"
+    }
+  ],
+  "components": [
+    {
+      "id": "settings_panel_bg",
+      "kind": "panel",
+      "node_selector": "#settings_panel",
+      "asset_ref": "settings_panel_bg",
+      "image_mode": "sliced",
+      "slicer": {
+        "border": 22.0,
+        "center_scale_mode": "stretch",
+        "sides_scale_mode": "stretch"
+      }
+    },
+    {
+      "id": "close_btn",
+      "kind": "button",
+      "node_selector": "#close_btn",
+      "asset_ref": "close_button_idle",
+      "states": {
+        "idle": "./assets/buttons/close_idle.png",
+        "hover": "./assets/buttons/close_hover.png",
+        "pressed": "./assets/buttons/close_pressed.png"
+      },
+      "image_mode": "sliced",
+      "slicer": {
+        "border": 22.0,
+        "center_scale_mode": "stretch",
+        "sides_scale_mode": "stretch"
+      }
+    },
+    {
+      "id": "loading_spinner",
+      "kind": "image",
+      "node_selector": "#loading_spinner",
+      "atlas_ref": "gabe_spinner",
+      "image_mode": "stretch"
+    }
+  ],
+  "icons": [
+    {
+      "semantic": "skill:fireball",
+      "path": "./assets/icons/fireball.png"
+    }
+  ],
+  "atlases": [
+    {
+      "id": "gabe_spinner",
+      "path": "./assets/atlas/loading_spinner.png",
+      "tile_width": 24,
+      "tile_height": 24,
+      "columns": 7,
+      "rows": 1
+    }
+  ]
+}

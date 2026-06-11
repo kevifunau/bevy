@@ -27,7 +27,10 @@ use crate::core::{
         },
     },
     model::BuiDocument,
-    opendesign::html::opendesign_html_to_bui_document,
+    opendesign::{
+        html::opendesign_html_to_bui_document_with_manifest,
+        manifest::{discover_manifest_path, load_manifest_file},
+    },
     parse::ir::parse_bui_document,
     parse::validate::validate_bui_document,
     runtime::components::{BuiDocumentResource, BuiIdMap, BuiRootEntity, BuiSourcePaths},
@@ -380,8 +383,15 @@ pub(crate) fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, Strin
                     path.display()
                 )
             })?;
-            opendesign_html_to_bui_document(&raw)
+            let manifest_path = discover_manifest_path(path);
+            let manifest = manifest_path
+                .as_deref()
+                .map(load_manifest_file)
+                .transpose()?;
+            opendesign_html_to_bui_document_with_manifest(&raw, manifest.as_ref(), path.parent())
         }
-        BuiSource::HtmlInline(html) => opendesign_html_to_bui_document(html),
+        BuiSource::HtmlInline(html) => {
+            opendesign_html_to_bui_document_with_manifest(html, None, None)
+        }
     }
 }

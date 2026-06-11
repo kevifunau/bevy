@@ -1,0 +1,1501 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "markers": [
+      "class:bevy-ui-root"
+    ],
+    "layout": {
+      "styles": {
+        "display": "flex",
+        "min_height": "100vh",
+        "padding": "40px",
+        "justify_content": "center",
+        "align_items": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#3B281862"
+      }
+    },
+    "children": [
+      {
+        "id": "overlay_root_pseudo_before",
+        "kind": "node",
+        "markers": [
+          "pseudo:before"
+        ]
+      },
+      {
+        "id": "hud_shell",
+        "kind": "node",
+        "markers": [
+          "class:hud-shell"
+        ],
+        "layout": {
+          "styles": {
+            "display": "grid",
+            "width": "1080px",
+            "min_height": "620px",
+            "row_gap": "32px",
+            "column_gap": "32px",
+            "grid_template_columns": "px(320) flex(1)"
+          }
+        },
+        "children": [
+          {
+            "id": "hud_shell_pseudo_before",
+            "kind": "node",
+            "markers": [
+              "pseudo:before"
+            ]
+          },
+          {
+            "id": "left_col",
+            "kind": "node",
+            "markers": [
+              "class:left-col"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "flex_direction": "column",
+                "row_gap": "16px",
+                "column_gap": "16px"
+              }
+            },
+            "children": [
+              {
+                "id": "left_col_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "card",
+                "kind": "node",
+                "markers": [
+                  "class:card"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "20px",
+                    "flex_direction": "column",
+                    "row_gap": "12px",
+                    "column_gap": "12px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#18212b",
+                    "border_color": "#31404f",
+                    "border_width": "1px",
+                    "border_radius": "14px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "card_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "subline",
+                    "kind": "node",
+                    "markers": [
+                      "class:subline"
+                    ],
+                    "children": [
+                      {
+                        "id": "subline_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "subline_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Command Deck",
+                            "font_size": 13.0,
+                            "font_color": "#94a0ad",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      },
+                      {
+                        "id": "subline_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "headline",
+                    "kind": "node",
+                    "markers": [
+                      "class:headline"
+                    ],
+                    "children": [
+                      {
+                        "id": "headline_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "headline_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Mission Brief",
+                            "font_size": 30.0,
+                            "font_color": "#3B2818",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 700
+                          }
+                        }
+                      },
+                      {
+                        "id": "headline_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "div",
+                    "kind": "node",
+                    "children": [
+                      {
+                        "id": "div_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "div_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Pure HTML/CSS baseline without `bevy-ui.assets.json`.",
+                            "font_size": 16.0,
+                            "font_color": "#3B2818",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      },
+                      {
+                        "id": "div_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "card_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "card_2",
+                "kind": "node",
+                "markers": [
+                  "class:card"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "20px",
+                    "flex_direction": "column",
+                    "row_gap": "12px",
+                    "column_gap": "12px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#18212b",
+                    "border_color": "#31404f",
+                    "border_width": "1px",
+                    "border_radius": "14px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "card_2_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "subline_2",
+                    "kind": "node",
+                    "markers": [
+                      "class:subline"
+                    ],
+                    "children": [
+                      {
+                        "id": "subline_2_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "subline_2_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Systems",
+                            "font_size": 13.0,
+                            "font_color": "#94a0ad",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      },
+                      {
+                        "id": "subline_2_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "chip_row",
+                    "kind": "node",
+                    "markers": [
+                      "class:chip-row"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "flex_wrap": "wrap",
+                        "row_gap": "8px",
+                        "column_gap": "8px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "chip_row_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "chip",
+                        "kind": "node",
+                        "markers": [
+                          "class:chip"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "padding": "8px 12px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "chip_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "chip_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Navigation",
+                                "font_size": 13.0,
+                                "font_color": "#e4b85d",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "chip_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "chip_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:chip"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "padding": "8px 12px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "chip_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "chip_2_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Engines",
+                                "font_size": 13.0,
+                                "font_color": "#e4b85d",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "chip_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "chip_3",
+                        "kind": "node",
+                        "markers": [
+                          "class:chip"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "padding": "8px 12px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "chip_3_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "chip_3_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Payload",
+                                "font_size": 13.0,
+                                "font_color": "#e4b85d",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "chip_3_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "chip_4",
+                        "kind": "node",
+                        "markers": [
+                          "class:chip"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "padding": "8px 12px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "999px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "chip_4_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "chip_4_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "Telemetry",
+                                "font_size": 13.0,
+                                "font_color": "#e4b85d",
+                                "font_path": "Hiragino Sans GB.ttc"
+                              }
+                            }
+                          },
+                          {
+                            "id": "chip_4_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "chip_row_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "card_2_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "left_col_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "right_col",
+            "kind": "node",
+            "markers": [
+              "class:right-col"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "flex_direction": "column",
+                "row_gap": "16px",
+                "column_gap": "16px"
+              }
+            },
+            "children": [
+              {
+                "id": "right_col_pseudo_before",
+                "kind": "node",
+                "markers": [
+                  "pseudo:before"
+                ]
+              },
+              {
+                "id": "card_3",
+                "kind": "node",
+                "markers": [
+                  "class:card"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "20px",
+                    "flex_direction": "column",
+                    "row_gap": "12px",
+                    "column_gap": "12px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#18212b",
+                    "border_color": "#31404f",
+                    "border_width": "1px",
+                    "border_radius": "14px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "card_3_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "subline_3",
+                    "kind": "node",
+                    "markers": [
+                      "class:subline"
+                    ],
+                    "children": [
+                      {
+                        "id": "subline_3_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "subline_3_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Status",
+                            "font_size": 13.0,
+                            "font_color": "#94a0ad",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      },
+                      {
+                        "id": "subline_3_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "stat_grid",
+                    "kind": "node",
+                    "markers": [
+                      "class:stat-grid"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "grid",
+                        "row_gap": "16px",
+                        "column_gap": "16px",
+                        "grid_template_columns": "flex(2, 1)"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "stat_grid_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "shield_stat",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "padding": "18px",
+                            "flex_direction": "column",
+                            "row_gap": "8px",
+                            "column_gap": "8px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#22303d",
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "8px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "shield_stat_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "stat_label",
+                            "kind": "node",
+                            "markers": [
+                              "class:stat-label"
+                            ],
+                            "children": [
+                              {
+                                "id": "stat_label_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "stat_label_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "Shield Grid",
+                                    "font_size": 12.0,
+                                    "font_color": "#94a0ad",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "stat_label_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "stat_value",
+                            "kind": "node",
+                            "markers": [
+                              "class:stat-value",
+                              "class:ok"
+                            ],
+                            "children": [
+                              {
+                                "id": "stat_value_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "stat_value_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "Stable",
+                                    "font_size": 26.0,
+                                    "font_color": "#5bd18c",
+                                    "font_path": "Hiragino Sans GB.ttc",
+                                    "font_weight": 700
+                                  }
+                                }
+                              },
+                              {
+                                "id": "stat_value_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "shield_stat_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "power_stat",
+                        "kind": "node",
+                        "markers": [
+                          "class:stat"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "padding": "18px",
+                            "flex_direction": "column",
+                            "row_gap": "8px",
+                            "column_gap": "8px"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#22303d",
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "8px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "power_stat_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "stat_label_2",
+                            "kind": "node",
+                            "markers": [
+                              "class:stat-label"
+                            ],
+                            "children": [
+                              {
+                                "id": "stat_label_2_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "stat_label_2_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "Power Reserve",
+                                    "font_size": 12.0,
+                                    "font_color": "#94a0ad",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "stat_label_2_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "stat_value_2",
+                            "kind": "node",
+                            "markers": [
+                              "class:stat-value"
+                            ],
+                            "children": [
+                              {
+                                "id": "stat_value_2_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "stat_value_2_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "245 MW",
+                                    "font_size": 26.0,
+                                    "font_color": "#3B2818",
+                                    "font_path": "Hiragino Sans GB.ttc",
+                                    "font_weight": 700
+                                  }
+                                }
+                              },
+                              {
+                                "id": "stat_value_2_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "power_stat_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "stat_grid_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "card_3_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "card_4",
+                "kind": "node",
+                "markers": [
+                  "class:card"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "padding": "20px",
+                    "flex_direction": "column",
+                    "row_gap": "12px",
+                    "column_gap": "12px"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "background_color": "#18212b",
+                    "border_color": "#31404f",
+                    "border_width": "1px",
+                    "border_radius": "14px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "card_4_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "subline_4",
+                    "kind": "node",
+                    "markers": [
+                      "class:subline"
+                    ],
+                    "children": [
+                      {
+                        "id": "subline_4_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "subline_4_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Mission Queue",
+                            "font_size": 13.0,
+                            "font_color": "#94a0ad",
+                            "font_path": "Hiragino Sans GB.ttc"
+                          }
+                        }
+                      },
+                      {
+                        "id": "subline_4_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mission_list",
+                    "kind": "node",
+                    "markers": [
+                      "class:mission-list"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "flex_direction": "column",
+                        "row_gap": "12px",
+                        "column_gap": "12px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "mission_list_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "mission",
+                        "kind": "node",
+                        "markers": [
+                          "class:mission"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "padding": "16px 18px",
+                            "justify_content": "space-between",
+                            "align_items": "center"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#22303d",
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "8px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "mission_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "div_2",
+                            "kind": "node",
+                            "children": [
+                              {
+                                "id": "div_2_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "mission_title",
+                                "kind": "node",
+                                "markers": [
+                                  "class:mission-title"
+                                ],
+                                "children": [
+                                  {
+                                    "id": "mission_title_pseudo_before",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:before"
+                                    ]
+                                  },
+                                  {
+                                    "id": "mission_title_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Escort Convoy Through Nebula Gate",
+                                        "font_size": 16.0,
+                                        "font_color": "#3B2818",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "font_weight": 600
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "mission_title_pseudo_after",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:after"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "mission_meta",
+                                "kind": "node",
+                                "markers": [
+                                  "class:mission-meta"
+                                ],
+                                "children": [
+                                  {
+                                    "id": "mission_meta_pseudo_before",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:before"
+                                    ]
+                                  },
+                                  {
+                                    "id": "mission_meta_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "ETA 08:30",
+                                        "font_size": 13.0,
+                                        "font_color": "#94a0ad",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "mission_meta_pseudo_after",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:after"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "div_2_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "ok",
+                            "kind": "node",
+                            "markers": [
+                              "class:ok"
+                            ],
+                            "children": [
+                              {
+                                "id": "ok_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "ok_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "Ready",
+                                    "font_size": 16.0,
+                                    "font_color": "#5bd18c",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "ok_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "mission_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "mission_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:mission"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "display": "flex",
+                            "padding": "16px 18px",
+                            "justify_content": "space-between",
+                            "align_items": "center"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "#22303d",
+                            "border_color": "#31404f",
+                            "border_width": "1px",
+                            "border_radius": "8px"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "mission_2_pseudo_before",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:before"
+                            ]
+                          },
+                          {
+                            "id": "div_3",
+                            "kind": "node",
+                            "children": [
+                              {
+                                "id": "div_3_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "mission_title_2",
+                                "kind": "node",
+                                "markers": [
+                                  "class:mission-title"
+                                ],
+                                "children": [
+                                  {
+                                    "id": "mission_title_2_pseudo_before",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:before"
+                                    ]
+                                  },
+                                  {
+                                    "id": "mission_title_2_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Deploy Scanner Drone to Sector 14",
+                                        "font_size": 16.0,
+                                        "font_color": "#3B2818",
+                                        "font_path": "Hiragino Sans GB.ttc",
+                                        "font_weight": 600
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "mission_title_2_pseudo_after",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:after"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "mission_meta_2",
+                                "kind": "node",
+                                "markers": [
+                                  "class:mission-meta"
+                                ],
+                                "children": [
+                                  {
+                                    "id": "mission_meta_2_pseudo_before",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:before"
+                                    ]
+                                  },
+                                  {
+                                    "id": "mission_meta_2_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "Awaiting signal lock",
+                                        "font_size": 13.0,
+                                        "font_color": "#94a0ad",
+                                        "font_path": "Hiragino Sans GB.ttc"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "id": "mission_meta_2_pseudo_after",
+                                    "kind": "node",
+                                    "markers": [
+                                      "pseudo:after"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "div_3_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "div_4",
+                            "kind": "node",
+                            "children": [
+                              {
+                                "id": "div_4_pseudo_before",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:before"
+                                ]
+                              },
+                              {
+                                "id": "div_4_text_1",
+                                "kind": "text",
+                                "content": {
+                                  "text": {
+                                    "content": "Queued",
+                                    "font_size": 16.0,
+                                    "font_color": "#3B2818",
+                                    "font_path": "Hiragino Sans GB.ttc"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "div_4_pseudo_after",
+                                "kind": "node",
+                                "markers": [
+                                  "pseudo:after"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "mission_2_pseudo_after",
+                            "kind": "node",
+                            "markers": [
+                              "pseudo:after"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "mission_list_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "card_4_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "action_row",
+                "kind": "node",
+                "markers": [
+                  "class:action-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "row_gap": "12px",
+                    "column_gap": "12px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "action_row_pseudo_before",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:before"
+                    ]
+                  },
+                  {
+                    "id": "launch_btn",
+                    "kind": "button",
+                    "markers": [
+                      "class:action-btn"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "launch_now"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "min_width": "180px",
+                        "min_height": "56px"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#22303d",
+                        "border_color": "#31404f",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#2a3b4b"
+                        }
+                      },
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#36495b"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "launch_btn_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "launch_btn_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Launch",
+                            "font_size": 16.0,
+                            "font_color": "#f7f3e9",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 700
+                          }
+                        }
+                      },
+                      {
+                        "id": "launch_btn_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "hold_btn",
+                    "kind": "button",
+                    "markers": [
+                      "class:action-btn"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "hold_position"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "min_width": "180px",
+                        "min_height": "56px"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "background_color": "#22303d",
+                        "border_color": "#31404f",
+                        "border_width": "1px",
+                        "border_radius": "8px"
+                      }
+                    },
+                    "state_visuals": {
+                      "pressed": {
+                        "visuals": {
+                          "background_color": "#36495b"
+                        }
+                      },
+                      "hovered": {
+                        "visuals": {
+                          "background_color": "#2a3b4b"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "hold_btn_pseudo_before",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:before"
+                        ]
+                      },
+                      {
+                        "id": "hold_btn_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "Hold",
+                            "font_size": 16.0,
+                            "font_color": "#f7f3e9",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "font_weight": 700
+                          }
+                        }
+                      },
+                      {
+                        "id": "hold_btn_pseudo_after",
+                        "kind": "node",
+                        "markers": [
+                          "pseudo:after"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "action_row_pseudo_after",
+                    "kind": "node",
+                    "markers": [
+                      "pseudo:after"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "right_col_pseudo_after",
+                "kind": "node",
+                "markers": [
+                  "pseudo:after"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "hud_shell_pseudo_after",
+            "kind": "node",
+            "markers": [
+              "pseudo:after"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "overlay_root_pseudo_after",
+        "kind": "node",
+        "markers": [
+          "pseudo:after"
+        ]
+      }
+    ]
+  }
+}

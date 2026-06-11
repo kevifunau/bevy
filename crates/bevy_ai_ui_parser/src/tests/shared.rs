@@ -40,6 +40,15 @@ pub(super) const HERO_GAME_UI_IR: &str = include_str!(
 pub(super) const BEVY_UI_EXAMPLE_HTML: &str = include_str!(
     "../../../../examples/UiParserTest/opendesignTest/bevy_ui_example/bevy-ui-example.html"
 );
+pub(super) const BEVY_UI_ASSET_FLOW_HTML: &str = include_str!(
+    "../../../../examples/UiParserTest/opendesignTest/bevy_ui_asset_flow/index.html"
+);
+pub(super) const BEVY_UI_ASSET_FLOW_MANIFEST: &str = include_str!(
+    "../../../../examples/UiParserTest/opendesignTest/bevy_ui_asset_flow/bevy-ui.assets.json"
+);
+pub(super) const BEVY_UI_TEXT_BASELINE_HTML: &str = include_str!(
+    "../../../../examples/UiParserTest/opendesignTest/bevy_ui_text_baseline/index.html"
+);
 
 pub(super) fn find_bui_node<'a>(node: &'a BuiNode, id: &str) -> &'a BuiNode {
     find_bui_node_optional(node, id).unwrap_or_else(|| panic!("IR node '{id}' should exist"))

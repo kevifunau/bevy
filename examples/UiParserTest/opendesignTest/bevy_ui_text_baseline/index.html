@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bevy UI Text Baseline</title>
+<style>
+:root {
+  --bg: #10161d;
+  --surface: #18212b;
+  --surface-2: #22303d;
+  --fg: #f7f3e9;
+  --muted: #94a0ad;
+  --accent: #e4b85d;
+  --success: #5bd18c;
+  --border: #31404f;
+  --font-display: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-body: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-mono: ui-monospace, "Menlo", "Monaco", "Courier", monospace;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.bevy-ui-root {
+  display: flex;
+  min-height: 100vh;
+  padding: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-shell {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-8);
+  width: 1080px;
+  min-height: 620px;
+}
+
+.left-col,
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.headline {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.subline {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mission {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.mission-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mission-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.action-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.action-btn {
+  min-width: 180px;
+  min-height: 56px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--fg);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.action-btn:hover {
+  background: #2a3b4b;
+}
+
+.action-btn:active {
+  background: #36495b;
+}
+
+.ok {
+  color: var(--success);
+}
+</style>
+</head>
+<body>
+<div class="bevy-ui-root">
+  <div class="hud-shell">
+    <section class="left-col">
+      <div class="card">
+        <div class="subline">Command Deck</div>
+        <div class="headline">Mission Brief</div>
+        <div>Pure HTML/CSS baseline without `bevy-ui.assets.json`.</div>
+      </div>
+
+      <div class="card">
+        <div class="subline">Systems</div>
+        <div class="chip-row">
+          <div class="chip">Navigation</div>
+          <div class="chip">Engines</div>
+          <div class="chip">Payload</div>
+          <div class="chip">Telemetry</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="right-col">
+      <div class="card">
+        <div class="subline">Status</div>
+        <div class="stat-grid">
+          <div id="shield_stat" class="stat">
+            <div class="stat-label">Shield Grid</div>
+            <div class="stat-value ok">Stable</div>
+          </div>
+          <div id="power_stat" class="stat">
+            <div class="stat-label">Power Reserve</div>
+            <div class="stat-value">245 MW</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="subline">Mission Queue</div>
+        <div class="mission-list">
+          <div class="mission">
+            <div>
+              <div class="mission-title">Escort Convoy Through Nebula Gate</div>
+              <div class="mission-meta">ETA 08:30</div>
+            </div>
+            <div class="ok">Ready</div>
+          </div>
+          <div class="mission">
+            <div>
+              <div class="mission-title">Deploy Scanner Drone to Sector 14</div>
+              <div class="mission-meta">Awaiting signal lock</div>
+            </div>
+            <div>Queued</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="launch_btn" class="action-btn" type="button" data-action="launch_now">
+          Launch
+        </button>
+        <button id="hold_btn" class="action-btn" type="button" data-action="hold_position">
+          Hold
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

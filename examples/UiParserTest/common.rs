@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 use std::{fs, io};
 
 use bevy::app::{AppExit, PostUpdate};
-use bevy::asset::RenderAssetUsages;
+use bevy::asset::{AssetPlugin, RenderAssetUsages, UnapprovedPathMode};
 use bevy::camera::RenderTarget;
 use bevy::ecs::hierarchy::ChildOf;
 use bevy::image::Image;
@@ -29,6 +29,7 @@ pub fn run_with_json_without_button_feedback(file_name: &str) {
     configure_editor_app_with_plugin(
         &mut app,
         AiUiPlugin::from_path_with_editor(bui_path(file_name)),
+        None,
     );
     app.run();
 }
@@ -36,9 +37,11 @@ pub fn run_with_json_without_button_feedback(file_name: &str) {
 #[allow(dead_code)]
 pub fn run_with_bui_file_without_button_feedback(file_name: &str) {
     let mut app = App::new();
+    let file_path = bui_path(file_name);
     configure_editor_app_with_plugin(
         &mut app,
-        AiUiPlugin::from_path_with_editor(bui_path(file_name)),
+        AiUiPlugin::from_path_with_editor(file_path.clone()),
+        Some(asset_root_for_file(&file_path)),
     );
     app.run();
 }
@@ -46,9 +49,11 @@ pub fn run_with_bui_file_without_button_feedback(file_name: &str) {
 #[allow(dead_code)]
 pub fn run_with_html(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_plugin(
+    let file_path = bui_path(file_name);
+    configure_app_with_plugin_and_asset_root(
         &mut app,
-        AiUiPlugin::from_html_path(bui_path(file_name)),
+        AiUiPlugin::from_html_path(file_path.clone()),
+        Some(asset_root_for_file(&file_path)),
         true,
     );
     app.run();
@@ -57,9 +62,11 @@ pub fn run_with_html(file_name: &str) {
 #[allow(dead_code)]
 pub fn run_with_html_without_button_feedback(file_name: &str) {
     let mut app = App::new();
-    configure_app_with_plugin(
+    let file_path = bui_path(file_name);
+    configure_app_with_plugin_and_asset_root(
         &mut app,
-        AiUiPlugin::from_html_path(bui_path(file_name)),
+        AiUiPlugin::from_html_path(file_path.clone()),
+        Some(asset_root_for_file(&file_path)),
         false,
     );
     app.run();
@@ -68,9 +75,11 @@ pub fn run_with_html_without_button_feedback(file_name: &str) {
 #[allow(dead_code)]
 pub fn run_with_bui_file_with_editor(file_name: &str) {
     let mut app = App::new();
+    let file_path = bui_path(file_name);
     configure_editor_app_with_plugin(
         &mut app,
-        AiUiPlugin::from_path_with_editor(bui_path(file_name)),
+        AiUiPlugin::from_path_with_editor(file_path.clone()),
+        Some(asset_root_for_file(&file_path)),
     );
     app.run();
 }
@@ -85,11 +94,29 @@ pub fn configure_app_with_json(app: &mut App, file_name: &str, button_feedback_e
 }
 
 fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_enabled: bool) {
+    configure_app_with_plugin_and_asset_root(app, plugin, None, button_feedback_enabled);
+}
+
+fn configure_app_with_plugin_and_asset_root(
+    app: &mut App,
+    plugin: AiUiPlugin,
+    asset_root: Option<PathBuf>,
+    button_feedback_enabled: bool,
+) {
     register_optional_windows_fonts_source(app);
     register_optional_macos_fonts_source(app);
     register_optional_auto_screenshot(app);
 
-    app.add_plugins(DefaultPlugins)
+    let mut default_plugins = DefaultPlugins.build();
+    if let Some(asset_root) = asset_root {
+        default_plugins = default_plugins.set(AssetPlugin {
+            file_path: asset_root.to_string_lossy().to_string(),
+            unapproved_path_mode: UnapprovedPathMode::Allow,
+            ..Default::default()
+        });
+    }
+
+    app.add_plugins(default_plugins)
         .add_plugins(plugin)
         .insert_resource(ClearColor(Color::srgb_u8(59, 40, 24)))
         .add_systems(Startup, (setup_camera, setup_auto_screenshot_target));
@@ -118,8 +145,12 @@ fn configure_app_with_plugin(app: &mut App, plugin: AiUiPlugin, button_feedback_
     app.add_observer(on_scroll_handler);
 }
 
-fn configure_editor_app_with_plugin(app: &mut App, plugin: AiUiPlugin) {
-    configure_app_with_plugin(app, plugin, false);
+fn configure_editor_app_with_plugin(
+    app: &mut App,
+    plugin: AiUiPlugin,
+    asset_root: Option<PathBuf>,
+) {
+    configure_app_with_plugin_and_asset_root(app, plugin, asset_root, false);
     app.add_systems(
         Startup,
         (
@@ -210,6 +241,13 @@ fn bui_path(file_name: &str) -> PathBuf {
         .filter(|path| path.exists())
         .or_else(|| nested_in_testset.filter(|path| path.exists()))
         .unwrap_or_else(|| root.join(file_name))
+}
+
+fn asset_root_for_file(file_path: &Path) -> PathBuf {
+    file_path
+        .parent()
+        .map(Path::to_path_buf)
+        .unwrap_or_else(|| PathBuf::from("."))
 }
 
 fn log_bui_root_system(root: Option<Res<BuiRootEntity>>, mut logged: Local<bool>) {

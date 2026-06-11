@@ -5,6 +5,8 @@ mod css_effects;
 mod css_gradients;
 mod css_values;
 mod ir;
+mod opendesign_fallback;
+mod opendesign_manifest;
 mod opendesign_html;
 mod parse;
 mod runtime_contract;

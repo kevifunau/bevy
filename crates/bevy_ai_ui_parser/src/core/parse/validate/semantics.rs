@@ -5,7 +5,7 @@ use crate::core::{
     style::css_parser::{parse_color, parse_rotation, parse_val2, parse_vec2, parse_visibility},
 };
 
-use super::style::{validate_styles, validate_visuals};
+use super::style::{validate_image_config, validate_styles, validate_visuals};
 
 pub(super) fn validate_actions(actions: &[BuiActionBinding]) -> Result<(), String> {
     for action in actions {
@@ -54,6 +54,10 @@ pub(super) fn validate_state_visuals(
         validate_visuals(&state.visuals)?;
         if let Some(text_color) = &state.text_color {
             parse_color(text_color)?;
+        }
+        if let Some(image) = &state.image {
+            validate_image_config(image)
+                .map_err(|error| format!("state_visuals.{name}: {error}"))?;
         }
     }
     Ok(())
