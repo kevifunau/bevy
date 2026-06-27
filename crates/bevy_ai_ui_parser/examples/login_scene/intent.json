@@ -1,0 +1,92 @@
+{
+  "brief": "复刻 Unity UGUI 登录场景为 Bevy HTML/CSS 实现",
+  "targetResolution": {
+    "width": 1365,
+    "height": 768,
+    "orientation": "landscape"
+  },
+  "pages": [
+    {
+      "id": "index",
+      "role": "登录页 — 对应 UGUI LoginBKPanel + LoginPanel",
+      "controls": [
+        "用户名输入框 (inputUN, data-binding=login.username)",
+        "密码输入框 (inputPW, data-binding=login.password)",
+        "记住密码复选框 (togPW, data-binding=login.rememberPw)",
+        "自动登录复选框 (togAuto, data-binding=login.autoLogin)",
+        "登录按钮 (btnSure, data-action=login.sure)",
+        "注册按钮 (btnRe, data-action=login.register)",
+        "提示弹窗 (tip_panel, set-visible 控制)"
+      ],
+      "navigation": [
+        "login.register → register.html",
+        "login.sure → server_select.html (首次) 或 server_list.html (已选服)"
+      ]
+    },
+    {
+      "id": "register",
+      "role": "注册页 — 对应 UGUI RegisterPanel",
+      "controls": [
+        "用户名输入框 (inputUN, data-binding=register.username)",
+        "密码输入框 (inputPW, data-binding=register.password)",
+        "确认密码输入框 (inputPW2, data-binding=register.passwordConfirm)",
+        "确定按钮 (btnSure, data-action=register.sure)",
+        "取消按钮 (btnCancel, data-action=register.cancel)",
+        "提示弹窗 (tip_panel)"
+      ],
+      "navigation": [
+        "register.cancel → index.html",
+        "register.sure → index.html (注册成功后返回登录)"
+      ]
+    },
+    {
+      "id": "server_select",
+      "role": "选服页 — 对应 UGUI ChooseServerPanel",
+      "controls": [
+        "服务器网格 (server_grid, data-binding=server.list)",
+        "进入游戏按钮 (btnEnter, data-action=server.enter)",
+        "返回按钮 (btnBack, data-action=server.back)"
+      ],
+      "navigation": [
+        "server.back → index.html",
+        "server.enter → 游戏主场景"
+      ]
+    },
+    {
+      "id": "server_list",
+      "role": "服务器列表页 — 对应 UGUI ServerPanel",
+      "controls": [
+        "区域列表 (region_list, data-binding=server.regions, data-scroll-view)",
+        "服务器列表 (server_list_right, data-binding=server.servers, data-scroll-view)",
+        "当前服务器名 (txtName, data-binding=server.currentName)",
+        "开始游戏按钮 (btnStart, data-action=server.start)",
+        "换服按钮 (btnChange, data-action=server.change)",
+        "返回按钮 (btnBack, data-action=server.back)"
+      ],
+      "navigation": [
+        "server.back → index.html",
+        "server.start → 游戏主场景"
+      ]
+    }
+  ],
+  "styleAxes": {
+    "mood": "暗色游戏风，金色标题点缀",
+    "accent": "#ffd700 (金色)",
+    "density": "中等密度，居中面板布局"
+  },
+  "source": "Unity UGUI_Demo LoginScene (唐老师教学项目)",
+  "assets": [
+    "BK.jpg — 全屏背景",
+    "panel_bg.png — 面板背景 (9-slice, ui_DL_anniuxiao_01)",
+    "input_frame.png — 输入框背景 (ui_DL_kuang_01)",
+    "checkbox_bg.png — 复选框底框 (ui_TY_xuanzekuang_01)",
+    "checkmark.png — 勾选标记 (ui_TY_gouxuan_01)",
+    "btn_confirm.png — 确定按钮 (ui_DL_an_queding_01)",
+    "btn_register.png — 注册按钮 (ui_DL_an_zhuce_01)",
+    "btn_cancel.png — 取消按钮 (ui_DL_an_quxiao_01)",
+    "btn_enter_game.png — 进入游戏按钮 (ui_DL_jinruyouxi_01)",
+    "hot_tag.png — 热门标签 (ui_DL_huobao_01)",
+    "new_tag.png — 新服标签 (ui_DL_new_01)",
+    "server_select_btn.png — 服务器选择按钮 (ui_DL_fuwuqixuanze_02)"
+  ]
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1365, initial-scale=1.0" />
+<title>服务器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body { font-family: "Microsoft YaHei", "Heiti SC", sans-serif; background: #1a1a2e; color: #fff; }
+  .game-stage { width: 1365px; height: 768px; position: relative; margin: 0 auto; overflow: hidden; }
+
+  /* LoginBKPanel */
+  .login-bk { position: absolute; inset: 0; overflow: hidden; }
+  .login-bk img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+
+  /* ServerPanel (root) — just a bottom bar with current server + 3 buttons */
+  .server-panel {
+    position: absolute;
+    bottom: 60px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 60px;
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    /* imgBK (ui_DL_kuang_01 = input_frame) */
+    background-image: url("Asset/input_frame.png");
+    background-repeat: no-repeat; background-size: 100% 100%;
+  }
+
+  /* txtName (Text="233区  人鬼情缘") */
+  .server-name-text {
+    font-size: 16px; color: #ddd;
+  }
+  .server-name-text .name { color: #ffd700; font-weight: bold; }
+
+  /* Buttons */
+  .server-buttons { display: flex; flex-direction: row; column-gap: 12px; }
+
+  /* btnChange (Button, Image[ui_DL_dianjihuanqu_01 = "点击还区"]) */
+  .btn-change {
+    width: 100px; height: 40px; border: none; cursor: pointer;
+    background-image: url("Asset/btn_change_region.png");
+    background-repeat: no-repeat; background-size: 100% 100%;
+    transition: transform 0.1s;
+  }
+  .btn-change:active { transform: scale(0.96); }
+
+  /* btnStart (Button, Image[ui_DL_jinruyouxi_01 = "进入游戏"]) */
+  .btn-start {
+    width: 120px; height: 40px; border: none; cursor: pointer;
+    background-image: url("Asset/btn_enter_game.png");
+    background-repeat: no-repeat; background-size: 100% 100%;
+    transition: transform 0.1s;
+  }
+  .btn-start:active { transform: scale(0.96); }
+
+  /* btnBack (Button, Image[ui_TY_fanhui_01 = "返回"]) */
+  .btn-back {
+    width: 80px; height: 40px; border: none; cursor: pointer;
+    background-image: url("Asset/btn_back.png");
+    background-repeat: no-repeat; background-size: 100% 100%;
+    transition: transform 0.1s;
+  }
+  .btn-back:active { transform: scale(0.96); }
+</style>
+</head>
+<body>
+
+<div class="game-stage bevy-ui-root">
+
+  <!-- LoginBKPanel -->
+  <div class="login-bk" id="login_bk">
+    <img src="Asset/BK.jpg" alt="background" />
+  </div>
+
+  <!-- ServerPanel -->
+  <div class="server-panel" id="server_panel">
+    <!-- txtName (Text="233区  人鬼情缘") -->
+    <span class="server-name-text">
+      当前服务器：<span class="name" id="txtName" data-binding="server.currentName">未选择</span>
+    </span>
+
+    <div class="server-buttons">
+      <!-- btnChange (Image[ui_DL_dianjihuanqu_01]) -->
+      <button class="btn-change" id="btnChange" data-action="server.change"></button>
+      <!-- btnStart (Image[ui_DL_jinruyouxi_01]) -->
+      <button class="btn-start" id="btnStart" data-action="server.start"></button>
+      <!-- btnBack (Image[ui_TY_fanhui_01]) -->
+      <button class="btn-back" id="btnBack" data-action="server.back"></button>
+    </div>
+  </div>
+
+  <!-- Static Action DSL (Bevy runtime only) -->
+  <script type="application/json" data-bui-actions>
+  {
+    "actions": {
+      "server.change": [],
+      "server.start": [],
+      "server.back": []
+    }
+  }
+  </script>
+
+  <!-- Browser preview JS -->
+  <script>
+    (function() {
+      var txtName = document.getElementById('txtName');
+
+      // Load saved server
+      var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+      if (loginData.frontServerName) {
+        txtName.textContent = loginData.frontServerName;
+      }
+
+      document.getElementById('btnChange').addEventListener('click', function() {
+        window.location.href = 'server_select.html';
+      });
+
+      document.getElementById('btnStart').addEventListener('click', function() {
+        alert('进入游戏：' + txtName.textContent + '！（演示结束）');
+      });
+
+      document.getElementById('btnBack').addEventListener('click', function() {
+        window.location.href = 'index.html';
+      });
+    })();
+  </script>
+</div>
+
+</body>
+</html>
