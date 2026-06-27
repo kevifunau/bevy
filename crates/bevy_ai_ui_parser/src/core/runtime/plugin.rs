@@ -147,10 +147,13 @@ impl Plugin for AiUiPlugin {
             .init_resource::<BuiIdMap>()
             .init_resource::<BuiDelayedActionQueue>()
             .init_resource::<BuiTextInputFocusState>()
+            .init_resource::<BuiPanelSwitch>()
+            .init_resource::<BuiPanelPaths>()
             .add_message::<BuiActionTriggered>()
             .add_message::<BuiBindingUpdate>()
             .add_message::<BuiStateSet>()
             .add_systems(Startup, spawn_bui_scene)
+            .add_systems(Update, process_panel_switch)
             .add_systems(
                 Update,
                 (
@@ -481,7 +484,7 @@ pub fn spawn_bui_ir(
     texture_atlases: &mut Assets<TextureAtlasLayout>,
     state_store: &mut BuiStateStore,
     ir_path: impl AsRef<Path>,
-) -> Result<Entity, String> {
+) -> Result<(Entity, std::collections::HashMap<String, Entity>), String> {
     let path = ir_path.as_ref();
     let raw = fs::read_to_string(path)
         .map_err(|error| format!("Failed to read BUI IR '{}': {error}", path.display()))?;
@@ -496,7 +499,83 @@ pub fn spawn_bui_ir(
 
     commands.insert_resource(BuiRootEntity(root));
     commands.insert_resource(BuiDocumentResource(document));
-    commands.insert_resource(BuiIdMap(id_map));
+    commands.insert_resource(BuiIdMap(id_map.clone()));
 
-    Ok(root)
+    Ok((root, id_map))
+}
+
+/// Resource holding a pending panel switch request.
+/// Game code calls `switch.show("register")` and the plugin handles the rest.
+#[derive(Resource, Default)]
+pub struct BuiPanelSwitch {
+    /// The panel name to switch to, if any.
+    pub pending: Option<String>,
+}
+
+impl BuiPanelSwitch {
+    /// Request the plugin to switch to a different panel.
+    /// Equivalent to Unity's `UIManager.ShowPanel<T>()`.
+    pub fn show(&mut self, panel_name: &str) {
+        self.pending = Some(panel_name.to_string());
+    }
+}
+
+/// Resource mapping panel names to IR JSON file paths.
+/// Register panels via `app.register_bui_panel("register", "path/to/register.ir.json")`.
+#[derive(Resource, Default)]
+pub struct BuiPanelPaths(pub std::collections::HashMap<String, String>);
+
+/// Extension trait for registering BUI panels on a Bevy app.
+pub trait BuiPanelAppExt {
+    /// Register a panel name → IR JSON path mapping.
+    /// After registering, game code can call `BuiPanelSwitch::show("name")` to switch to it.
+    fn register_bui_panel(&mut self, name: &str, ir_path: impl AsRef<Path>) -> &mut Self;
+}
+
+impl BuiPanelAppExt for App {
+    fn register_bui_panel(&mut self, name: &str, ir_path: impl AsRef<Path>) -> &mut Self {
+        let mut paths = self
+            .world_mut()
+            .get_resource_or_insert_with::<BuiPanelPaths>(Default::default);
+        paths.0.insert(name.to_string(), ir_path.as_ref().to_string_lossy().to_string());
+        self
+    }
+}
+
+/// System that processes pending panel switch requests.
+/// Despawns the current BUI tree, loads the new IR JSON, and spawns the new tree.
+fn process_panel_switch(
+    mut switch: ResMut<BuiPanelSwitch>,
+    panel_paths: Res<BuiPanelPaths>,
+    root: Option<Res<BuiRootEntity>>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
+    mut state_store: ResMut<BuiStateStore>,
+) {
+    let Some(panel_name) = switch.pending.take() else {
+        return;
+    };
+
+    let Some(ir_path) = panel_paths.0.get(&panel_name) else {
+        error!("Panel '{}' not registered. Use app.register_bui_panel() first.", panel_name);
+        return;
+    };
+
+    // Despawn old BUI tree
+    if let Some(root) = root {
+        commands.entity(root.0).despawn();
+        info!("Despawned previous panel");
+    }
+
+    // Load and spawn new panel
+    match spawn_bui_ir(&mut commands, &asset_server, &mut texture_atlases, &mut state_store, ir_path) {
+        Ok((root, _id_map)) => {
+            info!("Switched to panel: {}", panel_name);
+            let _ = root;
+        }
+        Err(e) => {
+            error!("Failed to switch to panel '{}': {}", panel_name, e);
+        }
+    }
 }

@@ -38,6 +38,41 @@ pub fn spawn_bui_tree(
     Ok((root, id_map))
 }
 
+/// Spawn a single BUI node as a child of an existing parent entity.
+///
+/// This is the runtime equivalent of Unity's `parent.Add(VisualElement)` —
+/// it creates a new Bevy UI entity from a BuiNode and attaches it as a child
+/// of the specified parent. Use this to dynamically populate scroll views,
+/// lists, and other containers at runtime.
+///
+/// # Example
+///
+/// ```no_run
+/// # use bevy::prelude::*;
+/// # use bevy_ai_ui_parser::{spawn_bui_child, BuiNode, BuiId, BuiIdMap};
+/// fn populate_list(mut commands: Commands, asset_server: Res<AssetServer>,
+///                  mut id_map: ResMut<BuiIdMap>, parent: Entity) {
+///     let mut map = id_map.0.clone();
+///     let node = BuiNode { id: "item_1".into(), kind: "node".into(),
+///         ..Default::default() };
+///     let _child = spawn_bui_child(&mut commands, &asset_server, &mut Assets::default(),
+///         parent, &node, &mut map);
+///     id_map.0 = map;
+/// }
+/// ```
+pub fn spawn_bui_child(
+    commands: &mut Commands,
+    asset_server: &AssetServer,
+    texture_atlases: &mut Assets<TextureAtlasLayout>,
+    parent_entity: Entity,
+    node: &BuiNode,
+    id_map: &mut HashMap<String, Entity>,
+) -> Result<Entity, String> {
+    let child = spawn_bui_node_inner(commands, asset_server, texture_atlases, node, id_map)?;
+    commands.entity(parent_entity).add_child(child);
+    Ok(child)
+}
+
 fn spawn_bui_node_inner(
     commands: &mut Commands,
     asset_server: &AssetServer,

@@ -72,5 +72,6 @@ pub use core::model::{
     BuiStateModel, BuiStateVisual, BuiStyle, BuiStyles, BuiTextConfig, BuiTextShadowConfig,
     BuiTextureAtlasConfig, BuiTextureSlicerConfig, BuiVisuals,
 };
-pub use core::runtime::components::{BuiDocumentResource, BuiSourcePaths};
-pub use core::runtime::plugin::spawn_bui_ir;
+pub use core::runtime::components::{BuiDocumentResource, BuiIdMap, BuiSourcePaths};
+pub use core::runtime::plugin::{spawn_bui_ir, BuiPanelAppExt, BuiPanelPaths, BuiPanelSwitch};
+pub use core::runtime::spawn::{spawn_bui_child, spawn_bui_tree};

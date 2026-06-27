@@ -42,7 +42,7 @@ pub struct BuiDocumentResource(pub BuiDocument);
 /// BuiId string → ECS Entity mapping, built during spawn.
 #[derive(Resource, Debug, Clone, Default)]
 #[allow(dead_code)]
-pub(crate) struct BuiIdMap(pub(crate) HashMap<String, Entity>);
+pub struct BuiIdMap(pub std::collections::HashMap<String, Entity>);
 
 /// Source file paths for write-back on editor save.
 #[derive(Resource, Debug, Clone, Default)]
