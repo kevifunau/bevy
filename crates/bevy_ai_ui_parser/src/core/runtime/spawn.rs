@@ -21,7 +21,7 @@ use crate::core::{
     },
 };
 
-pub(crate) fn spawn_bui_tree(
+pub fn spawn_bui_tree(
     commands: &mut Commands,
     asset_server: &AssetServer,
     texture_atlases: &mut Assets<TextureAtlasLayout>,

@@ -14,7 +14,6 @@
   .login-bk { position: absolute; inset: 0; overflow: hidden; }
   .login-bk img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
 
-  /* RegisterPanel */
   .register-panel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 460px; padding: 40px 50px 35px;
@@ -24,7 +23,6 @@
     border-radius: 12px;
   }
 
-  /* txtTitle (Text="用户注册") */
   .register-title { text-align: center; font-size: 24px; font-weight: bold; color: #ffd700; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
   .form-row { display: flex; flex-direction: column; row-gap: 6px; }
@@ -38,20 +36,16 @@
   .input-wrapper input { width: 100%; height: 100%; border: none; background: transparent; color: #fff; font-size: 16px; outline: none; }
   .input-wrapper input::placeholder { color: #888; }
 
-  /* btnSure (bg=panel_bg, child=btn_register "注册") / btnCancel (bg=panel_bg, child=btn_cancel "取消") */
   .button-row { display: flex; flex-direction: row; justify-content: center; column-gap: 20px; margin-top: 8px; }
   .btn {
     width: 120px; height: 44px; border: none; cursor: pointer;
-    background-repeat: no-repeat, no-repeat;
-    background-position: center, center;
-    background-size: auto, 100% 100%;
+    background-image: url("Asset/panel_bg.png");
+    background-repeat: no-repeat; background-size: 100% 100%;
+    font-size: 18px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     transition: transform 0.1s;
   }
   .btn:active { transform: scale(0.96); }
-  .btn-sure { background-image: url("Asset/btn_register.png"), url("Asset/panel_bg.png"); }
-  .btn-cancel { background-image: url("Asset/btn_cancel.png"), url("Asset/panel_bg.png"); }
 
-  /* TipPanel (separate prefab) */
   .tip-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; visibility: hidden; z-index: 100; }
   .tip-panel {
     width: 340px; padding: 30px 25px 20px;
@@ -62,64 +56,47 @@
   }
   .tip-title { font-size: 18px; font-weight: bold; color: #ffd700; }
   .tip-info { font-size: 15px; color: #ddd; text-align: center; }
-  .tip-btn {
-    width: 100px; height: 38px; border: none; cursor: pointer;
-    background-image: url("Asset/btn_confirm.png"), url("Asset/panel_bg.png");
-    background-position: center, center; background-repeat: no-repeat, no-repeat;
-    background-size: auto, 100% 100%;
-  }
 </style>
 </head>
 <body>
 
-<div class="game-stage bevy-ui-root">
+<div class="bevy-ui-root game-stage">
 
-  <!-- LoginBKPanel -->
   <div class="login-bk" id="login_bk">
     <img src="Asset/BK.jpg" alt="background" />
   </div>
 
-  <!-- RegisterPanel -->
   <div class="register-panel" id="register_panel">
-    <!-- txtTitle (Text="用户注册") -->
     <div class="register-title">用户注册</div>
 
-    <!-- txtUN (Text="账号:") + imgUN + inputUN (placeholder="请输入账号") -->
     <div class="form-row">
       <span class="form-label">账号:</span>
       <div class="input-wrapper" id="imgUN">
-        <input type="text" id="inputUN" placeholder="请输入账号"
-               data-binding="register.username" />
+        <input type="text" id="inputUN" placeholder="请输入账号" data-binding="register.username" />
       </div>
     </div>
 
-    <!-- txtPW (Text="密码:") + imgPW + inputPW (placeholder="请输入密码") -->
     <div class="form-row">
       <span class="form-label">密码:</span>
       <div class="input-wrapper" id="imgPW">
-        <input type="password" id="inputPW" placeholder="请输入密码"
-               data-binding="register.password" />
+        <input type="password" id="inputPW" placeholder="请输入密码" data-binding="register.password" />
       </div>
     </div>
 
-    <!-- btnSure (Button, child Image=btn_register "注册") -->
-    <!-- btnCancel (Button, child Image=btn_cancel "取消") -->
     <div class="button-row">
-      <button class="btn btn-sure" id="btnSure" data-action="register.sure"></button>
-      <button class="btn btn-cancel" id="btnCancel" data-action="register.cancel"></button>
+      <button class="btn" id="btnSure" data-action="register.sure">确定</button>
+      <button class="btn" id="btnCancel" data-action="register.cancel">取消</button>
     </div>
   </div>
 
-  <!-- TipPanel (separate prefab, runtime overlay) -->
   <div class="tip-overlay" id="tip_panel">
     <div class="tip-panel">
       <div class="tip-title">提示</div>
       <div class="tip-info" id="txtInfo"></div>
-      <button class="tip-btn" id="btnTipSure" data-action="tip.close"></button>
+      <button class="btn" id="btnTipSure" data-action="tip.close" style="width:100px;height:38px;font-size:15px;">确定</button>
     </div>
   </div>
 
-  <!-- Static Action DSL (Bevy runtime only) -->
   <script type="application/json" data-bui-actions>
   {
     "actions": {
@@ -132,7 +109,6 @@
   }
   </script>
 
-  <!-- Browser preview JS -->
   <script>
     (function() {
       var inputUN = document.getElementById('inputUN');

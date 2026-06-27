@@ -10,11 +10,9 @@
   body { font-family: "Microsoft YaHei", "Heiti SC", sans-serif; background: #1a1a2e; color: #fff; }
   .game-stage { width: 1365px; height: 768px; position: relative; margin: 0 auto; overflow: hidden; }
 
-  /* LoginBKPanel */
   .login-bk { position: absolute; inset: 0; overflow: hidden; }
   .login-bk img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
 
-  /* ChooseServerPanel (root, Image[ui_TY_erjikuang_01 = panel_frame]) */
   .server-panel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 900px; height: 540px;
@@ -23,16 +21,12 @@
     background-repeat: no-repeat; background-size: 100% 100%;
     padding: 15px;
   }
-
-  /* imgBK2 (ui_TY_di_shensebj_01 = dark_bg) */
   .server-bg {
     position: absolute; inset: 15px;
     background-image: url("Asset/dark_bg.png");
     background-repeat: no-repeat; background-size: 100% 100%;
     z-index: 0;
   }
-
-  /* imgChoose (ui_DL_xuanzefuwuqi_01 = "选择服务器" title image) */
   .server-title {
     position: relative; z-index: 1;
     height: 40px;
@@ -40,8 +34,6 @@
     background-repeat: no-repeat; background-position: center;
     background-size: auto 100%;
   }
-
-  /* imgFrontBK2 (ui_DL_zhuangshi_01 = decoration) */
   .decoration {
     position: absolute; top: 5px; right: 10px; width: 40px; height: 40px;
     background-image: url("Asset/decoration.png");
@@ -49,88 +41,59 @@
     z-index: 2;
   }
 
-  /* Main: svLeft + svRight */
   .server-content {
     position: relative; z-index: 1;
-    flex: 1;
-    display: flex; flex-direction: row;
-    column-gap: 10px;
-    padding: 10px 0;
+    flex: 1; display: flex; flex-direction: row;
+    column-gap: 10px; padding: 10px 0;
   }
 
-  /* svLeft (Scroll View) */
   .sv-left {
-    width: 200px;
-    display: flex; flex-direction: column;
-    /* imgFrontBK (ui_DL_fuwuqiliebiao_01 = server_list_bg) */
+    width: 200px; display: flex; flex-direction: column;
     background-image: url("Asset/server_list_bg.png");
     background-repeat: no-repeat; background-size: 100% 100%;
     padding: 8px;
   }
-  /* svLeft Content: VerticalLayoutGroup */
-  .sv-left-content {
-    flex: 1; overflow-y: auto;
-    display: flex; flex-direction: column; row-gap: 4px;
-  }
-
-  /* ServerLeftItem (Button + Image[ui_DL_fuwuqixuanze_01 = server_select_bg] + Text) */
+  .sv-left-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; row-gap: 4px; }
   .left-item {
-    height: 40px;
-    display: flex; align-items: center; justify-content: center;
+    height: 40px; display: flex; align-items: center; justify-content: center;
     background-image: url("Asset/server_select_bg.png");
     background-repeat: no-repeat; background-size: 100% 100%;
-    cursor: pointer;
-    transition: transform 0.1s;
+    cursor: pointer; transition: transform 0.1s;
   }
   .left-item:active { transform: scale(0.96); }
   .left-item-text { font-size: 14px; color: #ccc; }
   .left-item.active .left-item-text { color: #ffd700; }
 
-  /* svRight (Scroll View) */
   .sv-right {
-    flex: 1;
-    display: flex; flex-direction: column;
+    flex: 1; display: flex; flex-direction: column;
     background-image: url("Asset/server_list_bg.png");
     background-repeat: no-repeat; background-size: 100% 100%;
     padding: 8px;
   }
-  /* svRight Content: GridLayoutGroup (CellSize=295x78, Spacing=9.16x2.21) */
   .sv-right-content {
     flex: 1; overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, 295px);
     grid-auto-rows: 78px;
-    column-gap: 9px;
-    row-gap: 2px;
-    justify-content: start;
-    align-content: start;
+    column-gap: 9px; row-gap: 2px;
+    justify-content: start; align-content: start;
   }
-
-  /* ServerRightItem (Button + Image[ui_DL_fuwuqiliebiao_01 = server_list_bg] + imgNew + txtName + imgState) */
   .right-item {
     position: relative;
     display: flex; flex-direction: row; align-items: center;
     padding: 0 15px;
     background-image: url("Asset/server_list_bg.png");
     background-repeat: no-repeat; background-size: 100% 100%;
-    cursor: pointer;
-    transition: transform 0.1s;
-    column-gap: 8px;
+    cursor: pointer; transition: transform 0.1s; column-gap: 8px;
   }
   .right-item:active { transform: scale(0.96); }
   .right-item.selected { border: 2px solid #ffd700; border-radius: 4px; }
-  /* txtName (Text="31区    天下无双") */
   .right-item-name { font-size: 15px; color: #ddd; flex: 1; }
-  /* imgState (status image: 流畅/繁忙/火爆/维护) */
-  .right-item-state {
-    width: 30px; height: 18px;
-    background-repeat: no-repeat; background-size: contain;
-  }
+  .right-item-state { width: 30px; height: 18px; background-repeat: no-repeat; background-size: contain; }
   .right-item-state.state-1 { background-image: url("Asset/status_smooth.png"); }
   .right-item-state.state-2 { background-image: url("Asset/status_busy.png"); }
   .right-item-state.state-3 { background-image: url("Asset/status_hot.png"); }
   .right-item-state.state-4 { background-image: url("Asset/status_maintenance.png"); }
-  /* imgNew (ui_DL_new_01 = new tag) */
   .right-item-new {
     position: absolute; top: -2px; right: -2px;
     width: 24px; height: 14px;
@@ -140,14 +103,12 @@
   }
   .right-item-new.show { display: block; }
 
-  /* Bottom bar */
   .server-bottom {
     position: relative; z-index: 1;
     height: 50px;
     display: flex; flex-direction: row; align-items: center; justify-content: space-between;
     padding: 0 10px;
   }
-  /* imgFront (ui_DL_shangcidenglu_01 = "上次登录") + txtFront (server name) + imgState */
   .last-login { display: flex; flex-direction: row; align-items: center; column-gap: 8px; }
   .last-login-icon {
     width: 80px; height: 20px;
@@ -156,19 +117,13 @@
   }
   .last-login-text { font-size: 14px; color: #ccc; }
   .last-login-text .server-name { color: #ffd700; }
-  .last-login-state {
-    width: 30px; height: 18px;
-    background-repeat: no-repeat; background-size: contain;
-    display: none;
-  }
+  .last-login-state { width: 30px; height: 18px; background-repeat: no-repeat; background-size: contain; display: none; }
   .last-login-state.state-1 { background-image: url("Asset/status_smooth.png"); display: block; }
   .last-login-state.state-2 { background-image: url("Asset/status_busy.png"); display: block; }
   .last-login-state.state-3 { background-image: url("Asset/status_hot.png"); display: block; }
   .last-login-state.state-4 { background-image: url("Asset/status_maintenance.png"); display: block; }
-  /* txtRange (Text="服务器  1-5") */
   .server-range { font-size: 13px; color: rgba(255,255,255,0.5); }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
@@ -176,59 +131,36 @@
 </head>
 <body>
 
-<div class="game-stage bevy-ui-root">
+<div class="bevy-ui-root game-stage">
 
-  <!-- LoginBKPanel -->
   <div class="login-bk" id="login_bk">
     <img src="Asset/BK.jpg" alt="background" />
   </div>
 
-  <!-- ChooseServerPanel -->
   <div class="server-panel" id="choose_server_panel">
-    <!-- imgBK2 (dark_bg) -->
     <div class="server-bg"></div>
-
-    <!-- imgChoose (title image) -->
     <div class="server-title"></div>
-
-    <!-- imgFrontBK2 (decoration) -->
     <div class="decoration"></div>
 
-    <!-- svLeft + svRight -->
     <div class="server-content">
-      <!-- svLeft (Scroll View, Content=VerticalLayoutGroup) -->
       <div class="sv-left" id="svLeft">
-        <div class="sv-left-content" id="left_content"
-             data-scroll-view="true" data-scroll-binding="server.regions">
-          <!-- ServerLeftItem instances created at runtime -->
-        </div>
+        <div class="sv-left-content" id="left_content"></div>
       </div>
-
-      <!-- svRight (Scroll View, Content=GridLayoutGroup) -->
       <div class="sv-right" id="svRight">
-        <div class="sv-right-content" id="right_content"
-             data-scroll-view="true" data-scroll-binding="server.servers">
-          <!-- ServerRightItem instances created at runtime -->
-        </div>
+        <div class="sv-right-content" id="right_content"></div>
       </div>
     </div>
 
-    <!-- Bottom: imgFront + txtFront + imgState + txtRange -->
     <div class="server-bottom">
       <div class="last-login">
-        <!-- imgFront (上次登录 image) -->
         <div class="last-login-icon"></div>
-        <!-- txtFront (Text="1区  绿色平原") -->
-        <span class="last-login-text">上次登录：<span class="server-name" id="txtFront" data-binding="server.currentName">无</span></span>
-        <!-- imgState (status) -->
+        <span class="last-login-text">上次登录：<span class="server-name" id="txtFront">无</span></span>
         <div class="last-login-state" id="lastLoginState"></div>
       </div>
-      <!-- txtRange (Text="服务器  1-5") -->
       <span class="server-range" id="txtRange">服务器列表</span>
     </div>
   </div>
 
-  <!-- Static Action DSL (Bevy runtime only) -->
   <script type="application/json" data-bui-actions>
   {
     "actions": {
@@ -238,10 +170,14 @@
   }
   </script>
 
-  <!-- Browser preview JS (simulates ChooseServerPanel.cs + ServerLeftItem.cs + ServerRightItem.cs) -->
   <script>
     (function() {
-      // Load ServerInfo.json
+      var leftContent = document.getElementById('left_content');
+      var rightContent = document.getElementById('right_content');
+      var txtFront = document.getElementById('txtFront');
+      var txtRange = document.getElementById('txtRange');
+      var lastLoginState = document.getElementById('lastLoginState');
+
       var serverData = [
         {"id":1,"name":"天下无双","state":0,"isNew":false},
         {"id":2,"name":"无双霸业","state":1,"isNew":false},
@@ -271,19 +207,11 @@
         {"id":26,"name":"天下无双18","state":4,"isNew":true}
       ];
 
-      var leftContent = document.getElementById('left_content');
-      var rightContent = document.getElementById('right_content');
-      var txtFront = document.getElementById('txtFront');
-      var txtRange = document.getElementById('txtRange');
-      var lastLoginState = document.getElementById('lastLoginState');
-
-      // Init: create ServerLeftItem for each group of 5
       var numGroups = Math.floor(serverData.length / 5) + 1;
       for (var i = 0; i < numGroups; i++) {
         var begin = i * 5 + 1;
         var end = Math.min(5 * (i + 1), serverData.length);
         if (begin > serverData.length) break;
-
         var item = document.createElement('div');
         item.className = 'left-item' + (i === 0 ? ' active' : '');
         item.innerHTML = '<span class="left-item-text">' + begin + ' - ' + end + '区</span>';
@@ -298,59 +226,39 @@
         leftContent.appendChild(item);
       }
 
-      // UpdatePanel: clear svRight, create ServerRightItem for each server in range
       function updatePanel(beginIndex, endIndex) {
         txtRange.textContent = '服务器 ' + beginIndex + '-' + endIndex;
         rightContent.innerHTML = '';
-
         for (var i = beginIndex; i <= endIndex; i++) {
           var info = serverData[i - 1];
           var item = document.createElement('div');
           item.className = 'right-item';
-
           var html = '<span class="right-item-name">' + info.id + '区  ' + info.name + '</span>';
-          if (info.state > 0) {
-            html += '<div class="right-item-state state-' + info.state + '"></div>';
-          }
-          if (info.isNew) {
-            html += '<div class="right-item-new show"></div>';
-          }
+          if (info.state > 0) html += '<div class="right-item-state state-' + info.state + '"></div>';
+          if (info.isNew) html += '<div class="right-item-new show"></div>';
           item.innerHTML = html;
-
           (function(serverInfo, el) {
             el.addEventListener('click', function() {
               var prev = rightContent.querySelector('.right-item.selected');
               if (prev) prev.classList.remove('selected');
               el.classList.add('selected');
-
-              // Save selection (ServerRightItem.cs: LoginMgr.frontServerID = info.id)
               var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
               loginData.frontServerID = serverInfo.id;
               loginData.frontServerName = serverInfo.id + '区 ' + serverInfo.name;
               localStorage.setItem('loginData', JSON.stringify(loginData));
-
-              // Navigate to ServerPanel (HidePanel<ChooseServerPanel> + ShowPanel<ServerPanel>)
               window.location.href = 'server_list.html';
             });
           })(info, item);
-
           rightContent.appendChild(item);
         }
       }
 
-      // ShowMe: show last login server
       var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
       if (loginData.frontServerID && loginData.frontServerID > 0) {
         var info = serverData[loginData.frontServerID - 1];
         txtFront.textContent = info.id + '区  ' + info.name;
-        if (info.state > 0) {
-          lastLoginState.className = 'last-login-state state-' + info.state;
-        }
-      } else {
-        txtFront.textContent = '无';
+        if (info.state > 0) lastLoginState.className = 'last-login-state state-' + info.state;
       }
-
-      // Initial: show first group
       updatePanel(1, Math.min(5, serverData.length));
     })();
   </script>

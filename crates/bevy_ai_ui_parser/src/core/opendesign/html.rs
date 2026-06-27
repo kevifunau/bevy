@@ -132,6 +132,13 @@ fn find_matching_div_close(fragment: &str) -> Option<usize> {
 }
 
 fn normalize_html_entities_for_xml(fragment: &str) -> String {
+    // Strip all <script>...</script> tags before XML parsing.
+    // The data-bui-actions JSON is already extracted separately via
+    // parse_interaction_model(), so stripping script tags here is safe.
+    // This prevents roxmltree from failing on JS content containing '<'
+    // characters and boolean attributes like data-bui-actions.
+    let fragment = strip_script_tags(fragment);
+
     let mut result = String::with_capacity(fragment.len());
     let mut chars = fragment.char_indices().peekable();
     while let Some((i, c)) = chars.next() {
@@ -173,6 +180,58 @@ fn normalize_html_entities_for_xml(fragment: &str) -> String {
         }
     }
     result
+}
+
+/// Remove all `<script>...</script>` blocks from an HTML fragment.
+/// Handles both `<script type="...">` and `<script>` (no attributes).
+/// Self-closing `<script src="..."/>` and `<script src="..."></script>` are also removed.
+fn strip_script_tags(html: &str) -> String {
+    let mut result = String::with_capacity(html.len());
+    let lower = html.to_ascii_lowercase();
+    let mut pos = 0;
+
+    while pos < html.len() {
+        if let Some(start) = lower[pos..].find("<script") {
+            let abs_start = pos + start;
+            result.push_str(&html[pos..abs_start]);
+
+            // Find the end of this script tag: either </script> or />
+            if let Some(end) = find_script_end(&lower[abs_start..]) {
+                pos = abs_start + end;
+            } else {
+                // No closing tag found, keep the rest as-is
+                result.push_str(&html[abs_start..]);
+                break;
+            }
+        } else {
+            result.push_str(&html[pos..]);
+            break;
+        }
+    }
+
+    // Clean up multiple blank lines left by removed scripts
+    while result.contains("\n\n\n") {
+        result = result.replace("\n\n\n", "\n\n");
+    }
+
+    result
+}
+
+/// Find the end position of a `<script>` block (including the closing `</script>` tag).
+/// Returns the byte offset relative to the start of the input.
+fn find_script_end(s: &str) -> Option<usize> {
+    // Check for self-closing: <script ... />
+    if let Some(close) = s.find("/>") {
+        // Make sure this is the end of the opening tag
+        if let Some(tag_end) = s.find('>') {
+            if close < tag_end {
+                return Some(close + 2);
+            }
+        }
+    }
+
+    // Find </script>
+    s.find("</script>").map(|pos| pos + "</script>".len())
 }
 
 pub(crate) fn opendesign_compile_viewport(

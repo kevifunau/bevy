@@ -1,0 +1,355 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "interaction_model": {
+    "actions": {
+      "server.back": [],
+      "server.change": [],
+      "server.start": []
+    }
+  },
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "overflow": "clip",
+        "justify_content": "center",
+        "align_items": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#1a1a2e"
+      }
+    },
+    "children": [
+      {
+        "id": "stage_root",
+        "kind": "node",
+        "markers": [
+          "class:bevy-ui-root",
+          "class:game-stage",
+          "bui-stage-fit:1365x768"
+        ],
+        "layout": {
+          "styles": {
+            "box_sizing": "border-box",
+            "width": "1365px",
+            "height": "768px",
+            "overflow": "hidden",
+            "margin": "0 auto",
+            "padding": "0",
+            "position_type": "relative"
+          }
+        },
+        "semantics": {
+          "stage_fit": {
+            "design_width": 1365.0,
+            "design_height": 768.0,
+            "mode": "scale-down"
+          }
+        },
+        "children": [
+          {
+            "id": "login_bk",
+            "kind": "node",
+            "markers": [
+              "class:login-bk"
+            ],
+            "layout": {
+              "styles": {
+                "box_sizing": "border-box",
+                "left": "0",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
+                "overflow": "hidden",
+                "margin": "0",
+                "padding": "0",
+                "position_type": "absolute"
+              }
+            },
+            "children": [
+              {
+                "id": "img",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "box_sizing": "border-box",
+                    "width": "100%",
+                    "height": "100%",
+                    "margin": "0",
+                    "padding": "0",
+                    "ui_opacity": 0.5
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "Asset/BK.jpg",
+                    "image_mode": "stretch"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "server_panel",
+            "kind": "node",
+            "markers": [
+              "class:server-panel"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "box_sizing": "border-box",
+                "width": "600px",
+                "height": "60px",
+                "left": "50%",
+                "bottom": "60px",
+                "margin": "0",
+                "padding": "0 20px",
+                "flex_direction": "row",
+                "justify_content": "space-between",
+                "align_items": "center",
+                "ui_translation": "-50% 0px",
+                "position_type": "absolute"
+              }
+            },
+            "content": {
+              "image": {
+                "texture_path": "Asset/input_frame.png",
+                "image_mode": "stretch",
+                "background_size": "100% 100%",
+                "background_repeat": "no-repeat"
+              }
+            },
+            "children": [
+              {
+                "id": "server_name_text",
+                "kind": "node",
+                "markers": [
+                  "class:server-name-text"
+                ],
+                "layout": {
+                  "styles": {
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "padding": "0"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "server_name_text_text_1",
+                    "kind": "text",
+                    "content": {
+                      "text": {
+                        "content": "当前服务器：",
+                        "font_size": 16.0,
+                        "font_color": "#ddd",
+                        "font_path": "Songti.ttc",
+                        "linebreak": "word_or_character"
+                      }
+                    }
+                  },
+                  {
+                    "id": "txtname",
+                    "kind": "node",
+                    "markers": [
+                      "class:name"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "txtname_text_1",
+                        "kind": "text",
+                        "bindings": [
+                          {
+                            "target": "text.content",
+                            "source": "server.currentName"
+                          }
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "未选择",
+                            "font_size": 16.0,
+                            "font_color": "#ffd700",
+                            "font_path": "Songti.ttc",
+                            "font_weight": 700,
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "server_buttons",
+                "kind": "node",
+                "markers": [
+                  "class:server-buttons"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "padding": "0",
+                    "flex_direction": "row",
+                    "column_gap": "12px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "btnchange",
+                    "kind": "button",
+                    "markers": [
+                      "class:btn-change"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "server.change"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "100px",
+                        "height": "40px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/btn_change_region.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_scale": "0.96 0.96"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": "btnstart",
+                    "kind": "button",
+                    "markers": [
+                      "class:btn-start"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "server.start"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "120px",
+                        "height": "40px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/btn_enter_game.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_scale": "0.96 0.96"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "id": "btnback",
+                    "kind": "button",
+                    "markers": [
+                      "class:btn-back"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "server.back"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "80px",
+                        "height": "40px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/btn_back.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_scale": "0.96 0.96"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

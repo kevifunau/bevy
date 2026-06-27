@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::{Path, PathBuf}};
 
 use bevy_app::{App, Plugin, PostUpdate, Startup, Update};
 use bevy_asset::{AssetServer, Assets};
@@ -450,4 +450,53 @@ pub(crate) fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, Strin
             opendesign_html_to_bui_document_with_manifest(html, None, None)
         }
     }
+}
+
+/// Load an IR JSON file, seed state model, and spawn a BUI entity tree.
+///
+/// This is the runtime equivalent of Unity's `VisualTreeAsset.CloneTree(root)` —
+/// it creates a live Bevy UI entity tree from a compiled IR JSON file.
+///
+/// Use this in `OnEnter(State::X)` systems to spawn a panel, and tag the
+/// returned root entity with `DespawnOnExit(State::X)` for automatic cleanup.
+///
+/// # Example
+///
+/// ```no_run
+/// # use bevy::prelude::*;
+/// # use bevy_ai_ui_parser::spawn_bui_ir;
+/// fn login_enter(mut commands: Commands, asset_server: Res<AssetServer>,
+///                texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
+///                state_store: ResMut<bevy_ai_ui_parser::BuiStateStore>) {
+///     let root = spawn_bui_ir(&mut commands, &asset_server, &mut texture_atlases,
+///                             &mut state_store.into_inner(),
+///                             "ui/login.ir.json").unwrap();
+///     commands.entity(root).insert(bevy::state::state_scoped::DespawnOnExit(MyState::Login));
+/// }
+/// # #[derive(States, Clone, Copy, PartialEq, Eq, Hash, Debug)] enum MyState { Login }
+/// ```
+pub fn spawn_bui_ir(
+    commands: &mut Commands,
+    asset_server: &AssetServer,
+    texture_atlases: &mut Assets<TextureAtlasLayout>,
+    state_store: &mut BuiStateStore,
+    ir_path: impl AsRef<Path>,
+) -> Result<Entity, String> {
+    let path = ir_path.as_ref();
+    let raw = fs::read_to_string(path)
+        .map_err(|error| format!("Failed to read BUI IR '{}': {error}", path.display()))?;
+    let document = parse_bui_document(&raw)?;
+    validate_bui_document(&document)?;
+
+    info!("Spawning BUI scene '{}' from {}.", document.scene_name, path.display());
+
+    seed_state_model(&document, state_store);
+
+    let (root, id_map) = spawn_bui_tree(commands, asset_server, texture_atlases, &document)?;
+
+    commands.insert_resource(BuiRootEntity(root));
+    commands.insert_resource(BuiDocumentResource(document));
+    commands.insert_resource(BuiIdMap(id_map));
+
+    Ok(root)
 }

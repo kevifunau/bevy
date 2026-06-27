@@ -53,9 +53,8 @@ pub(super) fn validate_bui_node(
     match node.node_type() {
         BuiNodeType::Node | BuiNodeType::Button | BuiNodeType::Toggle => {
             reject_config(node.content.text.is_some(), path, "text_config")?;
-            if !matches!(node.node_type(), BuiNodeType::Node | BuiNodeType::Button) {
-                reject_config(node.content.image.is_some(), path, "image_config")?;
-            }
+            // Node, Button, and Toggle can all have image_config (e.g. CSS
+            // background-image on a checkbox input is a standard HTML pattern).
             if let Some(image_config) = &node.content.image {
                 validate_image_config(image_config).map_err(|error| format!("{path}: {error}"))?;
             }

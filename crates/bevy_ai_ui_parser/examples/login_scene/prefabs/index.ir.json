@@ -1,0 +1,867 @@
+{
+  "version": "3.0-ir",
+  "scene_name": "OpenDesignHtmlScene",
+  "interaction_model": {
+    "actions": {
+      "login.register": [],
+      "login.sure": [],
+      "login.toggleAuto": [],
+      "login.toggleRemember": [],
+      "tip.close": [
+        {
+          "op": "set-visible",
+          "value": "hidden",
+          "target": "tip_panel"
+        }
+      ]
+    }
+  },
+  "root": {
+    "id": "overlay_root",
+    "kind": "node",
+    "layout": {
+      "styles": {
+        "width": "100%",
+        "height": "100%",
+        "overflow": "clip",
+        "justify_content": "center",
+        "align_items": "center"
+      }
+    },
+    "style": {
+      "visuals": {
+        "background_color": "#1a1a2e"
+      }
+    },
+    "children": [
+      {
+        "id": "stage_root",
+        "kind": "node",
+        "markers": [
+          "class:bevy-ui-root",
+          "class:game-stage",
+          "bui-stage-fit:1365x768"
+        ],
+        "layout": {
+          "styles": {
+            "box_sizing": "border-box",
+            "width": "1365px",
+            "height": "768px",
+            "overflow": "hidden",
+            "margin": "0 auto",
+            "padding": "0",
+            "position_type": "relative"
+          }
+        },
+        "semantics": {
+          "stage_fit": {
+            "design_width": 1365.0,
+            "design_height": 768.0,
+            "mode": "scale-down"
+          }
+        },
+        "children": [
+          {
+            "id": "login_bk",
+            "kind": "node",
+            "markers": [
+              "class:login-bk"
+            ],
+            "layout": {
+              "styles": {
+                "box_sizing": "border-box",
+                "left": "0",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
+                "overflow": "hidden",
+                "margin": "0",
+                "padding": "0",
+                "position_type": "absolute"
+              }
+            },
+            "children": [
+              {
+                "id": "img",
+                "kind": "image",
+                "layout": {
+                  "styles": {
+                    "box_sizing": "border-box",
+                    "width": "100%",
+                    "height": "100%",
+                    "margin": "0",
+                    "padding": "0"
+                  }
+                },
+                "content": {
+                  "image": {
+                    "texture_path": "Asset/BK.jpg",
+                    "image_mode": "stretch"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "login_panel",
+            "kind": "node",
+            "markers": [
+              "class:login-panel"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "box_sizing": "border-box",
+                "width": "460px",
+                "left": "50%",
+                "top": "50%",
+                "margin": "0",
+                "padding": "40px 50px 35px",
+                "flex_direction": "column",
+                "row_gap": "18px",
+                "align_items": "stretch",
+                "ui_translation": "-50% -50%",
+                "position_type": "absolute"
+              }
+            },
+            "style": {
+              "visuals": {
+                "border_width": "2px",
+                "border_radius": "12px"
+              }
+            },
+            "children": [
+              {
+                "id": "form_row",
+                "kind": "node",
+                "markers": [
+                  "class:form-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "padding": "0",
+                    "flex_direction": "column",
+                    "row_gap": "6px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "form_label",
+                    "kind": "node",
+                    "markers": [
+                      "class:form-label"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0",
+                        "padding_left": "4px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "form_label_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "账号:",
+                            "font_size": 14.0,
+                            "font_color": "#ccc",
+                            "font_path": "Songti.ttc",
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "imgun",
+                    "kind": "node",
+                    "markers": [
+                      "class:input-wrapper"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "height": "42px",
+                        "margin": "0",
+                        "padding": "0 12px",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/input_frame.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "inputun",
+                        "kind": "text_input",
+                        "actions": [
+                          {
+                            "event": "focus",
+                            "emit": "login.un.focus"
+                          },
+                          {
+                            "event": "blur",
+                            "emit": "login.un.blur"
+                          }
+                        ],
+                        "bindings": [
+                          {
+                            "target": "text.content",
+                            "source": "login.username"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "width": "100%",
+                            "height": "100%",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "transparent"
+                          }
+                        },
+                        "content": {
+                          "text": {
+                            "content": "",
+                            "placeholder": "请输入账号",
+                            "font_size": 16.0,
+                            "font_color": "#fff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "allow_newlines": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "form_row_2",
+                "kind": "node",
+                "markers": [
+                  "class:form-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "padding": "0",
+                    "flex_direction": "column",
+                    "row_gap": "6px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "form_label_2",
+                    "kind": "node",
+                    "markers": [
+                      "class:form-label"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0",
+                        "padding_left": "4px"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "form_label_2_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "密码:",
+                            "font_size": 14.0,
+                            "font_color": "#ccc",
+                            "font_path": "Songti.ttc",
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "imgpw",
+                    "kind": "node",
+                    "markers": [
+                      "class:input-wrapper"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "height": "42px",
+                        "margin": "0",
+                        "padding": "0 12px",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/input_frame.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "inputpw",
+                        "kind": "text_input",
+                        "bindings": [
+                          {
+                            "target": "text.content",
+                            "source": "login.password"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "width": "100%",
+                            "height": "100%",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "background_color": "transparent"
+                          }
+                        },
+                        "content": {
+                          "text": {
+                            "content": "",
+                            "placeholder": "请输入密码",
+                            "font_size": 16.0,
+                            "font_color": "#fff",
+                            "font_path": "Hiragino Sans GB.ttc",
+                            "allow_newlines": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "toggle_row",
+                "kind": "node",
+                "markers": [
+                  "class:toggle-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "padding": "0",
+                    "padding_left": "4px",
+                    "flex_direction": "row",
+                    "column_gap": "30px",
+                    "align_items": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "togpw",
+                    "kind": "node",
+                    "markers": [
+                      "class:toggle"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0",
+                        "flex_direction": "row",
+                        "column_gap": "6px",
+                        "align_items": "center"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "input",
+                        "kind": "toggle",
+                        "actions": [
+                          {
+                            "event": "value_changed",
+                            "emit": "login.toggleRemember"
+                          }
+                        ],
+                        "bindings": [
+                          {
+                            "target": "checked",
+                            "source": "login.rememberPw"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "width": "20px",
+                            "height": "20px",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "content": {
+                          "image": {
+                            "texture_path": "Asset/checkbox_bg.png",
+                            "image_mode": "auto",
+                            "background_size": "contain",
+                            "background_repeat": "no-repeat"
+                          }
+                        },
+                        "state_visuals": {
+                          "checked": {
+                            "image": {
+                              "texture_path": "Asset/checkmark.png",
+                              "image_mode": "stretch"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "toggle_label",
+                        "kind": "node",
+                        "markers": [
+                          "class:toggle-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "toggle_label_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "记住密码",
+                                "font_size": 14.0,
+                                "font_color": "#ccc",
+                                "font_path": "Songti.ttc",
+                                "linebreak": "word_or_character"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "togauto",
+                    "kind": "node",
+                    "markers": [
+                      "class:toggle"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0",
+                        "flex_direction": "row",
+                        "column_gap": "6px",
+                        "align_items": "center"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "input_2",
+                        "kind": "toggle",
+                        "actions": [
+                          {
+                            "event": "value_changed",
+                            "emit": "login.toggleAuto"
+                          }
+                        ],
+                        "bindings": [
+                          {
+                            "target": "checked",
+                            "source": "login.autoLogin"
+                          }
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "width": "20px",
+                            "height": "20px",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "content": {
+                          "image": {
+                            "texture_path": "Asset/checkbox_bg.png",
+                            "image_mode": "auto",
+                            "background_size": "contain",
+                            "background_repeat": "no-repeat"
+                          }
+                        },
+                        "state_visuals": {
+                          "checked": {
+                            "image": {
+                              "texture_path": "Asset/checkmark.png",
+                              "image_mode": "stretch"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "toggle_label_2",
+                        "kind": "node",
+                        "markers": [
+                          "class:toggle-label"
+                        ],
+                        "layout": {
+                          "styles": {
+                            "box_sizing": "border-box",
+                            "margin": "0",
+                            "padding": "0"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "toggle_label_2_text_1",
+                            "kind": "text",
+                            "content": {
+                              "text": {
+                                "content": "自动登录",
+                                "font_size": 14.0,
+                                "font_color": "#ccc",
+                                "font_path": "Songti.ttc",
+                                "linebreak": "word_or_character"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "button_row",
+                "kind": "node",
+                "markers": [
+                  "class:button-row"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "margin": "0",
+                    "margin_top": "8px",
+                    "padding": "0",
+                    "flex_direction": "row",
+                    "column_gap": "20px",
+                    "justify_content": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "btnsure",
+                    "kind": "button",
+                    "markers": [
+                      "class:btn"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "login.sure"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "120px",
+                        "height": "44px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/panel_bg.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_scale": "0.96 0.96"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "btnsure_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "登录",
+                            "font_size": 18.0,
+                            "font_color": "#fff",
+                            "font_path": "Songti.ttc",
+                            "line_height": "1",
+                            "text_shadow": {
+                              "offset_x": 0.0,
+                              "offset_y": 1.0
+                            },
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "btnre",
+                    "kind": "button",
+                    "markers": [
+                      "class:btn"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "login.register"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "120px",
+                        "height": "44px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/panel_bg.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "state_visuals": {
+                      "normal": {
+                        "styles": {
+                          "ui_scale": "1 1"
+                        }
+                      },
+                      "pressed": {
+                        "styles": {
+                          "ui_scale": "0.96 0.96"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "btnre_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "注册",
+                            "font_size": 18.0,
+                            "font_color": "#fff",
+                            "font_path": "Songti.ttc",
+                            "line_height": "1",
+                            "text_shadow": {
+                              "offset_x": 0.0,
+                              "offset_y": 1.0
+                            },
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "tip_panel",
+            "kind": "node",
+            "markers": [
+              "class:tip-overlay"
+            ],
+            "layout": {
+              "styles": {
+                "display": "flex",
+                "box_sizing": "border-box",
+                "left": "0",
+                "right": "0",
+                "top": "0",
+                "bottom": "0",
+                "margin": "0",
+                "padding": "0",
+                "justify_content": "center",
+                "align_items": "center",
+                "position_type": "absolute",
+                "z_index": "100"
+              }
+            },
+            "children": [
+              {
+                "id": "tip_panel_2",
+                "kind": "node",
+                "markers": [
+                  "class:tip-panel"
+                ],
+                "layout": {
+                  "styles": {
+                    "display": "flex",
+                    "box_sizing": "border-box",
+                    "width": "360px",
+                    "margin": "0",
+                    "padding": "30px 25px 20px",
+                    "flex_direction": "column",
+                    "row_gap": "16px",
+                    "align_items": "center"
+                  }
+                },
+                "style": {
+                  "visuals": {
+                    "border_width": "2px",
+                    "border_radius": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "txttip",
+                    "kind": "node",
+                    "markers": [
+                      "class:tip-title"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "txttip_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "提示",
+                            "font_size": 18.0,
+                            "font_color": "#ffd700",
+                            "font_path": "Songti.ttc",
+                            "font_weight": 700,
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "txtinfo",
+                    "kind": "node",
+                    "markers": [
+                      "class:tip-info"
+                    ],
+                    "layout": {
+                      "styles": {
+                        "box_sizing": "border-box",
+                        "margin": "0",
+                        "padding": "0"
+                      }
+                    }
+                  },
+                  {
+                    "id": "btntipsure",
+                    "kind": "button",
+                    "markers": [
+                      "class:tip-btn"
+                    ],
+                    "actions": [
+                      {
+                        "event": "press",
+                        "emit": "tip.close"
+                      }
+                    ],
+                    "layout": {
+                      "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
+                        "width": "100px",
+                        "height": "38px",
+                        "margin": "0",
+                        "padding": "0",
+                        "justify_content": "center",
+                        "align_items": "center"
+                      }
+                    },
+                    "content": {
+                      "image": {
+                        "texture_path": "Asset/panel_bg.png",
+                        "image_mode": "stretch",
+                        "background_size": "100% 100%",
+                        "background_repeat": "no-repeat"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "btntipsure_text_1",
+                        "kind": "text",
+                        "content": {
+                          "text": {
+                            "content": "确定",
+                            "font_size": 15.0,
+                            "font_color": "#fff",
+                            "font_path": "Songti.ttc",
+                            "line_height": "1",
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
