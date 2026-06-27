@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "微型小游戏合集 MINI MIX:软萌马卡龙糖果色、低饱和奶油底、圆润可爱、老少咸宜。3 页(合集首页/通用结算/设置)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-04T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "collection home — 小游戏入口卡片网格(图标/名字/最高分或解锁态) + 金币信息" },
+    { "id": "result", "role": "result — 本局成绩 + 星级评价 + 奖励 + 再玩一次/返回合集" },
+    { "id": "settings", "role": "settings — 音乐/音效开关、音量滑块、语言切换、恢复默认" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "mobile-portrait-stack",
+    "mood": "soft-macaron-candy",
+    "accentFamily": "pastel-pink-mint",
+    "densityProfile": "spacious"
+  },
+  "inputControls": ["button", "toggle.skinned", "slider.skinned", "chooser.segmented"]
+}

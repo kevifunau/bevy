@@ -748,6 +748,7 @@ flate2 = "1.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.140"
 bytemuck = "1"
+bevy_ai_ui_parser = { path = "crates/bevy_ai_ui_parser", version = "0.1.0" }
 # The following explicit dependencies are needed for proc macros to work inside of examples as they are part of the bevy crate itself.
 bevy_animation = { path = "crates/bevy_animation", version = "0.19.0", default-features = false }
 bevy_asset = { path = "crates/bevy_asset", version = "0.19.0", default-features = false }

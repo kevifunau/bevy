@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "超休闲单手点击小游戏 PULSE TAP:深色底 + 霓虹青/品红发光、硬朗大圆角、高对比科技感,即点即玩。2 页(开始页/结算页)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-04T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "start — LOGO + 最高分 + 巨大开始主按钮 + 静音/排行极简入口" },
+    { "id": "result", "role": "result — 本局得分与最高分对比 + 奖励展示 + 再来一局/返回" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "mobile-portrait-stack",
+    "mood": "dark-neon-cyber",
+    "accentFamily": "cyan-magenta-glow",
+    "densityProfile": "spacious"
+  },
+  "inputControls": ["button"]
+}

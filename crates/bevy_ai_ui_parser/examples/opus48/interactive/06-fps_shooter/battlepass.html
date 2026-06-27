@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0A0F14;
+  flex-direction: column;
+}
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  height: 78px;
+  padding: 0 36px;
+  background-color: #0D141B;
+  border-bottom-width: 2px;
+  border-bottom-color: #16222B;
+}
+.back-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-right: 18px;
+  background-color: #101A22;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+}
+.back-icon { width: 26px; height: 26px; }
+.page-title { font-size: 28px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 4px; }
+.title-spacer { flex-grow: 1; }
+.wallet { flex-direction: row; align-items: center; }
+.coin-chip {
+  flex-direction: row;
+  align-items: center;
+  height: 48px;
+  padding: 0 18px;
+  margin-left: 12px;
+  background-color: #101A22;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+}
+.coin-chip-icon { width: 26px; height: 26px; margin-right: 10px; }
+.coin-chip-val { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+
+.body { flex-direction: column; flex-grow: 1; padding: 24px 36px; }
+
+/* battle pass strip */
+.pass-card {
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  border-left-width: 4px;
+  border-left-color: #C18BFF;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.pass-head { flex-direction: row; align-items: center; margin-bottom: 18px; }
+.pass-title-wrap { flex-direction: column; flex-grow: 1; }
+.pass-season { font-size: 14px; color: #C18BFF; letter-spacing: 4px; }
+.pass-name { font-size: 30px; color: #FFFFFF; -unity-font-style: bold; margin-top: 6px; }
+.pass-tier-info { flex-direction: row; align-items: center; }
+.pass-tier-num {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background-color: #1A1330;
+  border-width: 2px;
+  border-color: #C18BFF;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-right: 16px;
+}
+.pass-tier-label { font-size: 11px; color: #C18BFF; letter-spacing: 1px; }
+.pass-tier-val { font-size: 26px; color: #FFFFFF; -unity-font-style: bold; }
+.pass-upgrade {
+  height: 56px;
+  padding: 0 24px;
+  background-color: #C18BFF;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 18px;
+  color: #0A0F14;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+}
+
+.pass-progress-row { flex-direction: row; align-items: center; margin-bottom: 18px; }
+.bar {
+  flex-direction: row;
+  flex-grow: 1;
+  height: 14px;
+  background-color: #0A1218;
+  border-radius: 6px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.bar-fill { height: 12px; border-radius: 6px; background-color: #C18BFF; }
+.fill-pass { width: 58%; }
+.pass-xp-txt { font-size: 14px; color: #8AA0AC; margin-left: 16px; width: 150px; -unity-text-align: middle-right; }
+
+.tiers { flex-direction: row; }
+.tier {
+  width: 150px;
+  flex-direction: column;
+  margin-right: 14px;
+  background-color: #0A1218;
+  border-width: 1px;
+  border-color: #16222B;
+  border-radius: 9px;
+  padding: 14px;
+  align-items: center;
+}
+.tier-claimed { border-color: #C18BFF; }
+.tier-current { border-color: #2DE2C8; border-width: 2px; }
+.tier-locked-card { }
+.tier-num-pill {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #1A1330;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 13px;
+  color: #C18BFF;
+  -unity-font-style: bold;
+  margin-bottom: 12px;
+}
+.tier-reward-box {
+  width: 110px;
+  height: 90px;
+  background-color: #11181E;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.tier-reward-icon { width: 56px; height: 56px; }
+.tier-reward-name { font-size: 13px; color: #C4D2DA; -unity-text-align: middle-center; -unity-font-style: bold; }
+.tier-status {
+  font-size: 11px;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+.tier-status-claimed { color: #C18BFF; }
+.tier-status-current { color: #2DE2C8; }
+.tier-status-locked { color: #455A66; }
+
+/* shop grid */
+.shop-head { flex-direction: row; align-items: center; margin: 4px 0 16px 0; }
+.shop-head-title { font-size: 18px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 3px; }
+.shop-head-spacer { flex-grow: 1; }
+.shop-refresh { flex-direction: row; align-items: center; }
+.shop-refresh-icon { width: 18px; height: 18px; margin-right: 8px; }
+.shop-refresh-txt { font-size: 14px; color: #6E8794; letter-spacing: 1px; }
+
+.shop-grid { flex-direction: row; flex-grow: 1; }
+.shop-card {
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  margin-right: 18px;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 18px;
+}
+.shop-card-last { margin-right: 0; }
+.shop-card-feat { border-color: #FF7A2D; border-left-width: 4px; }
+.shop-tag {
+  height: 24px;
+  padding: 0 12px;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 12px;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+}
+.shop-tag-wrap { flex-direction: row; margin-bottom: 14px; }
+.tag-featured { background-color: #FF7A2D; color: #0A0F14; }
+.tag-new { background-color: #2DE2C8; color: #0A0F14; }
+.tag-bundle { background-color: #C18BFF; color: #0A0F14; }
+.shop-preview {
+  flex-grow: 1;
+  background-color: #0A1218;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: #16222B;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.shop-preview-icon { width: 130px; height: 90px; }
+.shop-card-name { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+.shop-card-desc { font-size: 13px; color: #6E8794; margin-top: 6px; }
+.shop-buy-row { flex-direction: row; align-items: center; margin-top: 14px; }
+.shop-price { flex-direction: row; align-items: center; flex-grow: 1; }
+.shop-price-icon { width: 22px; height: 22px; margin-right: 8px; }
+.shop-price-val { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; }
+.shop-buy-btn {
+  height: 46px;
+  padding: 0 22px;
+  background-color: #2DE2C8;
+  border-radius: 7px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 15px;
+  color: #0A0F14;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+}
+.shop-buy-btn-feat { background-color: #FF7A2D; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="topbar">
+      <button class="back-btn">
+        <svg id="icon-back-shop" class="back-icon" width="26" height="26" viewBox="0 0 26 26">
+          <path d="M16 5l-8 8 8 8" stroke="#2DE2C8" stroke-width="2.5" fill="none"/>
+        </svg>
+      </button>
+      <span class="page-title">BATTLE PASS &amp; STORE</span>
+      <div class="title-spacer"></div>
+      <div class="wallet">
+        <div class="coin-chip">
+          <svg id="icon-shop-credit" class="coin-chip-icon" width="26" height="26" viewBox="0 0 26 26">
+            <circle cx="13" cy="13" r="10" fill="#14222C" stroke="#2DE2C8" stroke-width="2"/>
+            <path d="M13 7v12M9 10h6a2 2 0 010 4H9" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+          </svg>
+          <span class="coin-chip-val">24,860</span>
+        </div>
+        <div class="coin-chip">
+          <svg id="icon-shop-gem" class="coin-chip-icon" width="26" height="26" viewBox="0 0 26 26">
+            <path d="M13 3l8 6-8 14L5 9z" fill="#14222C" stroke="#FF7A2D" stroke-width="2"/>
+            <path d="M5 9h16" stroke="#FF7A2D" stroke-width="1.5"/>
+          </svg>
+          <span class="coin-chip-val">1,250</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="pass-card">
+        <div class="pass-head">
+          <div class="pass-title-wrap">
+            <span class="pass-season">SEASON 12 · PHANTOM PROTOCOL</span>
+            <span class="pass-name">PREMIUM BATTLE PASS</span>
+          </div>
+          <div class="pass-tier-info">
+            <div class="pass-tier-num">
+              <span class="pass-tier-label">TIER</span>
+              <span class="pass-tier-val">34</span>
+            </div>
+            <button class="pass-upgrade">UPGRADE · 950</button>
+          </div>
+        </div>
+
+        <div class="pass-progress-row">
+          <div class="bar"><div class="bar-fill fill-pass"></div></div>
+          <span class="pass-xp-txt">2,900 / 5,000 XP</span>
+        </div>
+
+        <div class="tiers">
+          <div class="tier tier-claimed">
+            <div class="tier-num-pill">32</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-credit" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="20" fill="#14222C" stroke="#2DE2C8" stroke-width="3"/>
+                <path d="M28 16v24M20 22h12a4 4 0 010 8H20" fill="none" stroke="#2DE2C8" stroke-width="3"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">500 CREDITS</span>
+            <span class="tier-status tier-status-claimed">CLAIMED</span>
+          </div>
+
+          <div class="tier tier-claimed">
+            <div class="tier-num-pill">33</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-charm" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="20" r="10" fill="#1A1330" stroke="#C18BFF" stroke-width="3"/>
+                <path d="M28 30v18M22 44l6 6 6-6" stroke="#C18BFF" stroke-width="3" fill="none"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">WEAPON CHARM</span>
+            <span class="tier-status tier-status-claimed">CLAIMED</span>
+          </div>
+
+          <div class="tier tier-current">
+            <div class="tier-num-pill">34</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-skin" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M6 30h30l8-5h6v6h-5l-2 7H26l-2 6h-8l-2-6H6z" fill="#102830" stroke="#2DE2C8" stroke-width="2.5"/>
+                <circle cx="40" cy="28" r="3" fill="#FF7A2D"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">RIFLE SKIN</span>
+            <span class="tier-status tier-status-current">CLAIM NOW</span>
+          </div>
+
+          <div class="tier tier-locked-card">
+            <div class="tier-num-pill">35</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-lock-1" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M16 26h24v20H16z" fill="#11181E" stroke="#455A66" stroke-width="3"/>
+                <path d="M21 26v-5a7 7 0 0114 0v5" fill="none" stroke="#455A66" stroke-width="3"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">EPIC OUTFIT</span>
+            <span class="tier-status tier-status-locked">LOCKED</span>
+          </div>
+
+          <div class="tier tier-locked-card">
+            <div class="tier-num-pill">36</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-gem" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 8l16 12-16 28L12 20z" fill="#11181E" stroke="#FF7A2D" stroke-width="2.5"/>
+                <path d="M12 20h32" stroke="#FF7A2D" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">300 GEMS</span>
+            <span class="tier-status tier-status-locked">LOCKED</span>
+          </div>
+
+          <div class="tier tier-locked-card">
+            <div class="tier-num-pill">40</div>
+            <div class="tier-reward-box">
+              <svg id="icon-tier-lock-2" class="tier-reward-icon" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M16 26h24v20H16z" fill="#11181E" stroke="#FF7A2D" stroke-width="3"/>
+                <path d="M21 26v-5a7 7 0 0114 0v5" fill="none" stroke="#FF7A2D" stroke-width="3"/>
+                <path d="M28 33l2 5h5l-4 3 1 5-4-3-4 3 1-5-4-3h5z" fill="#FF7A2D"/>
+              </svg>
+            </div>
+            <span class="tier-reward-name">LEGENDARY</span>
+            <span class="tier-status tier-status-locked">LOCKED</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="shop-head">
+        <span class="shop-head-title">FEATURED STORE</span>
+        <div class="shop-head-spacer"></div>
+        <div class="shop-refresh">
+          <svg id="icon-shop-clock" class="shop-refresh-icon" width="18" height="18" viewBox="0 0 18 18">
+            <circle cx="9" cy="9" r="7" fill="none" stroke="#6E8794" stroke-width="2"/>
+            <path d="M9 5v4l3 2" stroke="#6E8794" stroke-width="2" fill="none"/>
+          </svg>
+          <span class="shop-refresh-txt">REFRESH IN 14:32:08</span>
+        </div>
+      </div>
+
+      <div class="shop-grid">
+        <div class="shop-card shop-card-feat">
+          <div class="shop-tag-wrap"><div class="shop-tag tag-featured">FEATURED</div></div>
+          <div class="shop-preview">
+            <svg id="icon-shop-gun-1" class="shop-preview-icon" width="130" height="90" viewBox="0 0 130 90">
+              <path d="M8 44h72l16-8h22v10h-9l-3 10H56l-4 10H36l-4-10H8z" fill="#102830" stroke="#FF7A2D" stroke-width="2.5"/>
+              <path d="M44 64v14" stroke="#FF7A2D" stroke-width="3"/>
+              <circle cx="106" cy="38" r="4" fill="#FF7A2D"/>
+            </svg>
+          </div>
+          <span class="shop-card-name">KR-7 INFERNO</span>
+          <span class="shop-card-desc">Legendary skin · Animated tracer</span>
+          <div class="shop-buy-row">
+            <div class="shop-price">
+              <svg id="icon-price-gem-1" class="shop-price-icon" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2l7 5-7 12L4 7z" fill="#FF7A2D"/>
+              </svg>
+              <span class="shop-price-val">1,800</span>
+            </div>
+            <button class="shop-buy-btn shop-buy-btn-feat">BUY</button>
+          </div>
+        </div>
+
+        <div class="shop-card">
+          <div class="shop-tag-wrap"><div class="shop-tag tag-new">NEW</div></div>
+          <div class="shop-preview">
+            <svg id="icon-shop-char" class="shop-preview-icon" width="130" height="90" viewBox="0 0 130 90">
+              <path d="M65 8c-14 0-22 10-22 24v10h10l4 12h16l4-12h10V32c0-14-8-24-22-24z" fill="#102830" stroke="#2DE2C8" stroke-width="2.5"/>
+              <path d="M51 36h28" stroke="#2DE2C8" stroke-width="2.5"/>
+              <circle cx="57" cy="30" r="3" fill="#FF7A2D"/>
+              <circle cx="73" cy="30" r="3" fill="#FF7A2D"/>
+            </svg>
+          </div>
+          <span class="shop-card-name">OPERATOR: WRAITH</span>
+          <span class="shop-card-desc">Epic outfit · Voice lines</span>
+          <div class="shop-buy-row">
+            <div class="shop-price">
+              <svg id="icon-price-gem-2" class="shop-price-icon" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2l7 5-7 12L4 7z" fill="#FF7A2D"/>
+              </svg>
+              <span class="shop-price-val">1,200</span>
+            </div>
+            <button class="shop-buy-btn">BUY</button>
+          </div>
+        </div>
+
+        <div class="shop-card">
+          <div class="shop-tag-wrap"><div class="shop-tag tag-new">NEW</div></div>
+          <div class="shop-preview">
+            <svg id="icon-shop-gun-2" class="shop-preview-icon" width="130" height="90" viewBox="0 0 130 90">
+              <path d="M10 44h74l14-7h20v10h-8l-3 9H58l-4 11H38l-4-11H10z" fill="#102830" stroke="#C18BFF" stroke-width="2.5"/>
+              <path d="M46 64v13" stroke="#C18BFF" stroke-width="3"/>
+            </svg>
+          </div>
+          <span class="shop-card-name">VX-90 SPECTRE</span>
+          <span class="shop-card-desc">Epic skin · Custom reload</span>
+          <div class="shop-buy-row">
+            <div class="shop-price">
+              <svg id="icon-price-credit-1" class="shop-price-icon" width="22" height="22" viewBox="0 0 22 22">
+                <circle cx="11" cy="11" r="8" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+                <path d="M11 6v10M8 8h5a2 2 0 010 4H8" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+              </svg>
+              <span class="shop-price-val">3,400</span>
+            </div>
+            <button class="shop-buy-btn">BUY</button>
+          </div>
+        </div>
+
+        <div class="shop-card shop-card-last">
+          <div class="shop-tag-wrap"><div class="shop-tag tag-bundle">BUNDLE</div></div>
+          <div class="shop-preview">
+            <svg id="icon-shop-bundle" class="shop-preview-icon" width="130" height="90" viewBox="0 0 130 90">
+              <path d="M30 30h70v44H30z" fill="#102830" stroke="#C18BFF" stroke-width="2.5"/>
+              <path d="M30 44h70M65 30v44" stroke="#C18BFF" stroke-width="2"/>
+              <path d="M50 30a15 15 0 0130 0" fill="none" stroke="#FF7A2D" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="shop-card-name">PHANTOM BUNDLE</span>
+          <span class="shop-card-desc">2 skins + charm + 500 credits</span>
+          <div class="shop-buy-row">
+            <div class="shop-price">
+              <svg id="icon-price-gem-3" class="shop-price-icon" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2l7 5-7 12L4 7z" fill="#FF7A2D"/>
+              </svg>
+              <span class="shop-price-val">2,400</span>
+            </div>
+            <button class="shop-buy-btn">BUY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

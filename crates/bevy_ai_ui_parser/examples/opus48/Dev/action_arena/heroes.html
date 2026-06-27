@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #0C111B;
+  --bg1: #141C2B;
+  --panel: #1B2536;
+  --panel2: #243047;
+  --line: #2E3D58;
+  --ember: #FF6A2B;
+  --ember-d: #C8420F;
+  --blue: #38C6FF;
+  --blue-d: #1A8FC4;
+  --red: #FF3B4E;
+  --gold: #FFC24B;
+  --text: #E8EEFA;
+  --text-dim: #7E8DAB;
+  --green: #4BE08A;
+  --purple: #A06BFF;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--bg0);
+  padding: 48px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 80px; margin-bottom: 32px; }
+.back {
+  width: 72px; height: 72px;
+  background-color: var(--panel);
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.title { font-size: 48px; color: var(--text); font-weight: bold; white-space: normal; flex-grow: 1; }
+.power-chip {
+  flex-direction: row; align-items: center;
+  height: 68px;
+  background-color: var(--panel);
+  border-width: 3px; border-color: var(--ember);
+  padding: 0 26px 0 14px;
+}
+.power-chip-ico { width: 40px; height: 40px; margin-right: 12px; }
+.power-chip-tx { font-size: 32px; min-height: 40px; color: var(--ember); font-weight: bold; white-space: normal; }
+
+/* ---------- main row ---------- */
+.main { flex-direction: row; flex-grow: 1; }
+
+/* hero showcase */
+.showcase {
+  width: 760px;
+  background-color: var(--bg1);
+  border-width: 4px; border-color: var(--line);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  margin-right: 36px;
+}
+.hero-figure {
+  width: 360px; height: 440px;
+  background-color: var(--panel2);
+  border-width: 5px; border-color: var(--blue);
+  align-items: center; justify-content: center;
+  margin-bottom: 28px;
+}
+.hero-name { font-size: 60px; color: var(--blue); font-weight: bold; white-space: normal; }
+.hero-class { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 8px; }
+.hero-stars { flex-direction: row; align-items: center; height: 48px; margin-top: 20px; }
+.hstar { width: 44px; height: 44px; margin-right: 8px; }
+
+/* attribute panel */
+.attr {
+  flex-grow: 1;
+  flex-direction: column;
+}
+.attr-card {
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  padding: 32px 36px;
+  flex-direction: column;
+  margin-bottom: 28px;
+}
+.attr-title { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 24px; }
+.attr-row { flex-direction: row; align-items: center; height: 72px; }
+.attr-lbl { width: 180px; font-size: 30px; min-height: 38px; color: var(--text); font-weight: bold; white-space: normal; }
+.attr-bar { flex-grow: 1; height: 24px; background-color: var(--bg0); margin-right: 24px; }
+.attr-fill { height: 24px; }
+.fill-red { background-color: var(--red); }
+.fill-ember { background-color: var(--ember); }
+.fill-blue { background-color: var(--blue); }
+.fill-green { background-color: var(--green); }
+.attr-num { width: 80px; font-size: 30px; min-height: 38px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+.skill-card {
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  padding: 28px 32px;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+}
+.skill-ico {
+  width: 100px; height: 100px;
+  background-color: var(--ember-d);
+  border-width: 3px; border-color: var(--ember);
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.skill-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.skill-name { font-size: 38px; min-height: 46px; color: var(--ember); font-weight: bold; white-space: normal; }
+.skill-desc { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 6px; }
+
+/* ---------- bottom hero list ---------- */
+.hlist { flex-direction: row; align-items: center; height: 168px; margin-top: 32px; }
+.hslot {
+  width: 168px; height: 168px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.hslot.is-on { border-color: var(--blue); background-color: var(--panel2); }
+.hslot.is-lock { background-color: var(--bg1); }
+.hslot-ring {
+  width: 96px; height: 96px;
+  border-radius: 48px;
+  align-items: center; justify-content: center;
+}
+.ring-blue { background-color: var(--blue-d); }
+.ring-red { background-color: #8E2230; }
+.ring-purple { background-color: #5A3AA0; }
+.ring-green { background-color: #2A7A4E; }
+.ring-lock { background-color: var(--bg0); }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M24 8 L12 20 L24 32" stroke="#7E8DAB" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="title">英雄养成</span>
+      <div class="power-chip">
+        <svg id="icon-pw" class="power-chip-ico" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M22 4 L11 23 L19 23 L17 36 L29 16 L21 16 Z" fill="#FF6A2B"/>
+        </svg>
+        <span class="power-chip-tx">战力 9,840</span>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="showcase">
+        <div class="hero-figure">
+          <svg id="icon-figure" width="200" height="260" viewBox="0 0 200 260">
+            <circle cx="100" cy="58" r="40" fill="#38C6FF"/>
+            <path d="M40 240 C40 150 70 120 100 120 C130 120 160 150 160 240 Z" fill="#38C6FF"/>
+            <rect x="150" y="60" width="14" height="150" fill="#E8EEFA"/>
+            <path d="M150 50 L172 56 L150 70 Z" fill="#FF6A2B"/>
+          </svg>
+        </div>
+        <span class="hero-name">霜刃·凯尔</span>
+        <span class="hero-class">近战刺客 · 高爆发</span>
+        <div class="hero-stars">
+          <svg class="hstar" id="hs1" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC24B"/></svg>
+          <svg class="hstar" id="hs2" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC24B"/></svg>
+          <svg class="hstar" id="hs3" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC24B"/></svg>
+          <svg class="hstar" id="hs4" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC24B"/></svg>
+          <svg class="hstar" id="hs5" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#2E3D58"/></svg>
+        </div>
+      </div>
+
+      <div class="attr">
+        <div class="attr-card">
+          <span class="attr-title">— 属性 ATTRIBUTES —</span>
+          <div class="attr-row">
+            <span class="attr-lbl">攻击</span>
+            <div class="attr-bar"><div class="attr-fill fill-red" style="width:88%"></div></div>
+            <span class="attr-num">880</span>
+          </div>
+          <div class="attr-row">
+            <span class="attr-lbl">防御</span>
+            <div class="attr-bar"><div class="attr-fill fill-blue" style="width:54%"></div></div>
+            <span class="attr-num">540</span>
+          </div>
+          <div class="attr-row">
+            <span class="attr-lbl">生命</span>
+            <div class="attr-bar"><div class="attr-fill fill-green" style="width:72%"></div></div>
+            <span class="attr-num">7,200</span>
+          </div>
+          <div class="attr-row">
+            <span class="attr-lbl">暴击</span>
+            <div class="attr-bar"><div class="attr-fill fill-ember" style="width:65%"></div></div>
+            <span class="attr-num">65%</span>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-ico">
+            <svg id="icon-skill" width="60" height="60" viewBox="0 0 60 60">
+              <path d="M44 8 L30 26 L38 26 L16 52 L26 30 L18 30 Z" fill="#FF6A2B"/>
+            </svg>
+          </div>
+          <div class="skill-txw">
+            <span class="skill-name">终极技 · 千刃风暴</span>
+            <span class="skill-desc">召唤刃环对周围敌人造成 6 段范围斩击,附带流血</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hlist">
+      <div class="hslot is-on">
+        <div class="hslot-ring ring-blue">
+          <svg id="hl1" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="20" r="11" fill="#E8EEFA"/><path d="M10 48 C10 36 20 32 28 32 C36 32 46 36 46 48 Z" fill="#E8EEFA"/></svg>
+        </div>
+      </div>
+      <div class="hslot">
+        <div class="hslot-ring ring-red">
+          <svg id="hl2" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="20" r="11" fill="#E8EEFA"/><path d="M10 48 C10 36 20 32 28 32 C36 32 46 36 46 48 Z" fill="#E8EEFA"/></svg>
+        </div>
+      </div>
+      <div class="hslot">
+        <div class="hslot-ring ring-purple">
+          <svg id="hl3" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="20" r="11" fill="#E8EEFA"/><path d="M10 48 C10 36 20 32 28 32 C36 32 46 36 46 48 Z" fill="#E8EEFA"/></svg>
+        </div>
+      </div>
+      <div class="hslot">
+        <div class="hslot-ring ring-green">
+          <svg id="hl4" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="20" r="11" fill="#E8EEFA"/><path d="M10 48 C10 36 20 32 28 32 C36 32 46 36 46 48 Z" fill="#E8EEFA"/></svg>
+        </div>
+      </div>
+      <div class="hslot is-lock">
+        <div class="hslot-ring ring-lock">
+          <svg id="hl5" width="56" height="56" viewBox="0 0 56 56">
+            <rect x="16" y="26" width="24" height="20" rx="4" fill="#2E3D58"/>
+            <path d="M21 26 L21 19 A7 7 0 0 1 35 19 L35 26" stroke="#2E3D58" stroke-width="5" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="hslot is-lock">
+        <div class="hslot-ring ring-lock">
+          <svg id="hl6" width="56" height="56" viewBox="0 0 56 56">
+            <rect x="16" y="26" width="24" height="20" rx="4" fill="#2E3D58"/>
+            <path d="M21 26 L21 19 A7 7 0 0 1 35 19 L35 26" stroke="#2E3D58" stroke-width="5" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <title>Cyberpunk Racing Main UI</title>
+  <style>
+    :root {
+          --stage-w: 1920px;
+          --stage-h: 1080px;
+          --bg: #05080c;
+          --panel: #0c1620;
+          --line: #25d8ff;
+          --orange: #ff8a24;
+          --blue-deep: #07162a;
+          --panel-dark: #071018;
+          --cyan-soft: #8cecff;
+          --orange-soft: #ffd2a3;
+          --text: #f4fbff;
+          --muted: #a9c4d2;
+        }
+    
+        * {
+          box-sizing: border-box;
+        }
+    
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          overflow: hidden;
+          background-color: var(--bg);
+          color: var(--text);
+          font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        button {
+          margin: 0;
+          padding: 0;
+          border: 0;
+          background-color: transparent;
+          color: var(--text);
+          font: inherit;
+          font-weight: 800;
+        }
+    
+        .bevy-ui-root {
+          position: relative;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+          background-color: var(--bg);
+          background-image: url("Asset/background-clean.png");
+          background-size: cover;
+          background-position: center;
+        }
+    
+        .readability-layer {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #000000;
+          opacity: 0.24;
+        }
+    
+        .top-bar {
+          position: absolute;
+          left: 32px;
+          right: 32px;
+          top: 24px;
+          height: 96px;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 18px;
+          padding: 0 26px;
+          background-image: url("Asset/hud-panel-wide.png");
+          background-size: 100% 100%;
+          filter: drop-shadow(0 0 12px #0d9dff);
+        }
+    
+        .player-area,
+        .currency-area,
+        .system-icons,
+        .level-row,
+        .social-icons,
+        .stat-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+    
+        .player-area {
+          min-width: 370px;
+        }
+    
+        .avatar-img {
+          width: 72px;
+          height: 72px;
+          filter: drop-shadow(0 0 10px var(--line));
+        }
+    
+        .player-info {
+          width: 260px;
+          display: flex;
+          flex-direction: column;
+          gap: 9px;
+        }
+    
+        .player-name {
+          font-size: 26px;
+          line-height: 1;
+          font-weight: 900;
+          text-shadow: 0 0 10px var(--line);
+        }
+    
+        .level-row {
+          color: var(--muted);
+          font-size: 16px;
+          font-weight: 800;
+        }
+    
+        .xp-track,
+        .stat-track {
+          width: 150px;
+          height: 11px;
+          border: 1px solid var(--line);
+          background-color: var(--panel-dark);
+          box-shadow: 0 0 8px #0d9dff;
+        }
+    
+        .xp-fill,
+        .stat-fill {
+          height: 100%;
+          background-color: var(--orange);
+          box-shadow: 0 0 10px var(--orange);
+        }
+    
+        .xp-fill {
+          width: 68%;
+        }
+    
+        .currency-pill {
+          width: 210px;
+          height: 58px;
+          display: grid;
+          place-items: center;
+          background-image: url("Asset/currency-pill.png");
+          background-size: 100% 100%;
+          color: var(--text);
+          font-size: 18px;
+          font-weight: 900;
+          text-shadow: 0 0 8px var(--line);
+          filter: drop-shadow(0 0 8px #0d9dff);
+        }
+    
+        .icon-button {
+          width: 72px;
+          height: 72px;
+          background-image: url("Asset/small-button.png");
+          background-size: 100% 100%;
+          filter: drop-shadow(0 0 8px var(--line));
+        }
+    
+        .icon-button:hover,
+        .social-button:hover,
+        .nav-button:hover {
+          filter: brightness(1.18);
+        }
+    
+        .icon-button.is-pressed,
+        .social-button.is-pressed,
+        .nav-button.is-pressed {
+          transform: translateY(2px) scale(0.96);
+          filter: brightness(1.35) saturate(1.18);
+        }
+    
+        .button-icon {
+          width: 42px;
+          height: 42px;
+          filter: drop-shadow(0 0 6px var(--cyan-soft));
+        }
+    
+        .left-menu {
+          position: absolute;
+          left: 32px;
+          top: 160px;
+          width: 260px;
+          z-index: 5;
+          display: flex;
+          flex-direction: column;
+          gap: 13px;
+        }
+    
+        .nav-button {
+          width: 260px;
+          height: 64px;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 0 18px;
+          background-image: url("Asset/menu-button-idle.png");
+          background-size: 100% 100%;
+          text-align: left;
+          font-size: 24px;
+          line-height: 1;
+          color: var(--cyan-soft);
+          text-shadow: 0 0 8px #0d9dff;
+          filter: drop-shadow(0 0 8px #0d9dff);
+        }
+    
+        .nav-button[aria-current="page"],
+        .nav-button.selected,
+        .nav-button.is-selected {
+          background-image: url("Asset/menu-button-active.png");
+          color: var(--orange-soft);
+          text-shadow: 0 0 10px var(--orange);
+          filter: brightness(1.1) drop-shadow(0 0 13px var(--orange));
+        }
+    
+        .nav-icon {
+          width: 42px;
+          height: 42px;
+          filter: drop-shadow(0 0 6px var(--line));
+        }
+    
+        .race-scene {
+          position: absolute;
+          left: 314px;
+          right: 792px;
+          top: 144px;
+          bottom: 170px;
+          z-index: 3;
+          padding: 34px;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          background-color: #04101a66;
+          box-shadow: 0 0 18px #0d9dff;
+        }
+    
+        .season-panel {
+          position: absolute;
+          left: 34px;
+          top: 34px;
+          width: 520px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 20px 22px;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          background-color: #06111dd8;
+          box-shadow: 0 0 16px #0d9dff;
+        }
+    
+        .scene-kicker {
+          color: var(--orange);
+          font-size: 15px;
+          font-weight: 900;
+          text-shadow: 0 0 8px var(--orange);
+        }
+    
+        .scene-title {
+          color: var(--text);
+          font-size: 40px;
+          line-height: 1;
+          font-weight: 900;
+          text-shadow: 0 0 14px var(--line);
+        }
+    
+        .scene-meta {
+          color: var(--muted);
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.25;
+        }
+    
+        .play-ring {
+          position: absolute;
+          left: 50%;
+          bottom: 34px;
+          width: 180px;
+          height: 180px;
+          margin-left: -90px;
+          filter: drop-shadow(0 0 20px var(--orange));
+        }
+    
+        .play-button {
+          position: absolute;
+          left: 50%;
+          bottom: 49px;
+          width: 150px;
+          height: 150px;
+          margin-left: -75px;
+          background-image: url("Asset/play-button.png");
+          background-size: 100% 100%;
+          color: var(--text);
+          font-size: 32px;
+          line-height: 1;
+          text-align: center;
+          text-shadow: 0 0 12px var(--orange);
+          filter: drop-shadow(0 0 24px var(--orange));
+        }
+    
+        .play-button:hover {
+          filter: brightness(1.22) saturate(1.18);
+        }
+    
+        .play-button.is-pressed {
+          transform: scale(0.94);
+          filter: brightness(1.4) saturate(1.25);
+        }
+    
+        .car-showcase {
+          position: absolute;
+          right: 32px;
+          top: 144px;
+          bottom: 184px;
+          width: 760px;
+          z-index: 5;
+          display: grid;
+          grid-template-rows: 92px 1fr 64px;
+          gap: 14px;
+          padding: 24px;
+          background-image: url("Asset/showcase-panel.png");
+          background-size: 100% 100%;
+          filter: drop-shadow(0 0 14px #0d9dff);
+        }
+    
+        .car-title-row,
+        .platform {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+        }
+    
+        .car-title {
+          margin: 0;
+          color: var(--text);
+          font-size: 42px;
+          line-height: 1;
+          font-weight: 900;
+          text-shadow: 0 0 14px var(--line);
+        }
+    
+        .car-class {
+          min-width: 108px;
+          padding: 12px;
+          border: 1px solid var(--orange);
+          border-radius: 6px;
+          color: var(--orange);
+          font-size: 16px;
+          font-weight: 900;
+          text-align: center;
+          text-shadow: 0 0 8px var(--orange);
+          box-shadow: 0 0 12px var(--orange);
+        }
+    
+        .car-frame {
+          width: 100%;
+          height: 100%;
+          min-height: 0;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          padding: 12px;
+          background-color: #020b12;
+          box-shadow: 0 0 18px #0d9dff;
+        }
+    
+        .car-hero {
+          width: 100%;
+          height: 100%;
+          min-height: 0;
+          object-fit: contain;
+          filter: saturate(1.16);
+        }
+    
+        .platform {
+          padding: 0 18px;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          color: var(--muted);
+          font-size: 14px;
+          font-weight: 900;
+          background-color: #06111dd8;
+          box-shadow: 0 0 12px #0d9dff;
+        }
+    
+        .platform strong {
+          color: var(--orange);
+          text-shadow: 0 0 9px var(--orange);
+        }
+    
+        .bottom-bar {
+          position: absolute;
+          left: 32px;
+          right: 32px;
+          bottom: 14px;
+          height: 132px;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          padding: 0 28px;
+          background-image: url("Asset/bottom-panel.png");
+          background-size: 100% 100%;
+          filter: drop-shadow(0 0 10px #0d9dff);
+        }
+    
+        .social-button {
+          width: 72px;
+          height: 72px;
+          background-image: url("Asset/small-button.png");
+          background-size: 100% 100%;
+          filter: drop-shadow(0 0 8px var(--line));
+        }
+    
+        .race-status {
+          min-width: 320px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          color: var(--muted);
+          font-size: 12px;
+          font-weight: 800;
+          text-shadow: 0 0 7px #0d9dff;
+        }
+    
+        .race-status strong {
+          color: var(--orange);
+          font-size: 17px;
+          text-shadow: 0 0 10px var(--orange);
+        }
+    
+        .race-status strong.is-updated {
+          color: var(--line);
+          transform: scale(1.08);
+          text-shadow: 0 0 12px var(--line);
+        }
+    
+        .car-stats {
+          width: 500px;
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          padding: 10px 14px;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          background-color: #06111dd8;
+          box-shadow: 0 0 12px #0d9dff;
+        }
+    
+        .rating-line {
+          color: var(--text);
+          font-size: 16px;
+          font-weight: 900;
+          text-shadow: 0 0 9px var(--line);
+        }
+    
+        .stat-row {
+          color: var(--text);
+          font-size: 12px;
+          font-weight: 900;
+          text-shadow: 0 0 6px var(--line);
+        }
+    
+        .stat-icon {
+          width: 24px;
+          height: 24px;
+          filter: drop-shadow(0 0 5px var(--line));
+        }
+    
+        .stat-label {
+          width: 82px;
+        }
+    
+        .stat-track {
+          width: 260px;
+          height: 8px;
+        }
+    
+        .stat-fill.speed {
+          width: 94%;
+        }
+    
+        .stat-fill.accel {
+          width: 89%;
+        }
+    
+        .stat-fill.handling {
+          width: 82%;
+        }
+    
+        .stat-fill.nitro {
+          width: 91%;
+        }
+  </style>
+</head>
+<body>
+  <main class="bevy-ui-root" id="racing_main_ui" data-screen="racing-main-ui" aria-label="Cyberpunk racing main menu">
+    <div class="readability-layer" id="scene_readability_layer" aria-hidden="true"></div>
+
+    <header class="top-bar" id="top_bar" data-region="top-player-economy">
+      <section class="player-area" id="player_profile_cluster" aria-label="Player profile">
+        <img class="avatar-img" id="player_avatar" src="Asset/avatar-frame.png" alt="Player avatar" ></img>
+        <div class="player-info" id="player_info">
+          <strong class="player-name" id="player_name" data-binding="player.name">KAI_SPEEDSTER</strong>
+          <div class="level-row" id="player_level_row">
+            <span id="player_level" data-binding="player.level">LEVEL 25</span>
+            <div class="xp-track" id="player_xp_track" aria-label="Experience bar">
+              <div class="xp-fill" id="player_xp_fill" data-binding="player.xp.progress"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="currency-area" id="currency_cluster" aria-label="Currencies">
+        <strong class="currency-pill" id="currency_gold" data-binding="currency.gold">GOLD 15,340</strong>
+        <strong class="currency-pill" id="currency_diamond" data-binding="currency.diamond">DIAMONDS 850</strong>
+      </section>
+
+      <section class="system-icons" id="system_shortcuts" aria-label="System shortcuts">
+        <button class="icon-button" id="top_settings_shortcut" type="button" data-action="open-settings" data-wireframe-action="setting" aria-label="Open settings">
+          <img class="button-icon" src="Asset/icon-settings.png" alt="" ></img>
+        </button>
+        <button class="icon-button" id="top_notification" type="button" data-action="open-notification" data-wireframe-action="notification" aria-label="Open notifications">
+          <img class="button-icon" src="Asset/icon-notification.png" alt="" ></img>
+        </button>
+      </section>
+    </header>
+
+    <nav class="left-menu" id="left_main_menu" aria-label="Main navigation">
+      <button class="nav-button" id="nav_garage" type="button" data-action="open-garage" data-wireframe-action="garage" aria-current="page">
+        <img class="nav-icon" src="Asset/icon-garage.png" alt="" ></img><span>GARAGE</span>
+      </button>
+      <button class="nav-button" id="nav_events" type="button" data-action="open-events" data-wireframe-action="events">
+        <img class="nav-icon" src="Asset/icon-events.png" alt="" ></img><span>EVENTS</span>
+      </button>
+      <button class="nav-button" id="nav_multiplayer" type="button" data-action="open-multiplayer" data-wireframe-action="multiplayer">
+        <img class="nav-icon" src="Asset/icon-multiplayer.png" alt="" ></img><span>MULTIPLAYER</span>
+      </button>
+      <button class="nav-button" id="nav_club" type="button" data-action="open-club" data-wireframe-action="club">
+        <img class="nav-icon" src="Asset/icon-club.png" alt="" ></img><span>CLUB</span>
+      </button>
+      <button class="nav-button" id="nav_profile" type="button" data-action="open-profile" data-wireframe-action="profile">
+        <img class="nav-icon" src="Asset/icon-profile.png" alt="" ></img><span>PROFILE</span>
+      </button>
+      <button class="nav-button" id="nav_settings" type="button" data-action="open-settings" data-wireframe-action="settings">
+        <img class="nav-icon" src="Asset/icon-settings.png" alt="" ></img><span>SETTINGS</span>
+      </button>
+    </nav>
+
+    <section class="race-scene" id="race_scene" data-region="main-racing-background" aria-label="Night city racing scene">
+      <div class="season-panel" id="season_panel">
+        <span class="scene-kicker">NEON CITY SPRINT</span>
+        <strong class="scene-title">Blur-motion night street</strong>
+        <span class="scene-meta">Other racing cars, wet asphalt reflections, blue and orange neon lights.</span>
+      </div>
+      <img class="play-ring" id="play_light_ring" src="Asset/play-ring.png" alt="" ></img>
+      <button class="play-button" id="main_play" type="button" data-action="start-race" data-wireframe-action="play" aria-label="Start race">PLAY</button>
+    </section>
+
+    <aside class="car-showcase" id="car_showcase" data-region="selected-car-showcase" aria-label="Selected car">
+      <div class="car-title-row" id="car_title_row">
+        <h1 class="car-title" id="selected_car_name" data-binding="car.name">GT SUPER SPORT</h1>
+        <span class="car-class" id="selected_car_class" data-binding="car.class">S CLASS</span>
+      </div>
+      <div class="car-frame" id="car_preview_frame">
+        <img class="car-hero" id="car_preview" src="Asset/car-hero.png" alt="GT SUPER SPORT full car view" data-asset-slot="vehicle.gt-super-sport" ></img>
+      </div>
+      <div class="platform" id="vehicle_platform" data-asset-slot="platform.future-display">
+        <span>FUTURISTIC PLATFORM</span>
+        <strong id="car_power_hint">BLUE / ORANGE LIVERY</strong>
+      </div>
+    </aside>
+
+    <footer class="bottom-bar" id="bottom_bar" data-region="bottom-social-play-stats">
+      <section class="social-icons" id="social_shortcuts" aria-label="Social shortcuts">
+        <button class="social-button" id="social_chat" type="button" data-action="open-chat" data-wireframe-action="chat" aria-label="Open chat">
+          <img class="button-icon" src="Asset/icon-chat.png" alt="" ></img>
+        </button>
+        <button class="social-button" id="social_friends" type="button" data-action="open-friends" data-wireframe-action="friends" aria-label="Open friends">
+          <img class="button-icon" src="Asset/icon-friends.png" alt="" ></img>
+        </button>
+        <button class="social-button" id="social_mail" type="button" data-action="open-mail" data-wireframe-action="mail" aria-label="Open mail">
+          <img class="button-icon" src="Asset/icon-mail.png" alt="" ></img>
+        </button>
+      </section>
+
+      <section class="race-status" id="race_status_panel" aria-label="Race status">
+        <span>SELECTED EVENT</span>
+        <strong id="race_status_text" data-binding="race.status">READY TO RACE</strong>
+      </section>
+
+      <section class="car-stats" id="car_stats" aria-label="Car performance">
+        <strong class="rating-line" id="car_rating" data-binding="car.rating">RATING: 2850</strong>
+        <div class="stat-row" id="stat_speed">
+          <img class="stat-icon" src="Asset/icon-speed.png" alt="" ></img>
+          <span class="stat-label">SPEED</span>
+          <div class="stat-track" aria-label="Speed"><div class="stat-fill speed" id="stat_speed_fill" data-binding="car.stats.speed"></div></div>
+        </div>
+        <div class="stat-row" id="stat_accel">
+          <img class="stat-icon" src="Asset/icon-accel.png" alt="" ></img>
+          <span class="stat-label">ACCEL</span>
+          <div class="stat-track" aria-label="Acceleration"><div class="stat-fill accel" id="stat_accel_fill" data-binding="car.stats.accel"></div></div>
+        </div>
+        <div class="stat-row" id="stat_handling">
+          <img class="stat-icon" src="Asset/icon-handling.png" alt="" ></img>
+          <span class="stat-label">HANDLING</span>
+          <div class="stat-track" aria-label="Handling"><div class="stat-fill handling" id="stat_handling_fill" data-binding="car.stats.handling"></div></div>
+        </div>
+        <div class="stat-row" id="stat_nitro">
+          <img class="stat-icon" src="Asset/icon-nitro.png" alt="" ></img>
+          <span class="stat-label">NITRO</span>
+          <div class="stat-track" aria-label="Nitro"><div class="stat-fill nitro" id="stat_nitro_fill" data-binding="car.stats.nitro"></div></div>
+        </div>
+      </section>
+    </footer>
+  </main>
+  <script type="application/json" data-bui-actions>{
+  "actions": {
+    "select-garage": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_garage"
+      }
+    ],
+    "select-events": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_events"
+      }
+    ],
+    "select-multiplayer": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_multiplayer"
+      }
+    ],
+    "select-club": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_club"
+      }
+    ],
+    "select-profile": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_profile"
+      }
+    ],
+    "select-settings": [
+      {
+        "op": "set-selected",
+        "group": [
+          "nav_garage",
+          "nav_events",
+          "nav_multiplayer",
+          "nav_club",
+          "nav_profile",
+          "nav_settings"
+        ],
+        "target": "nav_settings"
+      }
+    ],
+    "start-race": [
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "MATCHMAKING..."
+      },
+      {
+        "op": "delay",
+        "ms": 900
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "RACE FOUND"
+      },
+      {
+        "op": "delay",
+        "ms": 900
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "READY TO RACE"
+      }
+    ],
+    "open-garage": [
+      {
+        "op": "run-action",
+        "target": "select-garage"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "GARAGE SELECTED"
+      }
+    ],
+    "open-events": [
+      {
+        "op": "run-action",
+        "target": "select-events"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "EVENTS OPENED"
+      }
+    ],
+    "open-multiplayer": [
+      {
+        "op": "run-action",
+        "target": "select-multiplayer"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "MULTIPLAYER READY"
+      }
+    ],
+    "open-club": [
+      {
+        "op": "run-action",
+        "target": "select-club"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "CLUB OPENED"
+      }
+    ],
+    "open-profile": [
+      {
+        "op": "run-action",
+        "target": "select-profile"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "PROFILE OPENED"
+      }
+    ],
+    "open-settings": [
+      {
+        "op": "run-action",
+        "target": "select-settings"
+      },
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "SETTINGS OPENED"
+      }
+    ],
+    "open-notification": [
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "NOTIFICATIONS OPENED"
+      }
+    ],
+    "open-chat": [
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "CHAT OPENED"
+      }
+    ],
+    "open-friends": [
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "FRIENDS OPENED"
+      }
+    ],
+    "open-mail": [
+      {
+        "op": "set-text",
+        "binding": "race.status",
+        "node": "race_status_text_text_1",
+        "value": "MAIL OPENED"
+      }
+    ]
+  }
+}</script>
+  
+</body>
+</html>

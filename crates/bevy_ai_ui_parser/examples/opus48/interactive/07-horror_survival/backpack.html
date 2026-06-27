@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #07090A;
+  overflow: hidden;
+}
+.bg { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; background-color: #0A0E0D; }
+.vignette {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  background-color: #00000000;
+  border-width: 160px; border-color: #03040400;
+  border-top-color: #030404; border-bottom-color: #030404;
+}
+/* header */
+.header {
+  position: absolute; top: 0; left: 0;
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 1920px; height: 88px; padding: 0 48px;
+  background-color: #0A0F0E;
+  border-bottom-width: 1px; border-bottom-color: #1B2522;
+}
+.h-left { flex-direction: row; align-items: center; }
+.back-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 52px; height: 52px; margin-right: 22px;
+  background-color: #0E1413; border-width: 1px; border-color: #243330; border-radius: 6px;
+}
+.back-btn .bk-ico { width: 24px; height: 24px; }
+.h-titles { align-items: flex-start; }
+.h-title { font-size: 30px; color: #DDE9E4; letter-spacing: 8px; }
+.h-sub { font-size: 14px; color: #5C6B66; letter-spacing: 4px; margin-top: 4px; }
+.tabs { flex-direction: row; align-items: center; }
+.seg {
+  flex-direction: row; height: 52px; padding: 5px;
+  background-color: #0E1413; border-width: 1px; border-color: #1E2A27; border-radius: 8px;
+}
+.seg-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 140px; height: 42px; border-radius: 6px;
+  background-color: #00000000;
+}
+.seg-btn.is-active { background-color: #112320; border-width: 1px; border-color: #2E5E56; }
+.seg-ico { width: 20px; height: 20px; margin-right: 10px; }
+.seg-txt { font-size: 16px; color: #6E7B75; letter-spacing: 2px; }
+.seg-btn.is-active .seg-txt { color: #5FD3C0; }
+
+/* body */
+.body {
+  position: absolute; top: 88px; left: 0;
+  flex-direction: row; width: 1920px; height: 904px; padding: 36px 48px;
+}
+/* left: item grid */
+.left {
+  width: 880px; height: 832px; margin-right: 32px;
+}
+.sect-title { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.st-left { flex-direction: row; align-items: center; }
+.st-bar { width: 4px; height: 22px; background-color: #5FD3C0; margin-right: 12px; border-radius: 2px; }
+.st-name { font-size: 20px; color: #C9D6D0; letter-spacing: 4px; }
+.st-count { font-size: 15px; color: #6E7B75; letter-spacing: 2px; }
+.grid-panel {
+  width: 880px; height: 776px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 10px; padding: 24px;
+}
+.grid-row { flex-direction: row; margin-bottom: 16px; }
+.cell {
+  width: 150px; height: 150px; margin-right: 16px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #233330;
+  border-radius: 8px; padding: 12px; align-items: center; justify-content: center;
+}
+.cell.empty { border-color: #1A2421; background-color: #080B0A; }
+.cell.key { border-color: #5E4E1E; background-color: #15120A; }
+.cell .c-ico { width: 56px; height: 56px; margin-bottom: 10px; }
+.cell-name { font-size: 14px; color: #C9D6D0; letter-spacing: 1px; }
+.cell-name.muted { color: #44524D; }
+.cell-count { position: absolute; bottom: 6px; right: 10px; font-size: 13px; color: #8FA29B; }
+
+/* right: clues + craft */
+.right { width: 596px; height: 832px; }
+.clue-panel {
+  width: 596px; height: 470px; margin-bottom: 24px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 10px; padding: 22px;
+}
+.clue {
+  flex-direction: row; align-items: center;
+  width: 552px; height: 84px; margin-bottom: 12px; padding: 0 16px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #1E2A27;
+  border-left-width: 3px; border-left-color: #6E5A8C; border-radius: 6px;
+}
+.clue.found { border-left-color: #5FD3C0; }
+.clue.locked { border-left-color: #2A3A36; opacity: 0.6; }
+.clue .cl-ico { width: 36px; height: 36px; margin-right: 16px; }
+.clue-body { align-items: flex-start; flex-grow: 1; }
+.clue-name { font-size: 17px; color: #C9D6D0; letter-spacing: 1px; margin-bottom: 4px; }
+.clue-name.muted { color: #5C6B66; }
+.clue-meta { font-size: 13px; color: #5C6B66; }
+.clue-state { width: 24px; height: 24px; }
+
+.craft-panel {
+  width: 596px; height: 338px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 10px; padding: 22px;
+}
+.craft {
+  flex-direction: row; align-items: center;
+  width: 552px; height: 96px; margin-bottom: 14px; padding: 0 18px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #233330; border-radius: 8px;
+}
+.craft .cf-ico { width: 48px; height: 48px; margin-right: 18px; }
+.craft-body { align-items: flex-start; flex-grow: 1; }
+.craft-name { font-size: 18px; color: #C9D6D0; letter-spacing: 2px; margin-bottom: 4px; }
+.craft-need { font-size: 13px; color: #6E7B75; }
+.craft-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 120px; height: 56px; border-radius: 8px;
+  background-color: #112320; border-width: 1px; border-color: #5FD3C0;
+}
+.craft-btn.use { background-color: #1A0E0D; border-color: #8E2B2B; }
+.craft-btn-txt { font-size: 17px; color: #5FD3C0; letter-spacing: 3px; }
+.craft-btn.use .craft-btn-txt { color: #C24A3A; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg"></div>
+    <div class="vignette"></div>
+
+    <div class="header">
+      <div class="h-left">
+        <button class="back-btn">
+          <svg id="icon-back-bp" class="bk-ico" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15 5 8 12 15 19" fill="none" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="h-titles">
+          <div class="h-title">背包</div>
+          <div class="h-sub">INVENTORY &amp; EVIDENCE</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="seg">
+          <button class="seg-btn is-active">
+            <svg id="icon-tab-items" class="seg-ico" width="20" height="20" viewBox="0 0 20 20">
+              <rect x="3" y="3" width="6" height="6" rx="1" fill="#5FD3C0"/>
+              <rect x="11" y="3" width="6" height="6" rx="1" fill="none" stroke="#5FD3C0" stroke-width="1.5"/>
+              <rect x="3" y="11" width="6" height="6" rx="1" fill="none" stroke="#5FD3C0" stroke-width="1.5"/>
+              <rect x="11" y="11" width="6" height="6" rx="1" fill="none" stroke="#5FD3C0" stroke-width="1.5"/>
+            </svg>
+            <span class="seg-txt">物品</span>
+          </button>
+          <button class="seg-btn">
+            <svg id="icon-tab-clues" class="seg-ico" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M4 3h9l3 3v11H4z" fill="none" stroke="#6E7B75" stroke-width="1.5"/>
+              <path d="M7 9h6M7 12h6" stroke="#6E7B75" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="seg-txt">线索</span>
+          </button>
+          <button class="seg-btn">
+            <svg id="icon-tab-map" class="seg-ico" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M3 5l5-2 4 2 5-2v12l-5 2-4-2-5 2z" fill="none" stroke="#6E7B75" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 3v12M12 5v12" stroke="#6E7B75" stroke-width="1.5"/>
+            </svg>
+            <span class="seg-txt">地图</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- item grid -->
+      <div class="left">
+        <div class="sect-title">
+          <div class="st-left"><div class="st-bar"></div><span class="st-name">物品栏</span></div>
+          <span class="st-count">9 / 15 格</span>
+        </div>
+        <div class="grid-panel">
+          <div class="grid-row">
+            <div class="cell">
+              <svg id="icon-bp-flash" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="10" y="22" width="18" height="12" rx="2" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+                <path d="M28 24h8v8h-8z" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+                <path d="M36 22 48 16v24l-12-6z" fill="#5FD3C0" opacity="0.3"/>
+              </svg>
+              <div class="cell-name">手电筒</div>
+            </div>
+            <div class="cell">
+              <svg id="icon-bp-bandage" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="14" y="22" width="28" height="12" rx="6" fill="none" stroke="#C24A3A" stroke-width="2" transform="rotate(-30 28 28)"/>
+                <circle cx="28" cy="28" r="3.5" fill="#C24A3A"/>
+              </svg>
+              <div class="cell-name">绷带</div>
+              <span class="cell-count">3</span>
+            </div>
+            <div class="cell">
+              <svg id="icon-bp-pill" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="14" y="22" width="28" height="12" rx="6" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+                <path d="M28 22v12" stroke="#6E5A8C" stroke-width="2"/>
+                <rect x="14" y="22" width="14" height="12" rx="6" fill="#6E5A8C" opacity="0.3"/>
+              </svg>
+              <div class="cell-name">镇定剂</div>
+              <span class="cell-count">2</span>
+            </div>
+            <div class="cell">
+              <svg id="icon-bp-battery" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="14" y="18" width="24" height="20" rx="3" fill="none" stroke="#C9A23A" stroke-width="2"/>
+                <rect x="22" y="14" width="8" height="4" rx="1" fill="#C9A23A"/>
+                <path d="M27 22l-4 7h6l-4 7" fill="none" stroke="#C9A23A" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              <div class="cell-name">电池</div>
+              <span class="cell-count">4</span>
+            </div>
+            <div class="cell">
+              <svg id="icon-bp-tape" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="14" fill="none" stroke="#9BB0A9" stroke-width="2"/>
+                <circle cx="28" cy="28" r="5" fill="none" stroke="#9BB0A9" stroke-width="2"/>
+                <path d="M14 36h28" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name">胶带</div>
+              <span class="cell-count">1</span>
+            </div>
+          </div>
+          <div class="grid-row">
+            <div class="cell">
+              <svg id="icon-bp-lighter" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="18" y="28" width="20" height="18" rx="2" fill="none" stroke="#C9A23A" stroke-width="2"/>
+                <path d="M28 10c4 5 7 8 7 12a7 7 0 0 1-14 0c0-3 1-4 3-6 1 3 4 1 4-6z" fill="#C9A23A" opacity="0.5"/>
+              </svg>
+              <div class="cell-name">打火机</div>
+            </div>
+            <div class="cell">
+              <svg id="icon-bp-wire" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M12 28c4-8 8 8 12 0s8 8 12 0 8 8 8 0" fill="none" stroke="#C24A3A" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="28" r="3" fill="#C24A3A"/>
+                <circle cx="44" cy="28" r="3" fill="#C24A3A"/>
+              </svg>
+              <div class="cell-name">电线</div>
+              <span class="cell-count">2</span>
+            </div>
+            <div class="cell key">
+              <svg id="icon-bp-keycard" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <rect x="12" y="18" width="32" height="20" rx="3" fill="none" stroke="#C9A23A" stroke-width="2"/>
+                <rect x="16" y="23" width="10" height="10" rx="2" fill="#C9A23A" opacity="0.5"/>
+                <path d="M30 26h10M30 31h7" stroke="#C9A23A" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name">门禁卡</div>
+            </div>
+            <div class="cell key">
+              <svg id="icon-bp-key" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="22" cy="22" r="8" fill="none" stroke="#C9A23A" stroke-width="2"/>
+                <path d="M27 27 42 42M38 38l4-4M34 34l4-4" stroke="#C9A23A" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name">铜钥匙</div>
+            </div>
+            <div class="cell empty">
+              <svg id="icon-bp-empty1" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+          </div>
+          <div class="grid-row">
+            <div class="cell empty">
+              <svg id="icon-bp-empty2" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+            <div class="cell empty">
+              <svg id="icon-bp-empty3" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+            <div class="cell empty">
+              <svg id="icon-bp-empty4" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+            <div class="cell empty">
+              <svg id="icon-bp-empty5" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+            <div class="cell empty">
+              <svg id="icon-bp-empty6" class="c-ico" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M28 18v20M18 28h20" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="cell-name muted">空</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- clues + craft -->
+      <div class="right">
+        <div class="sect-title">
+          <div class="st-left"><div class="st-bar"></div><span class="st-name">线索 / 档案</span></div>
+          <span class="st-count">3 / 8 收集</span>
+        </div>
+        <div class="clue-panel">
+          <div class="clue found">
+            <svg id="icon-clue-photo" class="cl-ico" width="36" height="36" viewBox="0 0 36 36">
+              <rect x="5" y="8" width="26" height="20" rx="2" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <circle cx="18" cy="18" r="5" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <rect x="13" y="5" width="10" height="4" rx="1" fill="#5FD3C0"/>
+            </svg>
+            <div class="clue-body">
+              <div class="clue-name">焦黑的全家福</div>
+              <div class="clue-meta">档案室 · 已阅</div>
+            </div>
+            <svg id="icon-clue-check1" class="clue-state" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M5 12l5 5 9-10" fill="none" stroke="#5FD3C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="clue found">
+            <svg id="icon-clue-note" class="cl-ico" width="36" height="36" viewBox="0 0 36 36">
+              <path d="M8 5h14l6 6v20H8z" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <path d="M12 16h12M12 21h12M12 26h7" stroke="#5FD3C0" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="clue-body">
+              <div class="clue-name">护士的日志 03</div>
+              <div class="clue-meta">二楼值班台 · 已阅</div>
+            </div>
+            <svg id="icon-clue-check2" class="clue-state" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M5 12l5 5 9-10" fill="none" stroke="#5FD3C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="clue">
+            <svg id="icon-clue-tape" class="cl-ico" width="36" height="36" viewBox="0 0 36 36">
+              <rect x="5" y="11" width="26" height="16" rx="2" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+              <circle cx="13" cy="19" r="3" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+              <circle cx="23" cy="19" r="3" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+            </svg>
+            <div class="clue-body">
+              <div class="clue-name">院长的录音带</div>
+              <div class="clue-meta">未播放 · 需录音机</div>
+            </div>
+            <svg id="icon-clue-new" class="clue-state" width="24" height="24" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5" fill="#6E5A8C"/>
+            </svg>
+          </div>
+          <div class="clue locked">
+            <svg id="icon-clue-locked" class="cl-ico" width="36" height="36" viewBox="0 0 36 36">
+              <rect x="9" y="16" width="18" height="14" rx="2" fill="none" stroke="#2A3A36" stroke-width="2"/>
+              <path d="M13 16v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#2A3A36" stroke-width="2"/>
+            </svg>
+            <div class="clue-body">
+              <div class="clue-name muted">??? 解剖报告</div>
+              <div class="clue-meta">未发现</div>
+            </div>
+            <svg id="icon-clue-lock-state" class="clue-state" width="24" height="24" viewBox="0 0 24 24">
+              <rect x="6" y="11" width="12" height="9" rx="1.5" fill="none" stroke="#2A3A36" stroke-width="2"/>
+              <path d="M9 11V8a3 3 0 0 1 6 0v3" fill="none" stroke="#2A3A36" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sect-title">
+          <div class="st-left"><div class="st-bar"></div><span class="st-name">合成 / 使用</span></div>
+        </div>
+        <div class="craft-panel">
+          <div class="craft">
+            <svg id="icon-craft-tool" class="cf-ico" width="48" height="48" viewBox="0 0 48 48">
+              <path d="M14 34l12-12M30 12l6 6-6 6-6-6z" fill="none" stroke="#5FD3C0" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="12" cy="36" r="4" fill="#5FD3C0"/>
+            </svg>
+            <div class="craft-body">
+              <div class="craft-name">临时撬棍</div>
+              <div class="craft-need">需要: 电线 ×2 + 胶带 ×1</div>
+            </div>
+            <button class="craft-btn"><span class="craft-btn-txt">合成</span></button>
+          </div>
+          <div class="craft">
+            <svg id="icon-craft-medkit" class="cf-ico" width="48" height="48" viewBox="0 0 48 48">
+              <rect x="8" y="14" width="32" height="24" rx="3" fill="none" stroke="#C24A3A" stroke-width="2"/>
+              <rect x="21" y="20" width="6" height="12" rx="1" fill="#C24A3A"/>
+              <rect x="18" y="23" width="12" height="6" rx="1" fill="#C24A3A"/>
+            </svg>
+            <div class="craft-body">
+              <div class="craft-name">使用 绷带</div>
+              <div class="craft-need">恢复体力 +30 · 库存 ×3</div>
+            </div>
+            <button class="craft-btn use"><span class="craft-btn-txt">使用</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

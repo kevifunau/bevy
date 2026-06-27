@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "休闲三消 CANDY BLAST:糖果嘉年华、明亮粉紫渐层底 + 多彩糖果光泽、圆润果冻按钮、关卡星星与体力心心。竖屏 4 页(主菜单/关卡地图/局内界面/体力商店)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "main — 标题 LOGO + 体力/金币 + 开始游戏/关卡/商店主按钮" },
+    { "id": "map", "role": "level-map — 关卡路径节点(已通关星级/当前/锁定)纵向列表" },
+    { "id": "game", "role": "in-game — 顶部目标与步数 + 糖果棋盘网格 + 道具栏" },
+    { "id": "shop", "role": "shop — 体力心心补充 + 金币礼包网格 + 购买按钮" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "portrait-list",
+    "mood": "candy-carnival-bright",
+    "accentFamily": "pink-purple-candy",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": ["button"]
+}

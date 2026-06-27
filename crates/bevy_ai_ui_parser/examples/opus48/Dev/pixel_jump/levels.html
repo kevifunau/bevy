@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --night0: #0B1026;
+  --night1: #161E45;
+  --panel: #1E2A5E;
+  --panel2: #283A7A;
+  --line: #3A4E96;
+  --green: #5CF270;
+  --green-d: #2BAA3E;
+  --orange: #FF9D3A;
+  --orange-d: #C96A12;
+  --pink: #FF5C8A;
+  --text: #EAF0FF;
+  --text-dim: #8C9BD6;
+  --gold: #FFD23F;
+  --lock: #4A5790;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--night0);
+  padding: 56px 72px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 96px; margin-bottom: 36px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--panel);
+  border-width: 5px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 32px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 52px; color: var(--green); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 24px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.prog-chip {
+  flex-direction: row; align-items: center;
+  height: 72px;
+  background-color: var(--panel);
+  border-width: 5px; border-color: var(--line);
+  padding: 0 28px;
+}
+.prog-ico { width: 40px; height: 40px; margin-right: 14px; }
+.prog-tx { font-size: 32px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+/* ---------- world tabs ---------- */
+.worlds { flex-direction: row; align-items: center; margin-bottom: 32px; }
+.world-tab {
+  flex-direction: row; align-items: center;
+  height: 68px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  padding: 0 28px; margin-right: 20px;
+}
+.world-tab.is-on { background-color: var(--orange); border-color: var(--orange-d); }
+.world-dot { width: 24px; height: 24px; background-color: var(--text-dim); margin-right: 14px; }
+.world-tab.is-on .world-dot { background-color: #0B1026; }
+.world-tx { font-size: 26px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.world-tab.is-on .world-tx { color: #0B1026; }
+
+/* ---------- level track ---------- */
+.track-wrap {
+  flex-grow: 1;
+  background-color: var(--night1);
+  border-width: 6px; border-color: var(--line);
+  padding: 48px 40px;
+  flex-direction: column;
+  justify-content: center;
+}
+.track {
+  flex-direction: row;
+  align-items: center;
+}
+.node-col { flex-direction: column; align-items: center; width: 200px; }
+.connector { width: 56px; height: 12px; background-color: var(--line); }
+.connector-done { background-color: var(--green-d); }
+
+.node {
+  width: 152px; height: 152px;
+  border-width: 6px;
+  align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.node-done { background-color: var(--panel2); border-color: var(--green); }
+.node-cur { background-color: var(--green); border-color: #BFFFC8; }
+.node-lock { background-color: var(--panel); border-color: var(--line); }
+.node-num { font-size: 56px; font-weight: bold; white-space: normal; }
+.node-num-done { color: var(--green); }
+.node-num-cur { color: #0B1026; }
+
+.stars-row { flex-direction: row; align-items: center; height: 36px; margin-bottom: 8px; }
+.star { width: 28px; height: 28px; margin-right: 6px; }
+.star-last { margin-right: 0; }
+.gems-row { flex-direction: row; align-items: center; }
+.gem-ico { width: 26px; height: 26px; margin-right: 8px; }
+.gems-tx { font-size: 24px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.label-cur { font-size: 24px; color: var(--green); font-weight: bold; white-space: normal; height: 36px; }
+.label-lock { font-size: 24px; color: var(--lock); font-weight: bold; white-space: normal; height: 36px; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="44" height="44" viewBox="0 0 44 44">
+          <rect x="22" y="10" width="8" height="8" fill="#8C9BD6"/>
+          <rect x="14" y="18" width="8" height="8" fill="#8C9BD6"/>
+          <rect x="22" y="26" width="8" height="8" fill="#8C9BD6"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">SELECT STAGE</span>
+        <span class="subtitle">选择关卡 · 共 18 关</span>
+      </div>
+      <div class="prog-chip">
+        <svg id="icon-star-top" class="prog-ico" width="40" height="40" viewBox="0 0 40 40">
+          <rect x="16" y="6" width="8" height="8" fill="#FFD23F"/>
+          <rect x="8" y="14" width="24" height="8" fill="#FFD23F"/>
+          <rect x="12" y="22" width="16" height="8" fill="#FFD23F"/>
+          <rect x="10" y="30" width="6" height="6" fill="#FFD23F"/>
+          <rect x="24" y="30" width="6" height="6" fill="#FFD23F"/>
+        </svg>
+        <span class="prog-tx">28 / 54</span>
+      </div>
+    </div>
+
+    <div class="worlds">
+      <div class="world-tab is-on">
+        <div class="world-dot"></div>
+        <span class="world-tx">WORLD 1 · 草原</span>
+      </div>
+      <div class="world-tab">
+        <div class="world-dot"></div>
+        <span class="world-tx">WORLD 2 · 洞窟</span>
+      </div>
+      <div class="world-tab">
+        <div class="world-dot"></div>
+        <span class="world-tx">WORLD 3 · 天空</span>
+      </div>
+    </div>
+
+    <div class="track-wrap">
+      <div class="track">
+
+        <div class="node-col">
+          <div class="node node-done">
+            <span class="node-num node-num-done">1</span>
+          </div>
+          <div class="stars-row">
+            <svg class="star" id="s1a" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#FFD23F"/><rect x="5" y="10" width="18" height="6" fill="#FFD23F"/><rect x="8" y="16" width="12" height="6" fill="#FFD23F"/></svg>
+            <svg class="star" id="s1b" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#FFD23F"/><rect x="5" y="10" width="18" height="6" fill="#FFD23F"/><rect x="8" y="16" width="12" height="6" fill="#FFD23F"/></svg>
+            <svg class="star star-last" id="s1c" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#FFD23F"/><rect x="5" y="10" width="18" height="6" fill="#FFD23F"/><rect x="8" y="16" width="12" height="6" fill="#FFD23F"/></svg>
+          </div>
+          <div class="gems-row">
+            <svg id="g1" class="gem-ico" width="26" height="26" viewBox="0 0 26 26"><rect x="9" y="4" width="8" height="6" fill="#5CF270"/><rect x="5" y="10" width="16" height="6" fill="#5CF270"/><rect x="9" y="16" width="8" height="6" fill="#2BAA3E"/></svg>
+            <span class="gems-tx">3/3</span>
+          </div>
+        </div>
+
+        <div class="connector connector-done"></div>
+
+        <div class="node-col">
+          <div class="node node-done">
+            <span class="node-num node-num-done">2</span>
+          </div>
+          <div class="stars-row">
+            <svg class="star" id="s2a" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#FFD23F"/><rect x="5" y="10" width="18" height="6" fill="#FFD23F"/><rect x="8" y="16" width="12" height="6" fill="#FFD23F"/></svg>
+            <svg class="star" id="s2b" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#FFD23F"/><rect x="5" y="10" width="18" height="6" fill="#FFD23F"/><rect x="8" y="16" width="12" height="6" fill="#FFD23F"/></svg>
+            <svg class="star star-last" id="s2c" width="28" height="28" viewBox="0 0 28 28"><rect x="11" y="4" width="6" height="6" fill="#3A4E96"/><rect x="5" y="10" width="18" height="6" fill="#3A4E96"/><rect x="8" y="16" width="12" height="6" fill="#3A4E96"/></svg>
+          </div>
+          <div class="gems-row">
+            <svg id="g2" class="gem-ico" width="26" height="26" viewBox="0 0 26 26"><rect x="9" y="4" width="8" height="6" fill="#5CF270"/><rect x="5" y="10" width="16" height="6" fill="#5CF270"/><rect x="9" y="16" width="8" height="6" fill="#2BAA3E"/></svg>
+            <span class="gems-tx">2/3</span>
+          </div>
+        </div>
+
+        <div class="connector connector-done"></div>
+
+        <div class="node-col">
+          <div class="node node-cur">
+            <span class="node-num node-num-cur">3</span>
+          </div>
+          <span class="label-cur">▶ NOW</span>
+          <div class="gems-row">
+            <svg id="g3" class="gem-ico" width="26" height="26" viewBox="0 0 26 26"><rect x="9" y="4" width="8" height="6" fill="#5CF270"/><rect x="5" y="10" width="16" height="6" fill="#5CF270"/><rect x="9" y="16" width="8" height="6" fill="#2BAA3E"/></svg>
+            <span class="gems-tx">0/3</span>
+          </div>
+        </div>
+
+        <div class="connector"></div>
+
+        <div class="node-col">
+          <div class="node node-lock">
+            <svg id="icon-lock4" width="64" height="64" viewBox="0 0 64 64">
+              <rect x="18" y="30" width="28" height="22" fill="#4A5790"/>
+              <rect x="22" y="18" width="6" height="14" fill="#4A5790"/>
+              <rect x="36" y="18" width="6" height="14" fill="#4A5790"/>
+              <rect x="22" y="14" width="20" height="6" fill="#4A5790"/>
+              <rect x="29" y="38" width="6" height="8" fill="#161E45"/>
+            </svg>
+          </div>
+          <span class="label-lock">LOCKED</span>
+        </div>
+
+        <div class="connector"></div>
+
+        <div class="node-col">
+          <div class="node node-lock">
+            <svg id="icon-lock5" width="64" height="64" viewBox="0 0 64 64">
+              <rect x="18" y="30" width="28" height="22" fill="#4A5790"/>
+              <rect x="22" y="18" width="6" height="14" fill="#4A5790"/>
+              <rect x="36" y="18" width="6" height="14" fill="#4A5790"/>
+              <rect x="22" y="14" width="20" height="6" fill="#4A5790"/>
+              <rect x="29" y="38" width="6" height="8" fill="#161E45"/>
+            </svg>
+          </div>
+          <span class="label-lock">LOCKED</span>
+        </div>
+
+        <div class="connector"></div>
+
+        <div class="node-col">
+          <div class="node node-lock">
+            <svg id="icon-boss" width="64" height="64" viewBox="0 0 64 64">
+              <rect x="16" y="20" width="32" height="24" fill="#FF5C8A"/>
+              <rect x="20" y="14" width="6" height="6" fill="#FF5C8A"/>
+              <rect x="38" y="14" width="6" height="6" fill="#FF5C8A"/>
+              <rect x="22" y="28" width="8" height="8" fill="#161E45"/>
+              <rect x="34" y="28" width="8" height="8" fill="#161E45"/>
+              <rect x="24" y="44" width="16" height="6" fill="#C9305E"/>
+            </svg>
+          </div>
+          <span class="label-lock">BOSS</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

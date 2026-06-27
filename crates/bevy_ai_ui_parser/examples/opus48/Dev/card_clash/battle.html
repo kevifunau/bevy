@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #16102E;
+  --bg1: #1F1742;
+  --panel: #2A1F58;
+  --panel2: #362873;
+  --line: #4A3A8C;
+  --gold: #F2C14E;
+  --gold-d: #C9971F;
+  --rune: #B06BFF;
+  --rune-d: #7E3FD6;
+  --mana: #3FC8E8;
+  --mana-d: #1E96B8;
+  --text: #EDE8FF;
+  --text-dim: #9486C4;
+  --red: #FF5A6E;
+  --green: #5BE0A0;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 40px 40px;
+  flex-direction: column;
+}
+
+/* ---------- player headers ---------- */
+.hero-row { flex-direction: row; align-items: center; height: 120px; }
+.hero-portrait {
+  width: 100px; height: 100px;
+  border-radius: 50px;
+  border-width: 4px;
+  align-items: center; justify-content: center;
+  margin-right: 20px;
+}
+.hp-enemy { background-color: #5A2230; border-color: var(--red); }
+.hp-self { background-color: var(--mana-d); border-color: var(--mana); }
+.hero-info { flex-direction: column; justify-content: center; flex-grow: 1; }
+.hero-name { font-size: 32px; min-height: 40px; color: var(--text); font-weight: bold; white-space: normal; }
+.hero-hp-track { flex-direction: row; align-items: center; height: 40px; margin-top: 8px; width: 320px; background-color: var(--bg1); border-radius: 20px; border-width: 2px; border-color: var(--line); }
+.hero-hp-fill { height: 36px; border-radius: 18px; }
+.fill-red { background-color: var(--red); }
+.fill-green { background-color: var(--green); }
+.hero-hp-tx { font-size: 36px; min-height: 44px; color: var(--text); font-weight: bold; white-space: normal; margin-left: 20px; }
+.hp-ico { width: 40px; height: 40px; }
+
+/* mana crystals */
+.mana-row { flex-direction: row; align-items: center; justify-content: flex-end; height: 56px; margin-top: 10px; }
+.crystal { width: 30px; height: 30px; margin-left: 8px; }
+
+/* ---------- battlefield ---------- */
+.field { flex-direction: column; flex-grow: 1; justify-content: center; }
+.field-line {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 220px;
+  margin-bottom: 24px;
+}
+.field-enemy { background-color: rgba(90,34,48,0.18); border-radius: 24px; }
+.field-self { background-color: rgba(31,116,140,0.16); border-radius: 24px; }
+.minion {
+  width: 150px; height: 190px;
+  background-color: var(--panel);
+  border-radius: 20px;
+  border-width: 3px; border-color: var(--line);
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 0 14px;
+}
+.minion-gold { border-color: var(--gold); }
+.minion-rune { border-color: var(--rune); }
+.minion-art {
+  width: 110px; height: 96px;
+  background-color: var(--bg1);
+  border-radius: 14px;
+  align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.minion-stats { flex-direction: row; align-items: center; justify-content: space-between; width: 110px; height: 44px; }
+.minion-atk {
+  width: 44px; height: 44px;
+  background-color: var(--gold);
+  border-radius: 22px;
+  align-items: center; justify-content: center;
+}
+.minion-atk-tx { font-size: 28px; min-height: 36px; color: #2A1F02; font-weight: bold; white-space: normal; }
+.minion-hp {
+  width: 44px; height: 44px;
+  background-color: var(--red);
+  border-radius: 22px;
+  align-items: center; justify-content: center;
+}
+.minion-hp-tx { font-size: 28px; min-height: 36px; color: var(--text); font-weight: bold; white-space: normal; }
+
+.divider { flex-direction: row; align-items: center; justify-content: center; height: 60px; margin-bottom: 24px; }
+.div-line { height: 3px; background-color: var(--line); flex-grow: 1; }
+.turn-chip {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 60px;
+  background-color: var(--gold);
+  border-radius: 30px;
+  padding: 0 36px;
+  margin: 0 24px;
+}
+.turn-tx { font-size: 30px; min-height: 38px; color: #2A1F02; font-weight: bold; white-space: normal; }
+
+/* ---------- hand ---------- */
+.hand { flex-direction: row; align-items: flex-end; justify-content: center; height: 280px; margin-top: 12px; }
+.hcard {
+  width: 156px; height: 240px;
+  background-color: var(--panel2);
+  border-radius: 18px;
+  border-width: 4px; border-color: var(--rune);
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 0 -8px;
+}
+.hcard-up { margin-bottom: 36px; }
+.hcard-cost {
+  width: 48px; height: 48px;
+  background-color: var(--mana);
+  border-radius: 24px;
+  align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.hcard-cost-tx { font-size: 30px; min-height: 38px; color: #08222A; font-weight: bold; white-space: normal; }
+.hcard-art {
+  width: 120px; height: 96px;
+  background-color: var(--bg1);
+  border-radius: 12px;
+  align-items: center; justify-content: center;
+  margin-bottom: 6px;
+}
+.hcard-name { font-size: 22px; min-height: 28px; color: var(--text); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="hero-row">
+      <div class="hero-portrait hp-enemy">
+        <svg id="icon-enemy" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="22" r="13" fill="#FF5A6E"/>
+          <path d="M9 50 C9 38 19 33 28 33 C37 33 47 38 47 50 Z" fill="#FF5A6E"/>
+        </svg>
+      </div>
+      <div class="hero-info">
+        <span class="hero-name">暗影法师 · 对手</span>
+        <div class="hero-hp-track">
+          <div class="hero-hp-fill fill-red" style="width:60%"></div>
+        </div>
+      </div>
+      <span class="hero-hp-tx">18</span>
+    </div>
+
+    <div class="field">
+      <div class="field-line field-enemy">
+        <div class="minion minion-rune">
+          <div class="minion-art">
+            <svg id="m-e1" width="70" height="64" viewBox="0 0 70 64">
+              <path d="M35 8 L24 34 L35 28 L46 34 Z" fill="#B06BFF"/>
+              <circle cx="35" cy="46" r="11" fill="#B06BFF"/>
+            </svg>
+          </div>
+          <div class="minion-stats">
+            <div class="minion-atk"><span class="minion-atk-tx">3</span></div>
+            <div class="minion-hp"><span class="minion-hp-tx">2</span></div>
+          </div>
+        </div>
+        <div class="minion">
+          <div class="minion-art">
+            <svg id="m-e2" width="70" height="64" viewBox="0 0 70 64">
+              <path d="M35 10 C24 26 24 40 35 56 C46 40 46 26 35 10 Z" fill="#FF5A6E"/>
+            </svg>
+          </div>
+          <div class="minion-stats">
+            <div class="minion-atk"><span class="minion-atk-tx">5</span></div>
+            <div class="minion-hp"><span class="minion-hp-tx">4</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">
+        <div class="div-line"></div>
+        <div class="turn-chip"><span class="turn-tx">你的回合</span></div>
+        <div class="div-line"></div>
+      </div>
+
+      <div class="field-line field-self">
+        <div class="minion minion-gold">
+          <div class="minion-art">
+            <svg id="m-s1" width="70" height="64" viewBox="0 0 70 64">
+              <circle cx="35" cy="24" r="14" fill="#F2C14E"/>
+              <path d="M14 58 C14 44 26 38 35 38 C44 38 56 44 56 58 Z" fill="#F2C14E"/>
+            </svg>
+          </div>
+          <div class="minion-stats">
+            <div class="minion-atk"><span class="minion-atk-tx">4</span></div>
+            <div class="minion-hp"><span class="minion-hp-tx">5</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-row">
+      <div class="hero-portrait hp-self">
+        <svg id="icon-self" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="22" r="13" fill="#EDE8FF"/>
+          <path d="M9 50 C9 38 19 33 28 33 C37 33 47 38 47 50 Z" fill="#EDE8FF"/>
+        </svg>
+      </div>
+      <div class="hero-info">
+        <span class="hero-name">你 · 奥术师</span>
+        <div class="hero-hp-track">
+          <div class="hero-hp-fill fill-green" style="width:80%"></div>
+        </div>
+        <div class="mana-row">
+          <svg class="crystal" id="cr1" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#3FC8E8"/></svg>
+          <svg class="crystal" id="cr2" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#3FC8E8"/></svg>
+          <svg class="crystal" id="cr3" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#3FC8E8"/></svg>
+          <svg class="crystal" id="cr4" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#3FC8E8"/></svg>
+          <svg class="crystal" id="cr5" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#4A3A8C"/></svg>
+          <svg class="crystal" id="cr6" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L26 12 L15 27 L4 12 Z" fill="#4A3A8C"/></svg>
+        </div>
+      </div>
+      <span class="hero-hp-tx">24</span>
+    </div>
+
+    <div class="hand">
+      <div class="hcard">
+        <div class="hcard-cost"><span class="hcard-cost-tx">2</span></div>
+        <div class="hcard-art">
+          <svg id="h1" width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="16" fill="none" stroke="#B06BFF" stroke-width="6"/><circle cx="30" cy="30" r="6" fill="#B06BFF"/></svg>
+        </div>
+        <span class="hcard-name">奥术飞弹</span>
+      </div>
+      <div class="hcard hcard-up">
+        <div class="hcard-cost"><span class="hcard-cost-tx">3</span></div>
+        <div class="hcard-art">
+          <svg id="h2" width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="22" r="12" fill="#F2C14E"/><path d="M12 50 C12 38 22 33 30 33 C38 33 48 38 48 50 Z" fill="#F2C14E"/></svg>
+        </div>
+        <span class="hcard-name">秘法骑士</span>
+      </div>
+      <div class="hcard">
+        <div class="hcard-cost"><span class="hcard-cost-tx">5</span></div>
+        <div class="hcard-art">
+          <svg id="h3" width="60" height="60" viewBox="0 0 60 60"><path d="M30 8 L46 24 L30 52 L14 24 Z" fill="#3FC8E8"/></svg>
+        </div>
+        <span class="hcard-name">寒冰巨像</span>
+      </div>
+      <div class="hcard">
+        <div class="hcard-cost"><span class="hcard-cost-tx">1</span></div>
+        <div class="hcard-art">
+          <svg id="h4" width="60" height="60" viewBox="0 0 60 60"><path d="M30 10 L20 32 L30 26 L40 32 Z" fill="#B06BFF"/><circle cx="30" cy="44" r="9" fill="#B06BFF"/></svg>
+        </div>
+        <span class="hcard-name">符文精灵</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

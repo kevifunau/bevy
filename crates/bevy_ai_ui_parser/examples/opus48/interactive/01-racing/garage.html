@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  flex-direction: column;
+  background-color: #070B18;
+}
+
+/* header */
+.header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1920px;
+  height: 96px;
+  padding: 0 48px;
+  background-color: #0C1226;
+  border-bottom-width: 2px;
+  border-bottom-color: #16203F;
+}
+.head-left { flex-direction: row; align-items: center; }
+.back-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background-color: #101A36;
+  border-width: 1px;
+  border-color: #1E2C52;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.page-title { font-size: 34px; color: #FFFFFF; font-weight: bold; letter-spacing: 4px; }
+.head-right { flex-direction: row; align-items: center; }
+.res-pill {
+  flex-direction: row;
+  align-items: center;
+  height: 52px;
+  padding: 0 18px;
+  margin-left: 14px;
+  border-radius: 26px;
+  background-color: #101A36;
+  border-width: 1px;
+  border-color: #1E2C52;
+}
+.res-icon { margin-right: 10px; align-items: center; justify-content: center; }
+.res-val { font-size: 22px; color: #FFFFFF; font-weight: bold; }
+
+/* body */
+.body { flex-direction: row; width: 1920px; height: 984px; padding: 36px 48px; }
+
+/* left: car list */
+.carlist {
+  width: 460px;
+  height: 912px;
+  margin-right: 32px;
+  flex-direction: column;
+}
+.list-title { font-size: 18px; color: #6B7CA8; letter-spacing: 4px; margin-bottom: 18px; }
+.car-item {
+  flex-direction: row;
+  align-items: center;
+  width: 460px;
+  height: 132px;
+  border-radius: 18px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.car-item.is-selected { border-color: #00E5FF; background-color: #0D1B3C; }
+.car-thumb {
+  width: 130px;
+  height: 96px;
+  border-radius: 12px;
+  background-color: #060B1A;
+  border-width: 1px;
+  border-color: #14203E;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+}
+.car-meta { flex-direction: column; justify-content: center; width: 250px; }
+.car-name { font-size: 24px; color: #FFFFFF; font-weight: bold; margin-bottom: 6px; }
+.car-row2 { flex-direction: row; align-items: center; }
+.car-class {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background-color: #101F40;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+.car-class.s { background-color: #FF2D7E; }
+.car-class.a { background-color: #00E5FF; }
+.car-class.b { background-color: #5C6E9E; }
+.car-class-txt { font-size: 14px; color: #FFFFFF; font-weight: bold; }
+.car-pwr { font-size: 15px; color: #6B7CA8; }
+.lock-wrap {
+  width: 130px;
+  height: 96px;
+  border-radius: 12px;
+  background-color: #0A1024;
+  border-width: 1px;
+  border-color: #14203E;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+}
+
+/* center: current car display */
+.center {
+  width: 700px;
+  height: 912px;
+  margin-right: 32px;
+  flex-direction: column;
+}
+.display {
+  width: 700px;
+  height: 470px;
+  border-radius: 24px;
+  background-color: #0B1430;
+  border-width: 2px;
+  border-color: #182648;
+  padding: 30px;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.disp-head { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+.disp-name { font-size: 48px; color: #FFFFFF; font-weight: bold; letter-spacing: 3px; }
+.disp-class {
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  background-color: #FF2D7E;
+}
+.disp-class-txt { font-size: 18px; color: #FFFFFF; font-weight: bold; letter-spacing: 2px; }
+.disp-stage {
+  width: 640px;
+  height: 300px;
+  border-radius: 18px;
+  background-color: #060B1A;
+  border-width: 1px;
+  border-color: #14203E;
+  align-items: center;
+  justify-content: center;
+}
+.tune-row { flex-direction: row; width: 700px; height: 130px; }
+.tune-btn {
+  width: 336px;
+  height: 130px;
+  border-radius: 20px;
+  padding: 24px;
+  flex-direction: row;
+  align-items: center;
+}
+.tune-btn.upgrade { background-color: #00E5FF; margin-right: 28px; }
+.tune-btn.paint {
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #FFE100;
+}
+.tune-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+}
+.tune-icon.dark { background-color: #073142; }
+.tune-icon.lite { background-color: #101F40; }
+.tune-txt { flex-direction: column; justify-content: center; }
+.tune-title { font-size: 24px; font-weight: bold; margin-bottom: 4px; }
+.tune-title.dark { color: #052230; }
+.tune-title.lite { color: #FFFFFF; }
+.tune-desc { font-size: 14px; }
+.tune-desc.dark { color: #0A4458; }
+.tune-desc.lite { color: #6B7CA8; }
+
+/* right: stats panel */
+.stats {
+  width: 564px;
+  height: 912px;
+  border-radius: 24px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 32px;
+  flex-direction: column;
+}
+.stats-title { font-size: 22px; color: #FFFFFF; font-weight: bold; letter-spacing: 3px; margin-bottom: 6px; }
+.stats-sub { font-size: 14px; color: #6B7CA8; margin-bottom: 30px; }
+.stat-block { flex-direction: column; margin-bottom: 28px; }
+.stat-head { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.stat-label-row { flex-direction: row; align-items: center; }
+.stat-dot { width: 14px; height: 14px; border-radius: 7px; margin-right: 12px; }
+.stat-dot.cyan { background-color: #00E5FF; }
+.stat-dot.pink { background-color: #FF2D7E; }
+.stat-dot.yellow { background-color: #FFE100; }
+.stat-dot.purple { background-color: #9B6BFF; }
+.stat-label { font-size: 20px; color: #FFFFFF; font-weight: bold; }
+.stat-num { font-size: 22px; color: #9FB0DE; font-weight: bold; }
+.bar {
+  flex-direction: row;
+  width: 500px;
+  height: 18px;
+  background-color: #0A1024;
+  border-radius: 9px;
+}
+.bar-fill { height: 18px; border-radius: 9px; }
+.bar-fill.cyan { background-color: #00E5FF; }
+.bar-fill.pink { background-color: #FF2D7E; }
+.bar-fill.yellow { background-color: #FFE100; }
+.bar-fill.purple { background-color: #9B6BFF; }
+.bf-92 { width: 460px; }
+.bf-80 { width: 400px; }
+.bf-68 { width: 340px; }
+.bf-74 { width: 370px; }
+
+.upgrade-hint {
+  flex-direction: row;
+  align-items: center;
+  width: 500px;
+  height: 88px;
+  border-radius: 16px;
+  background-color: #101F40;
+  border-width: 1px;
+  border-color: #1E3A5C;
+  padding: 18px;
+  margin-top: 6px;
+}
+.hint-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background-color: #0A1024;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.hint-txt { flex-direction: column; justify-content: center; }
+.hint-title { font-size: 17px; color: #FFE100; font-weight: bold; margin-bottom: 3px; }
+.hint-desc { font-size: 13px; color: #6B7CA8; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="header">
+      <div class="head-left">
+        <div class="back-btn">
+          <svg id="icon-back" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M18 5 L9 14 L18 23" fill="none" stroke="#00E5FF" stroke-width="3"/>
+          </svg>
+        </div>
+        <span class="page-title">GARAGE</span>
+      </div>
+      <div class="head-right">
+        <div class="res-pill">
+          <div class="res-icon">
+            <svg id="icon-coin-g" width="26" height="26" viewBox="0 0 26 26">
+              <circle cx="13" cy="13" r="11" fill="#FFE100"/>
+              <circle cx="13" cy="13" r="5" fill="#0C1226"/>
+            </svg>
+          </div>
+          <span class="res-val">128,400</span>
+        </div>
+        <div class="res-pill">
+          <div class="res-icon">
+            <svg id="icon-part" width="26" height="26" viewBox="0 0 26 26">
+              <path d="M13 3 L16 6 L13 9 L10 6 Z" fill="#00E5FF"/>
+              <circle cx="13" cy="13" r="5" fill="none" stroke="#00E5FF" stroke-width="2"/>
+              <path d="M13 18 L13 23 M8 13 L3 13 M23 13 L18 13" stroke="#00E5FF" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="res-val">86 部件</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <div class="carlist">
+        <span class="list-title">MY GARAGE · 12 CARS</span>
+        <div class="car-item is-selected">
+          <div class="car-thumb">
+            <svg id="icon-car-1" width="104" height="58" viewBox="0 0 104 58">
+              <path d="M6 40 L26 40 L40 22 L74 18 L92 28 L98 40 L6 40 Z" fill="#10204A" stroke="#00E5FF" stroke-width="2"/>
+              <circle cx="32" cy="42" r="9" fill="#060B1A" stroke="#FF2D7E" stroke-width="3"/>
+              <circle cx="80" cy="42" r="9" fill="#060B1A" stroke="#FF2D7E" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="car-meta">
+            <span class="car-name">VECTRA GT-R</span>
+            <div class="car-row2">
+              <div class="car-class s"><span class="car-class-txt">S</span></div>
+              <span class="car-pwr">PWR 1,840</span>
+            </div>
+          </div>
+        </div>
+        <div class="car-item">
+          <div class="car-thumb">
+            <svg id="icon-car-2" width="104" height="58" viewBox="0 0 104 58">
+              <path d="M6 40 L24 40 L38 24 L72 20 L94 30 L98 40 L6 40 Z" fill="#10204A" stroke="#FFE100" stroke-width="2"/>
+              <circle cx="32" cy="42" r="9" fill="#060B1A" stroke="#FFE100" stroke-width="3"/>
+              <circle cx="80" cy="42" r="9" fill="#060B1A" stroke="#FFE100" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="car-meta">
+            <span class="car-name">BLAZE 88</span>
+            <div class="car-row2">
+              <div class="car-class a"><span class="car-class-txt">A</span></div>
+              <span class="car-pwr">PWR 1,520</span>
+            </div>
+          </div>
+        </div>
+        <div class="car-item">
+          <div class="car-thumb">
+            <svg id="icon-car-3" width="104" height="58" viewBox="0 0 104 58">
+              <path d="M6 40 L26 40 L40 22 L74 18 L92 28 L98 40 L6 40 Z" fill="#10204A" stroke="#9B6BFF" stroke-width="2"/>
+              <circle cx="32" cy="42" r="9" fill="#060B1A" stroke="#9B6BFF" stroke-width="3"/>
+              <circle cx="80" cy="42" r="9" fill="#060B1A" stroke="#9B6BFF" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="car-meta">
+            <span class="car-name">PHANTOM V</span>
+            <div class="car-row2">
+              <div class="car-class a"><span class="car-class-txt">A</span></div>
+              <span class="car-pwr">PWR 1,470</span>
+            </div>
+          </div>
+        </div>
+        <div class="car-item">
+          <div class="car-thumb">
+            <svg id="icon-car-4" width="104" height="58" viewBox="0 0 104 58">
+              <path d="M6 40 L24 40 L38 24 L72 20 L94 30 L98 40 L6 40 Z" fill="#0E1A36" stroke="#5C6E9E" stroke-width="2"/>
+              <circle cx="32" cy="42" r="9" fill="#060B1A" stroke="#5C6E9E" stroke-width="3"/>
+              <circle cx="80" cy="42" r="9" fill="#060B1A" stroke="#5C6E9E" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="car-meta">
+            <span class="car-name">RUSTLINE S</span>
+            <div class="car-row2">
+              <div class="car-class b"><span class="car-class-txt">B</span></div>
+              <span class="car-pwr">PWR 980</span>
+            </div>
+          </div>
+        </div>
+        <div class="car-item">
+          <div class="lock-wrap">
+            <svg id="icon-lock" width="44" height="44" viewBox="0 0 44 44">
+              <rect x="11" y="20" width="22" height="17" rx="3" fill="#1E2C52"/>
+              <path d="M15 20 V15 A7 7 0 0 1 29 15 V20" fill="none" stroke="#1E2C52" stroke-width="3"/>
+              <circle cx="22" cy="28" r="3" fill="#5C6E9E"/>
+            </svg>
+          </div>
+          <div class="car-meta">
+            <span class="car-name">??? 锁定</span>
+            <div class="car-row2">
+              <span class="car-pwr">达到 LV 50 解锁</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="center">
+        <div class="display">
+          <div class="disp-head">
+            <span class="disp-name">VECTRA GT-R</span>
+            <div class="disp-class"><span class="disp-class-txt">CLASS S</span></div>
+          </div>
+          <div class="disp-stage">
+            <svg id="icon-car-display" width="560" height="220" viewBox="0 0 560 220">
+              <path d="M30 150 L110 150 L160 96 L340 80 L450 100 L530 142 L530 160 L30 160 Z" fill="#10204A" stroke="#00E5FF" stroke-width="3"/>
+              <path d="M170 100 L320 88 L420 104 L378 130 L196 134 Z" fill="#0A1733" stroke="#00E5FF" stroke-width="2"/>
+              <circle cx="158" cy="162" r="32" fill="#060B1A" stroke="#FF2D7E" stroke-width="6"/>
+              <circle cx="430" cy="162" r="32" fill="#060B1A" stroke="#FF2D7E" stroke-width="6"/>
+              <circle cx="158" cy="162" r="12" fill="#FF2D7E"/>
+              <circle cx="430" cy="162" r="12" fill="#FF2D7E"/>
+              <path d="M530 142 L552 136 L552 152 L530 158 Z" fill="#FFE100"/>
+            </svg>
+          </div>
+        </div>
+        <div class="tune-row">
+          <div class="tune-btn upgrade">
+            <div class="tune-icon dark">
+              <svg id="icon-wrench" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M26 6 A10 10 0 0 0 14 18 L6 26 L14 34 L22 26 A10 10 0 0 0 34 14 L28 14 L24 10 Z" fill="none" stroke="#052230" stroke-width="3"/>
+              </svg>
+            </div>
+            <div class="tune-txt">
+              <span class="tune-title dark">UPGRADE</span>
+              <span class="tune-desc dark">提升整车性能</span>
+            </div>
+          </div>
+          <div class="tune-btn paint">
+            <div class="tune-icon lite">
+              <svg id="icon-paint" width="40" height="40" viewBox="0 0 40 40">
+                <rect x="8" y="6" width="20" height="16" rx="3" fill="none" stroke="#FFE100" stroke-width="3"/>
+                <path d="M28 12 H34 V22 H26 V30 A3 3 0 0 1 20 30 V22" fill="none" stroke="#FFE100" stroke-width="3"/>
+              </svg>
+            </div>
+            <div class="tune-txt">
+              <span class="tune-title lite">PAINT</span>
+              <span class="tune-desc lite">涂装 / 贴纸</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <span class="stats-title">PERFORMANCE</span>
+        <span class="stats-sub">总战力 1,840 · 可升级 +220</span>
+
+        <div class="stat-block">
+          <div class="stat-head">
+            <div class="stat-label-row">
+              <div class="stat-dot cyan"></div>
+              <span class="stat-label">SPEED</span>
+            </div>
+            <span class="stat-num">92</span>
+          </div>
+          <div class="bar"><div class="bar-fill cyan bf-92"></div></div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-head">
+            <div class="stat-label-row">
+              <div class="stat-dot pink"></div>
+              <span class="stat-label">ACCEL</span>
+            </div>
+            <span class="stat-num">80</span>
+          </div>
+          <div class="bar"><div class="bar-fill pink bf-80"></div></div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-head">
+            <div class="stat-label-row">
+              <div class="stat-dot yellow"></div>
+              <span class="stat-label">HANDLING</span>
+            </div>
+            <span class="stat-num">68</span>
+          </div>
+          <div class="bar"><div class="bar-fill yellow bf-68"></div></div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-head">
+            <div class="stat-label-row">
+              <div class="stat-dot purple"></div>
+              <span class="stat-label">NITRO</span>
+            </div>
+            <span class="stat-num">74</span>
+          </div>
+          <div class="bar"><div class="bar-fill purple bf-74"></div></div>
+        </div>
+
+        <div class="upgrade-hint">
+          <div class="hint-icon">
+            <svg id="icon-bulb" width="30" height="30" viewBox="0 0 30 30">
+              <circle cx="15" cy="12" r="8" fill="none" stroke="#FFE100" stroke-width="2.5"/>
+              <path d="M11 22 H19 M12 26 H18" stroke="#FFE100" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="hint-txt">
+            <span class="hint-title">推荐:升级涡轮 II</span>
+            <span class="hint-desc">花费 12,000 金币,SPEED +6</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #0C111B;
+  --bg1: #141C2B;
+  --panel: #1B2536;
+  --panel2: #243047;
+  --line: #2E3D58;
+  --ember: #FF6A2B;
+  --ember-d: #C8420F;
+  --blue: #38C6FF;
+  --blue-d: #1A8FC4;
+  --red: #FF3B4E;
+  --red-d: #B01F2E;
+  --gold: #FFC24B;
+  --text: #E8EEFA;
+  --text-dim: #7E8DAB;
+  --green: #4BE08A;
+  --rage: #B86BFF;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--bg0);
+  padding: 44px 52px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ---------- top HUD ---------- */
+.hud-top { flex-direction: row; align-items: flex-start; justify-content: space-between; min-height: 150px; }
+
+.hud-left { flex-direction: row; align-items: center; min-height: 110px; }
+.portrait {
+  width: 110px; height: 110px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--blue);
+  align-items: center; justify-content: center;
+  margin-right: 20px;
+}
+.bars { flex-direction: column; justify-content: center; width: 440px; }
+.bar-label-row { flex-direction: row; align-items: center; justify-content: space-between; height: 30px; margin-bottom: 6px; }
+.bar-label { font-size: 24px; min-height: 30px; color: var(--text); font-weight: bold; white-space: normal; }
+.bar-val { font-size: 24px; min-height: 30px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.hp-track { height: 34px; background-color: var(--bg1); border-width: 3px; border-color: var(--line); margin-bottom: 14px; }
+.hp-fill { height: 28px; background-color: var(--red); }
+.rage-track { height: 24px; background-color: var(--bg1); border-width: 3px; border-color: var(--line); }
+.rage-fill { height: 18px; background-color: var(--rage); }
+
+.hud-mid { flex-direction: column; align-items: center; min-width: 160px; }
+.combo-num { font-size: 88px; color: var(--ember); font-weight: bold; white-space: normal; }
+.combo-lbl { font-size: 30px; min-height: 38px; color: var(--gold); font-weight: bold; white-space: normal; margin-top: -6px; }
+
+.hud-right { flex-direction: row; align-items: flex-start; min-height: 150px; }
+.minimap {
+  width: 200px; height: 150px;
+  background-color: var(--bg1);
+  border-width: 4px; border-color: var(--line);
+  margin-right: 20px;
+  align-items: center; justify-content: center;
+}
+.mm-dot { width: 22px; height: 22px; background-color: var(--blue); }
+.mm-enemy1 { width: 16px; height: 16px; background-color: var(--red); margin-left: 60px; margin-top: -40px; }
+.pause {
+  width: 96px; height: 96px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  align-items: center; justify-content: center;
+}
+
+/* ---------- bottom controls ---------- */
+.controls { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+
+.joystick {
+  width: 300px; height: 300px;
+  border-radius: 150px;
+  background-color: var(--panel);
+  border-width: 5px; border-color: var(--line);
+  align-items: center; justify-content: center;
+}
+.joy-knob {
+  width: 130px; height: 130px;
+  border-radius: 65px;
+  background-color: var(--panel2);
+  border-width: 4px; border-color: var(--blue);
+  align-items: center; justify-content: center;
+}
+
+.skills { flex-direction: row; align-items: flex-end; }
+.skill-btn {
+  width: 130px; height: 130px;
+  border-radius: 65px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.skill-cd { font-size: 36px; min-height: 44px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.attack-btn {
+  width: 220px; height: 220px;
+  border-radius: 110px;
+  background-color: var(--ember);
+  border-width: 7px; border-color: var(--ember-d);
+  align-items: center; justify-content: center;
+}
+.attack-col { flex-direction: column; align-items: center; justify-content: center; }
+.attack-lbl { font-size: 34px; min-height: 42px; color: #2A1003; font-weight: bold; white-space: normal; margin-top: 6px; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="hud-top">
+      <div class="hud-left">
+        <div class="portrait">
+          <svg id="icon-port" width="68" height="68" viewBox="0 0 68 68">
+            <circle cx="34" cy="24" r="14" fill="#38C6FF"/>
+            <path d="M12 58 C12 44 24 40 34 40 C44 40 56 44 56 58 Z" fill="#38C6FF"/>
+          </svg>
+        </div>
+        <div class="bars">
+          <div class="bar-label-row">
+            <span class="bar-label">霜刃·凯尔</span>
+            <span class="bar-val">7,200 / 7,200</span>
+          </div>
+          <div class="hp-track"><div class="hp-fill" style="width:100%"></div></div>
+          <div class="bar-label-row">
+            <span class="bar-label">怒气 RAGE</span>
+            <span class="bar-val">76%</span>
+          </div>
+          <div class="rage-track"><div class="rage-fill" style="width:76%"></div></div>
+        </div>
+      </div>
+
+      <div class="hud-mid">
+        <span class="combo-num">x18</span>
+        <span class="combo-lbl">COMBO!</span>
+      </div>
+
+      <div class="hud-right">
+        <div class="minimap">
+          <div class="mm-dot"></div>
+          <div class="mm-enemy1"></div>
+        </div>
+        <div class="pause">
+          <svg id="icon-pause" width="44" height="44" viewBox="0 0 44 44">
+            <rect x="11" y="9" width="9" height="26" fill="#7E8DAB"/>
+            <rect x="24" y="9" width="9" height="26" fill="#7E8DAB"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="joystick">
+        <div class="joy-knob">
+          <svg id="icon-joy" width="60" height="60" viewBox="0 0 60 60">
+            <path d="M30 8 L40 20 L20 20 Z" fill="#38C6FF"/>
+            <path d="M30 52 L40 40 L20 40 Z" fill="#38C6FF"/>
+            <path d="M8 30 L20 40 L20 20 Z" fill="#38C6FF"/>
+            <path d="M52 30 L40 40 L40 20 Z" fill="#38C6FF"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="skills">
+        <div class="skill-btn">
+          <svg id="icon-sk1" width="64" height="64" viewBox="0 0 64 64">
+            <path d="M44 10 L28 32 L38 32 L18 54 L30 34 L20 34 Z" fill="#B86BFF"/>
+          </svg>
+        </div>
+        <div class="skill-btn">
+          <span class="skill-cd">3s</span>
+        </div>
+        <div class="skill-btn">
+          <svg id="icon-sk3" width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="18" fill="none" stroke="#4BE08A" stroke-width="6"/>
+            <path d="M32 18 L32 32 L42 40" stroke="#4BE08A" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="attack-btn">
+          <div class="attack-col">
+            <svg id="icon-atk" width="80" height="80" viewBox="0 0 80 80">
+              <path d="M56 12 L34 38 L44 38 L20 68 L34 40 L24 40 Z" fill="#2A1003"/>
+            </svg>
+            <span class="attack-lbl">攻击</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

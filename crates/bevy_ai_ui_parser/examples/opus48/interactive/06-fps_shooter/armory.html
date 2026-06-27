@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0A0F14;
+  flex-direction: column;
+}
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  height: 78px;
+  padding: 0 36px;
+  background-color: #0D141B;
+  border-bottom-width: 2px;
+  border-bottom-color: #16222B;
+}
+.back-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-right: 18px;
+  background-color: #101A22;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+}
+.back-icon { width: 26px; height: 26px; }
+.page-title {
+  font-size: 28px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+  letter-spacing: 4px;
+}
+.title-spacer { flex-grow: 1; }
+.tab-bar { flex-direction: row; }
+.seg {
+  flex-direction: row;
+  height: 52px;
+  background-color: #0E161D;
+  border-radius: 8px;
+  padding: 5px;
+  border-width: 1px;
+  border-color: #1E2E39;
+}
+.seg-btn {
+  width: 130px;
+  height: 42px;
+  background-color: #00000000;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 15px;
+  color: #8AA0AC;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+}
+.seg-btn.is-active {
+  background-color: #14323A;
+  color: #2DE2C8;
+  border-width: 1px;
+  border-color: #2DE2C8;
+}
+
+.body {
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 24px 36px;
+}
+
+/* left weapon list */
+.list-col {
+  width: 380px;
+  margin-right: 26px;
+  flex-direction: column;
+}
+.list-head {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.list-head-title { font-size: 16px; color: #6E8794; letter-spacing: 3px; }
+.list-head-count { font-size: 14px; color: #2DE2C8; }
+.weapon-row {
+  flex-direction: row;
+  align-items: center;
+  height: 92px;
+  margin-bottom: 12px;
+  padding: 14px;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 9px;
+}
+.weapon-row-active {
+  border-color: #2DE2C8;
+  background-color: #102229;
+}
+.weapon-thumb {
+  width: 88px;
+  height: 56px;
+  margin-right: 16px;
+  background-color: #0A1218;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.weapon-info { flex-direction: column; flex-grow: 1; }
+.weapon-name { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+.weapon-class { font-size: 13px; color: #6E8794; margin-top: 6px; letter-spacing: 2px; }
+.weapon-badge {
+  width: 30px;
+  height: 22px;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+}
+.badge-leg { background-color: #FF7A2D; }
+.badge-epic { background-color: #C18BFF; }
+.badge-rare { background-color: #2DE2C8; }
+.badge-com { background-color: #3A4A55; }
+.weapon-badge-txt { font-size: 12px; color: #0A0F14; -unity-font-style: bold; }
+
+/* center selected weapon display */
+.display-col {
+  flex-grow: 1;
+  flex-direction: column;
+  margin-right: 26px;
+}
+.display-card {
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 26px;
+}
+.display-head { flex-direction: row; align-items: center; justify-content: space-between; }
+.display-name-wrap { flex-direction: column; }
+.display-name { font-size: 38px; color: #FFFFFF; -unity-font-style: bold; }
+.display-tagline { font-size: 15px; color: #2DE2C8; letter-spacing: 3px; margin-top: 6px; }
+.rarity-pill {
+  height: 32px;
+  padding: 0 16px;
+  background-color: #FF7A2D;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.rarity-pill-txt { font-size: 14px; color: #0A0F14; -unity-font-style: bold; letter-spacing: 2px; }
+
+.viewport {
+  flex-grow: 1;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #0A1218;
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: #16222B;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.viewport-gun { width: 360px; height: 130px; }
+.viewport-tag { font-size: 13px; color: #455A66; letter-spacing: 4px; margin-top: 18px; }
+
+.skins-row { flex-direction: column; }
+.skins-title { font-size: 14px; color: #6E8794; letter-spacing: 3px; margin-bottom: 12px; }
+.skins-list { flex-direction: row; }
+.skin-chip {
+  width: 96px;
+  height: 64px;
+  margin-right: 12px;
+  background-color: #0A1218;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+}
+.skin-chip-active { border-color: #2DE2C8; border-width: 2px; }
+.skin-swatch { width: 56px; height: 34px; border-radius: 4px; }
+.swatch-1 { background-color: #2DE2C8; }
+.swatch-2 { background-color: #FF7A2D; }
+.swatch-3 { background-color: #C18BFF; }
+.swatch-4 { background-color: #3A4A55; }
+.skin-chip-lock { width: 96px; height: 64px; margin-right: 0; }
+
+/* right attachments + stats */
+.right-col {
+  width: 420px;
+  flex-direction: column;
+}
+.panel {
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+.panel-title { font-size: 16px; color: #6E8794; letter-spacing: 3px; margin-bottom: 16px; }
+.attach-slot {
+  flex-direction: row;
+  align-items: center;
+  height: 64px;
+  margin-bottom: 10px;
+  padding: 0 14px;
+  background-color: #0A1218;
+  border-width: 1px;
+  border-color: #16222B;
+  border-radius: 8px;
+}
+.attach-slot-equipped { border-left-width: 3px; border-left-color: #2DE2C8; }
+.attach-slot-empty { border-left-width: 3px; border-left-color: #3A4A55; }
+.attach-icon {
+  width: 38px;
+  height: 38px;
+  margin-right: 14px;
+}
+.attach-info { flex-direction: column; flex-grow: 1; }
+.attach-kind { font-size: 12px; color: #6E8794; letter-spacing: 2px; }
+.attach-name { font-size: 17px; color: #FFFFFF; margin-top: 4px; -unity-font-style: bold; }
+.attach-name-empty { color: #455A66; -unity-font-style: normal; }
+.attach-arrow { width: 20px; height: 20px; }
+
+.stat-line { flex-direction: column; margin-bottom: 14px; }
+.stat-line-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+.stat-line-key { font-size: 14px; color: #C4D2DA; letter-spacing: 1px; }
+.stat-line-val { font-size: 14px; color: #2DE2C8; -unity-font-style: bold; }
+.bar {
+  flex-direction: row;
+  width: 100%;
+  height: 10px;
+  background-color: #0A1218;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.bar-fill { height: 8px; border-radius: 5px; background-color: #2DE2C8; }
+.fill-dmg { width: 78%; }
+.fill-rof { width: 64%; }
+.fill-rng { width: 52%; }
+.fill-rec { width: 70%; background-color: #FF7A2D; }
+.fill-mob { width: 58%; }
+
+.equip-btn {
+  height: 64px;
+  background-color: #2DE2C8;
+  border-radius: 9px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 22px;
+  color: #0A0F14;
+  -unity-font-style: bold;
+  letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="topbar">
+      <button class="back-btn">
+        <svg id="icon-back-armory" class="back-icon" width="26" height="26" viewBox="0 0 26 26">
+          <path d="M16 5l-8 8 8 8" stroke="#2DE2C8" stroke-width="2.5" fill="none"/>
+        </svg>
+      </button>
+      <span class="page-title">ARMORY</span>
+      <div class="title-spacer"></div>
+      <div class="tab-bar">
+        <div class="seg">
+          <button class="seg-btn is-active">PRIMARY</button>
+          <button class="seg-btn">SECONDARY</button>
+          <button class="seg-btn">MELEE</button>
+          <button class="seg-btn">GEAR</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="list-col">
+        <div class="list-head">
+          <span class="list-head-title">ASSAULT RIFLES</span>
+          <span class="list-head-count">12 OWNED</span>
+        </div>
+
+        <button class="weapon-row weapon-row-active">
+          <div class="weapon-thumb">
+            <svg id="icon-gun-ar1" width="72" height="40" viewBox="0 0 72 40">
+              <path d="M4 18h44l8-4h8v6h-6l-2 6H30l-2 6h-8l-2-6H4z" fill="#16222B" stroke="#2DE2C8" stroke-width="1.5"/>
+              <path d="M22 24v8" stroke="#2DE2C8" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="weapon-info">
+            <span class="weapon-name">KR-7 PHANTOM</span>
+            <span class="weapon-class">ASSAULT RIFLE</span>
+          </div>
+          <div class="weapon-badge badge-leg"><span class="weapon-badge-txt">L</span></div>
+        </button>
+
+        <button class="weapon-row">
+          <div class="weapon-thumb">
+            <svg id="icon-gun-ar2" width="72" height="40" viewBox="0 0 72 40">
+              <path d="M4 18h46l6-3h8v6h-6l-2 5H28l-2 6h-7l-2-6H4z" fill="#16222B" stroke="#3A4A55" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="weapon-info">
+            <span class="weapon-name">VX-90 STORM</span>
+            <span class="weapon-class">ASSAULT RIFLE</span>
+          </div>
+          <div class="weapon-badge badge-epic"><span class="weapon-badge-txt">E</span></div>
+        </button>
+
+        <button class="weapon-row">
+          <div class="weapon-thumb">
+            <svg id="icon-gun-ar3" width="72" height="40" viewBox="0 0 72 40">
+              <path d="M4 18h48l4-2h8v6h-6l-2 5H26l-2 6h-7l-2-6H4z" fill="#16222B" stroke="#3A4A55" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="weapon-info">
+            <span class="weapon-name">M4 TACTICAL</span>
+            <span class="weapon-class">ASSAULT RIFLE</span>
+          </div>
+          <div class="weapon-badge badge-rare"><span class="weapon-badge-txt">R</span></div>
+        </button>
+
+        <button class="weapon-row">
+          <div class="weapon-thumb">
+            <svg id="icon-gun-ar4" width="72" height="40" viewBox="0 0 72 40">
+              <path d="M4 18h46l6-3h8v6h-6l-3 6H27l-2 6h-7l-2-6H4z" fill="#16222B" stroke="#3A4A55" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="weapon-info">
+            <span class="weapon-name">AK-74 RUST</span>
+            <span class="weapon-class">ASSAULT RIFLE</span>
+          </div>
+          <div class="weapon-badge badge-com"><span class="weapon-badge-txt">C</span></div>
+        </button>
+
+        <button class="weapon-row">
+          <div class="weapon-thumb">
+            <svg id="icon-gun-ar5" width="72" height="40" viewBox="0 0 72 40">
+              <path d="M4 18h44l8-4h8v6h-6l-2 6H30l-2 6h-8l-2-6H4z" fill="#16222B" stroke="#3A4A55" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="weapon-info">
+            <span class="weapon-name">SCAR-H VIPER</span>
+            <span class="weapon-class">ASSAULT RIFLE</span>
+          </div>
+          <div class="weapon-badge badge-rare"><span class="weapon-badge-txt">R</span></div>
+        </button>
+      </div>
+
+      <div class="display-col">
+        <div class="display-card">
+          <div class="display-head">
+            <div class="display-name-wrap">
+              <span class="display-name">KR-7 PHANTOM</span>
+              <span class="display-tagline">PRECISION · FULL AUTO · 30 RND</span>
+            </div>
+            <div class="rarity-pill"><span class="rarity-pill-txt">LEGENDARY</span></div>
+          </div>
+
+          <div class="viewport">
+            <svg id="icon-viewport-gun" class="viewport-gun" width="360" height="130" viewBox="0 0 360 130">
+              <path d="M20 60h200l40-22h60v28h-26l-8 30H150l-10 26H92l-10-26H20z" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+              <path d="M110 96v22" stroke="#2DE2C8" stroke-width="3"/>
+              <path d="M232 60h54" stroke="#2DE2C8" stroke-width="2"/>
+              <circle cx="300" cy="52" r="6" fill="#FF7A2D"/>
+              <path d="M40 60h40" stroke="#FF7A2D" stroke-width="2"/>
+            </svg>
+            <span class="viewport-tag">3D INSPECT — DRAG TO ROTATE</span>
+          </div>
+
+          <div class="skins-row">
+            <span class="skins-title">WEAPON SKINS</span>
+            <div class="skins-list">
+              <div class="skin-chip skin-chip-active"><div class="skin-swatch swatch-1"></div></div>
+              <div class="skin-chip"><div class="skin-swatch swatch-2"></div></div>
+              <div class="skin-chip"><div class="skin-swatch swatch-3"></div></div>
+              <div class="skin-chip"><div class="skin-swatch swatch-4"></div></div>
+              <div class="skin-chip skin-chip-lock">
+                <svg id="icon-skin-lock" width="30" height="30" viewBox="0 0 30 30">
+                  <path d="M8 14h14v11H8z" fill="#16222B" stroke="#455A66" stroke-width="2"/>
+                  <path d="M11 14v-3a4 4 0 018 0v3" fill="none" stroke="#455A66" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="panel">
+          <span class="panel-title">ATTACHMENTS</span>
+          <div class="attach-slot attach-slot-equipped">
+            <svg id="icon-attach-optic" class="attach-icon" width="38" height="38" viewBox="0 0 38 38">
+              <rect x="8" y="12" width="22" height="14" rx="2" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+              <circle cx="19" cy="19" r="4" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+            </svg>
+            <div class="attach-info">
+              <span class="attach-kind">OPTIC</span>
+              <span class="attach-name">RED DOT 2.0X</span>
+            </div>
+            <svg id="icon-attach-arrow-1" class="attach-arrow" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M7 4l7 6-7 6" stroke="#6E8794" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+
+          <div class="attach-slot attach-slot-equipped">
+            <svg id="icon-attach-barrel" class="attach-icon" width="38" height="38" viewBox="0 0 38 38">
+              <rect x="6" y="15" width="26" height="8" rx="2" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+              <path d="M28 17h4v4h-4z" fill="#2DE2C8"/>
+            </svg>
+            <div class="attach-info">
+              <span class="attach-kind">BARREL</span>
+              <span class="attach-name">LONG SUPPRESSOR</span>
+            </div>
+            <svg id="icon-attach-arrow-2" class="attach-arrow" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M7 4l7 6-7 6" stroke="#6E8794" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+
+          <div class="attach-slot attach-slot-equipped">
+            <svg id="icon-attach-mag" class="attach-icon" width="38" height="38" viewBox="0 0 38 38">
+              <path d="M12 10h14v8l-2 12h-10l-2-12z" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+            </svg>
+            <div class="attach-info">
+              <span class="attach-kind">MAGAZINE</span>
+              <span class="attach-name">EXTENDED 45 RND</span>
+            </div>
+            <svg id="icon-attach-arrow-3" class="attach-arrow" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M7 4l7 6-7 6" stroke="#6E8794" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+
+          <div class="attach-slot attach-slot-empty">
+            <svg id="icon-attach-grip" class="attach-icon" width="38" height="38" viewBox="0 0 38 38">
+              <path d="M14 10h10v8l-3 12h-4l-3-12z" fill="#0A1218" stroke="#455A66" stroke-width="2"/>
+            </svg>
+            <div class="attach-info">
+              <span class="attach-kind">UNDERBARREL</span>
+              <span class="attach-name attach-name-empty">EMPTY SLOT</span>
+            </div>
+            <svg id="icon-attach-arrow-4" class="attach-arrow" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M10 5v10M5 10h10" stroke="#455A66" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="panel-title">WEAPON STATS</span>
+          <div class="stat-line">
+            <div class="stat-line-head">
+              <span class="stat-line-key">DAMAGE</span>
+              <span class="stat-line-val">78</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-dmg"></div></div>
+          </div>
+          <div class="stat-line">
+            <div class="stat-line-head">
+              <span class="stat-line-key">FIRE RATE</span>
+              <span class="stat-line-val">64</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-rof"></div></div>
+          </div>
+          <div class="stat-line">
+            <div class="stat-line-head">
+              <span class="stat-line-key">RANGE</span>
+              <span class="stat-line-val">52</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-rng"></div></div>
+          </div>
+          <div class="stat-line">
+            <div class="stat-line-head">
+              <span class="stat-line-key">RECOIL CONTROL</span>
+              <span class="stat-line-val">70</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-rec"></div></div>
+          </div>
+          <div class="stat-line">
+            <div class="stat-line-head">
+              <span class="stat-line-key">MOBILITY</span>
+              <span class="stat-line-val">58</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-mob"></div></div>
+          </div>
+        </div>
+
+        <button class="equip-btn">EQUIP LOADOUT</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

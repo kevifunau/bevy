@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "恐怖生存逃脱游戏 UI 套件:废弃医院题材,低亮度压抑氛围,共6页(标题/角色备战/游戏内HUD/背包线索/结算/设置)",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index", "role": "title / main menu" },
+    { "id": "prep", "role": "character & loadout preparation" },
+    { "id": "hud", "role": "in-game heads-up display" },
+    { "id": "backpack", "role": "backpack & clues collection" },
+    { "id": "result", "role": "escape result / outcome" },
+    { "id": "settings", "role": "settings & options" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "stage-with-side-panels",
+    "mood": "abandoned-asylum-dread",
+    "accentFamily": "sickly-clinical-cyan",
+    "densityProfile": "tense-sparse"
+  },
+  "inputControls": [
+    "button",
+    "toggle.switch",
+    "slider.range",
+    "segmented.chooser",
+    "progress.bar",
+    "picker"
+  ]
+}

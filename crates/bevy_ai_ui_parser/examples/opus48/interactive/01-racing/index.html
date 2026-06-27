@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  flex-direction: column;
+  background-color: #070B18;
+  padding: 0;
+}
+
+/* top resource bar */
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1920px;
+  height: 92px;
+  padding: 0 48px;
+  background-color: #0C1226;
+  border-bottom-width: 2px;
+  border-bottom-color: #16203F;
+}
+.brand-row { flex-direction: row; align-items: center; }
+.brand-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background-color: #101A36;
+  border-width: 2px;
+  border-color: #00E5FF;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.brand-text { flex-direction: column; justify-content: center; }
+.brand-name { font-size: 30px; color: #FFFFFF; font-weight: bold; letter-spacing: 4px; }
+.brand-sub { font-size: 14px; color: #5C6E9E; letter-spacing: 6px; }
+
+.res-row { flex-direction: row; align-items: center; }
+.res-pill {
+  flex-direction: row;
+  align-items: center;
+  height: 52px;
+  padding: 0 18px;
+  margin-left: 14px;
+  border-radius: 26px;
+  background-color: #101A36;
+  border-width: 1px;
+  border-color: #1E2C52;
+}
+.res-icon { margin-right: 10px; align-items: center; justify-content: center; }
+.res-val { font-size: 22px; color: #FFFFFF; font-weight: bold; }
+.res-add {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  margin-left: 12px;
+  background-color: #00E5FF;
+  align-items: center;
+  justify-content: center;
+}
+
+/* body */
+.body {
+  flex-direction: row;
+  width: 1920px;
+  height: 988px;
+  padding: 40px 48px;
+}
+
+/* left column */
+.left {
+  width: 560px;
+  height: 908px;
+  margin-right: 36px;
+  flex-direction: column;
+}
+.player-card {
+  width: 560px;
+  height: 300px;
+  background-color: #0E1730;
+  border-radius: 22px;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 28px;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 24px;
+  background-color: #10204A;
+  border-width: 3px;
+  border-color: #FF2D7E;
+  align-items: center;
+  justify-content: center;
+  margin-right: 26px;
+}
+.player-info { flex-direction: column; justify-content: center; width: 320px; }
+.player-name { font-size: 34px; color: #FFFFFF; font-weight: bold; margin-bottom: 6px; }
+.player-tag { font-size: 16px; color: #00E5FF; letter-spacing: 2px; margin-bottom: 18px; }
+.xp-head { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.xp-lv { font-size: 16px; color: #9FB0DE; }
+.xp-num { font-size: 14px; color: #5C6E9E; }
+.bar {
+  flex-direction: row;
+  width: 320px;
+  height: 14px;
+  background-color: #0A1024;
+  border-radius: 7px;
+}
+.bar-fill {
+  height: 14px;
+  width: 224px;
+  background-color: #00E5FF;
+  border-radius: 7px;
+}
+
+.secondary { flex-direction: column; width: 560px; height: 580px; }
+.sec-row { flex-direction: row; width: 560px; height: 176px; margin-bottom: 26px; }
+.sec-card {
+  width: 267px;
+  height: 176px;
+  background-color: #0E1730;
+  border-radius: 20px;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 22px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sec-card.garage { border-color: #2A3B6B; }
+.sec-card.events { border-color: #2A3B6B; }
+.sec-card.shop { border-color: #2A3B6B; }
+.sec-card.social { border-color: #2A3B6B; }
+.sec-mr { margin-right: 26px; }
+.sec-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background-color: #101F40;
+  align-items: center;
+  justify-content: center;
+}
+.sec-bottom { flex-direction: column; }
+.sec-title { font-size: 24px; color: #FFFFFF; font-weight: bold; margin-bottom: 4px; }
+.sec-desc { font-size: 14px; color: #6B7CA8; }
+.badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background-color: #FF2D7E;
+  align-items: center;
+  justify-content: center;
+}
+.badge-txt { font-size: 13px; color: #FFFFFF; font-weight: bold; }
+
+/* right column — featured car + start */
+.right {
+  width: 1180px;
+  height: 908px;
+  flex-direction: column;
+}
+.feature {
+  width: 1180px;
+  height: 600px;
+  background-color: #0B1430;
+  border-radius: 26px;
+  border-width: 2px;
+  border-color: #182648;
+  padding: 40px;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.feature-head { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+.feature-tagcol { flex-direction: column; }
+.feature-kicker { font-size: 16px; color: #FF2D7E; letter-spacing: 6px; margin-bottom: 10px; }
+.feature-name { font-size: 60px; color: #FFFFFF; font-weight: bold; letter-spacing: 4px; }
+.feature-class {
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  background-color: #101F40;
+  border-width: 1px;
+  border-color: #00E5FF;
+}
+.feature-class-txt { font-size: 18px; color: #00E5FF; font-weight: bold; letter-spacing: 2px; }
+
+.car-stage {
+  width: 1100px;
+  height: 320px;
+  border-radius: 20px;
+  background-color: #060B1A;
+  border-width: 1px;
+  border-color: #14203E;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-stats { flex-direction: row; align-items: center; }
+.stat-chip { flex-direction: column; width: 200px; margin-right: 40px; }
+.stat-name { font-size: 14px; color: #6B7CA8; letter-spacing: 2px; margin-bottom: 8px; }
+.stat-bar { flex-direction: row; width: 200px; height: 10px; background-color: #0A1024; border-radius: 5px; }
+.stat-on { height: 10px; border-radius: 5px; background-color: #00E5FF; }
+.stat-on.pink { background-color: #FF2D7E; }
+.stat-on.yellow { background-color: #FFE100; }
+.sf-90 { width: 180px; }
+.sf-78 { width: 156px; }
+.sf-66 { width: 132px; }
+
+/* start CTA */
+.cta-row { flex-direction: row; width: 1180px; height: 280px; }
+.start-btn {
+  width: 760px;
+  height: 280px;
+  margin-right: 28px;
+  border-radius: 26px;
+  background-color: #FF2D7E;
+  border-width: 2px;
+  border-color: #FF6BA6;
+  padding: 36px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.start-left { flex-direction: column; justify-content: center; }
+.start-kicker { font-size: 18px; color: #2A0A1A; letter-spacing: 6px; margin-bottom: 8px; font-weight: bold; }
+.start-title { font-size: 72px; color: #FFFFFF; font-weight: bold; letter-spacing: 6px; }
+.start-go {
+  width: 132px;
+  height: 132px;
+  border-radius: 66px;
+  background-color: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+}
+.side-stack { flex-direction: column; width: 392px; height: 280px; }
+.side-btn {
+  width: 392px;
+  height: 126px;
+  border-radius: 20px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #1E2C52;
+  padding: 24px;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.side-btn.daily { border-color: #FFE100; }
+.side-icon {
+  width: 78px;
+  height: 78px;
+  border-radius: 18px;
+  background-color: #101F40;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.side-txt { flex-direction: column; justify-content: center; }
+.side-title { font-size: 24px; color: #FFFFFF; font-weight: bold; margin-bottom: 4px; }
+.side-desc { font-size: 14px; color: #6B7CA8; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="topbar">
+      <div class="brand-row">
+        <div class="brand-mark">
+          <svg id="icon-brand-bolt" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M17 2 L6 17 L14 17 L12 28 L24 11 L15 11 Z" fill="#00E5FF"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">NEON RUSH</span>
+          <span class="brand-sub">NIGHT CIRCUIT</span>
+        </div>
+      </div>
+      <div class="res-row">
+        <div class="res-pill">
+          <div class="res-icon">
+            <svg id="icon-coin" width="26" height="26" viewBox="0 0 26 26">
+              <circle cx="13" cy="13" r="11" fill="#FFE100"/>
+              <circle cx="13" cy="13" r="7" fill="#0C1226"/>
+              <circle cx="13" cy="13" r="5" fill="#FFE100"/>
+            </svg>
+          </div>
+          <span class="res-val">128,400</span>
+          <div class="res-add">
+            <svg id="icon-plus-coin" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M10 4 V16 M4 10 H16" stroke="#0C1226" stroke-width="3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="res-pill">
+          <div class="res-icon">
+            <svg id="icon-gem" width="26" height="26" viewBox="0 0 26 26">
+              <path d="M6 3 H20 L24 10 L13 24 L2 10 Z" fill="#00E5FF"/>
+              <path d="M6 3 L13 10 L20 3 M2 10 H24" stroke="#0C1226" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <span class="res-val">3,260</span>
+          <div class="res-add">
+            <svg id="icon-plus-gem" width="20" height="20" viewBox="0 0 20 20">
+              <path d="M10 4 V16 M4 10 H16" stroke="#0C1226" stroke-width="3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="res-pill">
+          <div class="res-icon">
+            <svg id="icon-fuel" width="26" height="26" viewBox="0 0 26 26">
+              <rect x="5" y="4" width="12" height="18" rx="2" fill="#FF2D7E"/>
+              <rect x="7" y="7" width="8" height="6" fill="#0C1226"/>
+              <path d="M17 8 L21 10 V18 H18" stroke="#FF2D7E" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <span class="res-val">24 / 30</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <div class="left">
+        <div class="player-card">
+          <div class="avatar">
+            <svg id="icon-driver" width="74" height="74" viewBox="0 0 74 74">
+              <circle cx="37" cy="28" r="16" fill="#FF2D7E"/>
+              <path d="M12 66 C12 48 62 48 62 66 Z" fill="#FF2D7E"/>
+            </svg>
+          </div>
+          <div class="player-info">
+            <span class="player-name">RYO_X9</span>
+            <span class="player-tag">DIAMOND DRIVER</span>
+            <div class="xp-head">
+              <span class="xp-lv">LV 42</span>
+              <span class="xp-num">7,840 / 11,200 XP</span>
+            </div>
+            <div class="bar"><div class="bar-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="secondary">
+          <div class="sec-row">
+            <div class="sec-card garage sec-mr">
+              <div class="sec-icon">
+                <svg id="icon-garage" width="34" height="34" viewBox="0 0 34 34">
+                  <path d="M4 14 L17 5 L30 14 V30 H4 Z" fill="none" stroke="#00E5FF" stroke-width="2.5"/>
+                  <rect x="10" y="19" width="14" height="11" fill="#00E5FF"/>
+                </svg>
+              </div>
+              <div class="sec-bottom">
+                <span class="sec-title">GARAGE</span>
+                <span class="sec-desc">改装 / 升级你的座驾</span>
+              </div>
+            </div>
+            <div class="sec-card events">
+              <div class="badge"><span class="badge-txt">NEW</span></div>
+              <div class="sec-icon">
+                <svg id="icon-events" width="34" height="34" viewBox="0 0 34 34">
+                  <path d="M17 3 L21 12 L31 13 L23 20 L25 30 L17 25 L9 30 L11 20 L3 13 L13 12 Z" fill="#FFE100"/>
+                </svg>
+              </div>
+              <div class="sec-bottom">
+                <span class="sec-title">EVENTS</span>
+                <span class="sec-desc">限时锦标赛 进行中</span>
+              </div>
+            </div>
+          </div>
+          <div class="sec-row">
+            <div class="sec-card shop sec-mr">
+              <div class="sec-icon">
+                <svg id="icon-shop" width="34" height="34" viewBox="0 0 34 34">
+                  <path d="M5 11 H29 L27 30 H7 Z" fill="none" stroke="#FF2D7E" stroke-width="2.5"/>
+                  <path d="M11 11 V8 A6 6 0 0 1 23 8 V11" fill="none" stroke="#FF2D7E" stroke-width="2.5"/>
+                </svg>
+              </div>
+              <div class="sec-bottom">
+                <span class="sec-title">SHOP</span>
+                <span class="sec-desc">车辆 / 涂装 / 道具</span>
+              </div>
+            </div>
+            <div class="sec-card social">
+              <div class="sec-icon">
+                <svg id="icon-social" width="34" height="34" viewBox="0 0 34 34">
+                  <circle cx="12" cy="13" r="6" fill="#9B6BFF"/>
+                  <circle cx="24" cy="14" r="5" fill="#6B8BFF"/>
+                  <path d="M3 30 C3 21 21 21 21 30 Z" fill="#9B6BFF"/>
+                  <path d="M19 30 C19 23 31 23 31 30 Z" fill="#6B8BFF"/>
+                </svg>
+              </div>
+              <div class="sec-bottom">
+                <span class="sec-title">CREW</span>
+                <span class="sec-desc">车队 / 好友排行</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="feature">
+          <div class="feature-head">
+            <div class="feature-tagcol">
+              <span class="feature-kicker">CURRENT RIDE</span>
+              <span class="feature-name">VECTRA GT-R</span>
+            </div>
+            <div class="feature-class">
+              <span class="feature-class-txt">CLASS S</span>
+            </div>
+          </div>
+          <div class="car-stage">
+            <svg id="icon-car-hero" width="640" height="220" viewBox="0 0 640 220">
+              <path d="M40 150 L120 150 L170 96 L380 80 L500 100 L600 140 L600 160 L40 160 Z" fill="#10204A" stroke="#00E5FF" stroke-width="3"/>
+              <path d="M180 100 L360 88 L470 104 L420 130 L210 134 Z" fill="#0A1733" stroke="#00E5FF" stroke-width="2"/>
+              <circle cx="170" cy="162" r="34" fill="#060B1A" stroke="#FF2D7E" stroke-width="6"/>
+              <circle cx="480" cy="162" r="34" fill="#060B1A" stroke="#FF2D7E" stroke-width="6"/>
+              <circle cx="170" cy="162" r="14" fill="#FF2D7E"/>
+              <circle cx="480" cy="162" r="14" fill="#FF2D7E"/>
+              <path d="M600 140 L628 134 L628 150 L600 156 Z" fill="#FFE100"/>
+            </svg>
+          </div>
+          <div class="feature-stats">
+            <div class="stat-chip">
+              <span class="stat-name">TOP SPEED</span>
+              <div class="stat-bar"><div class="stat-on sf-90"></div></div>
+            </div>
+            <div class="stat-chip">
+              <span class="stat-name">ACCEL</span>
+              <div class="stat-bar"><div class="stat-on pink sf-78"></div></div>
+            </div>
+            <div class="stat-chip">
+              <span class="stat-name">HANDLING</span>
+              <div class="stat-bar"><div class="stat-on yellow sf-66"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <div class="start-btn">
+            <div class="start-left">
+              <span class="start-kicker">QUICK MATCH</span>
+              <span class="start-title">START RACE</span>
+            </div>
+            <div class="start-go">
+              <svg id="icon-play" width="64" height="64" viewBox="0 0 64 64">
+                <path d="M22 14 L50 32 L22 50 Z" fill="#FF2D7E"/>
+              </svg>
+            </div>
+          </div>
+          <div class="side-stack">
+            <div class="side-btn daily">
+              <div class="side-icon">
+                <svg id="icon-daily" width="40" height="40" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="none" stroke="#FFE100" stroke-width="3"/>
+                  <path d="M20 10 V20 L27 24" stroke="#FFE100" stroke-width="3" fill="none"/>
+                </svg>
+              </div>
+              <div class="side-txt">
+                <span class="side-title">DAILY RUN</span>
+                <span class="side-desc">领取今日奖励</span>
+              </div>
+            </div>
+            <div class="side-btn">
+              <div class="side-icon">
+                <svg id="icon-rank" width="40" height="40" viewBox="0 0 40 40">
+                  <rect x="6" y="22" width="7" height="12" fill="#00E5FF"/>
+                  <rect x="16" y="14" width="7" height="20" fill="#FF2D7E"/>
+                  <rect x="26" y="18" width="7" height="16" fill="#FFE100"/>
+                </svg>
+              </div>
+              <div class="side-txt">
+                <span class="side-title">RANKED</span>
+                <span class="side-desc">当前段位 #1,204</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

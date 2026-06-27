@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "第一人称射击竞技手游(FPS)UI 套件:大厅、军械库、战斗 HUD、结算、通行证/商店、设置,统一硬核科幻军事风。",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index", "role": "Lobby — player brand & rank, big start matchmaking entry, mode select, secondary entries (armory/shop/battlepass)." },
+    { "id": "armory", "role": "Armory/customize — weapon list, selected-weapon display slot, attachment slots + stat bars, skins." },
+    { "id": "hud", "role": "In-game HUD — hp/armor, ammo & reload, minimap, kill feed, crosshair, mobile FPS move/fire control zones." },
+    { "id": "result", "role": "Result — win/lose, personal KDA & score, team comparison, xp & currency earned, play again." },
+    { "id": "battlepass", "role": "Battlepass/shop — pass progress & tier rewards, shop weapons & skins, currency & bundles." },
+    { "id": "settings", "role": "Settings — sensitivity slider, music/sfx/voice, quality & framerate, key-layout entry, language, restore defaults." }
+  ],
+  "styleAxes": {
+    "mood": "硬核科幻军事:暗夜战术作战屏,冷峻、克制、信息密度高。",
+    "accent": "战术青橙双色:主青 #2DE2C8(科技读数)+ 警示橙 #FF7A2D(行动/危险),底色近黑 #0A0F14。",
+    "density": "高密度信息板:窄边框、细分割线、紧凑数据行,等宽数字读数。",
+    "shape": "锐利切角矩形为主、小圆角 6-10px,HUD 元件半透明叠层,统一 1-2px 描边。"
+  }
+}

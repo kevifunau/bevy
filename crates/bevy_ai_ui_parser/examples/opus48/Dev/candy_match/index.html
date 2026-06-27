@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #3A1858;
+  --bg1: #54237E;
+  --panel: #6B2E9E;
+  --panel2: #7E3AB5;
+  --line: #9B5BD0;
+  --pink: #FF6FB5;
+  --pink-d: #E0408F;
+  --yellow: #FFD24B;
+  --yellow-d: #E0A81C;
+  --mint: #4FE0C4;
+  --mint-d: #28B89E;
+  --blue: #5BB8FF;
+  --red: #FF6B7A;
+  --text: #FFF4FB;
+  --text-dim: #C9A8E0;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- top resources ---------- */
+.topbar { flex-direction: row; align-items: center; height: 96px; margin-bottom: 40px; }
+.res-chip {
+  flex-direction: row; align-items: center;
+  height: 96px;
+  background-color: var(--bg1);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  padding: 0 30px 0 14px;
+  margin-right: 24px;
+}
+.res-chip-last { margin-right: 0; height: 96px; }
+.res-ico { width: 56px; height: 56px; margin-right: 14px; }
+.res-tx { font-size: 38px; min-height: 46px; font-weight: bold; white-space: normal; }
+.res-tx-red { color: var(--red); }
+.res-tx-yellow { color: var(--yellow); }
+.spacer { flex-grow: 1; }
+.set-chip {
+  width: 96px; height: 96px;
+  background-color: var(--bg1);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center;
+}
+
+/* ---------- brand ---------- */
+.brand { flex-direction: column; align-items: center; margin-top: 40px; margin-bottom: 56px; }
+.brand-crest {
+  width: 220px; height: 220px;
+  background-color: var(--pink);
+  border-radius: 70px;
+  border-width: 6px; border-color: var(--yellow);
+  align-items: center; justify-content: center;
+  margin-bottom: 36px;
+}
+.logo1 { font-size: 116px; color: var(--yellow); font-weight: bold; white-space: normal; }
+.logo2 { font-size: 84px; color: var(--pink); font-weight: bold; white-space: normal; margin-top: -12px; }
+.brand-sub { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 18px; }
+
+/* ---------- menu ---------- */
+.menu { flex-direction: column; flex-grow: 1; justify-content: center; }
+.play {
+  flex-direction: column; align-items: center; justify-content: center;
+  height: 200px;
+  background-color: var(--mint);
+  border-radius: 48px;
+  border-width: 5px; border-color: var(--mint-d);
+  margin-bottom: 40px;
+}
+.play-tx { font-size: 64px; color: #064038; font-weight: bold; white-space: normal; }
+.play-sub { font-size: 28px; min-height: 34px; color: #0A5A4E; font-weight: bold; white-space: normal; margin-top: 6px; }
+.row2 { flex-direction: row; align-items: center; height: 150px; }
+.sbtn {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 150px;
+  border-radius: 40px;
+  border-width: 4px;
+  flex-grow: 1;
+}
+.sbtn-map { background-color: var(--panel); border-color: var(--pink); margin-right: 28px; }
+.sbtn-shop { background-color: var(--panel); border-color: var(--yellow); }
+.sbtn-ico {
+  width: 72px; height: 72px;
+  border-radius: 22px;
+  align-items: center; justify-content: center;
+  margin-right: 20px;
+}
+.ico-pink { background-color: var(--pink-d); }
+.ico-yellow { background-color: var(--yellow-d); }
+.sbtn-tx { font-size: 40px; color: var(--text); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="res-chip">
+        <svg id="icon-heart" class="res-ico" width="56" height="56" viewBox="0 0 56 56">
+          <path d="M28 48 C8 33 8 18 20 18 C25 18 28 22 28 22 C28 22 31 18 36 18 C48 18 48 33 28 48 Z" fill="#FF6B7A"/>
+        </svg>
+        <span class="res-tx res-tx-red">5</span>
+      </div>
+      <div class="res-chip res-chip-last">
+        <svg id="icon-coin" class="res-ico" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="22" fill="#FFD24B"/>
+          <circle cx="28" cy="28" r="14" fill="none" stroke="#E0A81C" stroke-width="4"/>
+        </svg>
+        <span class="res-tx res-tx-yellow">12,800</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="set-chip">
+        <svg id="icon-set" width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="9" fill="none" stroke="#C9A8E0" stroke-width="5"/>
+          <rect x="20" y="3" width="8" height="9" fill="#C9A8E0"/>
+          <rect x="20" y="36" width="8" height="9" fill="#C9A8E0"/>
+          <rect x="3" y="20" width="9" height="8" fill="#C9A8E0"/>
+          <rect x="36" y="20" width="9" height="8" fill="#C9A8E0"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="brand">
+      <div class="brand-crest">
+        <svg id="icon-crest" width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="42" cy="50" r="24" fill="#4FE0C4"/>
+          <circle cx="88" cy="50" r="24" fill="#5BB8FF"/>
+          <circle cx="65" cy="86" r="24" fill="#FFD24B"/>
+        </svg>
+      </div>
+      <span class="logo1">CANDY</span>
+      <span class="logo2">BLAST</span>
+      <span class="brand-sub">糖果消消乐 · 甜蜜大冒险</span>
+    </div>
+
+    <div class="menu">
+      <div class="play">
+        <span class="play-tx">开始游戏</span>
+        <span class="play-sub">第 47 关 · 草莓糖果园</span>
+      </div>
+      <div class="row2">
+        <div class="sbtn sbtn-map">
+          <div class="sbtn-ico ico-pink">
+            <svg id="icon-map" width="44" height="44" viewBox="0 0 44 44">
+              <path d="M22 6 C13 6 7 12 7 21 C7 32 22 38 22 38 C22 38 37 32 37 21 C37 12 31 6 22 6 Z" fill="#FFF4FB"/>
+              <circle cx="22" cy="20" r="7" fill="#6B2E9E"/>
+            </svg>
+          </div>
+          <span class="sbtn-tx">关卡</span>
+        </div>
+        <div class="sbtn sbtn-shop">
+          <div class="sbtn-ico ico-yellow">
+            <svg id="icon-shop" width="44" height="44" viewBox="0 0 44 44">
+              <path d="M10 14 L34 14 L31 36 L13 36 Z" fill="#FFF4FB"/>
+              <path d="M16 14 L18 7 L26 7 L28 14 Z" fill="#FFF4FB"/>
+            </svg>
+          </div>
+          <span class="sbtn-tx">商店</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

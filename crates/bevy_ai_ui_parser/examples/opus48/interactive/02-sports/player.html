@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0B1220;
+  flex-direction: column;
+}
+
+.header {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  height: 92px; padding: 0 48px;
+  background-color: #0E1626;
+  border-bottom-width: 2px; border-bottom-color: #1B2740;
+}
+.head-left { flex-direction: row; align-items: center; }
+.back-btn {
+  width: 56px; height: 56px; border-radius: 14px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+  align-items: center; justify-content: center; margin-right: 22px;
+}
+.page-title { font-size: 32px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.page-crumb { font-size: 15px; color: #6E7E9B; margin-top: 2px; letter-spacing: 1px; }
+.head-nav { flex-direction: row; align-items: center; }
+.nav-arrow {
+  width: 52px; height: 52px; border-radius: 12px; margin-left: 12px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+  align-items: center; justify-content: center;
+}
+
+.body { flex-direction: row; flex-grow: 1; padding: 32px 48px 36px 48px; }
+
+/* Left portrait card */
+.portrait-card {
+  width: 540px; height: 920px; margin-right: 32px;
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 36px; align-items: center;
+}
+.rating-tag {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 468px; height: 70px; margin-bottom: 24px;
+}
+.big-rating {
+  width: 96px; height: 96px; border-radius: 20px;
+  background-color: #26E07F; align-items: center; justify-content: center;
+}
+.big-rating-num { font-size: 52px; color: #04130A; -unity-font-style: bold; }
+.big-rating-lab { font-size: 12px; color: #04130A; letter-spacing: 1px; }
+.pos-badge {
+  width: 96px; height: 96px; border-radius: 20px;
+  background-color: #11203A; border-width: 2px; border-color: #FFC53D;
+  align-items: center; justify-content: center;
+}
+.pos-badge-num { font-size: 40px; color: #FFC53D; -unity-font-style: bold; }
+.pos-badge-lab { font-size: 14px; color: #9DB0D0; letter-spacing: 1px; }
+
+.portrait {
+  width: 320px; height: 360px; border-radius: 24px;
+  background-color: #11203A;
+  border-width: 2px; border-color: #25406B;
+  align-items: center; justify-content: flex-end;
+  overflow: hidden; margin-bottom: 24px;
+}
+.portrait-fig { margin-bottom: 0; }
+.player-name { font-size: 44px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; -unity-text-align: middle-center; }
+.player-fullname { font-size: 17px; color: #6E7E9B; margin-top: 6px; letter-spacing: 2px; -unity-text-align: middle-center; }
+.flag-row { flex-direction: row; align-items: center; margin-top: 16px; }
+.flag {
+  width: 32px; height: 22px; border-radius: 4px; margin-right: 12px;
+  background-color: #26E07F;
+}
+.flag-text { font-size: 16px; color: #9DB0D0; }
+.value-row {
+  flex-direction: row; align-items: center; justify-content: center;
+  margin-top: 26px;
+}
+.value-box {
+  align-items: center; padding: 0 26px;
+}
+.value-box-mid { border-left-width: 1px; border-right-width: 1px; border-color: #25406B; }
+.value-num { font-size: 30px; color: #FFC53D; -unity-font-style: bold; }
+.value-lab { font-size: 13px; color: #6E7E9B; margin-top: 4px; letter-spacing: 1px; }
+
+/* Right column */
+.right { flex-grow: 1; height: 920px; justify-content: space-between; }
+
+/* Ability card */
+.ability-card {
+  background-color: #0F1A2E; border-radius: 24px;
+  border-width: 2px; border-color: #1B2740; padding: 28px 32px;
+}
+.card-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.card-title-row { flex-direction: row; align-items: center; }
+.card-title { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; margin-left: 12px; }
+.avg-pill {
+  flex-direction: row; align-items: center;
+  height: 40px; padding: 0 18px; border-radius: 20px;
+  background-color: #143A2A; border-width: 1px; border-color: #26E07F;
+}
+.avg-pill-text { font-size: 17px; color: #26E07F; -unity-font-style: bold; }
+
+.ability-grid { flex-direction: row; }
+.ability-col { flex-grow: 1; }
+.ability-col-1 { margin-right: 40px; }
+.ab-row { margin-bottom: 20px; }
+.ab-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.ab-name { font-size: 18px; color: #9DB0D0; -unity-font-style: bold; letter-spacing: 1px; }
+.ab-val { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; }
+.bar { flex-direction: row; height: 14px; border-radius: 7px; background-color: #0B1220; }
+.bar-fill { height: 14px; border-radius: 7px; background-color: #26E07F; }
+.ab-pac { width: 91%; }
+.ab-sho { width: 84%; }
+.ab-pas { width: 79%; }
+.ab-dri { width: 88%; }
+.ab-def { width: 42%; background-color: #FFC53D; }
+.ab-phy { width: 71%; }
+
+/* Bottom row: training + contract */
+.bottom-row { flex-direction: row; height: 318px; }
+
+.training-card {
+  width: 670px; height: 318px; margin-right: 30px;
+  background-color: #0F1A2E; border-radius: 24px;
+  border-width: 2px; border-color: #1B2740; padding: 26px 28px;
+}
+.growth-bar-wrap { height: 50px; margin-top: 6px; margin-bottom: 24px; }
+.growth-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.growth-lab { font-size: 16px; color: #9DB0D0; }
+.growth-val { font-size: 16px; color: #FFC53D; -unity-font-style: bold; }
+.xp-bar { flex-direction: row; height: 18px; border-radius: 9px; background-color: #0B1220; }
+.xp-fill { height: 18px; width: 64%; border-radius: 9px; background-color: #FFC53D; }
+.train-grid { flex-direction: row; }
+.train-tile {
+  flex-grow: 1; height: 150px; margin-right: 16px;
+  background-color: #11203A; border-radius: 18px;
+  border-width: 1px; border-color: #25406B;
+  padding: 20px; justify-content: space-between;
+}
+.train-tile-last { margin-right: 0; }
+.train-tile-prime { border-color: #26E07F; background-color: #143A2A; }
+.train-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background-color: #0B1220; align-items: center; justify-content: center;
+}
+.train-name { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+.train-cost { font-size: 14px; color: #FFC53D; margin-top: 4px; }
+
+.contract-card {
+  flex-grow: 1; height: 318px;
+  background-color: #0F1A2E; border-radius: 24px;
+  border-width: 2px; border-color: #1B2740; padding: 26px 28px;
+}
+.status-pill {
+  flex-direction: row; align-items: center;
+  height: 36px; padding: 0 14px; border-radius: 18px;
+  background-color: #143A2A; border-width: 1px; border-color: #26E07F;
+}
+.status-pill-text { font-size: 15px; color: #26E07F; -unity-font-style: bold; margin-left: 8px; }
+.cinfo-row {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  height: 50px; border-bottom-width: 1px; border-bottom-color: #1B2740;
+}
+.cinfo-lab { font-size: 17px; color: #6E7E9B; }
+.cinfo-val { font-size: 19px; color: #FFFFFF; -unity-font-style: bold; }
+.cinfo-val-amber { color: #FFC53D; }
+.renew-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 60px; margin-top: 18px;
+  background-color: #26E07F; border-radius: 16px;
+}
+.renew-btn-text { font-size: 22px; color: #04130A; -unity-font-style: bold; margin-left: 12px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="header">
+      <div class="head-left">
+        <button class="back-btn">
+          <svg id="icon-back-player" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M17 5 L8 14 L17 23" stroke="#9DB0D0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="head-titles">
+          <div class="page-title">PLAYER PROFILE</div>
+          <div class="page-crumb">SQUAD · STARTING XI · #9</div>
+        </div>
+      </div>
+      <div class="head-nav">
+        <button class="nav-arrow">
+          <svg id="icon-prev-player" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15 4 L7 12 L15 20" stroke="#9DB0D0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="nav-arrow">
+          <svg id="icon-next-player" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M9 4 L17 12 L9 20" stroke="#9DB0D0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- Portrait card -->
+      <div class="portrait-card">
+        <div class="rating-tag">
+          <div class="big-rating">
+            <span class="big-rating-num">88</span>
+            <span class="big-rating-lab">OVERALL</span>
+          </div>
+          <div class="pos-badge">
+            <span class="pos-badge-num">ST</span>
+            <span class="pos-badge-lab">STRIKER</span>
+          </div>
+        </div>
+        <div class="portrait">
+          <svg id="icon-portrait-player" class="portrait-fig" width="240" height="300" viewBox="0 0 240 300">
+            <circle cx="120" cy="96" r="56" fill="#26E07F"/>
+            <path d="M28 300 C28 196 212 196 212 300 Z" fill="#26E07F"/>
+            <path d="M92 150 L120 178 L148 150 L168 168 L168 300 L72 300 L72 168 Z" fill="#1E8F57"/>
+          </svg>
+        </div>
+        <div class="player-name">CARVER</div>
+        <div class="player-fullname">MARCUS R. CARVER</div>
+        <div class="flag-row">
+          <div class="flag"></div>
+          <span class="flag-text">England · Age 28 · 188cm</span>
+        </div>
+        <div class="value-row">
+          <div class="value-box">
+            <span class="value-num">42M</span>
+            <span class="value-lab">VALUE</span>
+          </div>
+          <div class="value-box value-box-mid">
+            <span class="value-num">21</span>
+            <span class="value-lab">GOALS</span>
+          </div>
+          <div class="value-box">
+            <span class="value-num">8</span>
+            <span class="value-lab">ASSISTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="right">
+        <!-- Ability -->
+        <div class="ability-card">
+          <div class="card-head">
+            <div class="card-title-row">
+              <svg id="icon-ability-player" width="28" height="28" viewBox="0 0 28 28">
+                <path d="M14 3 L25 9 V19 L14 25 L3 19 V9 Z" fill="none" stroke="#26E07F" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M14 8 L20 11.5 V16 L14 19.5 L8 16 V11.5 Z" fill="#26E07F" opacity="0.5"/>
+              </svg>
+              <span class="card-title">ABILITY RATINGS</span>
+            </div>
+            <div class="avg-pill"><span class="avg-pill-text">AVG 75.8</span></div>
+          </div>
+          <div class="ability-grid">
+            <div class="ability-col ability-col-1">
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">PACE</span><span class="ab-val">91</span></div>
+                <div class="bar"><div class="bar-fill ab-pac"></div></div>
+              </div>
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">SHOOTING</span><span class="ab-val">84</span></div>
+                <div class="bar"><div class="bar-fill ab-sho"></div></div>
+              </div>
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">PASSING</span><span class="ab-val">79</span></div>
+                <div class="bar"><div class="bar-fill ab-pas"></div></div>
+              </div>
+            </div>
+            <div class="ability-col">
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">DRIBBLING</span><span class="ab-val">88</span></div>
+                <div class="bar"><div class="bar-fill ab-dri"></div></div>
+              </div>
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">DEFENDING</span><span class="ab-val">42</span></div>
+                <div class="bar"><div class="bar-fill ab-def"></div></div>
+              </div>
+              <div class="ab-row">
+                <div class="ab-top"><span class="ab-name">PHYSICAL</span><span class="ab-val">71</span></div>
+                <div class="bar"><div class="bar-fill ab-phy"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="bottom-row">
+          <!-- Training -->
+          <div class="training-card">
+            <div class="card-head">
+              <div class="card-title-row">
+                <svg id="icon-growth-player" width="28" height="28" viewBox="0 0 28 28">
+                  <path d="M4 22 L11 14 L16 18 L24 7" stroke="#FFC53D" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M18 7 H24 V13" stroke="#FFC53D" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="card-title">GROWTH &amp; TRAINING</span>
+              </div>
+            </div>
+            <div class="growth-bar-wrap">
+              <div class="growth-top">
+                <span class="growth-lab">Level 19 → 20</span>
+                <span class="growth-val">6,400 / 10,000 XP</span>
+              </div>
+              <div class="xp-bar"><div class="xp-fill"></div></div>
+            </div>
+            <div class="train-grid">
+              <button class="train-tile train-tile-prime">
+                <div class="train-icon">
+                  <svg id="icon-train-shoot" width="30" height="30" viewBox="0 0 30 30">
+                    <circle cx="15" cy="15" r="11" fill="none" stroke="#26E07F" stroke-width="2.2"/>
+                    <circle cx="15" cy="15" r="4" fill="#26E07F"/>
+                  </svg>
+                </div>
+                <div class="train-info">
+                  <div class="train-name">Finishing</div>
+                  <div class="train-cost">2 sessions · 800 coins</div>
+                </div>
+              </button>
+              <button class="train-tile">
+                <div class="train-icon">
+                  <svg id="icon-train-speed" width="30" height="30" viewBox="0 0 30 30">
+                    <path d="M16 3 L8 16 H14 L13 27 L22 12 H16 Z" fill="#FFC53D"/>
+                  </svg>
+                </div>
+                <div class="train-info">
+                  <div class="train-name">Sprint</div>
+                  <div class="train-cost">1 session · 500 coins</div>
+                </div>
+              </button>
+              <button class="train-tile train-tile-last">
+                <div class="train-icon">
+                  <svg id="icon-train-gym" width="30" height="30" viewBox="0 0 30 30">
+                    <path d="M5 11 V19 M25 11 V19 M9 8 V22 M21 8 V22 M9 15 H21" stroke="#58C7FF" stroke-width="2.4" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="train-info">
+                  <div class="train-name">Strength</div>
+                  <div class="train-cost">3 sessions · 1.2K coins</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Contract -->
+          <div class="contract-card">
+            <div class="card-head">
+              <span class="card-title">CONTRACT</span>
+              <div class="status-pill">
+                <svg id="icon-status-player" width="16" height="16" viewBox="0 0 16 16">
+                  <circle cx="8" cy="8" r="6" fill="#26E07F"/>
+                </svg>
+                <span class="status-pill-text">FIT</span>
+              </div>
+            </div>
+            <div class="cinfo-row">
+              <span class="cinfo-lab">Wage / week</span>
+              <span class="cinfo-val cinfo-val-amber">85K</span>
+            </div>
+            <div class="cinfo-row">
+              <span class="cinfo-lab">Expires</span>
+              <span class="cinfo-val">Jun 2028</span>
+            </div>
+            <div class="cinfo-row">
+              <span class="cinfo-lab">Morale</span>
+              <span class="cinfo-val">High</span>
+            </div>
+            <button class="renew-btn">
+              <svg id="icon-renew-player" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M4 11 a7 7 0 1 1 2 5" stroke="#04130A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                <path d="M4 6 V11 H9" stroke="#04130A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="renew-btn-text">RENEW CONTRACT</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

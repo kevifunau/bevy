@@ -1,0 +1,8 @@
+//! Renders opus48 Dev/action_arena/heroes.html
+
+#[path = "../../../common.rs"]
+mod common;
+
+fn main() {
+    common::run("opus48/Dev/action_arena/heroes.ir.json");
+}

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+  .stage {
+    width: 1920px;
+    height: 1080px;
+    background-color: #12141F;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 80px;
+  }
+
+  /* Hero result banner */
+  .hero {
+    width: 1760px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 240px;
+    padding: 0 64px;
+    border-radius: 28px;
+    background-color: #2C2718;
+    border-width: 2px;
+    border-color: #F2C14E;
+    margin-bottom: 36px;
+  }
+  .hero-left { flex-direction: row; align-items: center; }
+  .place-medal {
+    width: 156px;
+    height: 156px;
+    border-radius: 30px;
+    background-color: #1F2333;
+    border-width: 3px;
+    border-color: #F2C14E;
+    align-items: center;
+    justify-content: center;
+    margin-right: 40px;
+  }
+  .hero-meta { flex-direction: column; }
+  .hero-kicker { font-size: 22px; color: #F2C14E; letter-spacing: 6px; -unity-font-style: bold; }
+  .hero-place { font-size: 96px; color: #F4F6FF; -unity-font-style: bold; }
+  .hero-sub { font-size: 22px; color: #C2B07A; margin-top: 6px; }
+  .hero-right { flex-direction: row; }
+  .hero-stat {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 156px;
+    border-radius: 20px;
+    background-color: #1F2333;
+    margin-left: 22px;
+  }
+  .hs-num { font-size: 44px; color: #F4F6FF; -unity-font-style: bold; }
+  .hs-num.gold { color: #F2C14E; }
+  .hs-cap { font-size: 16px; color: #8B93AD; margin-top: 8px; }
+
+  /* Main two columns */
+  .panels { width: 1760px; height: 480px; flex-direction: row; margin-bottom: 32px; }
+
+  /* Comp recap */
+  .comp {
+    width: 1120px;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 24px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 32px;
+    margin-right: 36px;
+  }
+  .sec-head { flex-direction: row; align-items: center; margin-bottom: 24px; }
+  .sec-ic { width: 30px; height: 30px; margin-right: 14px; }
+  .sec-title { font-size: 26px; color: #F4F6FF; -unity-font-style: bold; }
+  .comp-row { flex-direction: row; }
+  .comp-unit {
+    width: 116px;
+    height: 132px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    background-color: #232739;
+    border-bottom-width: 4px;
+    border-bottom-color: #5A6076;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+  }
+  .comp-unit.r-blue { border-bottom-color: #4F76D6; }
+  .comp-unit.r-purple { border-bottom-color: #A878F0; }
+  .comp-unit.r-gold { border-bottom-color: #F2C14E; }
+  .comp-unit.r-green { border-bottom-color: #57C77A; }
+  .cu-art { width: 78px; height: 78px; border-radius: 12px; background-color: #1F2333; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .cu-stars { flex-direction: row; }
+  .cu-star { width: 16px; height: 16px; margin-right: 2px; }
+
+  .syn-strip { flex-direction: row; margin-top: 10px; }
+  .syn-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    padding: 0 18px;
+    margin-right: 14px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .syn-pill.on { border-color: #F2C14E; background-color: #2C2718; }
+  .syn-pill-ic { width: 26px; height: 26px; margin-right: 10px; }
+  .syn-pill-tx { font-size: 17px; color: #C2C8DE; -unity-font-style: bold; }
+  .syn-pill.on .syn-pill-tx { color: #F2C14E; }
+
+  /* Rating change */
+  .rating {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 24px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 32px;
+  }
+  .lp-card {
+    flex-direction: column;
+    align-items: center;
+    background-color: #232739;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .lp-tier { font-size: 26px; color: #4FD6C9; -unity-font-style: bold; }
+  .lp-delta-row { flex-direction: row; align-items: center; margin-top: 14px; }
+  .lp-delta-ic { width: 36px; height: 36px; margin-right: 10px; }
+  .lp-delta { font-size: 56px; color: #57C77A; -unity-font-style: bold; }
+  .lp-from { font-size: 18px; color: #9AA1BC; margin-top: 10px; }
+  .lp-bar-cap { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .lp-bar-tx { font-size: 16px; color: #9AA1BC; }
+  .lp-bar-val { font-size: 16px; color: #4FD6C9; -unity-font-style: bold; }
+  .bar { flex-direction: row; width: 100%; height: 16px; border-radius: 8px; background-color: #12141F; }
+  .bar-fill { height: 16px; width: 76%; border-radius: 8px; background-color: #4FD6C9; }
+
+  /* Action buttons */
+  .actions { width: 1760px; flex-direction: row; justify-content: flex-end; }
+  .act {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 88px;
+    padding: 0 44px;
+    margin-left: 24px;
+    border-radius: 18px;
+  }
+  .act.ghost { background-color: #232739; border-width: 2px; border-color: #343A50; }
+  .act.primary { background-color: #F2C14E; }
+  .act-ic { width: 32px; height: 32px; margin-right: 14px; }
+  .act-tx { font-size: 28px; color: #F4F6FF; -unity-font-style: bold; }
+  .act.primary .act-tx { color: #1A1320; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-left">
+        <div class="place-medal">
+          <svg id="rs-medal" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="42" r="30" fill="#F2C14E"/>
+            <circle cx="50" cy="42" r="22" fill="#D9A638"/>
+            <path d="M50 26l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z" fill="#FFF3D0"/>
+            <path d="M34 68l-8 24 24-12 24 12-8-24z" fill="#A878F0"/>
+          </svg>
+        </div>
+        <div class="hero-meta">
+          <span class="hero-kicker">FINAL PLACEMENT</span>
+          <span class="hero-place">第 2 名</span>
+          <span class="hero-sub">仅一步之遥 · 八人竞技 · 用时 32:14</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat">
+          <span class="hs-num">36</span>
+          <span class="hs-cap">击杀玩家伤害</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hs-num gold">7</span>
+          <span class="hs-cap">最终等级</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hs-num">9</span>
+          <span class="hs-cap">连胜回合</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panels -->
+    <div class="panels">
+
+      <!-- Comp recap -->
+      <div class="comp">
+        <div class="sec-head">
+          <svg id="rs-sec-comp" width="30" height="30" viewBox="0 0 30 30" class="sec-ic"><rect x="3" y="3" width="11" height="11" rx="2" fill="#F2C14E"/><rect x="16" y="3" width="11" height="11" rx="2" fill="#4FD6C9"/><rect x="3" y="16" width="11" height="11" rx="2" fill="#A878F0"/><rect x="16" y="16" width="11" height="11" rx="2" fill="#57C77A"/></svg>
+          <span class="sec-title">阵容回顾</span>
+        </div>
+        <div class="comp-row">
+          <div class="comp-unit r-green">
+            <div class="cu-art"><svg id="rs-u1" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="19" r="11" fill="#57C77A"/><path d="M8 44c0-9 8-13 17-13s17 4 17 13z" fill="#3E8F58"/></svg></div>
+            <div class="cu-stars">
+              <svg id="rs-u1s1" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+              <svg id="rs-u1s2" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+              <svg id="rs-u1s3" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+            </div>
+          </div>
+          <div class="comp-unit r-blue">
+            <div class="cu-art"><svg id="rs-u2" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="19" r="11" fill="#4F76D6"/><path d="M8 44c0-9 8-13 17-13s17 4 17 13z" fill="#345799"/></svg></div>
+            <div class="cu-stars">
+              <svg id="rs-u2s1" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+              <svg id="rs-u2s2" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+            </div>
+          </div>
+          <div class="comp-unit r-purple">
+            <div class="cu-art"><svg id="rs-u3" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="19" r="11" fill="#A878F0"/><path d="M8 44c0-9 8-13 17-13s17 4 17 13z" fill="#7B53B8"/></svg></div>
+            <div class="cu-stars">
+              <svg id="rs-u3s1" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+              <svg id="rs-u3s2" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+            </div>
+          </div>
+          <div class="comp-unit r-purple">
+            <div class="cu-art"><svg id="rs-u4" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="19" r="11" fill="#A878F0"/><path d="M8 44c0-9 8-13 17-13s17 4 17 13z" fill="#7B53B8"/></svg></div>
+            <div class="cu-stars">
+              <svg id="rs-u4s1" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+            </div>
+          </div>
+          <div class="comp-unit r-gold">
+            <div class="cu-art"><svg id="rs-u5" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="19" r="11" fill="#F2C14E"/><path d="M8 44c0-9 8-13 17-13s17 4 17 13z" fill="#C99B33"/></svg></div>
+            <div class="cu-stars">
+              <svg id="rs-u5s1" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+              <svg id="rs-u5s2" width="16" height="16" viewBox="0 0 16 16" class="cu-star"><path d="M8 1l2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" fill="#F2C14E"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="syn-strip">
+          <div class="syn-pill on">
+            <svg id="rs-syn-warden" width="26" height="26" viewBox="0 0 26 26" class="syn-pill-ic"><path d="M13 3l8 3v6c0 6-4 9-8 10-4-1-8-4-8-10V6z" fill="#F2C14E"/></svg>
+            <span class="syn-pill-tx">守护者 4</span>
+          </div>
+          <div class="syn-pill on">
+            <svg id="rs-syn-mage" width="26" height="26" viewBox="0 0 26 26" class="syn-pill-ic"><circle cx="13" cy="13" r="9" fill="#A878F0"/><path d="M13 5v16M5 13h16" stroke="#FFF" stroke-width="2"/></svg>
+            <span class="syn-pill-tx">奥术师 3</span>
+          </div>
+          <div class="syn-pill">
+            <svg id="rs-syn-knight" width="26" height="26" viewBox="0 0 26 26" class="syn-pill-ic"><rect x="5" y="9" width="14" height="11" rx="2" fill="#4F76D6"/></svg>
+            <span class="syn-pill-tx">骑士 2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating change -->
+      <div class="rating">
+        <div class="sec-head">
+          <svg id="rs-sec-rank" width="30" height="30" viewBox="0 0 30 30" class="sec-ic"><path d="M15 3l11 8-11 16L4 11z" fill="#4FD6C9"/></svg>
+          <span class="sec-title">段位变化</span>
+        </div>
+        <div class="lp-card">
+          <span class="lp-tier">钻石 II</span>
+          <div class="lp-delta-row">
+            <svg id="rs-up" width="36" height="36" viewBox="0 0 36 36" class="lp-delta-ic"><path d="M18 6l12 14H22v10h-8V20H6z" fill="#57C77A"/></svg>
+            <span class="lp-delta">+42</span>
+          </div>
+          <span class="lp-from">联赛积分 68 → 110 LP</span>
+        </div>
+        <div class="lp-bar-cap">
+          <span class="lp-bar-tx">距离 钻石 I 晋级赛</span>
+          <span class="lp-bar-val">110 / 100 LP</span>
+        </div>
+        <div class="bar"><div class="bar-fill"></div></div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="act ghost">
+        <svg id="rs-act-home" width="32" height="32" viewBox="0 0 32 32" class="act-ic"><path d="M16 4L4 15h4v13h6v-8h4v8h6V15h4z" fill="#F4F6FF"/></svg>
+        <span class="act-tx">返回大厅</span>
+      </button>
+      <button class="act primary">
+        <svg id="rs-act-again" width="32" height="32" viewBox="0 0 32 32" class="act-ic"><path d="M27 16a11 11 0 11-3.2-7.8" stroke="#1A1320" stroke-width="3" fill="none"/><path d="M27 5v7h-7" stroke="#1A1320" stroke-width="3" fill="none"/></svg>
+        <span class="act-tx">再来一局</span>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

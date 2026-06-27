@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #211711;
+  --bg1: #2E2018;
+  --panel: #3A2A1E;
+  --panel2: #4A372A;
+  --line: #5E4634;
+  --gold: #FFC247;
+  --gold-d: #D9941C;
+  --emerald: #4FD98A;
+  --emerald-d: #28A862;
+  --wood: #C98A4B;
+  --text: #F5ECE0;
+  --text-dim: #B79C82;
+  --blue: #5BB8FF;
+  --red: #FF6B5A;
+  --off: #5E4634;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 100px; margin-bottom: 48px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--panel);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 56px; color: var(--gold); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- section ---------- */
+.sec-label { font-size: 32px; min-height: 40px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 22px; margin-top: 12px; }
+.panel {
+  flex-direction: column;
+  background-color: var(--bg1);
+  border-radius: 36px;
+  border-width: 3px; border-color: var(--line);
+  padding: 12px 40px;
+  margin-bottom: 44px;
+}
+.row { flex-direction: row; align-items: center; height: 144px; }
+.row-div { border-width: 0px; border-bottom-width: 2px; border-color: var(--panel); }
+.row-ico {
+  width: 88px; height: 88px;
+  border-radius: 28px;
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.ico-gold { background-color: var(--gold-d); }
+.ico-em { background-color: var(--emerald-d); }
+.ico-wood { background-color: var(--wood); }
+.row-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.row-name { font-size: 40px; min-height: 48px; color: var(--text); font-weight: bold; white-space: normal; }
+.row-sub { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+
+/* toggle (skinned) */
+.toggle-on { width: 128px; height: 70px; border-radius: 35px; background-color: var(--emerald); justify-content: flex-end; padding: 0 8px; flex-direction: row; align-items: center; }
+.toggle-off { width: 128px; height: 70px; border-radius: 35px; background-color: var(--off); justify-content: flex-start; padding: 0 8px; flex-direction: row; align-items: center; }
+.knob { width: 54px; height: 54px; border-radius: 27px; background-color: #FFFFFF; }
+
+/* select value */
+.row-val {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 70px;
+  background-color: var(--panel);
+  border-radius: 35px;
+  padding: 0 30px;
+}
+.row-val-tx { font-size: 30px; min-height: 36px; color: var(--gold); font-weight: bold; white-space: normal; margin-right: 12px; }
+.row-val-arr { width: 28px; height: 28px; }
+
+/* account */
+.acct {
+  flex-direction: row; align-items: center;
+  background-color: var(--panel);
+  border-radius: 36px;
+  border-width: 3px; border-color: var(--gold);
+  padding: 32px 40px;
+  margin-top: auto;
+}
+.acct-avatar {
+  width: 116px; height: 116px;
+  background-color: var(--emerald-d);
+  border-radius: 36px;
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.acct-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.acct-name { font-size: 44px; min-height: 52px; color: var(--text); font-weight: bold; white-space: normal; }
+.acct-id { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+.logout {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 84px;
+  background-color: var(--red);
+  border-radius: 42px;
+  padding: 0 38px;
+}
+.logout-tx { font-size: 32px; min-height: 40px; color: #FFFFFF; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M30 10 L16 24 L30 38" stroke="#B79C82" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">设置</span>
+        <span class="subtitle">放置帝国 · 偏好与账号</span>
+      </div>
+    </div>
+
+    <span class="sec-label">声音 AUDIO</span>
+    <div class="panel">
+      <div class="row row-div">
+        <div class="row-ico ico-gold">
+          <svg id="icon-music" width="48" height="48" viewBox="0 0 48 48">
+            <rect x="20" y="9" width="6" height="24" fill="#3A2400"/>
+            <path d="M26 9 L37 13 L37 20 L26 16 Z" fill="#3A2400"/>
+            <circle cx="16" cy="33" r="7" fill="#3A2400"/>
+          </svg>
+        </div>
+        <div class="row-txw">
+          <span class="row-name">背景音乐</span>
+          <span class="row-sub">BACKGROUND MUSIC</span>
+        </div>
+        <div class="toggle-on" data-aiui-toggle="on">
+          <div class="knob"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-ico ico-em">
+          <svg id="icon-sfx" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M11 18 L18 18 L27 11 L27 37 L18 30 L11 30 Z" fill="#06291A"/>
+            <path d="M33 16 Q39 24 33 32" stroke="#06291A" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="row-txw">
+          <span class="row-name">音效</span>
+          <span class="row-sub">SOUND EFFECTS</span>
+        </div>
+        <div class="toggle-on" data-aiui-toggle="on">
+          <div class="knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <span class="sec-label">体验 EXPERIENCE</span>
+    <div class="panel">
+      <div class="row row-div">
+        <div class="row-ico ico-em">
+          <svg id="icon-offline" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="18" fill="none" stroke="#06291A" stroke-width="4"/>
+            <path d="M24 13 L24 24 L33 30" stroke="#06291A" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="row-txw">
+          <span class="row-name">离线收益提醒</span>
+          <span class="row-sub">OFFLINE NOTIFY</span>
+        </div>
+        <div class="toggle-on" data-aiui-toggle="on">
+          <div class="knob"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-ico ico-wood">
+          <svg id="icon-lang" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="17" fill="none" stroke="#211711" stroke-width="4"/>
+            <path d="M7 24 L41 24 M24 7 Q13 24 24 41 Q35 24 24 7" stroke="#211711" stroke-width="3" fill="none"/>
+          </svg>
+        </div>
+        <div class="row-txw">
+          <span class="row-name">语言</span>
+          <span class="row-sub">LANGUAGE</span>
+        </div>
+        <div class="row-val">
+          <span class="row-val-tx">简体中文</span>
+          <svg id="icon-langarr" class="row-val-arr" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M10 7 L18 14 L10 21" stroke="#FFC247" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="acct">
+      <div class="acct-avatar">
+        <svg id="icon-acct" width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="14" fill="#06291A"/>
+          <path d="M10 56 C10 42 22 36 32 36 C42 36 54 42 54 56 Z" fill="#06291A"/>
+        </svg>
+      </div>
+      <div class="acct-txw">
+        <span class="acct-name">工坊主理人</span>
+        <span class="acct-id">ID: 88204175</span>
+      </div>
+      <div class="logout">
+        <span class="logout-tx">退出登录</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

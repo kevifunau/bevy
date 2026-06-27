@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: #140E26;
+  overflow: hidden;
+}
+
+/* ---- scene backdrop ---- */
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  background-color: #2A1E4C;
+}
+.scene-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 900px;
+  background-color: #33235C;
+}
+.scene-glow {
+  position: absolute;
+  top: 140px;
+  left: 600px;
+  width: 420px;
+  height: 420px;
+  border-radius: 210px;
+  background-color: #4A3580;
+  opacity: 0.6;
+}
+.scene-ground {
+  position: absolute;
+  top: 900px;
+  left: 0;
+  width: 1080px;
+  height: 1020px;
+  background-color: #1C1438;
+}
+
+/* character sprite */
+.sprite {
+  position: absolute;
+  bottom: 460px;
+  left: 320px;
+  width: 440px;
+  height: 980px;
+  border-radius: 220px 220px 40px 40px;
+  background-color: #3E2C70;
+  border-width: 2px;
+  border-color: #5B458F;
+  align-items: center;
+  justify-content: center;
+}
+.sprite-head {
+  width: 240px;
+  height: 240px;
+  border-radius: 120px;
+  background-color: #6E55A8;
+  margin-top: 80px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- top quick bar ---- */
+.topbar {
+  position: absolute;
+  top: 56px;
+  left: 60px;
+  width: 960px;
+  height: 92px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.chip {
+  flex-direction: row;
+  align-items: center;
+  height: 76px;
+  padding: 0 28px;
+  border-radius: 38px;
+  background-color: #1F1638;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  opacity: 0.94;
+}
+.chip-text {
+  font-size: 28px;
+  color: #C9B8F0;
+  letter-spacing: 4px;
+  margin-left: 14px;
+}
+.top-right {
+  flex-direction: row;
+  align-items: center;
+}
+.round-btn {
+  width: 76px;
+  height: 76px;
+  border-radius: 38px;
+  background-color: #1F1638;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  align-items: center;
+  justify-content: center;
+  margin-left: 18px;
+  opacity: 0.94;
+}
+
+/* ---- bottom dialogue box ---- */
+.dialogue {
+  position: absolute;
+  bottom: 60px;
+  left: 48px;
+  width: 984px;
+  height: 600px;
+}
+.name-tag {
+  flex-direction: row;
+  align-items: center;
+  height: 88px;
+  width: 380px;
+  padding: 0 36px;
+  border-radius: 24px 24px 0 0;
+  background-color: #E8C77A;
+  margin-left: 30px;
+}
+.name-tag-text {
+  font-size: 40px;
+  color: #2A1D08;
+  font-weight: bold;
+  letter-spacing: 6px;
+}
+.box {
+  width: 984px;
+  height: 412px;
+  border-radius: 32px;
+  background-color: #1A1330;
+  border-width: 2px;
+  border-color: #4A3A7A;
+  padding: 48px 56px 40px 56px;
+  opacity: 0.97;
+}
+.line {
+  font-size: 42px;
+  color: #ECE3FB;
+  letter-spacing: 1px;
+  line-height: 64px;
+  margin-bottom: 0;
+}
+.line-emph {
+  color: #E8C77A;
+  font-weight: bold;
+}
+.box-foot {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36px;
+}
+.progress-hint {
+  flex-direction: row;
+  align-items: center;
+}
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #4A3A7A;
+  margin-right: 12px;
+}
+.dot-on { background-color: #E8C77A; }
+.tap-hint {
+  flex-direction: row;
+  align-items: center;
+}
+.tap-text {
+  font-size: 26px;
+  color: #8C7CB8;
+  letter-spacing: 3px;
+  margin-right: 12px;
+}
+
+/* ---- bottom quick entries ---- */
+.quickbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 984px;
+  height: 92px;
+  margin-top: 22px;
+}
+.quick {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 188px;
+  height: 92px;
+  border-radius: 24px;
+  background-color: #241844;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  margin-right: 12px;
+}
+.quick-last { margin-right: 0; }
+.quick-active {
+  background-color: #2E2152;
+  border-color: #E8C77A;
+}
+.quick-text {
+  font-size: 30px;
+  color: #D8CCF4;
+  letter-spacing: 4px;
+  margin-left: 12px;
+}
+.quick-text-active { color: #E8C77A; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="scene">
+      <div class="scene-sky"></div>
+      <div class="scene-glow"></div>
+      <div class="scene-ground"></div>
+    </div>
+
+    <div class="sprite">
+      <div class="sprite-head">
+        <svg id="icon-sprite-face" width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="54" fill="#8C72C8"/>
+          <circle cx="44" cy="54" r="7" fill="#1A1330"/>
+          <circle cx="76" cy="54" r="7" fill="#1A1330"/>
+          <path d="M46 78 Q60 88 74 78" stroke="#1A1330" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- top bar -->
+    <div class="topbar">
+      <button class="chip">
+        <svg id="icon-back-dialogue" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M19 5 L9 15 L19 25" stroke="#C9B8F0" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="chip-text">第三章 · 黄昏的回响</span>
+      </button>
+      <div class="top-right">
+        <button class="round-btn">
+          <svg id="icon-menu-dialogue" width="34" height="34" viewBox="0 0 34 34">
+            <path d="M6 9 H28 M6 17 H28 M6 25 H28" stroke="#C9B8F0" stroke-width="3.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="round-btn">
+          <svg id="icon-config-dialogue" width="34" height="34" viewBox="0 0 34 34">
+            <path d="M17 22a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" fill="none" stroke="#C9B8F0" stroke-width="2.8"/>
+            <path d="M17 3v5M17 26v5M3 17h5M26 17h5M7 7l3.5 3.5M23.5 23.5L27 27M27 7l-3.5 3.5M10.5 23.5L7 27" stroke="#C9B8F0" stroke-width="2.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- dialogue box -->
+    <div class="dialogue">
+      <div class="name-tag">
+        <span class="name-tag-text">莉雅 · Lyra</span>
+      </div>
+      <div class="box">
+        <span class="line">「你终于来了。我在这片<span class="line-emph">星屑之海</span>等了很久……只要你愿意,故事就还没有结束。」</span>
+        <div class="box-foot">
+          <div class="progress-hint">
+            <div class="dot dot-on"></div>
+            <div class="dot dot-on"></div>
+            <div class="dot dot-on"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="tap-hint">
+            <span class="tap-text">轻触继续</span>
+            <svg id="icon-tap-next" width="30" height="30" viewBox="0 0 30 30">
+              <path d="M10 7 L20 15 L10 23" stroke="#8C7CB8" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- quick entries -->
+      <div class="quickbar">
+        <button class="quick">
+          <svg id="icon-auto-dialogue" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M15 4 A11 11 0 1 1 6.5 8" stroke="#D8CCF4" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M6.5 3 L6.5 9 L12.5 9" stroke="#D8CCF4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="quick-text">AUTO</span>
+        </button>
+        <button class="quick">
+          <svg id="icon-skip-dialogue" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M5 7 L15 15 L5 23 Z M16 7 L26 15 L16 23 Z" fill="#D8CCF4"/>
+          </svg>
+          <span class="quick-text">SKIP</span>
+        </button>
+        <button class="quick">
+          <svg id="icon-history-dialogue" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M15 5 A10 10 0 1 1 5.5 12" stroke="#D8CCF4" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M5.5 5 L5.5 12 L12 12" stroke="#D8CCF4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 10 L15 16 L20 18" stroke="#D8CCF4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="quick-text">记录</span>
+        </button>
+        <button class="quick quick-last quick-active">
+          <svg id="icon-save-dialogue" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M6 5 L21 5 L25 9 L25 25 L6 25 Z" fill="none" stroke="#E8C77A" stroke-width="3" stroke-linejoin="round"/>
+            <rect x="11" y="5" width="9" height="7" fill="#E8C77A"/>
+            <rect x="11" y="16" width="9" height="6" fill="none" stroke="#E8C77A" stroke-width="2.4"/>
+          </svg>
+          <span class="quick-text quick-text-active">保存</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

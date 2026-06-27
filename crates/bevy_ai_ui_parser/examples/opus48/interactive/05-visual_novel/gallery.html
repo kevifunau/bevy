@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: #140E26;
+  padding: 96px 70px 80px 70px;
+  overflow: hidden;
+}
+
+/* header */
+.header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 92px;
+  margin-bottom: 36px;
+}
+.header-left {
+  flex-direction: row;
+  align-items: center;
+}
+.back-btn {
+  width: 84px;
+  height: 84px;
+  border-radius: 26px;
+  background-color: #1F1638;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  align-items: center;
+  justify-content: center;
+  margin-right: 28px;
+}
+.title-wrap {
+  flex-direction: column;
+}
+.header-title {
+  font-size: 54px;
+  color: #F4E9C6;
+  font-weight: bold;
+  letter-spacing: 6px;
+  text-shadow: 0 0 20px rgba(232,199,122,0.35);
+}
+.header-sub {
+  font-size: 26px;
+  color: #8C7CB8;
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+
+/* completion progress */
+.completion {
+  width: 940px;
+  height: 130px;
+  border-radius: 26px;
+  background-color: #1A1330;
+  border-width: 1px;
+  border-color: #3A2D5E;
+  padding: 28px 36px;
+  margin-bottom: 38px;
+}
+.comp-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.comp-label {
+  flex-direction: row;
+  align-items: center;
+}
+.comp-text {
+  font-size: 30px;
+  color: #D8CCF4;
+  letter-spacing: 3px;
+  margin-left: 14px;
+}
+.comp-pct {
+  font-size: 32px;
+  color: #E8C77A;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.bar {
+  flex-direction: row;
+  width: 868px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: #0F0A1E;
+}
+.bar-fill {
+  height: 18px;
+  width: 520px;
+  border-radius: 9px;
+  background-color: #E8C77A;
+}
+
+/* tabs */
+.seg {
+  flex-direction: row;
+  width: 940px;
+  height: 92px;
+  background-color: #1A1330;
+  border-radius: 24px;
+  border-width: 1px;
+  border-color: #3A2D5E;
+  padding: 8px;
+  margin-bottom: 40px;
+}
+.seg-btn {
+  flex-grow: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 76px;
+  border-radius: 18px;
+  background-color: #1A1330;
+  margin-right: 8px;
+}
+.seg-btn-last { margin-right: 0; }
+.seg-btn-label {
+  font-size: 32px;
+  color: #9A88C6;
+  letter-spacing: 5px;
+  margin-left: 12px;
+}
+.seg-btn.is-active { background-color: #E8C77A; }
+.seg-btn.is-active .seg-btn-label { color: #2A1D08; font-weight: bold; }
+
+/* gallery grid (nested flex rows) */
+.grid {
+  flex-direction: column;
+}
+.grid-row {
+  flex-direction: row;
+  width: 940px;
+  margin-bottom: 30px;
+}
+.card {
+  width: 290px;
+  height: 420px;
+  border-radius: 26px;
+  background-color: #1A1330;
+  border-width: 2px;
+  border-color: #4A3A7A;
+  padding: 18px;
+  margin-right: 35px;
+  align-items: center;
+}
+.card-last { margin-right: 0; }
+.card-locked {
+  border-color: #2E2548;
+  background-color: #160F2C;
+}
+.portrait {
+  width: 254px;
+  height: 270px;
+  border-radius: 20px;
+  background-color: #3E2C70;
+  border-width: 1px;
+  border-color: #5B458F;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.portrait-locked {
+  background-color: #1A1330;
+  border-color: #2E2548;
+}
+.portrait-head {
+  width: 150px;
+  height: 150px;
+  border-radius: 75px;
+  background-color: #6E55A8;
+  align-items: center;
+  justify-content: center;
+}
+.rare-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 22px;
+  background-color: #2A1D08;
+  opacity: 0.92;
+}
+.rare-tag-ssr { background-color: #5A3D0A; }
+.rare-text {
+  font-size: 24px;
+  color: #E8C77A;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-left: 8px;
+}
+.card-name {
+  font-size: 36px;
+  color: #ECE3FB;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.card-name-locked { color: #5A4E80; }
+.card-role {
+  font-size: 26px;
+  color: #9A88C6;
+  letter-spacing: 2px;
+}
+.card-role-locked { color: #463C68; }
+.lock-icon {
+  margin-bottom: 18px;
+}
+.lock-hint {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 4px;
+}
+.lock-hint-text {
+  font-size: 24px;
+  color: #6E5E96;
+  letter-spacing: 1px;
+  margin-left: 8px;
+}
+
+/* CG strip preview row */
+.cg-strip {
+  flex-direction: row;
+  width: 940px;
+  margin-top: 6px;
+}
+.cg-cell {
+  width: 290px;
+  height: 180px;
+  border-radius: 22px;
+  background-color: #221646;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  margin-right: 35px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.cg-cell-last { margin-right: 0; }
+.cg-cell-locked {
+  background-color: #160F2C;
+  border-color: #2E2548;
+}
+.cg-orb {
+  width: 90px;
+  height: 90px;
+  border-radius: 45px;
+  background-color: #E8C77A;
+  opacity: 0.8;
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="header-left">
+        <button class="back-btn">
+          <svg id="icon-back-gallery" width="36" height="36" viewBox="0 0 36 36">
+            <path d="M22 7 L11 18 L22 29" stroke="#C9B8F0" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="title-wrap">
+          <span class="header-title">画廊</span>
+          <span class="header-sub">GALLERY · CODEX</span>
+        </div>
+      </div>
+      <button class="back-btn">
+        <svg id="icon-filter-gallery" width="34" height="34" viewBox="0 0 34 34">
+          <path d="M5 8 H29 M9 17 H25 M13 26 H21" stroke="#C9B8F0" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- completion -->
+    <div class="completion">
+      <div class="comp-row">
+        <div class="comp-label">
+          <svg id="icon-comp-star" width="32" height="32" viewBox="0 0 32 32">
+            <path d="M16 3 L19.5 12 L29 12.6 L21.5 18.5 L24 28 L16 22.5 L8 28 L10.5 18.5 L3 12.6 L12.5 12 Z" fill="#E8C77A"/>
+          </svg>
+          <span class="comp-text">收集进度</span>
+        </div>
+        <span class="comp-pct">18 / 30</span>
+      </div>
+      <div class="bar">
+        <div class="bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- tabs -->
+    <div class="seg">
+      <button class="seg-btn is-active">
+        <svg id="icon-tab-char" width="32" height="32" viewBox="0 0 32 32">
+          <circle cx="16" cy="11" r="6" fill="none" stroke="#2A1D08" stroke-width="3"/>
+          <path d="M5 27 C5 19 27 19 27 27" fill="none" stroke="#2A1D08" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="seg-btn-label">角色</span>
+      </button>
+      <button class="seg-btn seg-btn-last">
+        <svg id="icon-tab-cg" width="32" height="32" viewBox="0 0 32 32">
+          <rect x="4" y="6" width="24" height="20" rx="3" fill="none" stroke="#9A88C6" stroke-width="3"/>
+          <circle cx="11" cy="13" r="3" fill="#9A88C6"/>
+          <path d="M6 24 L13 16 L19 21 L23 17 L26 21" stroke="#9A88C6" stroke-width="3" fill="none" stroke-linejoin="round"/>
+        </svg>
+        <span class="seg-btn-label">CG 鉴赏</span>
+      </button>
+    </div>
+
+    <!-- characters grid -->
+    <div class="grid">
+      <div class="grid-row">
+        <div class="card">
+          <div class="portrait">
+            <div class="rare-tag rare-tag-ssr">
+              <svg id="icon-rare-1" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2 L13.3 8 L19 8.6 L14.6 12.4 L16 18 L11 14.8 L6 18 L7.4 12.4 L3 8.6 L8.7 8 Z" fill="#E8C77A"/>
+              </svg>
+              <span class="rare-text">SSR</span>
+            </div>
+            <div class="portrait-head">
+              <svg id="icon-char-lyra" width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="#8C72C8"/>
+                <circle cx="30" cy="36" r="5" fill="#1A1330"/>
+                <circle cx="50" cy="36" r="5" fill="#1A1330"/>
+                <path d="M30 52 Q40 60 50 52" stroke="#1A1330" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <span class="card-name">莉雅</span>
+          <span class="card-role">星海的歌者</span>
+        </div>
+
+        <div class="card card-last">
+          <div class="portrait">
+            <div class="rare-tag">
+              <svg id="icon-rare-2" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2 L13.3 8 L19 8.6 L14.6 12.4 L16 18 L11 14.8 L6 18 L7.4 12.4 L3 8.6 L8.7 8 Z" fill="#E8C77A"/>
+              </svg>
+              <span class="rare-text">SR</span>
+            </div>
+            <div class="portrait-head">
+              <svg id="icon-char-kai" width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="#5E7AC8"/>
+                <circle cx="30" cy="36" r="5" fill="#101626"/>
+                <circle cx="50" cy="36" r="5" fill="#101626"/>
+                <path d="M31 53 L49 53" stroke="#101626" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <span class="card-name">凯尔</span>
+          <span class="card-role">守钟的骑士</span>
+        </div>
+      </div>
+
+      <div class="grid-row">
+        <div class="card">
+          <div class="portrait">
+            <div class="rare-tag">
+              <svg id="icon-rare-3" width="22" height="22" viewBox="0 0 22 22">
+                <path d="M11 2 L13.3 8 L19 8.6 L14.6 12.4 L16 18 L11 14.8 L6 18 L7.4 12.4 L3 8.6 L8.7 8 Z" fill="#E8C77A"/>
+              </svg>
+              <span class="rare-text">SR</span>
+            </div>
+            <div class="portrait-head">
+              <svg id="icon-char-mira" width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="#C872A8"/>
+                <circle cx="30" cy="36" r="5" fill="#26101F"/>
+                <circle cx="50" cy="36" r="5" fill="#26101F"/>
+                <path d="M31 50 Q40 57 49 50" stroke="#26101F" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <span class="card-name">米拉</span>
+          <span class="card-role">游历的占星师</span>
+        </div>
+
+        <div class="card card-last card-locked">
+          <div class="portrait portrait-locked">
+            <div class="lock-icon">
+              <svg id="icon-lock-char" width="76" height="76" viewBox="0 0 76 76">
+                <rect x="20" y="34" width="36" height="30" rx="6" fill="none" stroke="#5A4E80" stroke-width="3.5"/>
+                <path d="M27 34 V26 A11 11 0 0 1 49 26 V34" fill="none" stroke="#5A4E80" stroke-width="3.5"/>
+                <circle cx="38" cy="48" r="4" fill="#5A4E80"/>
+              </svg>
+            </div>
+            <div class="lock-hint">
+              <svg id="icon-lock-q" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="#6E5E96" stroke-width="2.2"/>
+                <path d="M9 9 A3 3 0 1 1 12 13 V15" stroke="#6E5E96" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                <circle cx="12" cy="18" r="1.4" fill="#6E5E96"/>
+              </svg>
+              <span class="lock-hint-text">第五章解锁</span>
+            </div>
+          </div>
+          <span class="card-name card-name-locked">？？？</span>
+          <span class="card-role card-role-locked">尚未登场</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CG preview strip -->
+    <div class="cg-strip">
+      <div class="cg-cell">
+        <div class="cg-orb"></div>
+      </div>
+      <div class="cg-cell">
+        <div class="cg-orb"></div>
+      </div>
+      <div class="cg-cell cg-cell-last cg-cell-locked">
+        <svg id="icon-lock-cg" width="56" height="56" viewBox="0 0 56 56">
+          <rect x="15" y="25" width="26" height="22" rx="4" fill="none" stroke="#5A4E80" stroke-width="3"/>
+          <path d="M20 25 V19 A8 8 0 0 1 36 19 V25" fill="none" stroke="#5A4E80" stroke-width="3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

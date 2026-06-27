@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --night0: #0B1026;
+  --night1: #161E45;
+  --panel: #1E2A5E;
+  --panel2: #283A7A;
+  --line: #3A4E96;
+  --green: #5CF270;
+  --green-d: #2BAA3E;
+  --orange: #FF9D3A;
+  --orange-d: #C96A12;
+  --pink: #FF5C8A;
+  --text: #EAF0FF;
+  --text-dim: #8C9BD6;
+  --gold: #FFD23F;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--night0);
+  padding: 72px 96px;
+  flex-direction: row;
+}
+
+/* ---------- left: brand ---------- */
+.left {
+  width: 1040px;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 72px;
+}
+.tag-row { flex-direction: row; align-items: center; min-height: 36px; margin-bottom: 40px; }
+.tag-pix {
+  width: 36px; height: 36px;
+  background-color: var(--green);
+  border-width: 4px; border-color: var(--green-d);
+  margin-right: 12px;
+}
+.tag-pix-o { width: 36px; height: 36px; background-color: var(--orange); border-color: var(--orange-d); }
+.tag-pix-p { width: 36px; height: 36px; background-color: var(--pink); border-color: #C9305E; }
+.tag-tx { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-left: 16px; }
+
+.logo-line1 { font-size: 176px; color: var(--green); font-weight: bold; white-space: normal; }
+.logo-line2 { font-size: 176px; color: var(--orange); font-weight: bold; white-space: normal; margin-top: -16px; }
+.logo-sub {
+  flex-direction: row; align-items: center;
+  margin-top: 36px;
+}
+.logo-sub-bar { width: 88px; height: 10px; background-color: var(--pink); margin-right: 24px; }
+.logo-sub-tx { font-size: 34px; color: var(--text); font-weight: bold; white-space: normal; }
+
+.coin-line { flex-direction: row; align-items: center; margin-top: 64px; }
+.coin-box {
+  flex-direction: row; align-items: center;
+  height: 76px;
+  background-color: var(--panel);
+  border-width: 5px; border-color: var(--line);
+  padding: 0 28px;
+  margin-right: 28px;
+}
+.coin-ico { width: 44px; height: 44px; margin-right: 16px; }
+.coin-tx { font-size: 34px; color: var(--gold); font-weight: bold; white-space: normal; }
+.hi-box {
+  flex-direction: row; align-items: center;
+  height: 76px;
+  background-color: var(--panel);
+  border-width: 5px; border-color: var(--line);
+  padding: 0 28px;
+}
+.hi-ico { width: 44px; height: 44px; margin-right: 16px; }
+.hi-tx { font-size: 34px; color: var(--green); font-weight: bold; white-space: normal; }
+
+/* ---------- right: menu ---------- */
+.right {
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+.menu-panel {
+  flex-direction: column;
+  background-color: var(--night1);
+  border-width: 6px; border-color: var(--line);
+  padding: 48px 44px;
+}
+.menu-title {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 72px;
+  background-color: var(--panel2);
+  border-width: 4px; border-color: var(--line);
+  margin-bottom: 40px;
+}
+.menu-title-tx { font-size: 30px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+.mbtn {
+  flex-direction: row; align-items: center;
+  height: 124px;
+  border-width: 6px;
+  padding: 0 36px;
+  margin-bottom: 28px;
+}
+.mbtn-start { background-color: var(--green); border-color: var(--green-d); }
+.mbtn-cont { background-color: var(--panel); border-color: var(--line); }
+.mbtn-set { background-color: var(--panel); border-color: var(--line); }
+.mbtn-last { margin-bottom: 0; }
+.mbtn-ico-wrap {
+  width: 72px; height: 72px;
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.mbtn-tx-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.mbtn-tx { font-size: 46px; font-weight: bold; white-space: normal; }
+.mbtn-tx-start { color: #0B1026; }
+.mbtn-tx-dim { color: var(--text); }
+.mbtn-sub { font-size: 22px; font-weight: bold; white-space: normal; margin-top: 4px; }
+.mbtn-sub-start { color: #134A1C; }
+.mbtn-sub-dim { color: var(--text-dim); }
+.mbtn-arrow { width: 40px; height: 40px; }
+
+.footer { flex-direction: row; align-items: center; justify-content: center; margin-top: 40px; }
+.footer-tx { font-size: 22px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="left">
+      <div class="tag-row">
+        <div class="tag-pix"></div>
+        <div class="tag-pix tag-pix-o"></div>
+        <div class="tag-pix tag-pix-p"></div>
+        <span class="tag-tx">RETRO ARCADE · 8BIT</span>
+      </div>
+
+      <span class="logo-line1">PIXEL</span>
+      <span class="logo-line2">LEAP</span>
+
+      <div class="logo-sub">
+        <div class="logo-sub-bar"></div>
+        <span class="logo-sub-tx">像素跳跃 · 闯关大冒险</span>
+      </div>
+
+      <div class="coin-line">
+        <div class="coin-box">
+          <svg id="icon-coin" class="coin-ico" width="44" height="44" viewBox="0 0 44 44">
+            <rect x="10" y="6" width="24" height="32" fill="#FFD23F"/>
+            <rect x="6" y="10" width="32" height="24" fill="#FFD23F"/>
+            <rect x="14" y="14" width="16" height="16" fill="#C9930F"/>
+            <rect x="18" y="14" width="8" height="16" fill="#FFE98A"/>
+          </svg>
+          <span class="coin-tx">2,460</span>
+        </div>
+        <div class="hi-box">
+          <svg id="icon-trophy-s" class="hi-ico" width="44" height="44" viewBox="0 0 44 44">
+            <rect x="12" y="8" width="20" height="6" fill="#5CF270"/>
+            <rect x="12" y="8" width="6" height="16" fill="#5CF270"/>
+            <rect x="26" y="8" width="6" height="16" fill="#5CF270"/>
+            <rect x="16" y="22" width="12" height="6" fill="#2BAA3E"/>
+            <rect x="18" y="28" width="8" height="8" fill="#2BAA3E"/>
+            <rect x="14" y="36" width="16" height="4" fill="#5CF270"/>
+          </svg>
+          <span class="hi-tx">BEST 18</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="menu-panel">
+        <div class="menu-title">
+          <span class="menu-title-tx">- MAIN MENU -</span>
+        </div>
+
+        <div class="mbtn mbtn-start">
+          <div class="mbtn-ico-wrap">
+            <svg id="icon-play" width="56" height="56" viewBox="0 0 56 56">
+              <rect x="14" y="10" width="8" height="36" fill="#0B1026"/>
+              <rect x="22" y="14" width="8" height="28" fill="#0B1026"/>
+              <rect x="30" y="18" width="8" height="20" fill="#0B1026"/>
+              <rect x="38" y="24" width="6" height="8" fill="#0B1026"/>
+            </svg>
+          </div>
+          <div class="mbtn-tx-wrap">
+            <span class="mbtn-tx mbtn-tx-start">开始游戏</span>
+            <span class="mbtn-sub mbtn-sub-start">START NEW GAME</span>
+          </div>
+          <svg id="icon-arr1" class="mbtn-arrow" width="40" height="40" viewBox="0 0 40 40">
+            <rect x="12" y="8" width="8" height="8" fill="#0B1026"/>
+            <rect x="20" y="16" width="8" height="8" fill="#0B1026"/>
+            <rect x="12" y="24" width="8" height="8" fill="#0B1026"/>
+          </svg>
+        </div>
+
+        <div class="mbtn mbtn-cont">
+          <div class="mbtn-ico-wrap">
+            <svg id="icon-cont" width="56" height="56" viewBox="0 0 56 56">
+              <rect x="10" y="12" width="6" height="32" fill="#5CF270"/>
+              <rect x="20" y="10" width="26" height="6" fill="#5CF270"/>
+              <rect x="40" y="16" width="6" height="14" fill="#5CF270"/>
+              <rect x="22" y="30" width="20" height="6" fill="#5CF270"/>
+              <rect x="22" y="36" width="8" height="8" fill="#5CF270"/>
+            </svg>
+          </div>
+          <div class="mbtn-tx-wrap">
+            <span class="mbtn-tx mbtn-tx-dim">继续游戏</span>
+            <span class="mbtn-sub mbtn-sub-dim">WORLD 2 · STAGE 4</span>
+          </div>
+          <svg id="icon-arr2" class="mbtn-arrow" width="40" height="40" viewBox="0 0 40 40">
+            <rect x="12" y="8" width="8" height="8" fill="#5CF270"/>
+            <rect x="20" y="16" width="8" height="8" fill="#5CF270"/>
+            <rect x="12" y="24" width="8" height="8" fill="#5CF270"/>
+          </svg>
+        </div>
+
+        <div class="mbtn mbtn-set mbtn-last">
+          <div class="mbtn-ico-wrap">
+            <svg id="icon-gear" width="56" height="56" viewBox="0 0 56 56">
+              <rect x="24" y="6" width="8" height="8" fill="#FF9D3A"/>
+              <rect x="24" y="42" width="8" height="8" fill="#FF9D3A"/>
+              <rect x="6" y="24" width="8" height="8" fill="#FF9D3A"/>
+              <rect x="42" y="24" width="8" height="8" fill="#FF9D3A"/>
+              <rect x="16" y="16" width="24" height="24" fill="#FF9D3A"/>
+              <rect x="22" y="22" width="12" height="12" fill="#1E2A5E"/>
+            </svg>
+          </div>
+          <div class="mbtn-tx-wrap">
+            <span class="mbtn-tx mbtn-tx-dim">设置</span>
+            <span class="mbtn-sub mbtn-sub-dim">OPTIONS</span>
+          </div>
+          <svg id="icon-arr3" class="mbtn-arrow" width="40" height="40" viewBox="0 0 40 40">
+            <rect x="12" y="8" width="8" height="8" fill="#FF9D3A"/>
+            <rect x="20" y="16" width="8" height="8" fill="#FF9D3A"/>
+            <rect x="12" y="24" width="8" height="8" fill="#FF9D3A"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="footer-tx">© 1989 PIXEL LEAP · PRESS START</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

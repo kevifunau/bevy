@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage { width: 1920px; height: 1080px; background-color: #FFF1DC; }
+
+.pagehead {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 110px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 36px;
+}
+.back-btn { width: 64px; height: 64px; border-radius: 20px; background-color: #FFF1DC; align-items: center; justify-content: center; margin-right: 20px; }
+.head-title-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.head-title { font-size: 32px; color: #5A3E2B; font-weight: bold; }
+.head-sub { font-size: 16px; color: #B08968; margin-top: 3px; }
+.head-res { flex-direction: row; align-items: center; height: 110px; }
+.hres-chip {
+  flex-direction: row; align-items: center; height: 56px;
+  background-color: #FFF6E9; border-radius: 28px; border-width: 2px; border-color: #F0D9B5;
+  padding: 0 20px 0 10px; margin-left: 16px;
+}
+.hres-ico { width: 34px; height: 34px; align-items: center; justify-content: center; margin-right: 10px; }
+.hres-val { font-size: 20px; color: #5A3E2B; font-weight: bold; }
+
+.content { flex-direction: column; width: 1920px; height: 970px; padding: 24px 36px; }
+
+/* ad banner row */
+.ad-row { flex-direction: row; width: 100%; margin-bottom: 22px; }
+.ad-banner {
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  height: 132px;
+  background-color: #5FB67A;
+  border-radius: 22px;
+  padding: 0 28px;
+  margin-right: 22px;
+}
+.ad-ico {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  background-color: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+  margin-right: 22px;
+}
+.ad-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.ad-title { font-size: 26px; color: #FFFFFF; font-weight: bold; }
+.ad-desc { font-size: 16px; color: #E3F5E8; margin-top: 4px; }
+.ad-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 72px;
+  border-radius: 18px;
+  background-color: #FFFFFF;
+}
+.ad-btn-ico { width: 30px; height: 30px; align-items: center; justify-content: center; margin-right: 10px; }
+.ad-btn-txt { font-size: 20px; color: #2F8B52; font-weight: bold; }
+
+.daily {
+  flex-direction: row;
+  align-items: center;
+  width: 420px;
+  height: 132px;
+  background-color: #F5A623;
+  border-radius: 22px;
+  padding: 0 24px;
+}
+.daily-ico { width: 80px; height: 80px; border-radius: 20px; background-color: #FFFFFF; align-items: center; justify-content: center; margin-right: 18px; }
+.daily-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.daily-title { font-size: 22px; color: #FFFFFF; font-weight: bold; }
+.daily-desc { font-size: 15px; color: #FFF1DC; margin-top: 4px; }
+.daily-go { width: 44px; height: 44px; border-radius: 22px; background-color: #FFFFFF; align-items: center; justify-content: center; }
+
+/* section heading */
+.sec-head { flex-direction: row; align-items: center; margin-bottom: 16px; height: 38px; }
+.sec-title { font-size: 24px; color: #5A3E2B; font-weight: bold; margin-right: 12px; }
+.sec-tip { flex-direction: row; align-items: center; }
+.sec-tip-ico { width: 22px; height: 22px; align-items: center; justify-content: center; margin-right: 6px; }
+.sec-tip-txt { font-size: 16px; color: #E8503A; font-weight: bold; }
+
+/* coin bundles */
+.bundle-row { flex-direction: row; width: 100%; margin-bottom: 26px; }
+.bundle {
+  width: 286px;
+  height: 300px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 20px;
+  margin-right: 22px;
+  align-items: center;
+}
+.bundle.is-best { border-width: 3px; border-color: #E8503A; }
+.bundle-ribbon {
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #E8503A;
+  padding: 0 16px;
+  margin-bottom: 10px;
+}
+.bundle-ribbon-txt { font-size: 14px; color: #FFFFFF; font-weight: bold; }
+.bundle-spacer { height: 42px; }
+.bundle-pile { width: 110px; height: 110px; align-items: center; justify-content: center; margin-bottom: 8px; }
+.bundle-amt { font-size: 30px; color: #5A3E2B; font-weight: bold; }
+.bundle-bonus { font-size: 15px; color: #5FB67A; font-weight: bold; margin-bottom: 14px; }
+.buy-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 58px;
+  border-radius: 16px;
+  background-color: #5FB67A;
+}
+.buy-txt { font-size: 22px; color: #FFFFFF; font-weight: bold; }
+
+/* limited goods */
+.limited-row { flex-direction: row; width: 100%; }
+.lim {
+  flex-direction: row;
+  align-items: center;
+  width: 588px;
+  height: 168px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 20px;
+  margin-right: 24px;
+}
+.lim-thumb {
+  width: 128px;
+  height: 128px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.lt-red { background-color: #FCE0DA; }
+.lt-honey { background-color: #FCEBCF; }
+.lt-grape { background-color: #EBE3F7; }
+.lim-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.lim-tag-row { flex-direction: row; align-items: center; margin-bottom: 6px; }
+.lim-tag {
+  align-items: center; justify-content: center;
+  height: 28px; border-radius: 14px; background-color: #FBE3D8; padding: 0 12px;
+}
+.lim-tag-txt { font-size: 13px; color: #E8503A; font-weight: bold; }
+.lim-timer { flex-direction: row; align-items: center; margin-left: 10px; }
+.lim-timer-ico { width: 18px; height: 18px; align-items: center; justify-content: center; margin-right: 5px; }
+.lim-timer-txt { font-size: 14px; color: #B08968; }
+.lim-name { font-size: 22px; color: #5A3E2B; font-weight: bold; }
+.lim-desc { font-size: 15px; color: #B08968; margin-top: 3px; }
+.lim-price-col { flex-direction: column; align-items: flex-end; justify-content: center; }
+.lim-old { flex-direction: row; align-items: center; margin-bottom: 4px; }
+.lim-old-txt { font-size: 15px; color: #C7B398; }
+.lim-buy {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 140px; height: 60px; border-radius: 16px; background-color: #E8503A;
+}
+.lim-buy-ico { width: 26px; height: 26px; align-items: center; justify-content: center; margin-right: 6px; }
+.lim-buy-txt { font-size: 22px; color: #FFFFFF; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="pagehead">
+      <div class="back-btn">
+        <svg id="icon-back-shop" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M20 6L10 16l10 10" fill="none" stroke="#5A3E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="head-title-wrap">
+        <span class="head-title">Shop</span>
+        <span class="head-sub">Stock up on coins, gems, and treats</span>
+      </div>
+      <div class="head-res">
+        <div class="hres-chip">
+          <div class="hres-ico"><svg id="icon-coin-shop" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F5A623"/><circle cx="15" cy="15" r="9" fill="#FFD66B"/></svg></div>
+          <span class="hres-val">24,860</span>
+        </div>
+        <div class="hres-chip">
+          <div class="hres-ico"><svg id="icon-gem-shop" width="30" height="30" viewBox="0 0 30 30"><path d="M8 6h14l4 7-11 11L4 13z" fill="#5AC8E8"/></svg></div>
+          <span class="hres-val">182</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ad + daily -->
+      <div class="ad-row">
+        <div class="ad-banner">
+          <div class="ad-ico">
+            <svg id="icon-ad-play" width="56" height="56" viewBox="0 0 56 56">
+              <rect x="8" y="14" width="40" height="28" rx="5" fill="#5FB67A"/>
+              <path d="M24 22l11 6-11 6z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <div class="ad-meta">
+            <span class="ad-title">Watch &amp; Earn</span>
+            <span class="ad-desc">Watch a short clip to claim 500 free coins. 3 of 5 left today.</span>
+          </div>
+          <div class="ad-btn">
+            <div class="ad-btn-ico"><svg id="icon-gift-ad" width="28" height="28" viewBox="0 0 28 28"><rect x="4" y="11" width="20" height="13" rx="2" fill="#5FB67A"/><path d="M4 11h20M14 7v17" stroke="#FFFFFF" stroke-width="2.5"/><path d="M14 11c-4 0-6-6-2-6 3 0 2 6 2 6zm0 0c4 0 6-6 2-6-3 0-2 6-2 6z" fill="#2F8B52"/></svg></div>
+            <span class="ad-btn-txt">Watch Now</span>
+          </div>
+        </div>
+
+        <div class="daily">
+          <div class="daily-ico">
+            <svg id="icon-daily-cal" width="52" height="52" viewBox="0 0 52 52">
+              <rect x="8" y="12" width="36" height="32" rx="4" fill="#F5A623"/>
+              <path d="M8 20h36" stroke="#FFFFFF" stroke-width="3"/>
+              <path d="M16 7v8M36 7v8" stroke="#F5A623" stroke-width="4" stroke-linecap="round"/>
+              <path d="M19 30l5 5 9-10" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="daily-meta">
+            <span class="daily-title">Daily Reward</span>
+            <span class="daily-desc">Day 4 · ready to collect</span>
+          </div>
+          <div class="daily-go">
+            <svg id="icon-daily-go" width="22" height="22" viewBox="0 0 22 22"><path d="M7 4l8 7-8 7" fill="none" stroke="#F5A623" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- coin & gem bundles -->
+      <div class="sec-head">
+        <span class="sec-title">Currency Bundles</span>
+      </div>
+      <div class="bundle-row">
+        <div class="bundle">
+          <div class="bundle-spacer"></div>
+          <div class="bundle-pile">
+            <svg id="icon-pile-s" width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="62" r="26" fill="#F5A623"/>
+              <circle cx="50" cy="62" r="18" fill="#FFD66B"/>
+              <circle cx="34" cy="40" r="14" fill="#F5A623"/>
+              <circle cx="34" cy="40" r="9" fill="#FFD66B"/>
+            </svg>
+          </div>
+          <span class="bundle-amt">2,500</span>
+          <span class="bundle-bonus">Coins</span>
+          <div class="buy-btn"><span class="buy-txt">$ 0.99</span></div>
+        </div>
+
+        <div class="bundle is-best">
+          <div class="bundle-ribbon"><span class="bundle-ribbon-txt">BEST VALUE</span></div>
+          <div class="bundle-pile">
+            <svg id="icon-pile-l" width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="70" r="34" fill="#F5A623"/>
+              <circle cx="55" cy="70" r="24" fill="#FFD66B"/>
+              <circle cx="32" cy="42" r="18" fill="#F5A623"/>
+              <circle cx="32" cy="42" r="12" fill="#FFD66B"/>
+              <circle cx="78" cy="44" r="16" fill="#F5A623"/>
+              <circle cx="78" cy="44" r="10" fill="#FFD66B"/>
+            </svg>
+          </div>
+          <span class="bundle-amt">18,000</span>
+          <span class="bundle-bonus">+ 30% Bonus</span>
+          <div class="buy-btn"><span class="buy-txt">$ 4.99</span></div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundle-spacer"></div>
+          <div class="bundle-pile">
+            <svg id="icon-pile-gem" width="100" height="100" viewBox="0 0 100 100">
+              <path d="M28 30h44l14 22-36 36-36-36z" fill="#5AC8E8"/>
+              <path d="M28 30l8 22h28l8-22M14 52h72M50 88L36 52M50 88l14-36" fill="none" stroke="#3A9BC4" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="bundle-amt">500</span>
+          <span class="bundle-bonus">Gems</span>
+          <div class="buy-btn"><span class="buy-txt">$ 9.99</span></div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundle-spacer"></div>
+          <div class="bundle-pile">
+            <svg id="icon-pile-mega" width="110" height="110" viewBox="0 0 110 110">
+              <rect x="18" y="40" width="74" height="46" rx="6" fill="#7C5CBF"/>
+              <path d="M18 40l10-16h54l10 16" fill="#634AA0"/>
+              <circle cx="55" cy="63" r="14" fill="#FFD66B"/>
+              <path d="M55 24v62" stroke="#FFD66B" stroke-width="3"/>
+            </svg>
+          </div>
+          <span class="bundle-amt">Mega Box</span>
+          <span class="bundle-bonus">Coins + Gems + Boost</span>
+          <div class="buy-btn"><span class="buy-txt">$ 19.99</span></div>
+        </div>
+      </div>
+
+      <!-- limited-time goods -->
+      <div class="sec-head">
+        <span class="sec-title">Limited-Time Goods</span>
+        <div class="sec-tip">
+          <div class="sec-tip-ico"><svg id="icon-flame" width="20" height="20" viewBox="0 0 20 20"><path d="M11 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-2-1-3-1-4 2 1 3 3 3 6a6 6 0 0 1-12 0c0-5 5-7 7-11z" fill="#E8503A"/></svg></div>
+          <span class="sec-tip-txt">Ends in 06:42:18</span>
+        </div>
+      </div>
+      <div class="limited-row">
+        <div class="lim">
+          <div class="lim-thumb lt-red">
+            <svg id="icon-lim-boost" width="84" height="84" viewBox="0 0 84 84">
+              <path d="M48 10L22 46h16l-4 28 26-38H46z" fill="#E8503A"/>
+            </svg>
+          </div>
+          <div class="lim-meta">
+            <div class="lim-tag-row">
+              <div class="lim-tag"><span class="lim-tag-txt">-50%</span></div>
+              <div class="lim-timer">
+                <div class="lim-timer-ico"><svg id="icon-lim-clock1" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#B08968" stroke-width="1.5"/><path d="M8 5v3l2 1" fill="none" stroke="#B08968" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <span class="lim-timer-txt">2h left</span>
+              </div>
+            </div>
+            <span class="lim-name">Speed Boost ×5</span>
+            <span class="lim-desc">Cook 2× faster for 30 minutes each.</span>
+          </div>
+          <div class="lim-price-col">
+            <div class="lim-old"><span class="lim-old-txt">160 gems</span></div>
+            <div class="lim-buy">
+              <div class="lim-buy-ico"><svg id="icon-lim-gem1" width="24" height="24" viewBox="0 0 24 24"><path d="M5 5h14l3 6-10 11L2 11z" fill="#5AC8E8"/></svg></div>
+              <span class="lim-buy-txt">80</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lim">
+          <div class="lim-thumb lt-honey">
+            <svg id="icon-lim-decor" width="84" height="84" viewBox="0 0 84 84">
+              <path d="M42 14l9 18 20 3-14 14 3 20-18-9-18 9 3-20-14-14 20-3z" fill="#F5A623"/>
+            </svg>
+          </div>
+          <div class="lim-meta">
+            <div class="lim-tag-row">
+              <div class="lim-tag"><span class="lim-tag-txt">RARE</span></div>
+              <div class="lim-timer">
+                <div class="lim-timer-ico"><svg id="icon-lim-clock2" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#B08968" stroke-width="1.5"/><path d="M8 5v3l2 1" fill="none" stroke="#B08968" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <span class="lim-timer-txt">today only</span>
+              </div>
+            </div>
+            <span class="lim-name">Golden Lantern</span>
+            <span class="lim-desc">Decoration · +5% town charm.</span>
+          </div>
+          <div class="lim-price-col">
+            <div class="lim-old"><span class="lim-old-txt">limited</span></div>
+            <div class="lim-buy">
+              <div class="lim-buy-ico"><svg id="icon-lim-coin2" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFD66B"/></svg></div>
+              <span class="lim-buy-txt">9,900</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #0C111B;
+  --bg1: #141C2B;
+  --panel: #1B2536;
+  --panel2: #243047;
+  --line: #2E3D58;
+  --ember: #FF6A2B;
+  --ember-d: #C8420F;
+  --blue: #38C6FF;
+  --blue-d: #1A8FC4;
+  --red: #FF3B4E;
+  --gold: #FFC24B;
+  --text: #E8EEFA;
+  --text-dim: #7E8DAB;
+  --green: #4BE08A;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--bg0);
+  padding: 48px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 80px; margin-bottom: 36px; }
+.back {
+  width: 72px; height: 72px;
+  background-color: var(--panel);
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.title { font-size: 48px; color: var(--text); font-weight: bold; white-space: normal; flex-grow: 1; }
+.ver { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- main two columns ---------- */
+.main { flex-direction: row; flex-grow: 1; }
+.col { flex-direction: column; flex-grow: 1; }
+.col-first { margin-right: 36px; }
+
+.sec-label { flex-direction: row; align-items: center; height: 44px; margin-bottom: 20px; }
+.sec-bar { width: 48px; height: 8px; background-color: var(--ember); margin-right: 16px; }
+.sec-tx { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+.panel {
+  flex-direction: column;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  padding: 8px 36px;
+  margin-bottom: 36px;
+}
+.row { flex-direction: row; align-items: center; height: 116px; }
+.row-div { border-width: 0px; border-bottom-width: 2px; border-color: var(--line); }
+.row-ico {
+  width: 68px; height: 68px;
+  background-color: var(--bg1);
+  border-width: 2px; border-color: var(--line);
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.row-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.row-name { font-size: 34px; min-height: 42px; color: var(--text); font-weight: bold; white-space: normal; }
+.row-sub { font-size: 22px; min-height: 28px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+
+/* toggle (skinned) */
+.toggle { width: 118px; height: 62px; flex-direction: row; align-items: center; }
+.toggle-on { width: 118px; height: 62px; background-color: var(--blue-d); border-width: 3px; border-color: var(--blue); justify-content: flex-end; padding: 0 6px; }
+.toggle-off { width: 118px; height: 62px; background-color: var(--bg1); border-width: 3px; border-color: var(--line); justify-content: flex-start; padding: 0 6px; }
+.knob { width: 44px; height: 44px; background-color: var(--text); }
+
+/* select value */
+.row-val {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 62px;
+  background-color: var(--bg1);
+  border-width: 3px; border-color: var(--line);
+  padding: 0 24px;
+}
+.row-val-tx { font-size: 28px; min-height: 34px; color: var(--blue); font-weight: bold; white-space: normal; margin-right: 14px; }
+.row-val-arr { width: 26px; height: 26px; }
+
+/* quality segmented */
+.seg { flex-direction: row; align-items: center; height: 62px; }
+.seg-item {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 62px;
+  background-color: var(--bg1);
+  border-width: 3px; border-color: var(--line);
+  padding: 0 28px;
+  margin-left: 12px;
+}
+.seg-on { background-color: var(--ember); border-color: var(--ember-d); }
+.seg-tx { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.seg-tx-on { font-size: 26px; min-height: 32px; color: #2A1003; font-weight: bold; white-space: normal; }
+
+/* account card */
+.acct {
+  flex-direction: row; align-items: center;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--ember);
+  padding: 28px 36px;
+  margin-top: auto;
+}
+.acct-avatar {
+  width: 96px; height: 96px;
+  background-color: var(--blue-d);
+  border-width: 3px; border-color: var(--blue);
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.acct-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.acct-name { font-size: 38px; min-height: 46px; color: var(--text); font-weight: bold; white-space: normal; }
+.acct-id { font-size: 24px; min-height: 30px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+.logout {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 76px;
+  background-color: var(--red);
+  border-width: 3px; border-color: var(--red);
+  padding: 0 40px;
+}
+.logout-tx { font-size: 30px; min-height: 38px; color: var(--text); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M24 8 L12 20 L24 32" stroke="#7E8DAB" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="title">设置</span>
+      <span class="ver">BLADE RUSH · v3.2.1</span>
+    </div>
+
+    <div class="main">
+      <div class="col col-first">
+        <div class="sec-label">
+          <div class="sec-bar"></div>
+          <span class="sec-tx">声音 AUDIO</span>
+        </div>
+        <div class="panel">
+          <div class="row row-div">
+            <div class="row-ico">
+              <svg id="icon-music" width="40" height="40" viewBox="0 0 40 40">
+                <rect x="17" y="7" width="5" height="21" fill="#38C6FF"/>
+                <path d="M22 7 L31 11 L31 17 L22 14 Z" fill="#38C6FF"/>
+                <circle cx="14" cy="28" r="6" fill="#38C6FF"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">背景音乐</span>
+              <span class="row-sub">BACKGROUND MUSIC</span>
+            </div>
+            <div class="toggle toggle-on" data-aiui-toggle="on">
+              <div class="knob"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-ico">
+              <svg id="icon-sfx" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M9 15 L15 15 L23 9 L23 31 L15 25 L9 25 Z" fill="#FF6A2B"/>
+                <path d="M28 14 Q33 20 28 26" stroke="#FF6A2B" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">音效</span>
+              <span class="row-sub">SOUND EFFECTS</span>
+            </div>
+            <div class="toggle toggle-on" data-aiui-toggle="on">
+              <div class="knob"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-label">
+          <div class="sec-bar"></div>
+          <span class="sec-tx">操作 CONTROLS</span>
+        </div>
+        <div class="panel">
+          <div class="row row-div">
+            <div class="row-ico">
+              <svg id="icon-vibe" width="40" height="40" viewBox="0 0 40 40">
+                <rect x="14" y="10" width="12" height="20" rx="3" fill="#4BE08A"/>
+                <rect x="8" y="17" width="3" height="6" fill="#4BE08A"/>
+                <rect x="29" y="17" width="3" height="6" fill="#4BE08A"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">震动反馈</span>
+              <span class="row-sub">HAPTICS</span>
+            </div>
+            <div class="toggle toggle-off" data-aiui-toggle="off">
+              <div class="knob"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-ico">
+              <svg id="icon-lang" width="40" height="40" viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="14" fill="none" stroke="#38C6FF" stroke-width="3"/>
+                <path d="M6 20 L34 20 M20 6 Q11 20 20 34 Q29 20 20 6" stroke="#38C6FF" stroke-width="2.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">语言</span>
+              <span class="row-sub">LANGUAGE</span>
+            </div>
+            <div class="row-val">
+              <span class="row-val-tx">简体中文</span>
+              <svg id="icon-langarr" class="row-val-arr" width="26" height="26" viewBox="0 0 26 26">
+                <path d="M9 6 L17 13 L9 20" stroke="#38C6FF" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="sec-label">
+          <div class="sec-bar"></div>
+          <span class="sec-tx">画质 GRAPHICS</span>
+        </div>
+        <div class="panel">
+          <div class="row row-div">
+            <div class="row-ico">
+              <svg id="icon-quality" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M20 5 L25 15 L36 16 L27 24 L30 35 L20 29 L10 35 L13 24 L4 16 L15 15 Z" fill="#FFC24B"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">画面质量</span>
+              <span class="row-sub">QUALITY</span>
+            </div>
+            <div class="seg">
+              <div class="seg-item">
+                <span class="seg-tx">流畅</span>
+              </div>
+              <div class="seg-item seg-on">
+                <span class="seg-tx-on">高清</span>
+              </div>
+              <div class="seg-item">
+                <span class="seg-tx">极致</span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-ico">
+              <svg id="icon-fps" width="40" height="40" viewBox="0 0 40 40">
+                <rect x="6" y="22" width="6" height="12" fill="#38C6FF"/>
+                <rect x="17" y="14" width="6" height="20" fill="#38C6FF"/>
+                <rect x="28" y="7" width="6" height="27" fill="#38C6FF"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">高帧率模式</span>
+              <span class="row-sub">120 FPS</span>
+            </div>
+            <div class="toggle toggle-on" data-aiui-toggle="on">
+              <div class="knob"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-label">
+          <div class="sec-bar"></div>
+          <span class="sec-tx">显示 DISPLAY</span>
+        </div>
+        <div class="panel">
+          <div class="row">
+            <div class="row-ico">
+              <svg id="icon-blood" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M20 6 C12 18 12 26 20 34 C28 26 28 18 20 6 Z" fill="#FF3B4E"/>
+              </svg>
+            </div>
+            <div class="row-txw">
+              <span class="row-name">伤害数字</span>
+              <span class="row-sub">DAMAGE NUMBERS</span>
+            </div>
+            <div class="toggle toggle-on" data-aiui-toggle="on">
+              <div class="knob"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acct">
+          <div class="acct-avatar">
+            <svg id="icon-acct" width="56" height="56" viewBox="0 0 56 56">
+              <circle cx="28" cy="21" r="12" fill="#E8EEFA"/>
+              <path d="M8 50 C8 37 19 32 28 32 C37 32 48 37 48 50 Z" fill="#E8EEFA"/>
+            </svg>
+          </div>
+          <div class="acct-txw">
+            <span class="acct-name">Lv.42 剑客</span>
+            <span class="acct-id">ID: 77203914</span>
+          </div>
+          <div class="logout">
+            <span class="logout-tx">退出登录</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

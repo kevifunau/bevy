@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0A0F14;
+  flex-direction: column;
+}
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  height: 84px;
+  padding: 0 36px;
+  background-color: #0D141B;
+  border-bottom-width: 2px;
+  border-bottom-color: #16222B;
+}
+.brand {
+  flex-direction: row;
+  align-items: center;
+}
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  margin-right: 14px;
+}
+.brand-name {
+  font-size: 30px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+  letter-spacing: 4px;
+}
+.brand-sub {
+  font-size: 14px;
+  color: #2DE2C8;
+  letter-spacing: 3px;
+  margin-left: 14px;
+  margin-top: 8px;
+}
+.topbar-spacer { flex-grow: 1; }
+.wallet {
+  flex-direction: row;
+  align-items: center;
+}
+.coin-chip {
+  flex-direction: row;
+  align-items: center;
+  height: 48px;
+  padding: 0 18px;
+  margin-left: 12px;
+  background-color: #101A22;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+}
+.coin-chip-icon { width: 26px; height: 26px; margin-right: 10px; }
+.coin-chip-val {
+  font-size: 20px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+}
+.coin-chip-add {
+  width: 26px;
+  height: 26px;
+  margin-left: 12px;
+  border-radius: 6px;
+  background-color: #2DE2C8;
+  align-items: center;
+  justify-content: center;
+}
+
+.body {
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 28px 36px;
+}
+
+/* left player card */
+.player-col {
+  width: 420px;
+  margin-right: 28px;
+  flex-direction: column;
+}
+.player-card {
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 24px;
+  flex-direction: column;
+}
+.player-head {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.avatar {
+  width: 86px;
+  height: 86px;
+  border-radius: 10px;
+  background-color: #14222C;
+  border-width: 2px;
+  border-color: #2DE2C8;
+  margin-right: 18px;
+  align-items: center;
+  justify-content: center;
+}
+.player-meta { flex-direction: column; }
+.player-name {
+  font-size: 26px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+}
+.player-tag {
+  font-size: 15px;
+  color: #6E8794;
+  margin-top: 6px;
+  letter-spacing: 2px;
+}
+.lvl-row {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 14px;
+}
+.lvl-badge {
+  width: 40px;
+  height: 26px;
+  background-color: #FF7A2D;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+.lvl-badge-txt { font-size: 15px; color: #0A0F14; -unity-font-style: bold; }
+.lvl-txt { font-size: 15px; color: #C4D2DA; }
+
+.rank-block {
+  flex-direction: column;
+  margin-top: 4px;
+  padding-top: 22px;
+  border-top-width: 1px;
+  border-top-color: #16222B;
+}
+.rank-top {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.rank-name {
+  flex-direction: row;
+  align-items: center;
+}
+.rank-icon { width: 44px; height: 44px; margin-right: 12px; }
+.rank-tier { font-size: 22px; color: #2DE2C8; -unity-font-style: bold; }
+.rank-pts { font-size: 16px; color: #8AA0AC; }
+.bar {
+  flex-direction: row;
+  width: 100%;
+  height: 12px;
+  background-color: #0A1218;
+  border-radius: 6px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.bar-fill {
+  height: 10px;
+  width: 64%;
+  background-color: #2DE2C8;
+  border-radius: 6px;
+}
+.rank-hint { font-size: 13px; color: #6E8794; margin-top: 10px; }
+
+.stat-grid {
+  flex-direction: row;
+  margin-top: 22px;
+}
+.stat-cell {
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  margin-right: 10px;
+  background-color: #0A1218;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.stat-cell-last { margin-right: 0; }
+.stat-val { font-size: 24px; color: #FFFFFF; -unity-font-style: bold; }
+.stat-key { font-size: 12px; color: #6E8794; margin-top: 6px; letter-spacing: 2px; }
+
+/* center matchmaking */
+.center-col {
+  flex-grow: 1;
+  flex-direction: column;
+}
+.modes {
+  flex-direction: row;
+  height: 56px;
+  margin-bottom: 22px;
+}
+.seg {
+  flex-direction: row;
+  height: 56px;
+  background-color: #0E161D;
+  border-radius: 8px;
+  padding: 5px;
+  border-width: 1px;
+  border-color: #1E2E39;
+}
+.seg-btn {
+  flex-grow: 1;
+  height: 46px;
+  background-color: #00000000;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 17px;
+  color: #8AA0AC;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+}
+.seg-btn.is-active {
+  background-color: #14323A;
+  color: #2DE2C8;
+  border-width: 1px;
+  border-color: #2DE2C8;
+}
+
+.match-card {
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 28px;
+}
+.match-mode-label {
+  font-size: 14px;
+  color: #2DE2C8;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+.match-mode-name {
+  font-size: 40px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+}
+.match-mode-desc {
+  font-size: 16px;
+  color: #6E8794;
+  margin-top: 10px;
+}
+.match-stage {
+  flex-grow: 1;
+  margin-top: 22px;
+  margin-bottom: 24px;
+  background-color: #0A1218;
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: #16222B;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.match-stage-icon { width: 120px; height: 120px; margin-bottom: 16px; }
+.match-stage-txt { font-size: 16px; color: #455A66; letter-spacing: 3px; }
+
+.match-foot { flex-direction: row; align-items: center; }
+.party {
+  flex-direction: row;
+  align-items: center;
+}
+.party-slot {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  margin-right: 10px;
+  background-color: #14222C;
+  border-width: 1px;
+  border-color: #2A3C48;
+  align-items: center;
+  justify-content: center;
+}
+.party-slot-filled { border-color: #2DE2C8; }
+.party-add { border-color: #2A3C48; }
+.match-foot-spacer { flex-grow: 1; }
+.start-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 340px;
+  height: 78px;
+  background-color: #FF7A2D;
+  border-radius: 10px;
+}
+.start-btn-icon { width: 34px; height: 34px; margin-right: 14px; }
+.start-btn-txt {
+  font-size: 26px;
+  color: #0A0F14;
+  -unity-font-style: bold;
+  letter-spacing: 3px;
+}
+
+/* right secondary entries */
+.right-col {
+  width: 320px;
+  margin-left: 28px;
+  flex-direction: column;
+}
+.entry {
+  flex-direction: row;
+  align-items: center;
+  height: 132px;
+  margin-bottom: 18px;
+  padding: 20px;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+}
+.entry-armory { border-left-width: 4px; border-left-color: #2DE2C8; }
+.entry-shop { border-left-width: 4px; border-left-color: #FF7A2D; }
+.entry-pass { border-left-width: 4px; border-left-color: #C18BFF; }
+.entry-icon {
+  width: 58px;
+  height: 58px;
+  margin-right: 18px;
+}
+.entry-text { flex-direction: column; flex-grow: 1; }
+.entry-title {
+  font-size: 22px;
+  color: #FFFFFF;
+  -unity-font-style: bold;
+}
+.entry-sub {
+  font-size: 14px;
+  color: #6E8794;
+  margin-top: 8px;
+}
+.entry-arrow { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="topbar">
+      <div class="brand">
+        <svg id="icon-brand-skull" class="brand-mark" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M24 4C13 4 6 11 6 22c0 6 3 10 7 13v6h6v-5h2v5h6v-5h2v5h6v-6c4-3 7-7 7-13C42 11 35 4 24 4z" fill="#16222B" stroke="#2DE2C8" stroke-width="2"/>
+          <circle cx="17" cy="22" r="4" fill="#2DE2C8"/>
+          <circle cx="31" cy="22" r="4" fill="#2DE2C8"/>
+          <path d="M22 30h4v4h-4z" fill="#FF7A2D"/>
+        </svg>
+        <span class="brand-name">VANGUARD</span>
+        <span class="brand-sub">OPS</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="wallet">
+        <div class="coin-chip">
+          <svg id="icon-credit" class="coin-chip-icon" width="26" height="26" viewBox="0 0 26 26">
+            <circle cx="13" cy="13" r="10" fill="#14222C" stroke="#2DE2C8" stroke-width="2"/>
+            <path d="M13 7v12M9 10h6a2 2 0 010 4H9" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+          </svg>
+          <span class="coin-chip-val">24,860</span>
+          <div class="coin-chip-add">
+            <svg id="icon-add-credit" width="16" height="16" viewBox="0 0 16 16">
+              <path d="M8 3v10M3 8h10" stroke="#0A0F14" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+        <div class="coin-chip">
+          <svg id="icon-gem" class="coin-chip-icon" width="26" height="26" viewBox="0 0 26 26">
+            <path d="M13 3l8 6-8 14L5 9z" fill="#14222C" stroke="#FF7A2D" stroke-width="2"/>
+            <path d="M5 9h16M13 3l-3 6 3 14 3-14z" fill="none" stroke="#FF7A2D" stroke-width="1.5"/>
+          </svg>
+          <span class="coin-chip-val">1,250</span>
+          <div class="coin-chip-add">
+            <svg id="icon-add-gem" width="16" height="16" viewBox="0 0 16 16">
+              <path d="M8 3v10M3 8h10" stroke="#0A0F14" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="player-col">
+        <div class="player-card">
+          <div class="player-head">
+            <div class="avatar">
+              <svg id="icon-avatar-helmet" width="54" height="54" viewBox="0 0 54 54">
+                <path d="M27 8c-11 0-17 8-17 18v8h8l3 8h12l3-8h8v-8c0-10-6-18-17-18z" fill="#0A1218" stroke="#2DE2C8" stroke-width="2"/>
+                <path d="M18 26h18" stroke="#2DE2C8" stroke-width="2"/>
+                <circle cx="22" cy="22" r="2.5" fill="#FF7A2D"/>
+                <circle cx="32" cy="22" r="2.5" fill="#FF7A2D"/>
+              </svg>
+            </div>
+            <div class="player-meta">
+              <span class="player-name">REAPER_07</span>
+              <span class="player-tag">[ VGD ] · ID 884203</span>
+              <div class="lvl-row">
+                <div class="lvl-badge"><span class="lvl-badge-txt">87</span></div>
+                <span class="lvl-txt">Operator Level</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rank-block">
+            <div class="rank-top">
+              <div class="rank-name">
+                <svg id="icon-rank-diamond" class="rank-icon" width="44" height="44" viewBox="0 0 44 44">
+                  <path d="M22 5l14 11-14 23L8 16z" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+                  <path d="M22 5l5 11-5 23-5-23z" fill="none" stroke="#2DE2C8" stroke-width="1.5"/>
+                  <circle cx="22" cy="17" r="3" fill="#FF7A2D"/>
+                </svg>
+                <span class="rank-tier">DIAMOND II</span>
+              </div>
+              <span class="rank-pts">3,240 RP</span>
+            </div>
+            <div class="bar"><div class="bar-fill"></div></div>
+            <span class="rank-hint">760 RP to DIAMOND I</span>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-cell">
+              <span class="stat-val">1.84</span>
+              <span class="stat-key">K/D</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-val">62%</span>
+              <span class="stat-key">WIN</span>
+            </div>
+            <div class="stat-cell stat-cell-last">
+              <span class="stat-val">248</span>
+              <span class="stat-key">HS%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-col">
+        <div class="modes">
+          <div class="seg">
+            <button class="seg-btn is-active">RANKED</button>
+            <button class="seg-btn">QUICK PLAY</button>
+            <button class="seg-btn">TDM</button>
+            <button class="seg-btn">SEARCH &amp; DESTROY</button>
+          </div>
+        </div>
+
+        <div class="match-card">
+          <span class="match-mode-label">SELECTED MODE</span>
+          <span class="match-mode-name">RANKED · 5v5</span>
+          <span class="match-mode-desc">Competitive search and destroy. Climb the ranked ladder, earn RP, prove your squad.</span>
+
+          <div class="match-stage">
+            <svg id="icon-stage-target" class="match-stage-icon" width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#16222B" stroke-width="3"/>
+              <circle cx="60" cy="60" r="32" fill="none" stroke="#1E2E39" stroke-width="3"/>
+              <circle cx="60" cy="60" r="8" fill="#2DE2C8"/>
+              <path d="M60 6v22M60 92v22M6 60h22M92 60h22" stroke="#2DE2C8" stroke-width="3"/>
+            </svg>
+            <span class="match-stage-txt">READY TO DEPLOY</span>
+          </div>
+
+          <div class="match-foot">
+            <div class="party">
+              <div class="party-slot party-slot-filled">
+                <svg id="icon-party-1" width="26" height="26" viewBox="0 0 26 26">
+                  <circle cx="13" cy="9" r="5" fill="#2DE2C8"/>
+                  <path d="M4 23c0-5 4-8 9-8s9 3 9 8z" fill="#2DE2C8"/>
+                </svg>
+              </div>
+              <div class="party-slot party-slot-filled">
+                <svg id="icon-party-2" width="26" height="26" viewBox="0 0 26 26">
+                  <circle cx="13" cy="9" r="5" fill="#6E8794"/>
+                  <path d="M4 23c0-5 4-8 9-8s9 3 9 8z" fill="#6E8794"/>
+                </svg>
+              </div>
+              <div class="party-slot party-add">
+                <svg id="icon-party-add" width="24" height="24" viewBox="0 0 24 24">
+                  <path d="M12 5v14M5 12h14" stroke="#455A66" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="match-foot-spacer"></div>
+            <button class="start-btn">
+              <svg id="icon-deploy" class="start-btn-icon" width="34" height="34" viewBox="0 0 34 34">
+                <path d="M6 17h18M18 9l8 8-8 8" stroke="#0A0F14" stroke-width="3" fill="none"/>
+              </svg>
+              <span class="start-btn-txt">FIND MATCH</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <button class="entry entry-armory">
+          <svg id="icon-entry-armory" class="entry-icon" width="58" height="58" viewBox="0 0 58 58">
+            <path d="M8 30h30l8-6 4 2-2 6h-6l-4 6H12z" fill="#102830" stroke="#2DE2C8" stroke-width="2"/>
+            <path d="M14 36v8M22 36v8" stroke="#2DE2C8" stroke-width="2"/>
+            <circle cx="40" cy="29" r="2.5" fill="#FF7A2D"/>
+          </svg>
+          <div class="entry-text">
+            <span class="entry-title">ARMORY</span>
+            <span class="entry-sub">Loadouts · Attachments</span>
+          </div>
+          <svg id="icon-arrow-armory" class="entry-arrow" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M9 5l8 7-8 7" stroke="#2DE2C8" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+
+        <button class="entry entry-shop">
+          <svg id="icon-entry-shop" class="entry-icon" width="58" height="58" viewBox="0 0 58 58">
+            <path d="M12 18h34l-3 24H15z" fill="#102830" stroke="#FF7A2D" stroke-width="2"/>
+            <path d="M22 18a7 7 0 0114 0" fill="none" stroke="#FF7A2D" stroke-width="2"/>
+          </svg>
+          <div class="entry-text">
+            <span class="entry-title">STORE</span>
+            <span class="entry-sub">Featured · Bundles</span>
+          </div>
+          <svg id="icon-arrow-shop" class="entry-arrow" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M9 5l8 7-8 7" stroke="#FF7A2D" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+
+        <button class="entry entry-pass">
+          <svg id="icon-entry-pass" class="entry-icon" width="58" height="58" viewBox="0 0 58 58">
+            <path d="M10 16h38v26H10z" fill="#102830" stroke="#C18BFF" stroke-width="2"/>
+            <path d="M29 20l4 8 9 1-6 6 1 9-8-4-8 4 1-9-6-6 9-1z" fill="#C18BFF"/>
+          </svg>
+          <div class="entry-text">
+            <span class="entry-title">BATTLE PASS</span>
+            <span class="entry-sub">Season 12 · Tier 34</span>
+          </div>
+          <svg id="icon-arrow-pass" class="entry-arrow" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M9 5l8 7-8 7" stroke="#C18BFF" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

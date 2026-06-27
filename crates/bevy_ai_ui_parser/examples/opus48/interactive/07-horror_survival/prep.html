@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #07090A;
+  overflow: hidden;
+}
+.bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1920px; height: 1080px;
+  background-color: #0A0E0D;
+}
+.vignette {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1920px; height: 1080px;
+  background-color: #00000000;
+  border-width: 160px;
+  border-color: #03040400;
+  border-top-color: #030404;
+  border-bottom-color: #030404;
+}
+/* header */
+.header {
+  position: absolute;
+  top: 0; left: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1920px;
+  height: 88px;
+  padding: 0 48px;
+  background-color: #0A0F0E;
+  border-bottom-width: 1px;
+  border-bottom-color: #1B2522;
+}
+.h-left { flex-direction: row; align-items: center; }
+.back-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 52px; height: 52px;
+  margin-right: 22px;
+  background-color: #0E1413;
+  border-width: 1px;
+  border-color: #243330;
+  border-radius: 6px;
+}
+.back-btn .bk-ico { width: 24px; height: 24px; }
+.h-title { font-size: 30px; color: #DDE9E4; letter-spacing: 8px; }
+.h-sub { font-size: 14px; color: #5C6B66; letter-spacing: 4px; margin-top: 4px; }
+.h-titles { align-items: flex-start; }
+.h-right { flex-direction: row; align-items: center; }
+.crumb { flex-direction: row; align-items: center; }
+.crumb-dot { width: 10px; height: 10px; border-radius: 5px; background-color: #2A3A36; margin-right: 10px; }
+.crumb-dot.on { background-color: #5FD3C0; }
+.crumb-label { font-size: 14px; color: #6E7B75; letter-spacing: 3px; margin-right: 26px; }
+
+/* body 3-col */
+.body {
+  position: absolute;
+  top: 88px; left: 0;
+  flex-direction: row;
+  width: 1920px;
+  height: 904px;
+  padding: 36px 48px;
+}
+/* survivor column */
+.survivor {
+  width: 520px;
+  height: 832px;
+  margin-right: 32px;
+  background-color: #0D1211;
+  border-width: 1px;
+  border-color: #1C2724;
+  border-radius: 10px;
+  padding: 28px;
+  align-items: center;
+}
+.portrait {
+  width: 460px;
+  height: 480px;
+  background-color: #080B0A;
+  border-width: 1px;
+  border-color: #233330;
+  border-radius: 8px;
+  margin-bottom: 22px;
+  align-items: center;
+  justify-content: center;
+}
+.portrait .pt-ico { width: 200px; height: 240px; }
+.sv-name { font-size: 34px; color: #DDE9E4; letter-spacing: 6px; margin-bottom: 6px; }
+.sv-role { font-size: 16px; color: #5FD3C0; letter-spacing: 4px; margin-bottom: 20px; }
+.sv-bio {
+  width: 460px;
+  font-size: 15px;
+  color: #7C8B85;
+  white-space: normal;
+}
+
+/* status column */
+.center {
+  width: 600px;
+  height: 832px;
+  margin-right: 32px;
+}
+.sect-title { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.sect-bar { width: 4px; height: 22px; background-color: #5FD3C0; margin-right: 12px; border-radius: 2px; }
+.sect-name { font-size: 20px; color: #C9D6D0; letter-spacing: 4px; }
+.status-panel {
+  width: 600px;
+  background-color: #0D1211;
+  border-width: 1px;
+  border-color: #1C2724;
+  border-radius: 10px;
+  padding: 26px;
+  margin-bottom: 24px;
+}
+.stat-row { margin-bottom: 22px; }
+.stat-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.stat-label { flex-direction: row; align-items: center; }
+.stat-label .st-ico { width: 22px; height: 22px; margin-right: 12px; }
+.stat-name { font-size: 17px; color: #C9D6D0; letter-spacing: 2px; }
+.stat-val { font-size: 16px; color: #8FA29B; letter-spacing: 1px; }
+.bar {
+  flex-direction: row;
+  width: 548px;
+  height: 14px;
+  background-color: #080B0A;
+  border-radius: 7px;
+  border-width: 1px;
+  border-color: #1E2A27;
+}
+.bar-fill { height: 12px; border-radius: 6px; }
+.fill-hp { width: 460px; background-color: #C24A3A; }
+.fill-san { width: 360px; background-color: #6E5A8C; }
+.fill-sta { width: 300px; background-color: #5FD3C0; }
+
+.skills-panel {
+  width: 600px;
+  background-color: #0D1211;
+  border-width: 1px;
+  border-color: #1C2724;
+  border-radius: 10px;
+  padding: 26px;
+}
+.skill-grid { flex-direction: row; }
+.skill {
+  width: 168px;
+  height: 132px;
+  margin-right: 16px;
+  background-color: #0A0F0E;
+  border-width: 1px;
+  border-color: #233330;
+  border-radius: 8px;
+  padding: 16px;
+  align-items: center;
+}
+.skill .sk-ico { width: 46px; height: 46px; margin-bottom: 12px; margin-top: 6px; }
+.skill-name { font-size: 16px; color: #C9D6D0; letter-spacing: 2px; margin-bottom: 4px; }
+.skill-desc { font-size: 12px; color: #5C6B66; }
+
+/* loadout column */
+.loadout {
+  width: 552px;
+  height: 832px;
+  background-color: #0D1211;
+  border-width: 1px;
+  border-color: #1C2724;
+  border-radius: 10px;
+  padding: 26px;
+}
+.slot-row { flex-direction: row; width: 500px; margin-bottom: 13px; }
+.slot {
+  width: 158px;
+  height: 158px;
+  margin-right: 13px;
+  background-color: #0A0F0E;
+  border-width: 1px;
+  border-color: #233330;
+  border-radius: 8px;
+  padding: 14px;
+  align-items: center;
+  justify-content: center;
+}
+.slot.empty { border-color: #1A2421; background-color: #080B0A; }
+.slot.equipped { border-color: #2E5E56; background-color: #0E1B18; }
+.slot .sl-ico { width: 58px; height: 58px; margin-bottom: 10px; }
+.slot-name { font-size: 14px; color: #C9D6D0; letter-spacing: 1px; }
+.slot-name.muted { color: #44524D; }
+.slot-tag { font-size: 11px; color: #5FD3C0; letter-spacing: 1px; margin-top: 3px; }
+
+.depart {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 78px;
+  margin-top: 14px;
+  background-color: #112320;
+  border-width: 1px;
+  border-color: #5FD3C0;
+  border-radius: 8px;
+}
+.depart .dp-ico { width: 30px; height: 30px; margin-right: 16px; }
+.depart-text { font-size: 24px; color: #5FD3C0; letter-spacing: 8px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg"></div>
+    <div class="vignette"></div>
+
+    <div class="header">
+      <div class="h-left">
+        <button class="back-btn">
+          <svg id="icon-back-prep" class="bk-ico" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15 5 8 12 15 19" fill="none" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="h-titles">
+          <div class="h-title">出发前准备</div>
+          <div class="h-sub">LOADOUT &amp; CONDITION</div>
+        </div>
+      </div>
+      <div class="h-right">
+        <div class="crumb"><div class="crumb-dot on"></div><span class="crumb-label">准备</span></div>
+        <div class="crumb"><div class="crumb-dot"></div><span class="crumb-label">潜入</span></div>
+        <div class="crumb"><div class="crumb-dot"></div><span class="crumb-label">逃脱</span></div>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- survivor -->
+      <div class="survivor">
+        <div class="portrait">
+          <svg id="icon-survivor" class="pt-ico" width="200" height="240" viewBox="0 0 200 240">
+            <circle cx="100" cy="70" r="46" fill="none" stroke="#3A4A45" stroke-width="3"/>
+            <path d="M40 230c0-46 27-78 60-78s60 32 60 78" fill="none" stroke="#3A4A45" stroke-width="3"/>
+            <circle cx="84" cy="66" r="5" fill="#5FD3C0"/>
+            <circle cx="116" cy="66" r="5" fill="#5FD3C0"/>
+            <path d="M86 92c8 6 20 6 28 0" fill="none" stroke="#2A3A36" stroke-width="3" stroke-linecap="round"/>
+            <path d="M70 150h60v30h-60z" fill="none" stroke="#243330" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="sv-name">ELIAS REED</div>
+        <div class="sv-role">夜班看护 · NIGHT ORDERLY</div>
+        <div class="sv-bio">在 WARD 13 工作了七年。停电那晚他被反锁在档案室,如今走廊里游荡的东西,曾是他照料过的病人。</div>
+      </div>
+
+      <!-- status & skills -->
+      <div class="center">
+        <div class="sect-title"><div class="sect-bar"></div><span class="sect-name">生存状态</span></div>
+        <div class="status-panel">
+          <div class="stat-row">
+            <div class="stat-head">
+              <div class="stat-label">
+                <svg id="icon-hp" class="st-ico" width="22" height="22" viewBox="0 0 22 22">
+                  <path d="M11 19C5 14 2 10 2 7a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3-3 7-9 12z" fill="#C24A3A"/>
+                </svg>
+                <span class="stat-name">体力 / HEALTH</span>
+              </div>
+              <span class="stat-val">82 / 100</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-hp"></div></div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-head">
+              <div class="stat-label">
+                <svg id="icon-sanity" class="st-ico" width="22" height="22" viewBox="0 0 22 22">
+                  <path d="M11 2c4 0 7 3 7 7 0 3-2 5-2 8H6c0-3-2-5-2-8 0-4 3-7 7-7z" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+                  <path d="M8 20h6M9 17v3M13 17v3" stroke="#6E5A8C" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="stat-name">理智 / SANITY</span>
+              </div>
+              <span class="stat-val">64 / 100</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-san"></div></div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-head">
+              <div class="stat-label">
+                <svg id="icon-stamina" class="st-ico" width="22" height="22" viewBox="0 0 22 22">
+                  <path d="M12 2 5 13h5l-2 7 9-12h-6z" fill="#5FD3C0"/>
+                </svg>
+                <span class="stat-name">耐力 / STAMINA</span>
+              </div>
+              <span class="stat-val">54 / 100</span>
+            </div>
+            <div class="bar"><div class="bar-fill fill-sta"></div></div>
+          </div>
+        </div>
+
+        <div class="sect-title"><div class="sect-bar"></div><span class="sect-name">特性</span></div>
+        <div class="skills-panel">
+          <div class="skill-grid">
+            <div class="skill">
+              <svg id="icon-trait-quiet" class="sk-ico" width="46" height="46" viewBox="0 0 46 46">
+                <path d="M14 18h6l8-7v24l-8-7h-6z" fill="#5FD3C0"/>
+                <path d="M32 16a8 8 0 0 1 0 14" fill="none" stroke="#8E2B2B" stroke-width="2"/>
+                <path d="M30 30 36 16" stroke="#8E2B2B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="skill-name">轻足</div>
+              <div class="skill-desc">脚步声 -30%</div>
+            </div>
+            <div class="skill">
+              <svg id="icon-trait-medic" class="sk-ico" width="46" height="46" viewBox="0 0 46 46">
+                <rect x="8" y="14" width="30" height="22" rx="3" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+                <rect x="20" y="20" width="6" height="10" rx="1" fill="#C24A3A"/>
+                <rect x="18" y="22" width="10" height="6" rx="1" fill="#C24A3A"/>
+                <path d="M18 14v-3h10v3" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              </svg>
+              <div class="skill-name">医护</div>
+              <div class="skill-desc">治疗效率 +25%</div>
+            </div>
+            <div class="skill">
+              <svg id="icon-trait-fear" class="sk-ico" width="46" height="46" viewBox="0 0 46 46">
+                <path d="M23 8c-7 0-12 5-12 12 0 4 2 6 2 9h20c0-3 2-5 2-9 0-7-5-12-12-12z" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+                <circle cx="18" cy="20" r="2.5" fill="#6E5A8C"/>
+                <circle cx="28" cy="20" r="2.5" fill="#6E5A8C"/>
+                <path d="M16 33h14" stroke="#6E5A8C" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="skill-name">麻木</div>
+              <div class="skill-desc">理智流失 -15%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- loadout -->
+      <div class="loadout">
+        <div class="sect-title"><div class="sect-bar"></div><span class="sect-name">携带物品 · 4 / 6</span></div>
+        <div class="slot-row">
+          <div class="slot equipped">
+            <svg id="icon-flashlight" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <rect x="10" y="22" width="20" height="14" rx="3" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <path d="M30 24h8v10h-8z" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <path d="M38 22 50 16v26l-12-6z" fill="#5FD3C0" opacity="0.3"/>
+            </svg>
+            <div class="slot-name">手电筒</div>
+            <div class="slot-tag">电量 72%</div>
+          </div>
+          <div class="slot equipped">
+            <svg id="icon-bandage" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <rect x="14" y="22" width="30" height="14" rx="7" fill="none" stroke="#C24A3A" stroke-width="2" transform="rotate(-30 29 29)"/>
+              <circle cx="29" cy="29" r="4" fill="#C24A3A"/>
+            </svg>
+            <div class="slot-name">绷带</div>
+            <div class="slot-tag">×3</div>
+          </div>
+          <div class="slot equipped">
+            <svg id="icon-pill" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <rect x="14" y="22" width="30" height="14" rx="7" fill="none" stroke="#6E5A8C" stroke-width="2"/>
+              <path d="M29 22v14" stroke="#6E5A8C" stroke-width="2"/>
+              <rect x="14" y="22" width="15" height="14" rx="7" fill="#6E5A8C" opacity="0.3"/>
+            </svg>
+            <div class="slot-name">镇定剂</div>
+            <div class="slot-tag">×2</div>
+          </div>
+        </div>
+        <div class="slot-row">
+          <div class="slot equipped">
+            <svg id="icon-key-item" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <circle cx="22" cy="22" r="9" fill="none" stroke="#C9A23A" stroke-width="2"/>
+              <path d="M28 28 42 42M38 38l4-4M34 34l4-4" stroke="#C9A23A" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="slot-name">铜钥匙</div>
+            <div class="slot-tag">任务</div>
+          </div>
+          <div class="slot empty">
+            <svg id="icon-slot-empty1" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <path d="M29 18v22M18 29h22" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="slot-name muted">空栏位</div>
+          </div>
+          <div class="slot empty">
+            <svg id="icon-slot-empty2" class="sl-ico" width="58" height="58" viewBox="0 0 58 58">
+              <path d="M29 18v22M18 29h22" stroke="#2A3A36" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="slot-name muted">空栏位</div>
+          </div>
+        </div>
+
+        <button class="depart">
+          <svg id="icon-depart" class="dp-ico" width="30" height="30" viewBox="0 0 30 30">
+            <path d="M4 15h18M16 8l8 7-8 7" fill="none" stroke="#5FD3C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 5v20" stroke="#5FD3C0" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="depart-text">潜入病院</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

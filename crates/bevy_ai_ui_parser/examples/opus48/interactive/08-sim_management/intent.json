@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "Warm bright restaurant simulation/management game UI suite: scene overview, build menu, orders/tasks, staff management, shop, settings.",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index", "role": "main view — business-scene overview, resource bar, current revenue, bottom main-function nav" },
+    { "id": "build", "role": "build menu — buildable/upgradeable building categories & cards with cost, output, unlock condition" },
+    { "id": "orders", "role": "orders/tasks — in-progress + available orders with demand, reward, countdown, claim entry" },
+    { "id": "staff", "role": "staff/role management — staff list & attributes, hire & upgrade, post assignment" },
+    { "id": "shop", "role": "shop — currency & bundles, limited-time goods, ad-acquire entry" },
+    { "id": "settings", "role": "settings — music/sfx toggles, volume slider, quality select, notification toggle, language, restore defaults" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "stage-with-hud",
+    "mood": "warm-bright-cozy-restaurant",
+    "accentFamily": "tomato-honey-cream",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": [
+    "switch",
+    "slider",
+    "seg",
+    "picker",
+    "bar",
+    "button"
+  ]
+}

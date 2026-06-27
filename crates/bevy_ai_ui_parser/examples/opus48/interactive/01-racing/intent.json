@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "霓虹夜跑风格竞速赛车手游 UI 套件:主菜单 / 车库改装 / 赛道选择 / 比赛 HUD / 结算,横屏 1920x1080。",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index",  "role": "Main menu — brand + player info, big start-race entry, secondary entries (garage/events/shop), resource bar." },
+    { "id": "garage", "role": "Garage / tuning — current car display, car list, performance stat bars, tune & upgrade entries." },
+    { "id": "tracks", "role": "Event / track select — selectable track cards with difficulty, rewards, unlock condition, best time." },
+    { "id": "hud",    "role": "In-race HUD — speedometer, lap/rank, timer, minimap, boost item, steering/throttle/brake control zones." },
+    { "id": "result", "role": "Result — placement, time, currency earned & unlocks, retry/back entries." }
+  ],
+  "styleAxes": {
+    "mood": "霓虹夜跑:午夜暗蓝底色 + 高饱和氖光,速度感、电子感、夜赛霓虹街道。",
+    "accent": "主氖青 #00E5FF + 品红 #FF2D7E + 警示黄 #FFE100,点缀紫光,危险红用于刹车/高难。",
+    "type": "无衬线、宽字距大标题表达冲刺速度感;数字使用大号粗体强调里程表/计时。",
+    "density": "横屏左右分栏,中高密度;卡片圆角 + 细氖描边,自绘皮肤控件统一调性。"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "version": "bevy-ui-assets/v1",
+  "ui_root": "index.html",
+  "design_system": "bevy-ui",
+  "assets": [
+    {
+      "id": "settings_panel_bg",
+      "kind": "panel",
+      "path": "Asset/panels/settings_panel_bg.png",
+      "usage": "background"
+    },
+    {
+      "id": "close_idle",
+      "kind": "button",
+      "path": "Asset/buttons/close_idle.png",
+      "usage": "button-idle"
+    },
+    {
+      "id": "close_hover",
+      "kind": "button",
+      "path": "Asset/buttons/close_hover.png",
+      "usage": "button-hover"
+    },
+    {
+      "id": "close_pressed",
+      "kind": "button",
+      "path": "Asset/buttons/close_pressed.png",
+      "usage": "button-pressed"
+    }
+  ],
+  "components": [
+    {
+      "id": "settings_panel",
+      "kind": "panel",
+      "node_selector": "#settings_panel",
+      "asset_ref": "settings_panel_bg",
+      "image_mode": "sliced",
+      "slicer": {
+        "border": 22.0,
+        "center_scale_mode": "stretch",
+        "sides_scale_mode": "stretch"
+      }
+    },
+    {
+      "id": "close_btn",
+      "kind": "button",
+      "node_selector": "#close_btn",
+      "states": {
+        "idle": "Asset/buttons/close_idle.png",
+        "hover": "Asset/buttons/close_hover.png",
+        "pressed": "Asset/buttons/close_pressed.png"
+      }
+    }
+  ],
+  "icons": [
+    {
+      "semantic": "skill:fireball",
+      "path": "Asset/icons/fireball.png"
+    }
+  ],
+  "atlases": [
+    {
+      "id": "loading_spinner",
+      "path": "Asset/atlas/loading_spinner.png",
+      "tile_width": 24,
+      "tile_height": 24,
+      "columns": 7,
+      "rows": 1
+    }
+  ]
+}

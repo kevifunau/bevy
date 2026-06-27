@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  flex-direction: column;
+  background-color: #05080F;
+  padding: 0;
+}
+
+/* track backdrop band suggestion */
+.road {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #070B18;
+}
+.road-glow {
+  position: absolute;
+  top: 720px;
+  left: 0;
+  width: 1920px;
+  height: 360px;
+  background-color: #0A0E1C;
+  border-top-width: 2px;
+  border-top-color: #14203E;
+}
+
+/* top HUD row */
+.top-hud {
+  position: absolute;
+  top: 36px;
+  left: 48px;
+  width: 1824px;
+  height: 120px;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.hud-card {
+  background-color: #0C1226;
+  border-radius: 18px;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 16px 22px;
+  flex-direction: column;
+}
+/* lap + rank */
+.lap-card { width: 280px; height: 120px; justify-content: center; }
+.lap-row { flex-direction: row; align-items: flex-end; }
+.lap-cur { font-size: 56px; color: #FFFFFF; font-weight: bold; }
+.lap-tot { font-size: 26px; color: #6B7CA8; font-weight: bold; margin-left: 6px; margin-bottom: 8px; }
+.lap-label { font-size: 14px; color: #00E5FF; letter-spacing: 4px; margin-bottom: 2px; }
+
+.timer-card { width: 360px; height: 120px; justify-content: center; align-items: center; }
+.timer-label { font-size: 14px; color: #6B7CA8; letter-spacing: 6px; margin-bottom: 4px; }
+.timer-val { font-size: 56px; color: #FFE100; font-weight: bold; letter-spacing: 2px; }
+
+.rank-card {
+  width: 200px;
+  height: 120px;
+  justify-content: center;
+  align-items: center;
+  border-color: #FF2D7E;
+}
+.rank-pos { flex-direction: row; align-items: flex-end; }
+.rank-num { font-size: 56px; color: #FF2D7E; font-weight: bold; }
+.rank-suffix { font-size: 22px; color: #FF2D7E; font-weight: bold; margin-bottom: 10px; margin-left: 2px; }
+.rank-of { font-size: 14px; color: #6B7CA8; letter-spacing: 3px; }
+
+/* minimap top-right */
+.minimap {
+  position: absolute;
+  top: 36px;
+  right: 48px;
+  width: 300px;
+  height: 220px;
+  border-radius: 18px;
+  background-color: #0A0E1C;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 18px;
+  align-items: center;
+  justify-content: center;
+}
+.minimap-label {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  font-size: 13px;
+  color: #6B7CA8;
+  letter-spacing: 3px;
+}
+
+/* speedometer center-bottom-left */
+.speedo {
+  position: absolute;
+  bottom: 56px;
+  left: 520px;
+  width: 420px;
+  height: 320px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.speedo-dial { width: 320px; height: 200px; align-items: center; justify-content: center; }
+.speedo-num { flex-direction: row; align-items: flex-end; justify-content: center; margin-top: 6px; }
+.speedo-val { font-size: 110px; color: #FFFFFF; font-weight: bold; letter-spacing: 2px; }
+.speedo-unit { font-size: 30px; color: #00E5FF; font-weight: bold; margin-bottom: 22px; margin-left: 10px; letter-spacing: 2px; }
+.gear-pill {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 56px;
+  border-radius: 14px;
+  background-color: #FF2D7E;
+  margin-top: 10px;
+}
+.gear-txt { font-size: 30px; color: #FFFFFF; font-weight: bold; }
+
+/* boost / nitro meter — vertical bar on left */
+.boost {
+  position: absolute;
+  bottom: 56px;
+  left: 48px;
+  width: 220px;
+  height: 320px;
+  border-radius: 18px;
+  background-color: #0C1226;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+.boost-label { font-size: 14px; color: #FFE100; letter-spacing: 4px; margin-bottom: 14px; }
+.boost-icon { margin-bottom: 14px; align-items: center; justify-content: center; }
+.boost-bar {
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 56px;
+  height: 160px;
+  border-radius: 28px;
+  background-color: #0A1024;
+  border-width: 1px;
+  border-color: #1E2C52;
+  overflow: hidden;
+}
+.boost-fill {
+  width: 56px;
+  height: 116px;
+  border-radius: 28px;
+  background-color: #FFE100;
+}
+.boost-pct { font-size: 22px; color: #FFFFFF; font-weight: bold; margin-top: 12px; }
+
+/* steering zone bottom-center */
+.steer-zone {
+  position: absolute;
+  bottom: 56px;
+  left: 980px;
+  width: 280px;
+  height: 280px;
+  align-items: center;
+  justify-content: center;
+}
+.steer-wheel {
+  width: 240px;
+  height: 240px;
+  border-radius: 120px;
+  background-color: #0C1226;
+  border-width: 6px;
+  border-color: #00E5FF;
+  align-items: center;
+  justify-content: center;
+}
+.steer-hub {
+  width: 110px;
+  height: 110px;
+  border-radius: 55px;
+  background-color: #101F40;
+  align-items: center;
+  justify-content: center;
+}
+
+/* throttle + brake right-bottom */
+.pedals {
+  position: absolute;
+  bottom: 56px;
+  right: 48px;
+  width: 300px;
+  height: 280px;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.pedal {
+  width: 140px;
+  height: 280px;
+  border-radius: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-width: 3px;
+}
+.pedal.brake { background-color: #1A060F; border-color: #FF2D7E; }
+.pedal.gas { background-color: #06121C; border-color: #00E5FF; }
+.pedal-icon { margin-bottom: 16px; align-items: center; justify-content: center; }
+.pedal-label { font-size: 22px; font-weight: bold; letter-spacing: 2px; }
+.pedal-label.brake { color: #FF2D7E; }
+.pedal-label.gas { color: #00E5FF; }
+
+/* boost item button bottom-center over steering */
+.item-btn {
+  position: absolute;
+  bottom: 360px;
+  left: 1010px;
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  background-color: #9B6BFF;
+  border-width: 3px;
+  border-color: #C7A6FF;
+  align-items: center;
+  justify-content: center;
+}
+.item-count {
+  position: absolute;
+  bottom: 350px;
+  left: 1090px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background-color: #FFE100;
+  align-items: center;
+  justify-content: center;
+}
+.item-count-txt { font-size: 18px; color: #0C1226; font-weight: bold; }
+
+/* warning strip */
+.warn {
+  position: absolute;
+  bottom: 16px;
+  left: 760px;
+  width: 400px;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.warn-txt { font-size: 16px; color: #FF2D7E; letter-spacing: 3px; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="road"></div>
+    <div class="road-glow"></div>
+
+    <div class="top-hud">
+      <div class="hud-card lap-card">
+        <span class="lap-label">LAP</span>
+        <div class="lap-row">
+          <span class="lap-cur">2</span>
+          <span class="lap-tot">/ 3</span>
+        </div>
+      </div>
+      <div class="hud-card timer-card">
+        <span class="timer-label">RACE TIME</span>
+        <span class="timer-val">01:24.62</span>
+      </div>
+      <div class="hud-card rank-card">
+        <span class="rank-of">POSITION</span>
+        <div class="rank-pos">
+          <span class="rank-num">3</span>
+          <span class="rank-suffix">RD</span>
+        </div>
+        <span class="rank-of">OF 8</span>
+      </div>
+    </div>
+
+    <div class="minimap">
+      <span class="minimap-label">MINIMAP</span>
+      <svg id="icon-minimap" width="260" height="160" viewBox="0 0 260 160">
+        <path d="M30 120 C60 40 120 30 160 70 C200 110 220 50 235 90" fill="none" stroke="#16203F" stroke-width="10"/>
+        <path d="M30 120 C60 40 120 30 160 70 C200 110 220 50 235 90" fill="none" stroke="#00E5FF" stroke-width="3"/>
+        <circle cx="160" cy="70" r="9" fill="#FF2D7E"/>
+        <circle cx="120" cy="44" r="6" fill="#FFE100"/>
+        <circle cx="200" cy="92" r="6" fill="#9B6BFF"/>
+        <rect x="26" y="112" width="8" height="16" fill="#FFFFFF"/>
+      </svg>
+    </div>
+
+    <div class="boost">
+      <span class="boost-label">NITRO</span>
+      <div class="boost-icon">
+        <svg id="icon-nitro" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M24 4 L12 26 L20 26 L18 40 L32 16 L23 16 Z" fill="#FFE100"/>
+        </svg>
+      </div>
+      <div class="boost-bar"><div class="boost-fill"></div></div>
+      <span class="boost-pct">72%</span>
+    </div>
+
+    <div class="speedo">
+      <div class="speedo-dial">
+        <svg id="icon-speedo" width="320" height="200" viewBox="0 0 320 200">
+          <path d="M30 180 A130 130 0 0 1 290 180" fill="none" stroke="#16203F" stroke-width="16"/>
+          <path d="M30 180 A130 130 0 0 1 230 70" fill="none" stroke="#00E5FF" stroke-width="16"/>
+          <path d="M230 70 A130 130 0 0 1 270 120" fill="none" stroke="#FF2D7E" stroke-width="16"/>
+          <path d="M160 180 L235 78" stroke="#FFFFFF" stroke-width="6"/>
+          <circle cx="160" cy="180" r="14" fill="#FFFFFF"/>
+        </svg>
+      </div>
+      <div class="speedo-num">
+        <span class="speedo-val">248</span>
+        <span class="speedo-unit">KM/H</span>
+      </div>
+      <div class="gear-pill"><span class="gear-txt">D5</span></div>
+    </div>
+
+    <div class="item-btn">
+      <svg id="icon-item-boost" width="50" height="50" viewBox="0 0 50 50">
+        <path d="M25 6 C16 16 16 30 25 44 C34 30 34 16 25 6 Z" fill="#FFFFFF"/>
+        <circle cx="25" cy="22" r="6" fill="#9B6BFF"/>
+      </svg>
+    </div>
+    <div class="item-count"><span class="item-count-txt">x2</span></div>
+
+    <div class="steer-zone">
+      <div class="steer-wheel">
+        <div class="steer-hub">
+          <svg id="icon-wheel" width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#00E5FF" stroke-width="4"/>
+            <circle cx="32" cy="32" r="8" fill="#00E5FF"/>
+            <path d="M32 14 V26 M14 36 L26 32 M50 36 L38 32" stroke="#00E5FF" stroke-width="4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="pedals">
+      <div class="pedal brake">
+        <div class="pedal-icon">
+          <svg id="icon-brake" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="#FF2D7E" stroke-width="4"/>
+            <rect x="14" y="20" width="20" height="8" rx="2" fill="#FF2D7E"/>
+          </svg>
+        </div>
+        <span class="pedal-label brake">BRAKE</span>
+      </div>
+      <div class="pedal gas">
+        <div class="pedal-icon">
+          <svg id="icon-gas" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M24 6 L12 30 L20 30 L18 42 L34 18 L25 18 Z" fill="#00E5FF"/>
+          </svg>
+        </div>
+        <span class="pedal-label gas">THROTTLE</span>
+      </div>
+    </div>
+
+    <div class="warn">
+      <span class="warn-txt">▲ DRIFT BONUS x3</span>
+    </div>
+
+  </div>
+</body>
+</html>

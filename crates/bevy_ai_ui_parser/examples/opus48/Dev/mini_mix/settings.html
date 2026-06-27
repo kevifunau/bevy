@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --cream: #FFF6EE;
+  --cream2: #FFEFE2;
+  --card: #FFFFFF;
+  --pink: #FF9EC4;
+  --pink-soft: #FFE2EE;
+  --mint: #7FD6C2;
+  --mint-soft: #DBF5EE;
+  --lemon: #FFD479;
+  --lemon-soft: #FFF0CE;
+  --lilac: #B7A6F0;
+  --lilac-soft: #ECE6FB;
+  --ink: #6B5B73;
+  --ink-dim: #A99CB0;
+  --line: #F2E4DA;
+  --danger: #FF8A9B;
+  --track: #EFE6DD;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--cream);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- top bar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 104px; margin-bottom: 36px; }
+.back {
+  width: 88px; height: 88px; border-radius: 28px;
+  background-color: var(--card);
+  border-width: 4px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.title-block { flex-direction: column; flex-grow: 1; justify-content: center; }
+.title { font-size: 48px; color: var(--ink); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 20px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- section ---------- */
+.section {
+  flex-direction: column;
+  background-color: var(--card);
+  border-radius: 36px;
+  border-width: 4px; border-color: var(--line);
+  padding: 20px 36px; margin-bottom: 40px;
+}
+.section-title { font-size: 24px; color: var(--mint); font-weight: bold; white-space: normal; margin: 18px 0 6px 0; }
+
+.row { flex-direction: row; align-items: center; justify-content: space-between; height: 128px; }
+.row-div { border-color: var(--line); border-bottom-width: 2px; }
+.row-left { flex-direction: row; align-items: center; }
+.row-ico-wrap {
+  width: 68px; height: 68px; border-radius: 20px;
+  background-color: var(--pink-soft);
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.row-ico-mint { background-color: var(--mint-soft); }
+.row-ico-lemon { background-color: var(--lemon-soft); }
+.row-ico-lilac { background-color: var(--lilac-soft); }
+.row-label { font-size: 26px; color: var(--ink); font-weight: bold; white-space: normal; }
+
+/* ---------- toggle ---------- */
+.switch {
+  flex-direction: row; align-items: center; justify-content: flex-start;
+  width: 132px; height: 68px; border-radius: 34px;
+  background-color: var(--track); padding: 0 8px;
+}
+.switch.is-on { background-color: var(--mint); justify-content: flex-end; }
+.switch-knob {
+  width: 52px; height: 52px; border-radius: 26px;
+  background-color: #FFFFFF; border-width: 3px; border-color: var(--line);
+}
+
+/* ---------- slider ---------- */
+.slider { width: 460px; height: 68px; justify-content: center; }
+.slider-track {
+  flex-direction: row; align-items: center;
+  width: 460px; height: 22px; border-radius: 11px;
+  background-color: var(--track);
+}
+.slider-fill { height: 22px; border-radius: 11px; background-color: var(--pink); }
+.slider-70 { width: 322px; }
+.slider-knob {
+  width: 48px; height: 48px; border-radius: 24px;
+  background-color: #FFFFFF; border-width: 5px; border-color: var(--pink);
+}
+
+/* ---------- segmented ---------- */
+.seg {
+  flex-direction: row; height: 76px;
+  background-color: var(--track); border-radius: 24px; padding: 6px;
+}
+.seg-btn {
+  height: 64px; width: 160px;
+  background-color: transparent; border-radius: 18px;
+  align-items: center; justify-content: center; margin-right: 6px;
+}
+.seg-btn-last { margin-right: 0; }
+.seg-btn.is-active { background-color: var(--lilac); }
+.seg-text { font-size: 26px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+.seg-btn.is-active .seg-text { color: #FFFFFF; }
+
+/* ---------- restore ---------- */
+.restore {
+  height: 116px; border-radius: 36px;
+  background-color: var(--card);
+  border-width: 4px; border-color: var(--danger);
+  flex-direction: row; align-items: center; justify-content: center; margin-top: 16px;
+}
+.restore-ico { width: 44px; height: 44px; margin-right: 18px; }
+.restore-text { font-size: 32px; color: var(--danger); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M26 8 L12 20 L26 32" stroke="#6B5B73" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="title-block">
+        <span class="title">设置</span>
+        <span class="subtitle">声音与语言</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-title">声音</span>
+
+      <div class="row row-div">
+        <div class="row-left">
+          <div class="row-ico-wrap">
+            <svg id="icon-music" width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="14" cy="28" r="6" fill="#FF9EC4"/>
+              <circle cx="30" cy="24" r="6" fill="#FF9EC4"/>
+              <path d="M20 28 L20 10 L36 7 L36 24" stroke="#FF7FB0" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="row-label">音乐</span>
+        </div>
+        <div class="switch is-on"><div class="switch-knob"></div></div>
+      </div>
+
+      <div class="row row-div">
+        <div class="row-left">
+          <div class="row-ico-wrap row-ico-mint">
+            <svg id="icon-sfx" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M8 15 L17 15 L25 8 L25 32 L17 25 L8 25 Z" fill="#7FD6C2" stroke="#4FBFA6" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M30 14 Q34 20 30 26" stroke="#4FBFA6" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="row-label">音效</span>
+        </div>
+        <div class="switch"><div class="switch-knob"></div></div>
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <div class="row-ico-wrap row-ico-lemon">
+            <svg id="icon-volume" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M7 15 L15 15 L23 8 L23 32 L15 25 L7 25 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M28 12 Q34 20 28 28 M31 8 Q40 20 31 32" stroke="#F4A93C" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="row-label">音量</span>
+        </div>
+        <div class="slider">
+          <div class="slider-track">
+            <div class="slider-fill slider-70"></div>
+            <div class="slider-knob"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-title">语言</span>
+      <div class="row">
+        <div class="row-left">
+          <div class="row-ico-wrap row-ico-lilac">
+            <svg id="icon-lang" width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#B7A6F0" stroke-width="2.5"/>
+              <path d="M6 20 L34 20 M20 6 Q11 20 20 34 Q29 20 20 6" stroke="#9C87E0" stroke-width="2.5" fill="none"/>
+            </svg>
+          </div>
+          <span class="row-label">语言切换</span>
+        </div>
+        <div class="seg">
+          <button class="seg-btn is-active"><span class="seg-text">中文</span></button>
+          <button class="seg-btn seg-btn-last"><span class="seg-text">English</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="restore">
+      <svg id="icon-restore" class="restore-ico" width="44" height="44" viewBox="0 0 44 44">
+        <path d="M9 22 A13 13 0 1 1 13 32" stroke="#FF8A9B" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M6 13 L9 23 L19 21" stroke="#FF8A9B" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="restore-text">恢复默认设置</span>
+    </div>
+
+  </div>
+</body>
+</html>

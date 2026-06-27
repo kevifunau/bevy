@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0B1220;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* ===== Result banner ===== */
+.banner {
+  height: 332px;
+  background-color: #0E1626;
+  border-bottom-width: 3px; border-bottom-color: #26E07F;
+  align-items: center; justify-content: center;
+  padding-top: 36px;
+}
+.result-tag {
+  flex-direction: row; align-items: center;
+  height: 50px; padding: 0 28px; border-radius: 25px;
+  background-color: #143A2A; border-width: 1px; border-color: #26E07F;
+  margin-bottom: 24px;
+}
+.result-tag-text { font-size: 22px; color: #26E07F; -unity-font-style: bold; letter-spacing: 4px; margin-left: 12px; }
+
+.final-row { flex-direction: row; align-items: center; justify-content: center; }
+.fr-team { flex-direction: row; align-items: center; width: 540px; }
+.fr-team-away { justify-content: flex-end; }
+.fr-crest {
+  width: 92px; height: 92px; border-radius: 18px;
+  align-items: center; justify-content: center;
+}
+.fr-crest-home { background-color: #143A2A; border-width: 2px; border-color: #26E07F; }
+.fr-crest-away { background-color: #2A2E3A; border-width: 2px; border-color: #5A6B86; }
+.fr-name { font-size: 38px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.fr-name-home { margin-left: 22px; }
+.fr-name-away { margin-right: 22px; -unity-text-align: middle-right; }
+.fr-score { flex-direction: row; align-items: center; justify-content: center; width: 320px; }
+.fr-score-num {
+  font-size: 100px; color: #FFFFFF; -unity-font-style: bold;
+  width: 110px; -unity-text-align: middle-center;
+}
+.fr-score-num-win { color: #26E07F; }
+.fr-dash { font-size: 70px; color: #3A4D70; -unity-font-style: bold; margin: 0 8px; }
+
+/* ===== Body ===== */
+.body { flex-direction: row; flex-grow: 1; padding: 36px 48px 40px 48px; }
+
+/* MVP card (left) */
+.mvp-card {
+  width: 460px; height: 632px; margin-right: 32px;
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #FFC53D;
+  padding: 32px; align-items: center;
+}
+.mvp-tag {
+  flex-direction: row; align-items: center;
+  height: 46px; padding: 0 24px; border-radius: 23px;
+  background-color: #FFC53D; margin-bottom: 26px;
+}
+.mvp-tag-text { font-size: 22px; color: #2A1A00; -unity-font-style: bold; letter-spacing: 3px; margin-left: 10px; }
+.mvp-portrait {
+  width: 240px; height: 260px; border-radius: 24px;
+  background-color: #11203A; border-width: 2px; border-color: #25406B;
+  align-items: center; justify-content: flex-end;
+  overflow: hidden; margin-bottom: 22px;
+}
+.mvp-name { font-size: 40px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.mvp-role { font-size: 16px; color: #FFC53D; margin-top: 6px; letter-spacing: 2px; }
+.mvp-stats { flex-direction: row; align-items: center; justify-content: center; margin-top: 26px; }
+.mvp-stat { align-items: center; padding: 0 24px; }
+.mvp-stat-mid { border-left-width: 1px; border-right-width: 1px; border-color: #25406B; }
+.mvp-stat-num { font-size: 36px; color: #26E07F; -unity-font-style: bold; }
+.mvp-stat-lab { font-size: 13px; color: #6E7E9B; margin-top: 4px; letter-spacing: 1px; }
+
+/* Stats card (center) */
+.stats-card {
+  flex-grow: 1; height: 632px; margin-right: 32px;
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 30px 36px;
+}
+.card-head { flex-direction: row; align-items: center; margin-bottom: 24px; }
+.card-title { font-size: 24px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; margin-left: 12px; }
+.stat-legend { flex-direction: row; align-items: center; justify-content: space-between; height: 24px; margin-bottom: 22px; }
+.legend-item { flex-direction: row; align-items: center; }
+.legend-dot { width: 16px; height: 16px; border-radius: 4px; margin-right: 10px; }
+.legend-dot-home { background-color: #26E07F; }
+.legend-dot-away { background-color: #5A6B86; }
+.legend-text { font-size: 17px; color: #FFFFFF; -unity-font-style: bold; }
+
+.cmp-row { margin-bottom: 22px; }
+.cmp-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.cmp-val-home { font-size: 22px; color: #26E07F; -unity-font-style: bold; width: 80px; }
+.cmp-lab { font-size: 16px; color: #9DB0D0; letter-spacing: 1px; -unity-text-align: middle-center; }
+.cmp-val-away { font-size: 22px; color: #9DB0D0; -unity-font-style: bold; width: 80px; -unity-text-align: middle-right; }
+.cmp-bar { flex-direction: row; height: 16px; border-radius: 8px; overflow: hidden; background-color: #0B1220; }
+.cmp-fill-home { height: 16px; background-color: #26E07F; }
+.cmp-fill-away { height: 16px; flex-grow: 1; background-color: #4A5A76; }
+.poss-h { width: 62%; }
+.shots-h { width: 64%; }
+.target-h { width: 67%; }
+.pass-h { width: 58%; }
+.corner-h { width: 57%; }
+
+/* Right column: rewards + next */
+.right { width: 460px; height: 632px; justify-content: space-between; }
+.rewards-card {
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 28px 30px;
+}
+.rew-row {
+  flex-direction: row; align-items: center;
+  height: 78px; margin-bottom: 14px;
+  padding: 0 20px; border-radius: 16px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+}
+.rew-row-last { margin-bottom: 0; }
+.rew-ico {
+  width: 52px; height: 52px; border-radius: 14px; margin-right: 18px;
+  background-color: #0B1220; align-items: center; justify-content: center;
+}
+.rew-info { flex-grow: 1; }
+.rew-name { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+.rew-sub { font-size: 13px; color: #6E7E9B; margin-top: 3px; }
+.rew-amt { font-size: 26px; -unity-font-style: bold; }
+.rew-amt-coin { color: #FFC53D; }
+.rew-amt-xp { color: #58C7FF; }
+.rew-amt-rep { color: #26E07F; }
+
+.next-card-r {
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 24px 28px;
+}
+.next-r-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.next-r-lab { font-size: 15px; color: #6E7E9B; letter-spacing: 2px; }
+.next-r-when { font-size: 16px; color: #FFC53D; -unity-font-style: bold; }
+.next-r-team { flex-direction: row; align-items: center; margin-bottom: 20px; }
+.next-r-crest {
+  width: 48px; height: 48px; border-radius: 12px; margin-right: 14px;
+  background-color: #11203A; align-items: center; justify-content: center;
+}
+.next-r-name { font-size: 24px; color: #FFFFFF; -unity-font-style: bold; }
+.next-r-meta { font-size: 13px; color: #6E7E9B; margin-top: 2px; }
+.cta-row { flex-direction: row; }
+.cta-ghost {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 132px; height: 72px; margin-right: 14px;
+  background-color: #11203A; border-radius: 16px;
+  border-width: 1px; border-color: #25406B;
+}
+.cta-ghost-text { font-size: 19px; color: #9DB0D0; -unity-font-style: bold; }
+.cta-prime {
+  flex-direction: row; align-items: center; justify-content: center;
+  flex-grow: 1; height: 72px;
+  background-color: #26E07F; border-radius: 16px;
+}
+.cta-prime-text { font-size: 22px; color: #04130A; -unity-font-style: bold; letter-spacing: 1px; margin-left: 12px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- Banner -->
+    <div class="banner">
+      <div class="result-tag">
+        <svg id="icon-result-win" width="26" height="26" viewBox="0 0 26 26">
+          <path d="M6 4 H20 V8 C20 13 16 16 13 16 C10 16 6 13 6 8 Z" fill="#26E07F"/>
+          <path d="M6 6 H2 V9 C2 12 4 13 6 13 M20 6 H24 V9 C24 12 22 13 20 13" stroke="#26E07F" stroke-width="1.8" fill="none"/>
+          <path d="M13 16 V20 M8 23 H18 V20 H8 Z" stroke="#26E07F" stroke-width="1.8" fill="#26E07F"/>
+        </svg>
+        <span class="result-tag-text">VICTORY</span>
+      </div>
+      <div class="final-row">
+        <div class="fr-team">
+          <div class="fr-crest fr-crest-home">
+            <svg id="icon-res-crest-home" width="56" height="56" viewBox="0 0 36 36">
+              <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#26E07F"/>
+              <path d="M18 9 V28 M11 14 H25" stroke="#0B1220" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="fr-name fr-name-home">NORTHGATE</span>
+        </div>
+        <div class="fr-score">
+          <span class="fr-score-num fr-score-num-win">2</span>
+          <span class="fr-dash">-</span>
+          <span class="fr-score-num">1</span>
+        </div>
+        <div class="fr-team fr-team-away">
+          <span class="fr-name fr-name-away">RIVERSIDE</span>
+          <div class="fr-crest fr-crest-away">
+            <svg id="icon-res-crest-away" width="56" height="56" viewBox="0 0 36 36">
+              <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#5A6B86"/>
+              <path d="M11 11 L25 25 M25 11 L11 25" stroke="#0B1220" stroke-width="2.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+      <!-- MVP -->
+      <div class="mvp-card">
+        <div class="mvp-tag">
+          <svg id="icon-mvp-star" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M12 2 L15 9 L22 9.5 L16.5 14 L18.5 21 L12 17 L5.5 21 L7.5 14 L2 9.5 L9 9 Z" fill="#2A1A00"/>
+          </svg>
+          <span class="mvp-tag-text">MAN OF THE MATCH</span>
+        </div>
+        <div class="mvp-portrait">
+          <svg id="icon-mvp-portrait" width="190" height="220" viewBox="0 0 190 220">
+            <circle cx="95" cy="72" r="46" fill="#FFC53D"/>
+            <path d="M20 220 C20 142 170 142 170 220 Z" fill="#FFC53D"/>
+            <path d="M72 112 L95 134 L118 112 L134 126 V220 H56 V126 Z" fill="#C99300"/>
+          </svg>
+        </div>
+        <div class="mvp-name">M. CARVER</div>
+        <div class="mvp-role">STRIKER · #9 · RATING 9.4</div>
+        <div class="mvp-stats">
+          <div class="mvp-stat">
+            <span class="mvp-stat-num">2</span>
+            <span class="mvp-stat-lab">GOALS</span>
+          </div>
+          <div class="mvp-stat mvp-stat-mid">
+            <span class="mvp-stat-num">5</span>
+            <span class="mvp-stat-lab">SHOTS</span>
+          </div>
+          <div class="mvp-stat">
+            <span class="mvp-stat-num">91%</span>
+            <span class="mvp-stat-lab">PASS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-card">
+        <div class="card-head">
+          <svg id="icon-stats-chart" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M4 24 V12 M11 24 V6 M18 24 V15 M25 24 V9" stroke="#26E07F" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span class="card-title">MATCH STATISTICS</span>
+        </div>
+        <div class="stat-legend">
+          <div class="legend-item">
+            <div class="legend-dot legend-dot-home"></div>
+            <span class="legend-text">NORTHGATE</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-text">RIVERSIDE</span>
+            <div class="legend-dot legend-dot-away" ></div>
+          </div>
+        </div>
+
+        <div class="cmp-row">
+          <div class="cmp-top">
+            <span class="cmp-val-home">62%</span>
+            <span class="cmp-lab">POSSESSION</span>
+            <span class="cmp-val-away">38%</span>
+          </div>
+          <div class="cmp-bar"><div class="cmp-fill-home poss-h"></div><div class="cmp-fill-away"></div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-top">
+            <span class="cmp-val-home">14</span>
+            <span class="cmp-lab">SHOTS</span>
+            <span class="cmp-val-away">8</span>
+          </div>
+          <div class="cmp-bar"><div class="cmp-fill-home shots-h"></div><div class="cmp-fill-away"></div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-top">
+            <span class="cmp-val-home">7</span>
+            <span class="cmp-lab">ON TARGET</span>
+            <span class="cmp-val-away">3</span>
+          </div>
+          <div class="cmp-bar"><div class="cmp-fill-home target-h"></div><div class="cmp-fill-away"></div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-top">
+            <span class="cmp-val-home">86%</span>
+            <span class="cmp-lab">PASS ACCURACY</span>
+            <span class="cmp-val-away">79%</span>
+          </div>
+          <div class="cmp-bar"><div class="cmp-fill-home pass-h"></div><div class="cmp-fill-away"></div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-top">
+            <span class="cmp-val-home">6</span>
+            <span class="cmp-lab">CORNERS</span>
+            <span class="cmp-val-away">4</span>
+          </div>
+          <div class="cmp-bar"><div class="cmp-fill-home corner-h"></div><div class="cmp-fill-away"></div></div>
+        </div>
+      </div>
+
+      <!-- Rewards + next -->
+      <div class="right">
+        <div class="rewards-card">
+          <div class="card-head">
+            <svg id="icon-rew-gift" width="26" height="26" viewBox="0 0 26 26">
+              <rect x="4" y="10" width="18" height="13" rx="2" fill="none" stroke="#26E07F" stroke-width="2"/>
+              <path d="M2 10 H24 V14 H2 Z M13 6 V23 M13 6 C13 3 9 3 9 6 C9 8 13 8 13 6 M13 6 C13 3 17 3 17 6 C17 8 13 8 13 6" stroke="#26E07F" stroke-width="2" fill="none"/>
+            </svg>
+            <span class="card-title">REWARDS</span>
+          </div>
+          <div class="rew-row">
+            <div class="rew-ico">
+              <svg id="icon-rew-coin" width="30" height="30" viewBox="0 0 30 30">
+                <circle cx="15" cy="15" r="12" fill="#FFC53D"/>
+                <path d="M15 8 V22 M11.5 11 H16.5 a2.5 2.5 0 0 1 0 5 H12.5" stroke="#7A5400" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="rew-info">
+              <div class="rew-name">Match Coins</div>
+              <div class="rew-sub">Win bonus included</div>
+            </div>
+            <span class="rew-amt rew-amt-coin">+4,200</span>
+          </div>
+          <div class="rew-row">
+            <div class="rew-ico">
+              <svg id="icon-rew-xp" width="30" height="30" viewBox="0 0 30 30">
+                <path d="M15 3 L26 9 V18 C26 24 21 27 15 28 C9 27 4 24 4 18 V9 Z" fill="none" stroke="#58C7FF" stroke-width="2.2"/>
+                <path d="M10 16 L13 19 L20 11" stroke="#58C7FF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="rew-info">
+              <div class="rew-name">Squad XP</div>
+              <div class="rew-sub">Distributed to starters</div>
+            </div>
+            <span class="rew-amt rew-amt-xp">+1,800</span>
+          </div>
+          <div class="rew-row rew-row-last">
+            <div class="rew-ico">
+              <svg id="icon-rew-rep" width="30" height="30" viewBox="0 0 30 30">
+                <path d="M15 4 L18 11 L26 11.5 L20 16 L22 24 L15 19.5 L8 24 L10 16 L4 11.5 L12 11 Z" fill="#26E07F"/>
+              </svg>
+            </div>
+            <div class="rew-info">
+              <div class="rew-name">Club Reputation</div>
+              <div class="rew-sub">League standing +1</div>
+            </div>
+            <span class="rew-amt rew-amt-rep">+15</span>
+          </div>
+        </div>
+
+        <div class="next-card-r">
+          <div class="next-r-head">
+            <span class="next-r-lab">NEXT MATCH</span>
+            <span class="next-r-when">IN 2 DAYS</span>
+          </div>
+          <div class="next-r-team">
+            <div class="next-r-crest">
+              <svg id="icon-next-crest" width="34" height="34" viewBox="0 0 36 36">
+                <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#58C7FF"/>
+              </svg>
+            </div>
+            <div class="next-r-info">
+              <div class="next-r-name">CITY ROVERS</div>
+              <div class="next-r-meta">Away · League · 3rd place</div>
+            </div>
+          </div>
+          <div class="cta-row">
+            <button class="cta-ghost"><span class="cta-ghost-text">MENU</span></button>
+            <button class="cta-prime">
+              <svg id="icon-next-play" width="26" height="26" viewBox="0 0 26 26">
+                <path d="M9 6 L20 13 L9 20 Z" fill="#04130A"/>
+              </svg>
+              <span class="cta-prime-text">CONTINUE</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

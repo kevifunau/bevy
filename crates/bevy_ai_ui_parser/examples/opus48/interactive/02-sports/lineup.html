@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0B1220;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  height: 92px; padding: 0 48px;
+  background-color: #0E1626;
+  border-bottom-width: 2px; border-bottom-color: #1B2740;
+}
+.head-left { flex-direction: row; align-items: center; }
+.back-btn {
+  width: 56px; height: 56px; border-radius: 14px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+  align-items: center; justify-content: center; margin-right: 22px;
+}
+.page-title { font-size: 32px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.page-crumb { font-size: 15px; color: #6E7E9B; margin-top: 2px; letter-spacing: 1px; }
+.head-right { flex-direction: row; align-items: center; }
+.ovr-chip {
+  flex-direction: row; align-items: center;
+  height: 60px; padding: 0 24px 0 10px;
+  background-color: #11203A; border-radius: 30px;
+  border-width: 1px; border-color: #26E07F; margin-right: 18px;
+}
+.ovr-chip-num {
+  width: 44px; height: 44px; border-radius: 22px;
+  background-color: #26E07F; -unity-text-align: middle-center;
+  font-size: 24px; color: #04130A; -unity-font-style: bold; margin-right: 14px;
+  align-items: center; justify-content: center;
+}
+.ovr-chip-lab { font-size: 16px; color: #9DB0D0; letter-spacing: 1px; }
+.save-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 60px; padding: 0 30px;
+  background-color: #26E07F; border-radius: 16px;
+}
+.save-btn-text { font-size: 22px; color: #04130A; -unity-font-style: bold; margin-left: 12px; }
+
+/* Body */
+.body { flex-direction: row; flex-grow: 1; padding: 32px 48px 36px 48px; }
+
+/* Pitch */
+.pitch-wrap {
+  width: 880px; height: 920px; margin-right: 32px;
+  background-color: #0F1A2E; border-radius: 28px;
+  border-width: 2px; border-color: #1B2740; padding: 24px;
+}
+.pitch {
+  position: relative;
+  width: 832px; height: 872px;
+  background-color: #123A24;
+  border-radius: 18px;
+  border-width: 2px; border-color: #1C5A38;
+  overflow: hidden;
+}
+.pitch-line { position: absolute; width: 832px; height: 3px; background-color: #2A7A4E; }
+.line-mid { top: 435px; left: 0; width: 832px; height: 3px; }
+.line-circle {
+  position: absolute; top: 376px; left: 326px;
+  width: 180px; height: 120px; border-radius: 90px;
+  border-width: 3px; border-color: #2A7A4E; background-color: #123A24;
+}
+.box-top { position: absolute; top: 0; left: 256px; width: 320px; height: 130px; border-width: 3px; border-color: #2A7A4E; border-top-width: 0; }
+.box-bottom { position: absolute; bottom: 0; left: 256px; width: 320px; height: 130px; border-width: 3px; border-color: #2A7A4E; border-bottom-width: 0; }
+
+.slot {
+  position: absolute;
+  width: 108px; height: 124px;
+  align-items: center;
+}
+.slot-disc {
+  width: 80px; height: 80px; border-radius: 40px;
+  background-color: #0E1626;
+  border-width: 3px; border-color: #26E07F;
+  align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.slot-disc-gk { border-color: #FFC53D; }
+.slot-num { font-size: 30px; color: #FFFFFF; -unity-font-style: bold; }
+.slot-name { font-size: 16px; color: #FFFFFF; -unity-font-style: bold; -unity-text-align: middle-center; }
+.slot-pos { font-size: 12px; color: #9DEFC0; -unity-text-align: middle-center; letter-spacing: 1px; }
+.slot-empty .slot-disc { border-color: #3A4D70; background-color: #11203A; }
+.slot-empty .slot-disc-plus { font-size: 40px; color: #3A4D70; }
+
+/* GK */
+.p-gk { left: 362px; bottom: 18px; }
+/* Defenders (4) */
+.p-d1 { left: 70px; bottom: 196px; }
+.p-d2 { left: 250px; bottom: 230px; }
+.p-d3 { left: 474px; bottom: 230px; }
+.p-d4 { left: 654px; bottom: 196px; }
+/* Mids (3) */
+.p-m1 { left: 150px; bottom: 410px; }
+.p-m2 { left: 362px; bottom: 440px; }
+.p-m3 { left: 574px; bottom: 410px; }
+/* Forwards (3) */
+.p-f1 { left: 140px; top: 70px; }
+.p-f2 { left: 362px; top: 40px; }
+.p-f3 { left: 584px; top: 70px; }
+
+/* Right panel */
+.panel { width: 824px; height: 920px; justify-content: space-between; }
+
+/* Tactic card */
+.tac-card {
+  background-color: #0F1A2E; border-radius: 24px;
+  border-width: 2px; border-color: #1B2740; padding: 26px 28px;
+}
+.card-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-title { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.card-title-row { flex-direction: row; align-items: center; }
+.card-title-icon { margin-right: 12px; }
+
+.tac-row { flex-direction: row; align-items: center; margin-bottom: 18px; }
+.tac-lab { font-size: 17px; color: #9DB0D0; width: 130px; }
+.seg {
+  flex-direction: row; flex-grow: 1; height: 54px;
+  background-color: #0B1220; border-radius: 14px;
+  border-width: 1px; border-color: #25406B; padding: 5px;
+}
+.seg-btn {
+  flex-grow: 1; height: 44px; border-radius: 10px;
+  background-color: transparent;
+  align-items: center; justify-content: center;
+  font-size: 18px; color: #9DB0D0; -unity-font-style: bold;
+  -unity-text-align: middle-center;
+}
+.seg-btn.is-active { background-color: #26E07F; color: #04130A; }
+
+/* Player list card */
+.list-card {
+  flex-grow: 1;
+  background-color: #0F1A2E; border-radius: 24px;
+  border-width: 2px; border-color: #1B2740; padding: 24px 26px 18px 26px;
+}
+.list-filter { flex-direction: row; margin-bottom: 18px; }
+.filter-pill {
+  height: 40px; padding: 0 20px; margin-right: 12px; border-radius: 20px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+  align-items: center; justify-content: center;
+  font-size: 16px; color: #9DB0D0; -unity-font-style: bold; -unity-text-align: middle-center;
+}
+.filter-pill.is-active { background-color: #143A2A; border-color: #26E07F; color: #26E07F; }
+
+.prow {
+  flex-direction: row; align-items: center;
+  height: 76px; padding: 0 18px; margin-bottom: 12px;
+  background-color: #11203A; border-radius: 16px;
+  border-width: 1px; border-color: #25406B;
+}
+.prow.is-selected { border-color: #26E07F; background-color: #143A2A; }
+.prow-pos {
+  width: 52px; height: 52px; border-radius: 12px; margin-right: 16px;
+  background-color: #0B1220; align-items: center; justify-content: center;
+  font-size: 16px; color: #26E07F; -unity-font-style: bold; -unity-text-align: middle-center;
+}
+.prow-pos-gk { color: #FFC53D; }
+.prow-avatar {
+  width: 52px; height: 52px; border-radius: 26px; margin-right: 16px;
+  background-color: #1C2F50; align-items: center; justify-content: center;
+}
+.prow-info { flex-grow: 1; }
+.prow-name { font-size: 20px; color: #FFFFFF; -unity-font-style: bold; }
+.prow-meta { font-size: 13px; color: #6E7E9B; margin-top: 3px; }
+.prow-rate {
+  width: 56px; height: 56px; border-radius: 14px; margin-left: 14px;
+  background-color: #0B1220; align-items: center; justify-content: center;
+}
+.prow-rate-num { font-size: 26px; color: #FFFFFF; -unity-font-style: bold; }
+.prow-rate-high { background-color: #143A2A; }
+.prow-rate-high .prow-rate-num { color: #26E07F; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="header">
+      <div class="head-left">
+        <button class="back-btn">
+          <svg id="icon-back-lineup" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M17 5 L8 14 L17 23" stroke="#9DB0D0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="head-titles">
+          <div class="page-title">LINEUP &amp; TACTICS</div>
+          <div class="page-crumb">FORMATION 4-3-3 · STARTING XI</div>
+        </div>
+      </div>
+      <div class="head-right">
+        <div class="ovr-chip">
+          <div class="ovr-chip-num">84</div>
+          <span class="ovr-chip-lab">TEAM OVERALL</span>
+        </div>
+        <button class="save-btn">
+          <svg id="icon-save-lineup" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M5 3 H17 L21 7 V21 H3 V5 Z" fill="none" stroke="#04130A" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M7 3 V9 H15 V3 M7 14 H17 V21 H7 Z" stroke="#04130A" stroke-width="2.2" fill="none"/>
+          </svg>
+          <span class="save-btn-text">SAVE</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- Pitch -->
+      <div class="pitch-wrap">
+        <div class="pitch">
+          <div class="pitch-line line-mid"></div>
+          <div class="line-circle"></div>
+          <div class="box-top"></div>
+          <div class="box-bottom"></div>
+
+          <div class="slot p-gk">
+            <div class="slot-disc slot-disc-gk"><span class="slot-num">1</span></div>
+            <span class="slot-name">REEVES</span>
+            <span class="slot-pos">GK</span>
+          </div>
+
+          <div class="slot p-d1">
+            <div class="slot-disc"><span class="slot-num">2</span></div>
+            <span class="slot-name">OWUSU</span>
+            <span class="slot-pos">RB</span>
+          </div>
+          <div class="slot p-d2">
+            <div class="slot-disc"><span class="slot-num">4</span></div>
+            <span class="slot-name">SILVA</span>
+            <span class="slot-pos">CB</span>
+          </div>
+          <div class="slot p-d3">
+            <div class="slot-disc"><span class="slot-num">5</span></div>
+            <span class="slot-name">HALL</span>
+            <span class="slot-pos">CB</span>
+          </div>
+          <div class="slot p-d4">
+            <div class="slot-disc"><span class="slot-num">3</span></div>
+            <span class="slot-name">KOVAC</span>
+            <span class="slot-pos">LB</span>
+          </div>
+
+          <div class="slot p-m1">
+            <div class="slot-disc"><span class="slot-num">6</span></div>
+            <span class="slot-name">DIALLO</span>
+            <span class="slot-pos">CDM</span>
+          </div>
+          <div class="slot p-m2">
+            <div class="slot-disc"><span class="slot-num">8</span></div>
+            <span class="slot-name">MARSH</span>
+            <span class="slot-pos">CM</span>
+          </div>
+          <div class="slot p-m3">
+            <div class="slot-disc"><span class="slot-num">10</span></div>
+            <span class="slot-name">VELEZ</span>
+            <span class="slot-pos">CAM</span>
+          </div>
+
+          <div class="slot p-f1">
+            <div class="slot-disc"><span class="slot-num">7</span></div>
+            <span class="slot-name">TANAKA</span>
+            <span class="slot-pos">RW</span>
+          </div>
+          <div class="slot p-f2">
+            <div class="slot-disc"><span class="slot-num">9</span></div>
+            <span class="slot-name">CARVER</span>
+            <span class="slot-pos">ST</span>
+          </div>
+          <div class="slot p-f3 slot-empty">
+            <div class="slot-disc"><span class="slot-disc-plus">+</span></div>
+            <span class="slot-name">EMPTY</span>
+            <span class="slot-pos">LW</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel -->
+      <div class="panel">
+        <!-- Tactics -->
+        <div class="tac-card">
+          <div class="card-head">
+            <div class="card-title-row">
+              <svg id="icon-tactic-lineup" class="card-title-icon" width="26" height="26" viewBox="0 0 26 26">
+                <rect x="3" y="4" width="20" height="18" rx="3" fill="none" stroke="#26E07F" stroke-width="2"/>
+                <circle cx="9" cy="10" r="2.4" fill="#26E07F"/>
+                <circle cx="17" cy="16" r="2.4" fill="#FFC53D"/>
+                <path d="M9 10 L17 16" stroke="#9DB0D0" stroke-width="1.6" fill="none"/>
+              </svg>
+              <span class="card-title">TACTICS</span>
+            </div>
+          </div>
+          <div class="tac-row">
+            <span class="tac-lab">Formation</span>
+            <div class="seg">
+              <button class="seg-btn">4-4-2</button>
+              <button class="seg-btn is-active">4-3-3</button>
+              <button class="seg-btn">3-5-2</button>
+              <button class="seg-btn">5-3-2</button>
+            </div>
+          </div>
+          <div class="tac-row">
+            <span class="tac-lab">Mentality</span>
+            <div class="seg">
+              <button class="seg-btn">Defensive</button>
+              <button class="seg-btn is-active">Balanced</button>
+              <button class="seg-btn">Attacking</button>
+            </div>
+          </div>
+          <div class="tac-row">
+            <span class="tac-lab">Tempo</span>
+            <div class="seg">
+              <button class="seg-btn">Slow</button>
+              <button class="seg-btn">Normal</button>
+              <button class="seg-btn is-active">High Press</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player list -->
+        <div class="list-card">
+          <div class="card-head">
+            <span class="card-title">AVAILABLE PLAYERS</span>
+          </div>
+          <div class="list-filter">
+            <div class="filter-pill is-active">ALL</div>
+            <div class="filter-pill">DEF</div>
+            <div class="filter-pill">MID</div>
+            <div class="filter-pill">ATT</div>
+          </div>
+
+          <div class="prow is-selected">
+            <div class="prow-pos">LW</div>
+            <div class="prow-avatar">
+              <svg id="icon-pl-1" width="34" height="34" viewBox="0 0 34 34">
+                <circle cx="17" cy="13" r="6.5" fill="#26E07F"/>
+                <path d="M5 30 C5 21 29 21 29 30 Z" fill="#26E07F"/>
+              </svg>
+            </div>
+            <div class="prow-info">
+              <div class="prow-name">L. FERREIRA</div>
+              <div class="prow-meta">Age 23 · Pace 89 · Left foot</div>
+            </div>
+            <div class="prow-rate prow-rate-high"><span class="prow-rate-num">86</span></div>
+          </div>
+
+          <div class="prow">
+            <div class="prow-pos">ST</div>
+            <div class="prow-avatar">
+              <svg id="icon-pl-2" width="34" height="34" viewBox="0 0 34 34">
+                <circle cx="17" cy="13" r="6.5" fill="#58C7FF"/>
+                <path d="M5 30 C5 21 29 21 29 30 Z" fill="#58C7FF"/>
+              </svg>
+            </div>
+            <div class="prow-info">
+              <div class="prow-name">M. CARVER</div>
+              <div class="prow-meta">Age 28 · Shooting 88 · Right foot</div>
+            </div>
+            <div class="prow-rate prow-rate-high"><span class="prow-rate-num">88</span></div>
+          </div>
+
+          <div class="prow">
+            <div class="prow-pos">CM</div>
+            <div class="prow-avatar">
+              <svg id="icon-pl-3" width="34" height="34" viewBox="0 0 34 34">
+                <circle cx="17" cy="13" r="6.5" fill="#FFC53D"/>
+                <path d="M5 30 C5 21 29 21 29 30 Z" fill="#FFC53D"/>
+              </svg>
+            </div>
+            <div class="prow-info">
+              <div class="prow-name">J. MARSH</div>
+              <div class="prow-meta">Age 25 · Passing 84 · Vision 86</div>
+            </div>
+            <div class="prow-rate"><span class="prow-rate-num">81</span></div>
+          </div>
+
+          <div class="prow">
+            <div class="prow-pos prow-pos-gk">GK</div>
+            <div class="prow-avatar">
+              <svg id="icon-pl-4" width="34" height="34" viewBox="0 0 34 34">
+                <circle cx="17" cy="13" r="6.5" fill="#9DB0D0"/>
+                <path d="M5 30 C5 21 29 21 29 30 Z" fill="#9DB0D0"/>
+              </svg>
+            </div>
+            <div class="prow-info">
+              <div class="prow-name">D. REEVES</div>
+              <div class="prow-meta">Age 31 · Reflexes 87 · Captain</div>
+            </div>
+            <div class="prow-rate"><span class="prow-rate-num">83</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

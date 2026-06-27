@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #060809;
+  overflow: hidden;
+}
+.bg { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; background-color: #080C0B; }
+.glow {
+  position: absolute; top: -120px; left: 560px;
+  width: 800px; height: 600px; border-radius: 400px;
+  background-color: #12100A; opacity: 0.7;
+}
+.vignette {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  background-color: #00000000;
+  border-width: 200px; border-color: #02030400;
+  border-top-color: #020304; border-bottom-color: #020304;
+}
+/* verdict banner */
+.verdict {
+  position: absolute; top: 90px; left: 360px;
+  width: 1200px; align-items: center;
+}
+.verdict-ico { width: 96px; height: 96px; margin-bottom: 20px; }
+.verdict-kicker { font-size: 18px; color: #8E6A2B; letter-spacing: 14px; margin-bottom: 12px; }
+.verdict-title {
+  font-size: 96px; color: #D9B25A; font-weight: bold; letter-spacing: 16px;
+  text-shadow: 0 0 30px #C9A23A44; margin-bottom: 10px;
+}
+.verdict-sub { font-size: 22px; color: #7C8B85; letter-spacing: 4px; white-space: normal; width: 900px; text-align: center; }
+
+/* main row: stats + collection */
+.panels {
+  position: absolute; top: 400px; left: 360px;
+  flex-direction: row; width: 1200px; height: 480px;
+}
+.stats {
+  width: 584px; height: 480px; margin-right: 32px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 12px; padding: 30px;
+}
+.panel-head { flex-direction: row; align-items: center; margin-bottom: 22px; }
+.ph-bar { width: 4px; height: 24px; background-color: #C9A23A; margin-right: 12px; border-radius: 2px; }
+.ph-name { font-size: 21px; color: #C9D6D0; letter-spacing: 4px; }
+.stat-line {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 524px; height: 66px; padding: 0 18px; margin-bottom: 12px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #1E2A27; border-radius: 8px;
+}
+.sl-left { flex-direction: row; align-items: center; }
+.sl-left .sl-ico { width: 28px; height: 28px; margin-right: 16px; }
+.sl-label { font-size: 17px; color: #8FA29B; letter-spacing: 2px; }
+.sl-value { font-size: 26px; color: #DDE9E4; font-weight: bold; letter-spacing: 2px; }
+.sl-value.gold { color: #D9B25A; }
+
+.collection {
+  width: 584px; height: 480px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 12px; padding: 30px;
+}
+.coll-summary { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.coll-pct { font-size: 40px; color: #5FD3C0; font-weight: bold; letter-spacing: 2px; }
+.coll-cap { font-size: 15px; color: #6E7B75; letter-spacing: 2px; }
+.bar {
+  flex-direction: row; width: 524px; height: 16px; margin-bottom: 24px;
+  background-color: #080B0A; border-radius: 8px; border-width: 1px; border-color: #1E2A27;
+}
+.bar-fill { width: 246px; height: 14px; border-radius: 7px; background-color: #5FD3C0; }
+.unlock-head { font-size: 14px; color: #5C6B66; letter-spacing: 4px; margin-bottom: 14px; }
+.unlock-row { flex-direction: row; }
+.unlock {
+  width: 160px; height: 150px; margin-right: 14px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #233330;
+  border-radius: 10px; padding: 16px; align-items: center; justify-content: center;
+}
+.unlock.locked { border-color: #1A2421; background-color: #080B0A; opacity: 0.7; }
+.unlock .u-ico { width: 52px; height: 52px; margin-bottom: 12px; }
+.unlock-name { font-size: 15px; color: #C9D6D0; letter-spacing: 1px; margin-bottom: 3px; }
+.unlock-name.muted { color: #44524D; }
+.unlock-tag { font-size: 12px; color: #5FD3C0; letter-spacing: 1px; }
+.unlock-tag.muted { color: #44524D; }
+
+/* footer actions */
+.actions {
+  position: absolute; bottom: 56px; left: 360px;
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 1200px;
+}
+.act-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 320px; height: 88px; margin: 0 16px;
+  background-color: #0E1413; border-width: 1px; border-color: #243330; border-radius: 10px;
+}
+.act-btn.primary { background-color: #112320; border-color: #5FD3C0; }
+.act-btn.danger { background-color: #1A0E0D; border-color: #8E2B2B; }
+.act-btn .ab-ico { width: 30px; height: 30px; margin-right: 16px; }
+.ab-txt { font-size: 24px; color: #C9D6D0; letter-spacing: 6px; }
+.act-btn.primary .ab-txt { color: #5FD3C0; }
+.act-btn.danger .ab-txt { color: #C24A3A; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg"></div>
+    <div class="glow"></div>
+
+    <div class="verdict">
+      <svg id="icon-verdict-door" class="verdict-ico" width="96" height="96" viewBox="0 0 96 96">
+        <rect x="24" y="14" width="40" height="68" rx="2" fill="none" stroke="#D9B25A" stroke-width="3"/>
+        <circle cx="56" cy="48" r="3" fill="#D9B25A"/>
+        <path d="M64 40 84 30v36L64 56z" fill="#D9B25A" opacity="0.3"/>
+        <path d="M68 48h12M74 42l6 6-6 6" fill="none" stroke="#D9B25A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="verdict-kicker">ESCAPE SUCCESSFUL</div>
+      <div class="verdict-title">逃脱成功</div>
+      <div class="verdict-sub">黎明的光刺进锈蚀的铁门。你活着走出了 WARD 13 —— 但身后那扇门后的低语,会跟着你很久。</div>
+    </div>
+
+    <div class="panels">
+      <!-- stats -->
+      <div class="stats">
+        <div class="panel-head"><div class="ph-bar"></div><span class="ph-name">本局战报</span></div>
+        <div class="stat-line">
+          <div class="sl-left">
+            <svg id="icon-stat-time" class="sl-ico" width="28" height="28" viewBox="0 0 28 28">
+              <circle cx="14" cy="14" r="11" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              <path d="M14 8v6l4 3" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="sl-label">存活时间</span>
+          </div>
+          <span class="sl-value gold">23:47</span>
+        </div>
+        <div class="stat-line">
+          <div class="sl-left">
+            <svg id="icon-stat-clues" class="sl-ico" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M6 4h11l5 5v15H6z" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              <path d="M10 13h9M10 17h9" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="sl-label">线索收集</span>
+          </div>
+          <span class="sl-value">5 / 8</span>
+        </div>
+        <div class="stat-line">
+          <div class="sl-left">
+            <svg id="icon-stat-evade" class="sl-ico" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M14 3c5 2 8 3 8 3v7c0 6-4 9-8 12-4-3-8-6-8-12V6s3-1 8-3z" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              <path d="M10 14l3 3 5-6" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="sl-label">成功躲避</span>
+          </div>
+          <span class="sl-value">12 次</span>
+        </div>
+        <div class="stat-line">
+          <div class="sl-left">
+            <svg id="icon-stat-sanity" class="sl-ico" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M14 4c5 0 8 4 8 8 0 3-2 5-2 8H8c0-3-2-5-2-8 0-4 3-8 8-8z" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              <path d="M10 24h8" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="sl-label">残余理智</span>
+          </div>
+          <span class="sl-value">38%</span>
+        </div>
+      </div>
+
+      <!-- collection -->
+      <div class="collection">
+        <div class="panel-head"><div class="ph-bar"></div><span class="ph-name">收集进度</span></div>
+        <div class="coll-summary">
+          <span class="coll-pct">47%</span>
+          <span class="coll-cap">全档案 12 / 26 解锁</span>
+        </div>
+        <div class="bar"><div class="bar-fill"></div></div>
+        <div class="unlock-head">本局解锁</div>
+        <div class="unlock-row">
+          <div class="unlock">
+            <svg id="icon-unlock-ending" class="u-ico" width="52" height="52" viewBox="0 0 52 52">
+              <path d="M26 6l5 14h15l-12 9 5 15-13-9-13 9 5-15-12-9h15z" fill="none" stroke="#D9B25A" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <div class="unlock-name">结局 A</div>
+            <div class="unlock-tag">「破晓」</div>
+          </div>
+          <div class="unlock">
+            <svg id="icon-unlock-skin" class="u-ico" width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="17" r="8" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+              <path d="M12 46c0-9 6-15 14-15s14 6 14 15" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+            </svg>
+            <div class="unlock-name">皮肤</div>
+            <div class="unlock-tag">幸存者</div>
+          </div>
+          <div class="unlock locked">
+            <svg id="icon-unlock-locked" class="u-ico" width="52" height="52" viewBox="0 0 52 52">
+              <rect x="14" y="24" width="24" height="18" rx="2" fill="none" stroke="#2A3A36" stroke-width="2"/>
+              <path d="M19 24v-5a7 7 0 0 1 14 0v5" fill="none" stroke="#2A3A36" stroke-width="2"/>
+            </svg>
+            <div class="unlock-name muted">困难模式</div>
+            <div class="unlock-tag muted">全收集解锁</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vignette"></div>
+
+    <div class="actions">
+      <button class="act-btn danger">
+        <svg id="icon-retry" class="ab-ico" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M24 8a11 11 0 1 0 3 9" fill="none" stroke="#C24A3A" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 4v6h-6" fill="none" stroke="#C24A3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="ab-txt">再来一次</span>
+      </button>
+      <button class="act-btn primary">
+        <svg id="icon-next" class="ab-ico" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M5 15h18M16 8l8 7-8 7" fill="none" stroke="#5FD3C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="ab-txt">下一章</span>
+      </button>
+      <button class="act-btn">
+        <svg id="icon-home" class="ab-ico" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M5 14 15 5l10 9" fill="none" stroke="#9BB0A9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 13v11h14V13" fill="none" stroke="#9BB0A9" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+        <span class="ab-txt">主菜单</span>
+      </button>
+    </div>
+  </div>
+</body>
+</html>

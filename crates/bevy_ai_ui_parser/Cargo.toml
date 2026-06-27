@@ -1,0 +1,369 @@
+[package]
+name = "bevy_ai_ui_parser"
+version = "0.1.0"
+edition = "2024"
+description = "A JSON-driven UI parser plugin for Bevy"
+homepage = "https://bevy.org"
+repository = "https://github.com/bevyengine/bevy"
+license = "MIT OR Apache-2.0"
+keywords = ["bevy", "ui", "json"]
+
+[features]
+default = []
+editor = [
+    "dep:bevy_egui",
+    "dep:bevy_inspector_egui",
+    "dep:egui_dock",
+    "dep:rfd",
+]
+
+[dependencies]
+# bevy
+bevy_app = { path = "../bevy_app", version = "0.19.0" }
+bevy_asset = { path = "../bevy_asset", version = "0.19.0" }
+bevy_camera = { path = "../bevy_camera", version = "0.19.0" }
+bevy_color = { path = "../bevy_color", version = "0.19.0" }
+bevy_ecs = { path = "../bevy_ecs", version = "0.19.0" }
+bevy_image = { path = "../bevy_image", version = "0.19.0" }
+bevy_input = { path = "../bevy_input", version = "0.19.0" }
+bevy_input_focus = { path = "../bevy_input_focus", version = "0.19.0" }
+bevy_log = { path = "../bevy_log", version = "0.19.0" }
+bevy_math = { path = "../bevy_math", version = "0.19.0" }
+bevy_picking = { path = "../bevy_picking", version = "0.19.0" }
+bevy_window = { path = "../bevy_window", version = "0.19.0" }
+bevy_text = { path = "../bevy_text", version = "0.19.0" }
+bevy_time = { path = "../bevy_time", version = "0.19.0" }
+bevy_ui = { path = "../bevy_ui", version = "0.19.0" }
+bevy_ui_widgets = { path = "../bevy_ui_widgets", version = "0.19.0" }
+
+# editor (optional)
+bevy = { path = "../../", features = ["bevy_ui_widgets"], optional = true }
+bevy_egui = { version = "0.40", optional = true }
+bevy_inspector_egui = { version = "0.37", package = "bevy-inspector-egui", optional = true }
+egui_dock = { version = "0.19", optional = true }
+rfd = { version = "0.17", optional = true }
+
+# other
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.140"
+roxmltree = "0.21.1"
+resvg = "0.44"
+usvg = "0.44"
+tiny-skia = "0.11"
+
+[[bin]]
+name = "bui_editor"
+path = "src/bin/bui_editor/main.rs"
+required-features = ["editor"]
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+bevy = { path = "../../", features = ["bevy_ui_widgets"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[example]]
+name = "editor_test"
+path = "examples/editor_test.rs"
+
+[[example]]
+name = "compile_opendesign_html"
+path = "examples/compile_opendesign_html.rs"
+
+[[example]]
+name = "validate_bui_json"
+path = "examples/validate_bui_json.rs"
+
+[[example]]
+name = "validate_bui_ir_json"
+path = "examples/validate_bui_ir_json.rs"
+
+[[example]]
+name = "opus48_Dev_action_arena_heroes"
+path = "examples/opus48/Dev/action_arena/heroes.rs"
+
+[[example]]
+name = "opus48_Dev_action_arena_hud"
+path = "examples/opus48/Dev/action_arena/hud.rs"
+
+[[example]]
+name = "opus48_Dev_action_arena_index"
+path = "examples/opus48/Dev/action_arena/index.rs"
+
+[[example]]
+name = "opus48_Dev_action_arena_settings"
+path = "examples/opus48/Dev/action_arena/settings.rs"
+
+[[example]]
+name = "opus48_Dev_candy_match_game"
+path = "examples/opus48/Dev/candy_match/game.rs"
+
+[[example]]
+name = "opus48_Dev_candy_match_index"
+path = "examples/opus48/Dev/candy_match/index.rs"
+
+[[example]]
+name = "opus48_Dev_candy_match_map"
+path = "examples/opus48/Dev/candy_match/map.rs"
+
+[[example]]
+name = "opus48_Dev_candy_match_shop"
+path = "examples/opus48/Dev/candy_match/shop.rs"
+
+[[example]]
+name = "opus48_Dev_card_clash_battle"
+path = "examples/opus48/Dev/card_clash/battle.rs"
+
+[[example]]
+name = "opus48_Dev_card_clash_deck"
+path = "examples/opus48/Dev/card_clash/deck.rs"
+
+[[example]]
+name = "opus48_Dev_card_clash_index"
+path = "examples/opus48/Dev/card_clash/index.rs"
+
+[[example]]
+name = "opus48_Dev_card_clash_settings"
+path = "examples/opus48/Dev/card_clash/settings.rs"
+
+[[example]]
+name = "opus48_Dev_cartoon_td_heroes"
+path = "examples/opus48/Dev/cartoon_td/heroes.rs"
+
+[[example]]
+name = "opus48_Dev_cartoon_td_index"
+path = "examples/opus48/Dev/cartoon_td/index.rs"
+
+[[example]]
+name = "opus48_Dev_cartoon_td_levels"
+path = "examples/opus48/Dev/cartoon_td/levels.rs"
+
+[[example]]
+name = "opus48_Dev_cartoon_td_settings"
+path = "examples/opus48/Dev/cartoon_td/settings.rs"
+
+[[example]]
+name = "opus48_Dev_hyper_tap_index"
+path = "examples/opus48/Dev/hyper_tap/index.rs"
+
+[[example]]
+name = "opus48_Dev_hyper_tap_result"
+path = "examples/opus48/Dev/hyper_tap/result.rs"
+
+[[example]]
+name = "opus48_Dev_idle_tycoon_gacha"
+path = "examples/opus48/Dev/idle_tycoon/gacha.rs"
+
+[[example]]
+name = "opus48_Dev_idle_tycoon_index"
+path = "examples/opus48/Dev/idle_tycoon/index.rs"
+
+[[example]]
+name = "opus48_Dev_idle_tycoon_settings"
+path = "examples/opus48/Dev/idle_tycoon/settings.rs"
+
+[[example]]
+name = "opus48_Dev_idle_tycoon_upgrade"
+path = "examples/opus48/Dev/idle_tycoon/upgrade.rs"
+
+[[example]]
+name = "opus48_Dev_mini_mix_index"
+path = "examples/opus48/Dev/mini_mix/index.rs"
+
+[[example]]
+name = "opus48_Dev_mini_mix_result"
+path = "examples/opus48/Dev/mini_mix/result.rs"
+
+[[example]]
+name = "opus48_Dev_mini_mix_settings"
+path = "examples/opus48/Dev/mini_mix/settings.rs"
+
+[[example]]
+name = "opus48_Dev_pixel_jump_hud"
+path = "examples/opus48/Dev/pixel_jump/hud.rs"
+
+[[example]]
+name = "opus48_Dev_pixel_jump_index"
+path = "examples/opus48/Dev/pixel_jump/index.rs"
+
+[[example]]
+name = "opus48_Dev_pixel_jump_levels"
+path = "examples/opus48/Dev/pixel_jump/levels.rs"
+
+[[example]]
+name = "opus48_interactive_01-racing_garage"
+path = "examples/opus48/interactive/01-racing/garage.rs"
+
+[[example]]
+name = "opus48_interactive_01-racing_hud"
+path = "examples/opus48/interactive/01-racing/hud.rs"
+
+[[example]]
+name = "opus48_interactive_01-racing_index"
+path = "examples/opus48/interactive/01-racing/index.rs"
+
+[[example]]
+name = "opus48_interactive_01-racing_result"
+path = "examples/opus48/interactive/01-racing/result.rs"
+
+[[example]]
+name = "opus48_interactive_01-racing_tracks"
+path = "examples/opus48/interactive/01-racing/tracks.rs"
+
+[[example]]
+name = "opus48_interactive_02-sports_hud"
+path = "examples/opus48/interactive/02-sports/hud.rs"
+
+[[example]]
+name = "opus48_interactive_02-sports_index"
+path = "examples/opus48/interactive/02-sports/index.rs"
+
+[[example]]
+name = "opus48_interactive_02-sports_lineup"
+path = "examples/opus48/interactive/02-sports/lineup.rs"
+
+[[example]]
+name = "opus48_interactive_02-sports_player"
+path = "examples/opus48/interactive/02-sports/player.rs"
+
+[[example]]
+name = "opus48_interactive_02-sports_result"
+path = "examples/opus48/interactive/02-sports/result.rs"
+
+[[example]]
+name = "opus48_interactive_03-autochess_board"
+path = "examples/opus48/interactive/03-autochess/board.rs"
+
+[[example]]
+name = "opus48_interactive_03-autochess_index"
+path = "examples/opus48/interactive/03-autochess/index.rs"
+
+[[example]]
+name = "opus48_interactive_03-autochess_piece"
+path = "examples/opus48/interactive/03-autochess/piece.rs"
+
+[[example]]
+name = "opus48_interactive_03-autochess_result"
+path = "examples/opus48/interactive/03-autochess/result.rs"
+
+[[example]]
+name = "opus48_interactive_03-autochess_synergy"
+path = "examples/opus48/interactive/03-autochess/synergy.rs"
+
+[[example]]
+name = "opus48_interactive_04-roguelike_dungeon_character"
+path = "examples/opus48/interactive/04-roguelike_dungeon/character.rs"
+
+[[example]]
+name = "opus48_interactive_04-roguelike_dungeon_event"
+path = "examples/opus48/interactive/04-roguelike_dungeon/event.rs"
+
+[[example]]
+name = "opus48_interactive_04-roguelike_dungeon_hud"
+path = "examples/opus48/interactive/04-roguelike_dungeon/hud.rs"
+
+[[example]]
+name = "opus48_interactive_04-roguelike_dungeon_index"
+path = "examples/opus48/interactive/04-roguelike_dungeon/index.rs"
+
+[[example]]
+name = "opus48_interactive_04-roguelike_dungeon_result"
+path = "examples/opus48/interactive/04-roguelike_dungeon/result.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_choice"
+path = "examples/opus48/interactive/05-visual_novel/choice.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_dialogue"
+path = "examples/opus48/interactive/05-visual_novel/dialogue.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_gallery"
+path = "examples/opus48/interactive/05-visual_novel/gallery.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_index"
+path = "examples/opus48/interactive/05-visual_novel/index.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_saves"
+path = "examples/opus48/interactive/05-visual_novel/saves.rs"
+
+[[example]]
+name = "opus48_interactive_05-visual_novel_settings"
+path = "examples/opus48/interactive/05-visual_novel/settings.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_armory"
+path = "examples/opus48/interactive/06-fps_shooter/armory.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_battlepass"
+path = "examples/opus48/interactive/06-fps_shooter/battlepass.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_hud"
+path = "examples/opus48/interactive/06-fps_shooter/hud.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_index"
+path = "examples/opus48/interactive/06-fps_shooter/index.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_result"
+path = "examples/opus48/interactive/06-fps_shooter/result.rs"
+
+[[example]]
+name = "opus48_interactive_06-fps_shooter_settings"
+path = "examples/opus48/interactive/06-fps_shooter/settings.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_backpack"
+path = "examples/opus48/interactive/07-horror_survival/backpack.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_hud"
+path = "examples/opus48/interactive/07-horror_survival/hud.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_index"
+path = "examples/opus48/interactive/07-horror_survival/index.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_prep"
+path = "examples/opus48/interactive/07-horror_survival/prep.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_result"
+path = "examples/opus48/interactive/07-horror_survival/result.rs"
+
+[[example]]
+name = "opus48_interactive_07-horror_survival_settings"
+path = "examples/opus48/interactive/07-horror_survival/settings.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_build"
+path = "examples/opus48/interactive/08-sim_management/build.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_index"
+path = "examples/opus48/interactive/08-sim_management/index.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_orders"
+path = "examples/opus48/interactive/08-sim_management/orders.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_settings"
+path = "examples/opus48/interactive/08-sim_management/settings.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_shop"
+path = "examples/opus48/interactive/08-sim_management/shop.rs"
+
+[[example]]
+name = "opus48_interactive_08-sim_management_staff"
+path = "examples/opus48/interactive/08-sim_management/staff.rs"

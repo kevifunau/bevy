@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+  .stage {
+    width: 1920px;
+    height: 1080px;
+    background-color: #12141F;
+    flex-direction: column;
+  }
+
+  /* Top bar with back */
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    height: 88px;
+    padding: 0 40px;
+    background-color: #1A1D2C;
+    border-bottom-width: 2px;
+    border-bottom-color: #2C3142;
+  }
+  .back-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 116px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+    margin-right: 24px;
+  }
+  .back-ic { width: 22px; height: 22px; margin-right: 8px; }
+  .back-tx { font-size: 18px; color: #F4F6FF; -unity-font-style: bold; }
+  .crumb { font-size: 20px; color: #8B93AD; }
+  .crumb-strong { font-size: 20px; color: #F2C14E; -unity-font-style: bold; }
+
+  .body { flex-direction: row; flex-grow: 1; padding: 36px 40px; }
+
+  /* Left: portrait card */
+  .portrait-col { width: 560px; flex-direction: column; margin-right: 36px; }
+  .portrait-card {
+    flex-direction: column;
+    align-items: center;
+    background-color: #1A1D2C;
+    border-radius: 24px;
+    border-width: 2px;
+    border-color: #A878F0;
+    padding: 32px;
+    margin-bottom: 28px;
+  }
+  .stars { flex-direction: row; justify-content: center; margin-bottom: 20px; }
+  .star { width: 40px; height: 40px; margin-right: 8px; }
+  .portrait-art {
+    width: 360px;
+    height: 360px;
+    border-radius: 20px;
+    background-color: #1F2333;
+    border-width: 2px;
+    border-color: #2C3142;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .piece-name { font-size: 48px; color: #F4F6FF; -unity-font-style: bold; }
+  .piece-title { font-size: 22px; color: #A878F0; margin-top: 8px; letter-spacing: 3px; }
+  .cost-pill {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    padding: 0 28px;
+    margin-top: 22px;
+    border-radius: 28px;
+    background-color: #2C2718;
+    border-width: 1px;
+    border-color: #F2C14E;
+  }
+  .cost-pill-ic { width: 26px; height: 26px; margin-right: 10px; }
+  .cost-pill-tx { font-size: 24px; color: #F2C14E; -unity-font-style: bold; }
+
+  /* stat grid */
+  .stat-grid { flex-direction: row; justify-content: space-between; }
+  .stat-box {
+    width: 174px;
+    height: 100px;
+    border-radius: 16px;
+    background-color: #1A1D2C;
+    border-width: 1px;
+    border-color: #2C3142;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .stat-box-ic { width: 28px; height: 28px; margin-bottom: 8px; }
+  .stat-box-num { font-size: 30px; color: #F4F6FF; -unity-font-style: bold; }
+  .stat-box-cap { font-size: 14px; color: #8B93AD; margin-top: 4px; }
+
+  /* Right: skill + synergies + combine */
+  .detail-col { flex-grow: 1; flex-direction: column; }
+  .section {
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 28px;
+    margin-bottom: 26px;
+  }
+  .sec-head { flex-direction: row; align-items: center; margin-bottom: 20px; }
+  .sec-ic { width: 32px; height: 32px; margin-right: 14px; }
+  .sec-title { font-size: 26px; color: #F4F6FF; -unity-font-style: bold; }
+
+  .skill-name-row { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .skill-name { font-size: 24px; color: #4FD6C9; -unity-font-style: bold; }
+  .mana-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 20px;
+    background-color: #1B2238;
+    border-width: 1px;
+    border-color: #4F76D6;
+  }
+  .mana-tx { font-size: 17px; color: #9CC3FF; -unity-font-style: bold; }
+  .skill-desc { font-size: 20px; color: #C2C8DE; white-space: normal; }
+  .skill-vals { flex-direction: row; margin-top: 20px; }
+  .skill-val {
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    height: 86px;
+    border-radius: 14px;
+    background-color: #232739;
+    justify-content: center;
+    margin-right: 16px;
+  }
+  .skill-val-num { font-size: 26px; color: #F2C14E; -unity-font-style: bold; }
+  .skill-val-cap { font-size: 14px; color: #8B93AD; margin-top: 6px; }
+
+  .syn-tags { flex-direction: row; }
+  .syn-tag {
+    flex-direction: row;
+    align-items: center;
+    height: 64px;
+    padding: 0 22px;
+    margin-right: 16px;
+    border-radius: 14px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .syn-tag-ic { width: 32px; height: 32px; margin-right: 12px; }
+  .syn-tag-tx { font-size: 20px; color: #F4F6FF; -unity-font-style: bold; }
+
+  /* combine hint */
+  .combine { flex-direction: row; align-items: center; justify-content: center; }
+  .cmb-unit {
+    width: 96px;
+    height: 96px;
+    border-radius: 16px;
+    background-color: #232739;
+    border-width: 2px;
+    border-color: #5A6076;
+    align-items: center;
+    justify-content: center;
+  }
+  .cmb-unit.gold { border-color: #F2C14E; }
+  .cmb-plus { font-size: 40px; color: #8B93AD; -unity-font-style: bold; margin: 0 18px; }
+  .cmb-eq { font-size: 40px; color: #F2C14E; -unity-font-style: bold; margin: 0 24px; }
+  .cmb-result {
+    width: 118px;
+    height: 118px;
+    border-radius: 18px;
+    background-color: #2C2718;
+    border-width: 2px;
+    border-color: #F2C14E;
+    align-items: center;
+    justify-content: center;
+  }
+  .cmb-note { font-size: 18px; color: #9AA1BC; margin-left: 30px; white-space: normal; flex-grow: 1; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="topbar">
+      <button class="back-btn">
+        <svg id="pc-back" width="22" height="22" viewBox="0 0 22 22" class="back-ic"><path d="M14 4l-7 7 7 7" stroke="#F4F6FF" stroke-width="3" fill="none"/></svg>
+        <span class="back-tx">返回</span>
+      </button>
+      <span class="crumb">棋子图鉴 / </span>
+      <span class="crumb-strong">虚空祭司</span>
+    </div>
+
+    <div class="body">
+
+      <!-- Portrait -->
+      <div class="portrait-col">
+        <div class="portrait-card">
+          <div class="stars">
+            <svg id="pc-star1" width="40" height="40" viewBox="0 0 40 40" class="star"><path d="M20 3l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z" fill="#F2C14E"/></svg>
+            <svg id="pc-star2" width="40" height="40" viewBox="0 0 40 40" class="star"><path d="M20 3l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z" fill="#F2C14E"/></svg>
+            <svg id="pc-star3" width="40" height="40" viewBox="0 0 40 40" class="star"><path d="M20 3l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z" fill="#3A3F52"/></svg>
+          </div>
+          <div class="portrait-art">
+            <svg id="pc-portrait" width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="78" r="46" fill="#A878F0"/>
+              <path d="M30 200c0-40 36-62 80-62s80 22 80 62z" fill="#7B53B8"/>
+              <path d="M110 36l10 22 24 2-18 16 6 24-22-14-22 14 6-24-18-16 24-2z" fill="#251C38"/>
+            </svg>
+          </div>
+          <span class="piece-name">虚空祭司</span>
+          <span class="piece-title">VOID PRIEST · 奥术师 / 守护者</span>
+          <div class="cost-pill">
+            <svg id="pc-cost" width="26" height="26" viewBox="0 0 26 26" class="cost-pill-ic"><circle cx="13" cy="13" r="11" fill="#F2C14E"/><circle cx="13" cy="13" r="7" fill="#D9A638"/></svg>
+            <span class="cost-pill-tx">4 费</span>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <svg id="pc-hp" width="28" height="28" viewBox="0 0 28 28" class="stat-box-ic"><path d="M14 24C6 18 3 13 3 9a6 6 0 0111-3 6 6 0 0111 3c0 4-3 9-11 15z" fill="#57C77A"/></svg>
+            <span class="stat-box-num">1100</span>
+            <span class="stat-box-cap">生命</span>
+          </div>
+          <div class="stat-box">
+            <svg id="pc-atk" width="28" height="28" viewBox="0 0 28 28" class="stat-box-ic"><path d="M5 23l14-14 4 4-14 14H5z" fill="#F2C14E"/><path d="M18 6l4 4" stroke="#FFF" stroke-width="2"/></svg>
+            <span class="stat-box-num">65</span>
+            <span class="stat-box-cap">攻击</span>
+          </div>
+          <div class="stat-box">
+            <svg id="pc-arm" width="28" height="28" viewBox="0 0 28 28" class="stat-box-ic"><path d="M14 3l9 4v7c0 6-4 9-9 11-5-2-9-5-9-11V7z" fill="#4F76D6"/></svg>
+            <span class="stat-box-num">40</span>
+            <span class="stat-box-cap">护甲</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail column -->
+      <div class="detail-col">
+
+        <div class="section">
+          <div class="sec-head">
+            <svg id="pc-sec-skill" width="32" height="32" viewBox="0 0 32 32" class="sec-ic"><path d="M16 3l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="#4FD6C9"/></svg>
+            <span class="sec-title">技能</span>
+          </div>
+          <div class="skill-name-row">
+            <span class="skill-name">虚空裂隙</span>
+            <div class="mana-pill"><span class="mana-tx">法力 0 / 80</span></div>
+          </div>
+          <span class="skill-desc">向最远的敌人区域撕开一道虚空裂隙,造成范围魔法伤害并使命中目标的护甲降低,持续 4 秒。每命中一名敌人,自身获得一层护盾叠加。</span>
+          <div class="skill-vals">
+            <div class="skill-val"><span class="skill-val-num">320</span><span class="skill-val-cap">基础魔法伤害</span></div>
+            <div class="skill-val"><span class="skill-val-num">-25%</span><span class="skill-val-cap">护甲削减</span></div>
+            <div class="skill-val"><span class="skill-val-num">4s</span><span class="skill-val-cap">持续时间</span></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sec-head">
+            <svg id="pc-sec-syn" width="32" height="32" viewBox="0 0 32 32" class="sec-ic"><circle cx="11" cy="12" r="5" fill="#A878F0"/><circle cx="21" cy="12" r="5" fill="#F2C14E"/><path d="M11 12h10" stroke="#8B93AD" stroke-width="2"/></svg>
+            <span class="sec-title">持有羁绊</span>
+          </div>
+          <div class="syn-tags">
+            <div class="syn-tag">
+              <svg id="pc-tag-mage" width="32" height="32" viewBox="0 0 32 32" class="syn-tag-ic"><circle cx="16" cy="16" r="10" fill="#A878F0"/><path d="M16 6v20M6 16h20" stroke="#FFF" stroke-width="2"/></svg>
+              <span class="syn-tag-tx">奥术师</span>
+            </div>
+            <div class="syn-tag">
+              <svg id="pc-tag-warden" width="32" height="32" viewBox="0 0 32 32" class="syn-tag-ic"><path d="M16 4l10 4v8c0 7-5 11-10 12-5-1-10-5-10-12V8z" fill="#F2C14E"/></svg>
+              <span class="syn-tag-tx">守护者</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sec-head">
+            <svg id="pc-sec-cmb" width="32" height="32" viewBox="0 0 32 32" class="sec-ic"><path d="M16 4v24M4 16h24" stroke="#F2C14E" stroke-width="3"/></svg>
+            <span class="sec-title">合成提示</span>
+          </div>
+          <div class="combine">
+            <div class="cmb-unit gold"><svg id="pc-cmb1" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="20" r="11" fill="#A878F0"/><path d="M8 45c0-9 8-13 17-13s17 4 17 13z" fill="#7B53B8"/></svg></div>
+            <span class="cmb-plus">+</span>
+            <div class="cmb-unit gold"><svg id="pc-cmb2" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="20" r="11" fill="#A878F0"/><path d="M8 45c0-9 8-13 17-13s17 4 17 13z" fill="#7B53B8"/></svg></div>
+            <span class="cmb-eq">=</span>
+            <div class="cmb-result"><svg id="pc-cmb3" width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="26" r="14" fill="#A878F0"/><path d="M10 58c0-11 10-17 22-17s22 6 22 17z" fill="#7B53B8"/><path d="M32 8l4 8 8 1-6 6 2 8-8-5-8 5 2-8-6-6 8-1z" fill="#F2C14E"/></svg></div>
+            <span class="cmb-note">再合成一名 ★★ 虚空祭司,即可升至 ★★★。当前进度 2 / 3,继续在商店购买同名棋子。</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

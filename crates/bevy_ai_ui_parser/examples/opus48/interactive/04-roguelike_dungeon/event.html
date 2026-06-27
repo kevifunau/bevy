@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  flex-direction: row;
+  background-color: #0E0B0A;
+  padding: 0;
+}
+
+/* ===== LEFT: scene / illustration ===== */
+.scene-col {
+  width: 720px;
+  height: 1080px;
+  background-color: #16110E;
+  border-right-width: 3px; border-right-color: #2C211A;
+  padding: 56px 56px;
+  justify-content: space-between;
+}
+.scene-tag {
+  flex-direction: row; align-items: center;
+  height: 44px; width: 220px;
+  background-color: #211913;
+  border-width: 1px; border-color: #C23B3B;
+  border-radius: 22px;
+  padding: 0 18px;
+}
+.scene-tag-ic { margin-right: 10px; }
+.scene-tag-txt { font-size: 16px; color: #E07B5B; -unity-font-style: bold; letter-spacing: 2px; }
+.scene-art {
+  flex-grow: 1;
+  margin: 40px 0;
+  background-color: #0E0B0A;
+  border-width: 2px; border-color: #3A2C20;
+  border-radius: 20px;
+  align-items: center; justify-content: center;
+}
+.scene-floor-row { flex-direction: row; align-items: center; }
+.scene-floor-ic {
+  width: 50px; height: 50px; border-radius: 12px;
+  background-color: #211913; align-items: center; justify-content: center; margin-right: 14px;
+}
+.scene-floor-txt { font-size: 18px; color: #9C8A74; }
+
+/* ===== RIGHT: event content ===== */
+.content-col {
+  flex-grow: 1;
+  height: 1080px;
+  padding: 64px 72px;
+  justify-content: space-between;
+}
+.event-head { flex-direction: column; }
+.event-kicker {
+  font-size: 18px; color: #E0A94B; letter-spacing: 6px;
+  -unity-font-style: bold; margin-bottom: 14px;
+}
+.event-title {
+  font-size: 56px; color: #F3D08A; -unity-font-style: bold;
+  -unity-text-outline-width: 1px; -unity-text-outline-color: #6B4A1F;
+}
+.event-desc {
+  font-size: 22px; color: #C8B79E;
+  margin-top: 26px;
+  width: 980px;
+  white-space: normal;
+}
+.event-desc-2 {
+  font-size: 22px; color: #C8B79E;
+  margin-top: 16px;
+  width: 980px;
+  white-space: normal;
+}
+
+/* choices */
+.choices { flex-direction: column; margin-top: 8px; }
+.choice {
+  flex-direction: row;
+  align-items: center;
+  height: 116px;
+  background-color: #16110E;
+  border-width: 2px; border-color: #2C211A;
+  border-radius: 16px;
+  padding: 0 26px;
+  margin-bottom: 20px;
+}
+.choice.risk { border-color: #5A2424; }
+.choice.safe { border-color: #2C4A2E; }
+.choice.reward { border-color: #6B4A1F; }
+.choice-ic {
+  width: 70px; height: 70px; border-radius: 14px;
+  background-color: #211913;
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.choice-body { flex-grow: 1; justify-content: center; }
+.choice-name { font-size: 26px; color: #EAD9C0; -unity-font-style: bold; }
+.choice-hint-row { flex-direction: row; align-items: center; margin-top: 10px; }
+.hint-pill {
+  flex-direction: row; align-items: center;
+  height: 30px; padding: 0 12px; border-radius: 8px;
+  background-color: #211913; margin-right: 12px;
+}
+.hint-pill.danger { background-color: #2A1414; }
+.hint-pill.good { background-color: #16261A; }
+.hint-txt { font-size: 14px; color: #9C8A74; margin-left: 6px; }
+.hint-txt.danger { color: #E07B5B; }
+.hint-txt.good { color: #6FBF73; }
+.choice-go {
+  width: 60px; height: 60px; border-radius: 30px;
+  background-color: #211913;
+  align-items: center; justify-content: center;
+}
+.choice.risk .choice-go { background-color: #8E2727; }
+
+/* footer */
+.event-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+.foot-note { flex-direction: row; align-items: center; }
+.foot-note-ic { margin-right: 10px; }
+.foot-note-txt { font-size: 16px; color: #6E5E4C; }
+.leave-btn {
+  flex-direction: row; align-items: center;
+  height: 56px; padding: 0 26px;
+  background-color: #16110E;
+  border-width: 1px; border-color: #2C211A;
+  border-radius: 12px;
+}
+.leave-txt { font-size: 18px; color: #9C8A74; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- LEFT scene -->
+    <div class="scene-col">
+      <div class="scene-tag">
+        <div class="scene-tag-ic">
+          <svg id="icon-event-mark" width="22" height="22" viewBox="0 0 22 22">
+            <path d="M11 2a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 4a3 3 0 0 1 3 3c0 2-3 2-3 4M11 16h.01" fill="none" stroke="#E07B5B" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="scene-tag-txt">随机事件</div>
+      </div>
+
+      <div class="scene-art">
+        <svg id="icon-event-altar" width="380" height="420" viewBox="0 0 380 420">
+          <rect x="120" y="280" width="140" height="110" rx="8" fill="#211913"/>
+          <rect x="100" y="262" width="180" height="24" rx="6" fill="#2C211A"/>
+          <path d="M150 262l8-60h64l8 60z" fill="#3A2C20"/>
+          <circle cx="190" cy="160" r="46" fill="#16110E" stroke="#E0A94B" stroke-width="3"/>
+          <path d="M190 130c4 14-10 17-10 26a10 10 0 0 0 20 0c0-6-4-8 0-15 6 5 10 11 10 19a20 20 0 0 1-40 0c0-15 16-22 20-30z" fill="#C23B3B"/>
+          <path d="M120 300l-28 90M260 300l28 90" stroke="#3A2C20" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="92" cy="300" r="10" fill="#E0A94B"/>
+          <circle cx="288" cy="300" r="10" fill="#E0A94B"/>
+        </svg>
+      </div>
+
+      <div class="scene-floor-row">
+        <div class="scene-floor-ic">
+          <svg id="icon-event-floor" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M4 21h5v-5h5v-5h5v-5h5" fill="none" stroke="#E0A94B" stroke-width="2.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="scene-floor-txt">第 14 层 · 被遗忘的祭坛</div>
+      </div>
+    </div>
+
+    <!-- RIGHT content -->
+    <div class="content-col">
+
+      <div class="event-head">
+        <div class="event-kicker">DECISION</div>
+        <div class="event-title">血色献祭之坛</div>
+        <div class="event-desc">幽暗的石室中央矗立着一座古老的祭坛,凝固的血迹诉说着无数前人的抉择。坛上漂浮的猩红宝珠散发出诱人的力量,而空气中弥漫着不祥的低语。</div>
+        <div class="event-desc-2">你感到一股原始的渴望——力量唾手可得,但代价从来不会轻易显现。</div>
+      </div>
+
+      <div class="choices">
+
+        <div class="choice reward">
+          <div class="choice-ic">
+            <svg id="icon-choice-offer" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M20 6c3 8-7 10-7 18a7 7 0 0 0 14 0c0-5-3-6 0-11 4 4 6 8 6 13a13 13 0 0 1-26 0c0-10 10-13 13-20z" fill="#C23B3B"/>
+            </svg>
+          </div>
+          <div class="choice-body">
+            <div class="choice-name">献上 30% 当前生命</div>
+            <div class="choice-hint-row">
+              <div class="hint-pill good"><svg id="icon-hint-up" width="14" height="14" viewBox="0 0 14 14"><path d="M7 2v10M3 6l4-4 4 4" stroke="#6FBF73" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="hint-txt good">永久 +12% 攻击力</div></div>
+              <div class="hint-pill danger"><svg id="icon-hint-down" width="14" height="14" viewBox="0 0 14 14"><path d="M7 12V2M3 8l4 4 4-4" stroke="#E07B5B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="hint-txt danger">失去 144 生命</div></div>
+            </div>
+          </div>
+          <div class="choice-go">
+            <svg id="icon-choice-go1" width="26" height="26" viewBox="0 0 26 26"><path d="M8 13h10M14 8l5 5-5 5" fill="none" stroke="#E0A94B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="choice risk">
+          <div class="choice-ic">
+            <svg id="icon-choice-gamble" width="40" height="40" viewBox="0 0 40 40">
+              <rect x="6" y="6" width="28" height="28" rx="6" fill="none" stroke="#C23B3B" stroke-width="3"/>
+              <circle cx="14" cy="14" r="3" fill="#C23B3B"/><circle cx="26" cy="14" r="3" fill="#C23B3B"/>
+              <circle cx="20" cy="20" r="3" fill="#C23B3B"/><circle cx="14" cy="26" r="3" fill="#C23B3B"/><circle cx="26" cy="26" r="3" fill="#C23B3B"/>
+            </svg>
+          </div>
+          <div class="choice-body">
+            <div class="choice-name">触碰猩红宝珠</div>
+            <div class="choice-hint-row">
+              <div class="hint-pill good"><svg id="icon-hint-gem" width="14" height="14" viewBox="0 0 14 14"><path d="M7 2l5 4-5 6-5-6z" fill="#6FBF73"/></svg><div class="hint-txt good">50% 传说装备</div></div>
+              <div class="hint-pill danger"><svg id="icon-hint-skull" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="6" r="5" fill="#E07B5B"/><circle cx="5" cy="6" r="1.3" fill="#16110E"/><circle cx="9" cy="6" r="1.3" fill="#16110E"/></svg><div class="hint-txt danger">50% 召唤守护者</div></div>
+            </div>
+          </div>
+          <div class="choice-go">
+            <svg id="icon-choice-go2" width="26" height="26" viewBox="0 0 26 26"><path d="M8 13h10M14 8l5 5-5 5" fill="none" stroke="#FFF3E0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="choice safe">
+          <div class="choice-ic">
+            <svg id="icon-choice-pray" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M20 6l10 5v8c0 8-5 12-10 15-5-3-10-7-10-15v-8z" fill="#6FBF73"/>
+              <path d="M16 19l3 3 6-6" fill="none" stroke="#16110E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="choice-body">
+            <div class="choice-name">默默祈祷后离开</div>
+            <div class="choice-hint-row">
+              <div class="hint-pill good"><svg id="icon-hint-heal" width="14" height="14" viewBox="0 0 14 14"><path d="M7 12S2 8 2 5a2.5 2.5 0 0 1 5-.5A2.5 2.5 0 0 1 12 5c0 3-5 7-5 7z" fill="#6FBF73"/></svg><div class="hint-txt good">恢复 15% 生命</div></div>
+              <div class="hint-pill"><svg id="icon-hint-safe" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="none" stroke="#9C8A74" stroke-width="2"/><path d="M5 7l1.5 1.5L9 6" stroke="#9C8A74" stroke-width="2" fill="none" stroke-linecap="round"/></svg><div class="hint-txt">无风险</div></div>
+            </div>
+          </div>
+          <div class="choice-go">
+            <svg id="icon-choice-go3" width="26" height="26" viewBox="0 0 26 26"><path d="M8 13h10M14 8l5 5-5 5" fill="none" stroke="#6FBF73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="event-foot">
+        <div class="foot-note">
+          <div class="foot-note-ic">
+            <svg id="icon-event-warn" width="22" height="22" viewBox="0 0 22 22"><path d="M11 3l9 16H2z" fill="none" stroke="#6E5E4C" stroke-width="2"/><path d="M11 9v4M11 16h.01" stroke="#6E5E4C" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="foot-note-txt">抉择不可撤销 · 选择将永久影响本局</div>
+        </div>
+        <div class="leave-btn">
+          <div class="leave-txt">无视并前进 →</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

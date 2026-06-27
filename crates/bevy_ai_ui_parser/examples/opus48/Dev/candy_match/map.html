@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #3A1858;
+  --bg1: #54237E;
+  --panel: #6B2E9E;
+  --panel2: #7E3AB5;
+  --line: #9B5BD0;
+  --pink: #FF6FB5;
+  --pink-d: #E0408F;
+  --yellow: #FFD24B;
+  --yellow-d: #E0A81C;
+  --mint: #4FE0C4;
+  --mint-d: #28B89E;
+  --blue: #5BB8FF;
+  --red: #FF6B7A;
+  --text: #FFF4FB;
+  --text-dim: #C9A8E0;
+  --lock: #4A2E6E;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 96px; margin-bottom: 40px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--bg1);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.title { font-size: 54px; color: var(--yellow); font-weight: bold; white-space: normal; flex-grow: 1; }
+.life-chip {
+  flex-direction: row; align-items: center;
+  height: 80px;
+  background-color: var(--bg1);
+  border-radius: 24px;
+  border-width: 3px; border-color: var(--red);
+  padding: 0 26px 0 12px;
+}
+.life-ico { width: 44px; height: 44px; margin-right: 12px; }
+.life-tx { font-size: 34px; min-height: 42px; color: var(--red); font-weight: bold; white-space: normal; }
+
+/* ---------- chapter banner ---------- */
+.chapter {
+  flex-direction: row; align-items: center;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  border-width: 3px; border-color: var(--pink);
+  padding: 26px 32px;
+  margin-bottom: 34px;
+}
+.chapter-ico {
+  width: 88px; height: 88px;
+  background-color: var(--pink-d);
+  border-radius: 26px;
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.chapter-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.chapter-name { font-size: 40px; min-height: 48px; color: var(--text); font-weight: bold; white-space: normal; }
+.chapter-prog { font-size: 27px; min-height: 34px; color: var(--mint); font-weight: bold; white-space: normal; margin-top: 4px; }
+
+/* ---------- level path ---------- */
+.levels { flex-direction: column; flex-grow: 1; }
+.lv-node {
+  flex-direction: row; align-items: center;
+  height: 150px;
+  background-color: var(--panel);
+  border-radius: 30px;
+  border-width: 3px; border-color: var(--line);
+  padding: 0 30px;
+  margin-bottom: 24px;
+}
+.lv-cur { background-color: var(--bg1); border-color: var(--yellow); border-width: 4px; }
+.lv-lock { background-color: var(--bg1); border-color: var(--lock); }
+.lv-badge {
+  width: 96px; height: 96px;
+  border-radius: 28px;
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.badge-done { background-color: var(--mint); width: 96px; height: 96px; }
+.badge-cur { background-color: var(--yellow); width: 96px; height: 96px; }
+.badge-lock { background-color: var(--lock); width: 96px; height: 96px; }
+.lv-num { font-size: 44px; min-height: 54px; font-weight: bold; white-space: normal; }
+.lv-num-done { color: #064038; }
+.lv-num-cur { color: #4A2E00; }
+.lv-num-lock { color: var(--text-dim); }
+.lv-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.lv-name { font-size: 36px; min-height: 44px; color: var(--text); font-weight: bold; white-space: normal; }
+.lv-name-dim { color: var(--text-dim); }
+.lv-sub { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+.stars { flex-direction: row; align-items: center; }
+.star { width: 40px; height: 40px; margin-left: 6px; }
+.lv-go {
+  flex-direction: row; align-items: center; justify-content: center;
+  min-width: 130px; height: 76px;
+  background-color: var(--yellow);
+  border-radius: 24px;
+  padding: 0 24px;
+}
+.lv-go-tx { font-size: 32px; min-height: 40px; color: #4A2E00; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M30 10 L16 24 L30 38" stroke="#C9A8E0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="title">关卡地图</span>
+      <div class="life-chip">
+        <svg id="icon-heart" class="life-ico" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M22 38 C6 26 6 14 16 14 C20 14 22 17 22 17 C22 17 24 14 28 14 C38 14 38 26 22 38 Z" fill="#FF6B7A"/>
+        </svg>
+        <span class="life-tx">5</span>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-ico">
+        <svg id="icon-ch" width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="16" cy="20" r="10" fill="#FFF4FB"/>
+          <circle cx="32" cy="20" r="10" fill="#FFF4FB"/>
+          <circle cx="24" cy="32" r="10" fill="#FFF4FB"/>
+        </svg>
+      </div>
+      <div class="chapter-txw">
+        <span class="chapter-name">第二章 · 草莓糖果园</span>
+        <span class="chapter-prog">已收集 18 / 30 颗星星</span>
+      </div>
+    </div>
+
+    <div class="levels">
+
+      <div class="lv-node">
+        <div class="lv-badge badge-done">
+          <span class="lv-num lv-num-done">45</span>
+        </div>
+        <div class="lv-txw">
+          <span class="lv-name">薄荷迷宫</span>
+          <span class="lv-sub">已通关</span>
+        </div>
+        <div class="stars">
+          <svg id="s1a" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#FFD24B"/></svg>
+          <svg id="s1b" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#FFD24B"/></svg>
+          <svg id="s1c" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#FFD24B"/></svg>
+        </div>
+      </div>
+
+      <div class="lv-node">
+        <div class="lv-badge badge-done">
+          <span class="lv-num lv-num-done">46</span>
+        </div>
+        <div class="lv-txw">
+          <span class="lv-name">焦糖瀑布</span>
+          <span class="lv-sub">已通关</span>
+        </div>
+        <div class="stars">
+          <svg id="s2a" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#FFD24B"/></svg>
+          <svg id="s2b" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#FFD24B"/></svg>
+          <svg id="s2c" class="star" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15 Z" fill="#4A2E6E"/></svg>
+        </div>
+      </div>
+
+      <div class="lv-node lv-cur">
+        <div class="lv-badge badge-cur">
+          <span class="lv-num lv-num-cur">47</span>
+        </div>
+        <div class="lv-txw">
+          <span class="lv-name">草莓糖果园</span>
+          <span class="lv-sub">当前关卡 · 目标 8,000 分</span>
+        </div>
+        <div class="lv-go">
+          <span class="lv-go-tx">开始</span>
+        </div>
+      </div>
+
+      <div class="lv-node lv-lock">
+        <div class="lv-badge badge-lock">
+          <svg id="lk1" width="40" height="40" viewBox="0 0 40 40">
+            <rect x="10" y="18" width="20" height="16" rx="3" fill="#C9A8E0"/>
+            <path d="M14 18 L14 13 C14 8 26 8 26 13 L26 18" stroke="#C9A8E0" stroke-width="4" fill="none"/>
+          </svg>
+        </div>
+        <div class="lv-txw">
+          <span class="lv-name lv-name-dim">蜜糖森林</span>
+          <span class="lv-sub">通关第 47 关解锁</span>
+        </div>
+      </div>
+
+      <div class="lv-node lv-lock">
+        <div class="lv-badge badge-lock">
+          <svg id="lk2" width="40" height="40" viewBox="0 0 40 40">
+            <rect x="10" y="18" width="20" height="16" rx="3" fill="#C9A8E0"/>
+            <path d="M14 18 L14 13 C14 8 26 8 26 13 L26 18" stroke="#C9A8E0" stroke-width="4" fill="none"/>
+          </svg>
+        </div>
+        <div class="lv-txw">
+          <span class="lv-name lv-name-dim">巧克力城堡</span>
+          <span class="lv-sub">通关第 48 关解锁</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

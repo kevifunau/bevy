@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage { width: 1920px; height: 1080px; background-color: #FFF1DC; }
+
+.pagehead {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 110px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 36px;
+}
+.back-btn { width: 64px; height: 64px; border-radius: 20px; background-color: #FFF1DC; align-items: center; justify-content: center; margin-right: 20px; }
+.head-title-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.head-title { font-size: 32px; color: #5A3E2B; font-weight: bold; }
+.head-sub { font-size: 16px; color: #B08968; margin-top: 3px; }
+
+/* tabs (segmented) */
+.seg {
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  background-color: #FFF6E9;
+  border-radius: 30px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 5px;
+}
+.seg-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border-radius: 24px;
+  padding: 0 26px;
+  margin-right: 4px;
+  background-color: #FFF6E9;
+}
+.seg-btn.is-active { background-color: #E8503A; }
+.seg-txt { font-size: 19px; color: #B08968; font-weight: bold; }
+.seg-btn.is-active .seg-txt { color: #FFFFFF; }
+.seg-pill {
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 13px;
+  background-color: #F0D9B5;
+  padding: 0 8px;
+  margin-left: 10px;
+}
+.seg-btn.is-active .seg-pill { background-color: #C2402E; }
+.seg-pill-txt { font-size: 14px; color: #5A3E2B; font-weight: bold; }
+.seg-btn.is-active .seg-pill-txt { color: #FFFFFF; }
+
+/* body two columns */
+.content { flex-direction: row; width: 1920px; height: 970px; padding: 28px 36px; }
+.col { flex-direction: column; flex-grow: 1; flex-basis: 0; margin-right: 28px; }
+.col-title-row { flex-direction: row; align-items: center; margin-bottom: 18px; height: 40px; }
+.col-title { font-size: 24px; color: #5A3E2B; font-weight: bold; margin-right: 12px; }
+.col-tip { font-size: 16px; color: #B08968; }
+
+/* in-progress order card */
+.order {
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 22px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 22px;
+  margin-bottom: 22px;
+}
+.order-top { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.order-ava {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.av-red { background-color: #FCE0DA; }
+.av-honey { background-color: #FCEBCF; }
+.av-grape { background-color: #EBE3F7; }
+.av-green { background-color: #DFF3E3; }
+.order-id { flex-direction: column; justify-content: center; flex-grow: 1; }
+.order-name { font-size: 22px; color: #5A3E2B; font-weight: bold; }
+.order-from { font-size: 15px; color: #B08968; margin-top: 3px; }
+.badge {
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: 18px;
+  padding: 0 16px;
+}
+.b-vip { background-color: #FBEED0; }
+.b-vip-txt { font-size: 15px; color: #C9851A; font-weight: bold; }
+
+.demand-row { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.dish {
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  background-color: #FFF6E9;
+  border-radius: 22px;
+  padding: 0 16px 0 8px;
+  margin-right: 12px;
+}
+.dish-ico { width: 30px; height: 30px; align-items: center; justify-content: center; margin-right: 8px; }
+.dish-txt { font-size: 16px; color: #5A3E2B; font-weight: bold; }
+
+.timer-row { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.timer-left { flex-direction: row; align-items: center; }
+.timer-ico { width: 24px; height: 24px; align-items: center; justify-content: center; margin-right: 8px; }
+.timer-txt { font-size: 17px; color: #E8503A; font-weight: bold; }
+.timer-pct { font-size: 16px; color: #B08968; }
+.bar {
+  flex-direction: row;
+  width: 100%;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #F0E2C8;
+  margin-bottom: 16px;
+}
+.bar-fill { height: 16px; border-radius: 8px; background-color: #5FB67A; }
+.bar-70 { width: 70%; }
+.bar-40 { width: 40%; }
+.bar-90 { width: 90%; }
+
+.order-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+.reward { flex-direction: row; align-items: center; }
+.rw-chip { flex-direction: row; align-items: center; margin-right: 14px; }
+.rw-ico { width: 28px; height: 28px; align-items: center; justify-content: center; margin-right: 6px; }
+.rw-num { font-size: 20px; color: #5A3E2B; font-weight: bold; }
+.claim {
+  width: 170px;
+  height: 56px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+}
+.claim-on { background-color: #5FB67A; }
+.claim-wait { background-color: #F0E2C8; }
+.claim-txt { font-size: 19px; color: #FFFFFF; font-weight: bold; }
+.claim-wait .claim-txt { color: #9C7B52; }
+
+/* available order card (compact) */
+.avail {
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 116px;
+  background-color: #FFFFFF;
+  border-radius: 22px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 0 22px;
+  margin-bottom: 20px;
+}
+.avail-ava { width: 70px; height: 70px; border-radius: 18px; align-items: center; justify-content: center; margin-right: 18px; }
+.avail-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.avail-name { font-size: 21px; color: #5A3E2B; font-weight: bold; }
+.avail-demand { flex-direction: row; align-items: center; margin-top: 7px; }
+.avail-tag { font-size: 15px; color: #B08968; margin-right: 14px; }
+.avail-right { flex-direction: column; align-items: flex-end; justify-content: center; margin-right: 18px; }
+.avail-rw { flex-direction: row; align-items: center; }
+.avail-rw-num { font-size: 22px; color: #5A3E2B; font-weight: bold; margin-left: 6px; }
+.avail-time { font-size: 14px; color: #B08968; margin-top: 5px; }
+.take {
+  width: 120px;
+  height: 60px;
+  border-radius: 16px;
+  background-color: #E8503A;
+  align-items: center;
+  justify-content: center;
+}
+.take-txt { font-size: 19px; color: #FFFFFF; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="pagehead">
+      <div class="back-btn">
+        <svg id="icon-back-orders" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M20 6L10 16l10 10" fill="none" stroke="#5A3E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="head-title-wrap">
+        <span class="head-title">Orders &amp; Tasks</span>
+        <span class="head-sub">Serve guests, claim rewards</span>
+      </div>
+      <div class="seg">
+        <div class="seg-btn is-active">
+          <span class="seg-txt">In Progress</span>
+          <div class="seg-pill"><span class="seg-pill-txt">3</span></div>
+        </div>
+        <div class="seg-btn">
+          <span class="seg-txt">Available</span>
+          <div class="seg-pill"><span class="seg-pill-txt">5</span></div>
+        </div>
+        <div class="seg-btn">
+          <span class="seg-txt">Done</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- in-progress column -->
+      <div class="col">
+        <div class="col-title-row">
+          <span class="col-title">In Progress</span>
+          <span class="col-tip">cooking now</span>
+        </div>
+
+        <div class="order">
+          <div class="order-top">
+            <div class="order-ava av-red">
+              <svg id="icon-guest-1" width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="14" r="8" fill="#E8503A"/><path d="M6 33c0-6 6-10 13-10s13 4 13 10z" fill="#E8503A"/></svg>
+            </div>
+            <div class="order-id">
+              <span class="order-name">Mrs. Hamilton</span>
+              <span class="order-from">Table 7 · party of 4</span>
+            </div>
+            <div class="badge b-vip"><span class="b-vip-txt">VIP</span></div>
+          </div>
+          <div class="demand-row">
+            <div class="dish">
+              <div class="dish-ico"><svg id="icon-dish-burger" width="26" height="26" viewBox="0 0 26 26"><path d="M4 11a9 9 0 0 1 18 0z" fill="#F5A623"/><rect x="4" y="13" width="18" height="3" fill="#5FB67A"/><path d="M4 18h18v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z" fill="#C9851A"/></svg></div>
+              <span class="dish-txt">Burger ×2</span>
+            </div>
+            <div class="dish">
+              <div class="dish-ico"><svg id="icon-dish-drink" width="26" height="26" viewBox="0 0 26 26"><path d="M7 6h12l-2 16H9z" fill="#5AC8E8"/><path d="M11 3h4v3h-4z" fill="#3A9BC4"/></svg></div>
+              <span class="dish-txt">Soda ×4</span>
+            </div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-left">
+              <div class="timer-ico"><svg id="icon-timer-1" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="12" r="8" fill="none" stroke="#E8503A" stroke-width="2"/><path d="M11 8v4l3 2" fill="none" stroke="#E8503A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="timer-txt">02:14 left</span>
+            </div>
+            <span class="timer-pct">70%</span>
+          </div>
+          <div class="bar"><div class="bar-fill bar-70"></div></div>
+          <div class="order-foot">
+            <div class="reward">
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-coin1" width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="#F5A623"/><circle cx="13" cy="13" r="7" fill="#FFD66B"/></svg></div><span class="rw-num">420</span></div>
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-star1" width="26" height="26" viewBox="0 0 26 26"><path d="M13 3l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#F5A623"/></svg></div><span class="rw-num">15</span></div>
+            </div>
+            <div class="claim claim-wait"><span class="claim-txt">Cooking…</span></div>
+          </div>
+        </div>
+
+        <div class="order">
+          <div class="order-top">
+            <div class="order-ava av-honey">
+              <svg id="icon-guest-2" width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="14" r="8" fill="#F5A623"/><path d="M6 33c0-6 6-10 13-10s13 4 13 10z" fill="#F5A623"/></svg>
+            </div>
+            <div class="order-id">
+              <span class="order-name">The Carters</span>
+              <span class="order-from">Takeout · counter</span>
+            </div>
+          </div>
+          <div class="demand-row">
+            <div class="dish">
+              <div class="dish-ico"><svg id="icon-dish-pizza" width="26" height="26" viewBox="0 0 26 26"><path d="M13 4L5 20h16z" fill="#E8503A"/><circle cx="11" cy="15" r="1.5" fill="#FFFFFF"/><circle cx="15" cy="13" r="1.5" fill="#FFFFFF"/></svg></div>
+              <span class="dish-txt">Pizza ×1</span>
+            </div>
+            <div class="dish">
+              <div class="dish-ico"><svg id="icon-dish-fries" width="26" height="26" viewBox="0 0 26 26"><path d="M7 9h12l-1 13H8z" fill="#F5A623"/><rect x="9" y="4" width="2" height="6" fill="#FFD66B"/><rect x="13" y="3" width="2" height="7" fill="#FFD66B"/></svg></div>
+              <span class="dish-txt">Fries ×2</span>
+            </div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-left">
+              <div class="timer-ico"><svg id="icon-timer-2" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="12" r="8" fill="none" stroke="#E8503A" stroke-width="2"/><path d="M11 8v4l3 2" fill="none" stroke="#E8503A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="timer-txt">05:40 left</span>
+            </div>
+            <span class="timer-pct">40%</span>
+          </div>
+          <div class="bar"><div class="bar-fill bar-40"></div></div>
+          <div class="order-foot">
+            <div class="reward">
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-coin2" width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="#F5A623"/><circle cx="13" cy="13" r="7" fill="#FFD66B"/></svg></div><span class="rw-num">260</span></div>
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-star2" width="26" height="26" viewBox="0 0 26 26"><path d="M13 3l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#F5A623"/></svg></div><span class="rw-num">8</span></div>
+            </div>
+            <div class="claim claim-wait"><span class="claim-txt">Cooking…</span></div>
+          </div>
+        </div>
+
+        <div class="order">
+          <div class="order-top">
+            <div class="order-ava av-green">
+              <svg id="icon-guest-3" width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="14" r="8" fill="#5FB67A"/><path d="M6 33c0-6 6-10 13-10s13 4 13 10z" fill="#5FB67A"/></svg>
+            </div>
+            <div class="order-id">
+              <span class="order-name">Office Lunch</span>
+              <span class="order-from">Delivery · 12 boxes</span>
+            </div>
+          </div>
+          <div class="demand-row">
+            <div class="dish">
+              <div class="dish-ico"><svg id="icon-dish-bowl" width="26" height="26" viewBox="0 0 26 26"><path d="M4 11h18a9 9 0 0 1-18 0z" fill="#7C5CBF"/><path d="M9 8c0-2 1-3 1-4M13 8c0-2 1-3 1-4" stroke="#7C5CBF" stroke-width="2" fill="none"/></svg></div>
+              <span class="dish-txt">Noodles ×12</span>
+            </div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-left">
+              <div class="timer-ico"><svg id="icon-timer-3" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="12" r="8" fill="none" stroke="#5FB67A" stroke-width="2"/><path d="M11 8v4l3 2" fill="none" stroke="#5FB67A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="timer-txt">Ready!</span>
+            </div>
+            <span class="timer-pct">90%</span>
+          </div>
+          <div class="bar"><div class="bar-fill bar-90"></div></div>
+          <div class="order-foot">
+            <div class="reward">
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-coin3" width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="#F5A623"/><circle cx="13" cy="13" r="7" fill="#FFD66B"/></svg></div><span class="rw-num">880</span></div>
+              <div class="rw-chip"><div class="rw-ico"><svg id="icon-rw-star3" width="26" height="26" viewBox="0 0 26 26"><path d="M13 3l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#F5A623"/></svg></div><span class="rw-num">30</span></div>
+            </div>
+            <div class="claim claim-on"><span class="claim-txt">Claim</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- available column -->
+      <div class="col">
+        <div class="col-title-row">
+          <span class="col-title">Available Orders</span>
+          <span class="col-tip">tap to accept</span>
+        </div>
+
+        <div class="avail">
+          <div class="avail-ava av-red">
+            <svg id="icon-avail-1" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="#E8503A"/><path d="M7 35c0-6 6-11 13-11s13 5 13 11z" fill="#E8503A"/></svg>
+          </div>
+          <div class="avail-meta">
+            <span class="avail-name">Birthday Party</span>
+            <div class="avail-demand">
+              <span class="avail-tag">Cake ×1 · Juice ×8</span>
+            </div>
+          </div>
+          <div class="avail-right">
+            <div class="avail-rw">
+              <svg id="icon-avail-coin1" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F5A623"/><circle cx="12" cy="12" r="6" fill="#FFD66B"/></svg>
+              <span class="avail-rw-num">540</span>
+            </div>
+            <span class="avail-time">expires in 12m</span>
+          </div>
+          <div class="take"><span class="take-txt">Take</span></div>
+        </div>
+
+        <div class="avail">
+          <div class="avail-ava av-honey">
+            <svg id="icon-avail-2" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="#F5A623"/><path d="M7 35c0-6 6-11 13-11s13 5 13 11z" fill="#F5A623"/></svg>
+          </div>
+          <div class="avail-meta">
+            <span class="avail-name">Late Night Snack</span>
+            <div class="avail-demand">
+              <span class="avail-tag">Burger ×3 · Fries ×3</span>
+            </div>
+          </div>
+          <div class="avail-right">
+            <div class="avail-rw">
+              <svg id="icon-avail-coin2" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F5A623"/><circle cx="12" cy="12" r="6" fill="#FFD66B"/></svg>
+              <span class="avail-rw-num">380</span>
+            </div>
+            <span class="avail-time">expires in 25m</span>
+          </div>
+          <div class="take"><span class="take-txt">Take</span></div>
+        </div>
+
+        <div class="avail">
+          <div class="avail-ava av-grape">
+            <svg id="icon-avail-3" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="#7C5CBF"/><path d="M7 35c0-6 6-11 13-11s13 5 13 11z" fill="#7C5CBF"/></svg>
+          </div>
+          <div class="avail-meta">
+            <span class="avail-name">Critic Visit</span>
+            <div class="avail-demand">
+              <span class="avail-tag">Chef's Special ×1</span>
+            </div>
+          </div>
+          <div class="avail-right">
+            <div class="avail-rw">
+              <svg id="icon-avail-gem3" width="24" height="24" viewBox="0 0 24 24"><path d="M6 5h12l3 6-9 10L3 11z" fill="#5AC8E8"/></svg>
+              <span class="avail-rw-num">25</span>
+            </div>
+            <span class="avail-time">expires in 40m</span>
+          </div>
+          <div class="take"><span class="take-txt">Take</span></div>
+        </div>
+
+        <div class="avail">
+          <div class="avail-ava av-green">
+            <svg id="icon-avail-4" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="#5FB67A"/><path d="M7 35c0-6 6-11 13-11s13 5 13 11z" fill="#5FB67A"/></svg>
+          </div>
+          <div class="avail-meta">
+            <span class="avail-name">Wedding Catering</span>
+            <div class="avail-demand">
+              <span class="avail-tag">Platter ×6 · Cake ×2</span>
+            </div>
+          </div>
+          <div class="avail-right">
+            <div class="avail-rw">
+              <svg id="icon-avail-coin4" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F5A623"/><circle cx="12" cy="12" r="6" fill="#FFD66B"/></svg>
+              <span class="avail-rw-num">1,200</span>
+            </div>
+            <span class="avail-time">expires in 1h</span>
+          </div>
+          <div class="take"><span class="take-txt">Take</span></div>
+        </div>
+
+        <div class="avail">
+          <div class="avail-ava av-red">
+            <svg id="icon-avail-5" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="15" r="8" fill="#E8503A"/><path d="M7 35c0-6 6-11 13-11s13 5 13 11z" fill="#E8503A"/></svg>
+          </div>
+          <div class="avail-meta">
+            <span class="avail-name">Quick Coffee Run</span>
+            <div class="avail-demand">
+              <span class="avail-tag">Latte ×5</span>
+            </div>
+          </div>
+          <div class="avail-right">
+            <div class="avail-rw">
+              <svg id="icon-avail-coin5" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F5A623"/><circle cx="12" cy="12" r="6" fill="#FFD66B"/></svg>
+              <span class="avail-rw-num">160</span>
+            </div>
+            <span class="avail-time">expires in 8m</span>
+          </div>
+          <div class="take"><span class="take-txt">Take</span></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

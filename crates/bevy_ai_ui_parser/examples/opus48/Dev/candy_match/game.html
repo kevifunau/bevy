@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #3A1858;
+  --bg1: #54237E;
+  --panel: #6B2E9E;
+  --panel2: #7E3AB5;
+  --line: #9B5BD0;
+  --pink: #FF6FB5;
+  --pink-d: #E0408F;
+  --yellow: #FFD24B;
+  --yellow-d: #E0A81C;
+  --mint: #4FE0C4;
+  --mint-d: #28B89E;
+  --blue: #5BB8FF;
+  --red: #FF6B7A;
+  --orange: #FF9D4B;
+  --text: #FFF4FB;
+  --text-dim: #C9A8E0;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 56px 48px;
+  flex-direction: column;
+}
+
+/* ---------- top header ---------- */
+.header { flex-direction: row; align-items: center; height: 88px; margin-bottom: 28px; }
+.back {
+  width: 80px; height: 80px;
+  background-color: var(--bg1);
+  border-radius: 24px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.lv-tag {
+  flex-direction: column; justify-content: center; flex-grow: 1;
+}
+.lv-tag-name { font-size: 42px; min-height: 50px; color: var(--text); font-weight: bold; white-space: normal; }
+.lv-tag-sub { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.steps-box {
+  flex-direction: column; align-items: center; justify-content: center;
+  min-width: 130px; height: 110px;
+  background-color: var(--yellow);
+  border-radius: 28px;
+}
+.steps-num { font-size: 52px; min-height: 62px; color: #4A2E00; font-weight: bold; white-space: normal; }
+.steps-lbl { font-size: 22px; min-height: 28px; color: #6B4A10; font-weight: bold; white-space: normal; }
+
+/* ---------- goals ---------- */
+.goals {
+  flex-direction: row; align-items: center; justify-content: center;
+  background-color: var(--bg1);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  padding: 22px 0;
+  margin-bottom: 14px;
+}
+.goal {
+  flex-direction: row; align-items: center; justify-content: center;
+  flex-grow: 1;
+}
+.goal-ico { width: 64px; height: 64px; margin-right: 14px; }
+.goal-tx { font-size: 42px; min-height: 50px; color: var(--text); font-weight: bold; white-space: normal; }
+.goal-tx-done { color: var(--mint); }
+
+/* ---------- score progress ---------- */
+.score-track { height: 24px; background-color: var(--bg1); border-radius: 12px; margin-bottom: 28px; }
+.score-fill { height: 24px; background-color: var(--mint); border-radius: 12px; width: 62%; }
+
+/* ---------- board ---------- */
+.board {
+  flex-direction: column;
+  background-color: var(--bg1);
+  border-radius: 36px;
+  border-width: 4px; border-color: var(--line);
+  padding: 18px;
+  margin-bottom: 28px;
+}
+.board-row { flex-direction: row; align-items: center; height: 148px; }
+.cell {
+  flex-direction: column; align-items: center; justify-content: center;
+  flex-grow: 1; height: 148px;
+}
+.candy {
+  width: 116px; height: 116px;
+  border-radius: 30px;
+  align-items: center; justify-content: center;
+}
+.c-pink { background-color: var(--pink); }
+.c-yellow { background-color: var(--yellow); }
+.c-mint { background-color: var(--mint); }
+.c-blue { background-color: var(--blue); }
+.c-orange { background-color: var(--orange); }
+.c-red { background-color: var(--red); }
+.candy-round { width: 116px; height: 116px; border-radius: 58px; }
+
+/* ---------- tools ---------- */
+.tools { flex-direction: row; align-items: center; height: 150px; }
+.tool {
+  flex-direction: column; align-items: center; justify-content: center;
+  height: 150px;
+  background-color: var(--panel);
+  border-radius: 32px;
+  border-width: 3px; border-color: var(--line);
+  flex-grow: 1;
+  margin-right: 24px;
+}
+.tool-last { margin-right: 0; }
+.tool-ico {
+  width: 76px; height: 76px;
+  align-items: center; justify-content: center;
+  margin-bottom: 6px;
+}
+.tool-cnt { font-size: 28px; min-height: 34px; color: var(--yellow); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="header">
+      <div class="back">
+        <svg id="icon-back" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M28 10 L14 22 L28 34" stroke="#C9A8E0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="lv-tag">
+        <span class="lv-tag-name">第 47 关</span>
+        <span class="lv-tag-sub">草莓糖果园</span>
+      </div>
+      <div class="steps-box">
+        <span class="steps-num">18</span>
+        <span class="steps-lbl">步数</span>
+      </div>
+    </div>
+
+    <div class="goals">
+      <div class="goal">
+        <svg id="g-pink" class="goal-ico" width="64" height="64" viewBox="0 0 64 64">
+          <rect x="12" y="12" width="40" height="40" rx="14" fill="#FF6FB5"/>
+        </svg>
+        <span class="goal-tx">12</span>
+      </div>
+      <div class="goal">
+        <svg id="g-mint" class="goal-ico" width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="22" fill="#4FE0C4"/>
+        </svg>
+        <span class="goal-tx-done">0</span>
+      </div>
+      <div class="goal">
+        <svg id="g-yellow" class="goal-ico" width="64" height="64" viewBox="0 0 64 64">
+          <path d="M32 8 L40 26 L60 28 L45 42 L49 62 L32 51 L15 62 L19 42 L4 28 L24 26 Z" fill="#FFD24B"/>
+        </svg>
+        <span class="goal-tx">7</span>
+      </div>
+    </div>
+
+    <div class="score-track">
+      <div class="score-fill"></div>
+    </div>
+
+    <div class="board">
+      <div class="board-row">
+        <div class="cell"><div class="candy c-pink"></div></div>
+        <div class="cell"><div class="candy candy-round c-mint"></div></div>
+        <div class="cell"><div class="candy c-yellow"></div></div>
+        <div class="cell"><div class="candy candy-round c-blue"></div></div>
+        <div class="cell"><div class="candy c-orange"></div></div>
+        <div class="cell"><div class="candy candy-round c-red"></div></div>
+      </div>
+      <div class="board-row">
+        <div class="cell"><div class="candy candy-round c-blue"></div></div>
+        <div class="cell"><div class="candy c-orange"></div></div>
+        <div class="cell"><div class="candy candy-round c-pink"></div></div>
+        <div class="cell"><div class="candy c-mint"></div></div>
+        <div class="cell"><div class="candy candy-round c-yellow"></div></div>
+        <div class="cell"><div class="candy c-pink"></div></div>
+      </div>
+      <div class="board-row">
+        <div class="cell"><div class="candy c-mint"></div></div>
+        <div class="cell"><div class="candy candy-round c-yellow"></div></div>
+        <div class="cell"><div class="candy c-red"></div></div>
+        <div class="cell"><div class="candy candy-round c-orange"></div></div>
+        <div class="cell"><div class="candy c-blue"></div></div>
+        <div class="cell"><div class="candy candy-round c-mint"></div></div>
+      </div>
+      <div class="board-row">
+        <div class="cell"><div class="candy candy-round c-yellow"></div></div>
+        <div class="cell"><div class="candy c-pink"></div></div>
+        <div class="cell"><div class="candy candy-round c-blue"></div></div>
+        <div class="cell"><div class="candy c-red"></div></div>
+        <div class="cell"><div class="candy candy-round c-pink"></div></div>
+        <div class="cell"><div class="candy c-orange"></div></div>
+      </div>
+      <div class="board-row">
+        <div class="cell"><div class="candy c-red"></div></div>
+        <div class="cell"><div class="candy candy-round c-orange"></div></div>
+        <div class="cell"><div class="candy c-mint"></div></div>
+        <div class="cell"><div class="candy candy-round c-yellow"></div></div>
+        <div class="cell"><div class="candy c-pink"></div></div>
+        <div class="cell"><div class="candy candy-round c-blue"></div></div>
+      </div>
+      <div class="board-row">
+        <div class="cell"><div class="candy candy-round c-orange"></div></div>
+        <div class="cell"><div class="candy c-blue"></div></div>
+        <div class="cell"><div class="candy candy-round c-red"></div></div>
+        <div class="cell"><div class="candy c-pink"></div></div>
+        <div class="cell"><div class="candy candy-round c-mint"></div></div>
+        <div class="cell"><div class="candy c-yellow"></div></div>
+      </div>
+    </div>
+
+    <div class="tools">
+      <div class="tool">
+        <svg id="t1" class="tool-ico" width="56" height="56" viewBox="0 0 56 56">
+          <path d="M14 42 L20 36 L40 16 L46 22 L26 42 L20 48 Z" fill="#FF9D4B"/>
+          <path d="M40 16 L44 12 L48 16 L44 20 Z" fill="#FFD24B"/>
+        </svg>
+        <span class="tool-cnt">x3</span>
+      </div>
+      <div class="tool">
+        <svg id="t2" class="tool-ico" width="56" height="56" viewBox="0 0 56 56">
+          <path d="M28 8 L34 24 L50 28 L34 32 L28 48 L22 32 L6 28 L22 24 Z" fill="#FF6FB5"/>
+        </svg>
+        <span class="tool-cnt">x2</span>
+      </div>
+      <div class="tool">
+        <svg id="t3" class="tool-ico" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="18" fill="#5BB8FF"/>
+          <path d="M28 16 L28 28 L37 34" stroke="#FFF4FB" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="tool-cnt">x1</span>
+      </div>
+      <div class="tool tool-last">
+        <svg id="t4" class="tool-ico" width="56" height="56" viewBox="0 0 56 56">
+          <path d="M28 10 C18 22 18 34 28 46 C38 34 38 22 28 10 Z" fill="#FF6B7A"/>
+        </svg>
+        <span class="tool-cnt">x5</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

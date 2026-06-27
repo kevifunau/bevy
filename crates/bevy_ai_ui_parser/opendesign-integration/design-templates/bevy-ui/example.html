@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bevy UI Asset Flow Example</title>
+<style>
+/*
+ * Asset-first Bevy UI example.
+ *
+ * This preview is meant to live beside:
+ *   - ./Asset/
+ *   - ./bevy-ui.assets.json (optional tooling metadata)
+ *
+ * It demonstrates the intended Open Design export shape:
+ *   index.html + Asset/ + optional bevy-ui.assets.json
+ */
+
+:root {
+  --bg: #0b1016;
+  --fg: #f4efe3;
+  --muted: #95a0b2;
+  --accent: #f3b24f;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-lg: 16px;
+  --font-display: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-body: "Inter", "Helvetica", "Arial", sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #071018;
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.bevy-ui-root {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("Asset/backgrounds/control_room_bg.png");
+  background-position: center;
+  background-size: cover;
+  opacity: 0.88;
+}
+
+.settings-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.settings-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-8);
+  width: 1120px;
+  min-height: 640px;
+  padding: 36px;
+  background-image: url("Asset/panels/settings_panel_bg.png");
+  background-position: center;
+  background-size: 100% 100%;
+  border-radius: var(--radius-lg);
+}
+
+.left-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.brand-logo {
+  width: 68px;
+  height: 68px;
+  background-image: url("Asset/icons/game_logo.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nav-btn {
+  min-height: 68px;
+  border: 0;
+  color: var(--fg);
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 22px;
+  background-color: transparent;
+  background-image: url("Asset/buttons/tab_idle.png");
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.nav-btn:hover {
+  background-image: url("Asset/buttons/tab_hover.png");
+}
+
+.nav-btn:active {
+  background-image: url("Asset/buttons/tab_pressed.png");
+}
+
+.panel-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.screen-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.close-btn {
+  width: 54px;
+  height: 54px;
+  border: 0;
+  background-color: transparent;
+  background-image: url("Asset/buttons/close_idle.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.close-btn:hover {
+  background-image: url("Asset/buttons/close_hover.png");
+}
+
+.close-btn:active {
+  background-image: url("Asset/buttons/close_pressed.png");
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 20px;
+  background-image: url("Asset/panels/stat_card_bg.png");
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.action-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.skill-icon,
+.spinner {
+  width: 58px;
+  height: 58px;
+  background-position: center;
+  background-size: cover;
+}
+
+.skill-icon {
+  background-image: url("Asset/icons/fireball.png");
+}
+
+.spinner {
+  background-image: url("Asset/atlas/loading_spinner.png");
+}
+
+.confirm-btn {
+  min-width: 220px;
+  min-height: 72px;
+  border: 0;
+  color: #fff8eb;
+  font-size: 20px;
+  font-weight: 700;
+  background-color: transparent;
+  background-image: url("Asset/buttons/confirm_idle.png");
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.confirm-btn:hover {
+  background-image: url("Asset/buttons/confirm_hover.png");
+}
+
+.confirm-btn:active {
+  background-image: url("Asset/buttons/confirm_pressed.png");
+}
+</style>
+</head>
+<body>
+<div class="bevy-ui-root">
+  <div class="scene-bg"></div>
+
+  <div class="settings-shell">
+    <section id="settings_panel" class="settings-panel">
+      <aside class="left-rail">
+        <div class="brand-row">
+          <div class="brand-logo" aria-label="Game logo"></div>
+          <div class="brand-copy">
+            <div class="brand-title">Star Forge</div>
+            <div class="brand-subtitle">Command Deck</div>
+          </div>
+        </div>
+
+        <button class="nav-btn" type="button" data-tab="general" data-tab-group="settings">
+          General
+        </button>
+        <button class="nav-btn" type="button" data-tab="combat" data-tab-group="settings">
+          Combat
+        </button>
+        <button class="nav-btn" type="button" data-tab="audio" data-tab-group="settings">
+          Audio
+        </button>
+      </aside>
+
+      <main class="panel-main" data-tab-panel="general">
+        <div class="topbar">
+          <div class="screen-title">Mission Control</div>
+          <button
+            id="close_btn"
+            class="close-btn"
+            type="button"
+            data-action="close_panel"
+            aria-label="Close panel"
+          ></button>
+        </div>
+
+        <div class="status-grid">
+          <section class="stat-card">
+            <div class="stat-label">Shield Network</div>
+            <div class="stat-value">87%</div>
+          </section>
+          <section class="stat-card">
+            <div class="stat-label">Power Reserve</div>
+            <div class="stat-value">245 MW</div>
+          </section>
+        </div>
+
+        <div class="action-row">
+          <div
+            id="skill_icon"
+            class="skill-icon"
+            data-skill="fireball"
+            aria-label="Fireball skill"
+          ></div>
+          <div id="loading_spinner" class="spinner" aria-label="Loading spinner"></div>
+          <button class="confirm-btn" type="button" data-action="launch_sequence">
+            Launch
+          </button>
+        </div>
+      </main>
+    </section>
+  </div>
+</div>
+</body>
+</html>

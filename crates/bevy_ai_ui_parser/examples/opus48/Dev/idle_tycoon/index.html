@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #211711;
+  --bg1: #2E2018;
+  --panel: #3A2A1E;
+  --panel2: #4A372A;
+  --line: #5E4634;
+  --gold: #FFC247;
+  --gold-d: #D9941C;
+  --emerald: #4FD98A;
+  --emerald-d: #28A862;
+  --wood: #C98A4B;
+  --text: #F5ECE0;
+  --text-dim: #B79C82;
+  --blue: #5BB8FF;
+  --red: #FF6B5A;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 56px 48px;
+  flex-direction: column;
+}
+
+/* ---------- resources ---------- */
+.res-row { flex-direction: row; align-items: center; height: 96px; margin-bottom: 28px; }
+.res-chip {
+  flex-direction: row; align-items: center;
+  height: 96px;
+  background-color: var(--panel);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  padding: 0 28px 0 14px;
+  flex-grow: 1;
+  margin-right: 20px;
+}
+.res-chip-last { margin-right: 0; flex-grow: 0; width: 96px; justify-content: center; padding: 0; }
+.res-ico { width: 52px; height: 52px; margin-right: 14px; }
+.res-tx { font-size: 38px; min-height: 46px; color: var(--text); font-weight: bold; white-space: normal; }
+.res-tx-gold { color: var(--gold); }
+.res-tx-blue { color: var(--blue); }
+
+/* ---------- offline banner ---------- */
+.offline {
+  flex-direction: row; align-items: center;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  border-width: 3px; border-color: var(--emerald);
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.offline-ico {
+  width: 96px; height: 96px;
+  background-color: var(--emerald-d);
+  border-radius: 28px;
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.offline-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.offline-lbl { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.offline-val { font-size: 48px; min-height: 58px; color: var(--emerald); font-weight: bold; white-space: normal; margin-top: 2px; }
+.offline-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 88px;
+  background-color: var(--emerald);
+  border-radius: 28px;
+  padding: 0 36px;
+}
+.offline-btn-tx { font-size: 34px; min-height: 42px; color: #0A2A18; font-weight: bold; white-space: normal; }
+
+/* ---------- production lines ---------- */
+.sec-label { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 20px; }
+.lines { flex-direction: column; flex-grow: 1; }
+.line {
+  flex-direction: row; align-items: center;
+  height: 170px;
+  background-color: var(--panel);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  padding: 0 28px;
+  margin-bottom: 24px;
+}
+.line-ico {
+  width: 110px; height: 110px;
+  background-color: var(--bg1);
+  border-radius: 26px;
+  border-width: 3px; border-color: var(--wood);
+  align-items: center; justify-content: center;
+  margin-right: 26px;
+}
+.line-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.line-name { font-size: 38px; min-height: 46px; color: var(--text); font-weight: bold; white-space: normal; }
+.line-rate { font-size: 28px; min-height: 34px; color: var(--gold); font-weight: bold; white-space: normal; margin-top: 4px; }
+.line-prog { height: 16px; background-color: var(--bg0); border-radius: 8px; margin-top: 12px; width: 380px; }
+.line-prog-fill { height: 16px; background-color: var(--emerald); border-radius: 8px; }
+.line-lv {
+  flex-direction: column; align-items: center; justify-content: center;
+  width: 100px; height: 100px;
+  background-color: var(--gold);
+  border-radius: 24px;
+}
+.line-lv-tx { font-size: 44px; min-height: 54px; color: #3A2400; font-weight: bold; white-space: normal; }
+.line-lv-lbl { font-size: 20px; min-height: 26px; color: #6B4A10; font-weight: bold; white-space: normal; }
+
+/* ---------- bottom main action ---------- */
+.main-act {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 140px;
+  background-color: var(--gold);
+  border-radius: 40px;
+  border-width: 4px; border-color: var(--gold-d);
+  margin-top: 16px;
+}
+.main-act-ico { width: 56px; height: 56px; margin-right: 20px; }
+.main-act-tx { font-size: 48px; min-height: 58px; color: #3A2400; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="res-row">
+      <div class="res-chip">
+        <svg id="icon-coin" class="res-ico" width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="20" fill="#FFC247"/>
+          <circle cx="26" cy="26" r="13" fill="none" stroke="#D9941C" stroke-width="4"/>
+        </svg>
+        <span class="res-tx res-tx-gold">2.4M</span>
+      </div>
+      <div class="res-chip">
+        <svg id="icon-gem" class="res-ico" width="52" height="52" viewBox="0 0 52 52">
+          <path d="M26 6 L44 20 L26 46 L8 20 Z" fill="#5BB8FF"/>
+          <path d="M8 20 L44 20 L26 46 Z" fill="#3A92D9"/>
+        </svg>
+        <span class="res-tx res-tx-blue">186</span>
+      </div>
+      <div class="res-chip res-chip-last">
+        <svg id="icon-set" width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="9" fill="none" stroke="#B79C82" stroke-width="5"/>
+          <rect x="20" y="3" width="8" height="9" fill="#B79C82"/>
+          <rect x="20" y="36" width="8" height="9" fill="#B79C82"/>
+          <rect x="3" y="20" width="9" height="8" fill="#B79C82"/>
+          <rect x="36" y="20" width="9" height="8" fill="#B79C82"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="offline">
+      <div class="offline-ico">
+        <svg id="icon-clock" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="22" fill="none" stroke="#F5ECE0" stroke-width="5"/>
+          <path d="M28 14 L28 28 L40 36" stroke="#F5ECE0" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="offline-txw">
+        <span class="offline-lbl">离线收益 · 4 小时 12 分</span>
+        <span class="offline-val">+ 318,500</span>
+      </div>
+      <div class="offline-btn">
+        <span class="offline-btn-tx">领取</span>
+      </div>
+    </div>
+
+    <span class="sec-label">— 生产线 PRODUCTION —</span>
+    <div class="lines">
+      <div class="line">
+        <div class="line-ico">
+          <svg id="ln1" width="64" height="64" viewBox="0 0 64 64">
+            <rect x="14" y="28" width="36" height="24" fill="#C98A4B"/>
+            <path d="M14 28 L32 14 L50 28 Z" fill="#FFC247"/>
+            <rect x="28" y="38" width="10" height="14" fill="#3A2A1E"/>
+          </svg>
+        </div>
+        <div class="line-txw">
+          <span class="line-name">金币矿场</span>
+          <span class="line-rate">+ 1,250 / 秒</span>
+          <div class="line-prog"><div class="line-prog-fill" style="width:72%"></div></div>
+        </div>
+        <div class="line-lv">
+          <span class="line-lv-tx">28</span>
+          <span class="line-lv-lbl">LV</span>
+        </div>
+      </div>
+
+      <div class="line">
+        <div class="line-ico">
+          <svg id="ln2" width="64" height="64" viewBox="0 0 64 64">
+            <rect x="12" y="22" width="40" height="30" rx="4" fill="#C98A4B"/>
+            <circle cx="24" cy="37" r="7" fill="#FFC247"/>
+            <circle cx="42" cy="37" r="7" fill="#FFC247"/>
+          </svg>
+        </div>
+        <div class="line-txw">
+          <span class="line-name">蒸汽工坊</span>
+          <span class="line-rate">+ 4,800 / 秒</span>
+          <div class="line-prog"><div class="line-prog-fill" style="width:45%"></div></div>
+        </div>
+        <div class="line-lv">
+          <span class="line-lv-tx">15</span>
+          <span class="line-lv-lbl">LV</span>
+        </div>
+      </div>
+
+      <div class="line">
+        <div class="line-ico">
+          <svg id="ln3" width="64" height="64" viewBox="0 0 64 64">
+            <path d="M32 10 L50 24 L50 52 L14 52 L14 24 Z" fill="#C98A4B"/>
+            <rect x="26" y="34" width="12" height="18" fill="#FFC247"/>
+            <rect x="20" y="28" width="8" height="8" fill="#3A2A1E"/>
+            <rect x="36" y="28" width="8" height="8" fill="#3A2A1E"/>
+          </svg>
+        </div>
+        <div class="line-txw">
+          <span class="line-name">魔能熔炉</span>
+          <span class="line-rate">+ 12,400 / 秒</span>
+          <div class="line-prog"><div class="line-prog-fill" style="width:30%"></div></div>
+        </div>
+        <div class="line-lv">
+          <span class="line-lv-tx">9</span>
+          <span class="line-lv-lbl">LV</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-act">
+      <svg id="icon-up" class="main-act-ico" width="56" height="56" viewBox="0 0 56 56">
+        <path d="M28 10 L46 32 L34 32 L34 46 L22 46 L22 32 L10 32 Z" fill="#3A2400"/>
+      </svg>
+      <span class="main-act-tx">一键升级</span>
+    </div>
+
+  </div>
+</body>
+</html>

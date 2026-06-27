@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "剧情向视觉小说 / interactive narrative visual novel — ethereal fantasy (唯美幻想) atmosphere, dusk-violet & gold, reading-first portrait UI.",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index",    "role": "Title / key visual with start, continue, load, settings entries." },
+    { "id": "dialogue", "role": "Dialogue scene — character sprite, bottom dialogue box, auto/skip/history/save quick entries." },
+    { "id": "choice",   "role": "Choice branch — situation description, branch buttons, affinity/route hints." },
+    { "id": "saves",    "role": "Save / load — multi save-slot list with thumbnail, time, chapter info." },
+    { "id": "gallery",  "role": "Character / CG gallery codex with unlocked and locked states." },
+    { "id": "settings", "role": "Settings — text speed, music/sfx/voice volume, auto interval, language, restore defaults." }
+  ],
+  "styleAxes": {
+    "mood": "唯美幻想 ethereal dusk — dreamy, immersive, calm and reading-friendly.",
+    "accent": "warm starlight gold (#E8C77A) over deep dusk violet/indigo (#1A1330 / #261A45).",
+    "density": "Generous spacing, large readable type (32-44px body), soft 18-32px radii, breathing cards.",
+    "typography": "Bold luminous headings with light gold; soft lavender-white body text for long-form reading."
+  }
+}

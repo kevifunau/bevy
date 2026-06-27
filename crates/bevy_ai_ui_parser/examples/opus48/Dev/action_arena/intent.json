@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "横版动作闯关 BLADE RUSH:暗黑金属质感、冷蓝钢灰底 + 烈焰橙/血红能量光、硬朗科幻边框、战斗力数值感。横屏 4 页(主菜单分栏/英雄选择/战斗HUD/设置)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1920, "height": 1080, "orientation": "landscape", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "main-menu — 左品牌右功能分栏(开始/英雄/商店/设置)+ 战力资源条" },
+    { "id": "heroes", "role": "hero-select — 左英雄大图右属性面板 + 底部英雄横列" },
+    { "id": "hud", "role": "battle-HUD — 血条/怒气/连击/小地图 + 横屏摇杆与技能按钮" },
+    { "id": "settings", "role": "settings — 画质/音乐/音效/操作 开关 + 账号" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "landscape-action",
+    "mood": "dark-metal-scifi",
+    "accentFamily": "ember-orange-blue",
+    "densityProfile": "compact"
+  },
+  "inputControls": ["button", "toggle"]
+}

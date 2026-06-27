@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #07090A;
+  overflow: hidden;
+}
+.bg { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; background-color: #0A0E0D; }
+.vignette {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  background-color: #00000000;
+  border-width: 160px; border-color: #03040400;
+  border-top-color: #030404; border-bottom-color: #030404;
+}
+/* header */
+.header {
+  position: absolute; top: 0; left: 0;
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 1920px; height: 88px; padding: 0 48px;
+  background-color: #0A0F0E; border-bottom-width: 1px; border-bottom-color: #1B2522;
+}
+.h-left { flex-direction: row; align-items: center; }
+.back-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 52px; height: 52px; margin-right: 22px;
+  background-color: #0E1413; border-width: 1px; border-color: #243330; border-radius: 6px;
+}
+.back-btn .bk-ico { width: 24px; height: 24px; }
+.h-titles { align-items: flex-start; }
+.h-title { font-size: 30px; color: #DDE9E4; letter-spacing: 8px; }
+.h-sub { font-size: 14px; color: #5C6B66; letter-spacing: 4px; margin-top: 4px; }
+.restore {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 200px; height: 56px;
+  background-color: #1A0E0D; border-width: 1px; border-color: #4A2220; border-radius: 8px;
+}
+.restore .rs-ico { width: 22px; height: 22px; margin-right: 12px; }
+.restore-txt { font-size: 16px; color: #B07A72; letter-spacing: 2px; }
+
+/* body two columns */
+.body {
+  position: absolute; top: 88px; left: 0;
+  flex-direction: row; width: 1920px; height: 904px; padding: 40px 48px;
+}
+.col { width: 880px; margin-right: 32px; }
+.col-2 { width: 880px; margin-right: 0; }
+.sect-title { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.st-bar { width: 4px; height: 22px; background-color: #5FD3C0; margin-right: 12px; border-radius: 2px; }
+.st-name { font-size: 20px; color: #C9D6D0; letter-spacing: 4px; }
+.panel {
+  width: 880px; margin-bottom: 28px;
+  background-color: #0D1211; border-width: 1px; border-color: #1C2724;
+  border-radius: 10px; padding: 12px 26px;
+}
+.row {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 828px; height: 84px;
+  border-bottom-width: 1px; border-bottom-color: #141C1A;
+}
+.row.last { border-bottom-width: 0; }
+.row-label { flex-direction: row; align-items: center; }
+.rl-ico { width: 24px; height: 24px; margin-right: 16px; }
+.rl-text { align-items: flex-start; }
+.rl-name { font-size: 19px; color: #C9D6D0; letter-spacing: 2px; margin-bottom: 3px; }
+.rl-desc { font-size: 13px; color: #5C6B66; }
+
+/* skinned switch */
+.switch {
+  flex-direction: row; align-items: center; justify-content: flex-start;
+  width: 92px; height: 48px; border-radius: 24px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #243330; padding: 0 5px;
+}
+.switch.is-on { background-color: #112320; border-color: #5FD3C0; justify-content: flex-end; }
+.switch-knob { width: 38px; height: 38px; border-radius: 19px; background-color: #44524D; }
+.switch.is-on .switch-knob { background-color: #5FD3C0; }
+
+/* skinned slider */
+.slider { width: 440px; height: 48px; flex-direction: row; align-items: center; justify-content: flex-start; }
+.slider-track {
+  flex-direction: row; align-items: center;
+  width: 400px; height: 14px; border-radius: 7px; background-color: #080B0A;
+  border-width: 1px; border-color: #1E2A27;
+}
+.slider-fill { height: 12px; border-radius: 6px; background-color: #5FD3C0; }
+.sl-62 { width: 248px; }
+.sl-40 { width: 160px; }
+.slider-knob {
+  width: 28px; height: 28px; border-radius: 14px;
+  background-color: #DDE9E4; border-width: 3px; border-color: #5FD3C0;
+}
+.slider-val { width: 52px; font-size: 17px; color: #8FA29B; margin-left: 14px; }
+
+/* skinned segmented chooser */
+.seg {
+  flex-direction: row; height: 48px; padding: 4px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #1E2A27; border-radius: 8px;
+}
+.seg-btn {
+  align-items: center; justify-content: center;
+  width: 110px; height: 40px; border-radius: 6px; background-color: #00000000;
+}
+.seg-btn.is-active { background-color: #112320; border-width: 1px; border-color: #2E5E56; }
+.seg-txt { font-size: 16px; color: #6E7B75; letter-spacing: 2px; }
+.seg-btn.is-active .seg-txt { color: #5FD3C0; }
+
+/* skinned picker */
+.picker {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 280px; height: 56px; padding: 0 18px;
+  background-color: #0A0F0E; border-width: 1px; border-color: #243330; border-radius: 8px;
+}
+.picker-value { font-size: 18px; color: #C9D6D0; letter-spacing: 1px; }
+.picker-caret { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg"></div>
+    <div class="vignette"></div>
+
+    <div class="header">
+      <div class="h-left">
+        <button class="back-btn">
+          <svg id="icon-back-set" class="bk-ico" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15 5 8 12 15 19" fill="none" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="h-titles">
+          <div class="h-title">设置</div>
+          <div class="h-sub">SETTINGS</div>
+        </div>
+      </div>
+      <button class="restore">
+        <svg id="icon-restore" class="rs-ico" width="22" height="22" viewBox="0 0 22 22">
+          <path d="M17 6a8 8 0 1 0 2 6" fill="none" stroke="#B07A72" stroke-width="2" stroke-linecap="round"/>
+          <path d="M17 3v4h-4" fill="none" stroke="#B07A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="restore-txt">恢复默认</span>
+      </button>
+    </div>
+
+    <div class="body">
+      <!-- audio column -->
+      <div class="col">
+        <div class="sect-title"><div class="st-bar"></div><span class="st-name">音频</span></div>
+        <div class="panel">
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-music" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M9 18V6l10-2v12" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="6" cy="18" r="3" fill="none" stroke="#8FA29B" stroke-width="2"/>
+                <circle cx="16" cy="16" r="3" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">背景音乐</div><div class="rl-desc">环境氛围配乐</div></div>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-sfx" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M4 9v6h4l5 4V5L8 9z" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M17 9a4 4 0 0 1 0 6" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">音效</div><div class="rl-desc">脚步 · 互动 · 道具</div></div>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+          <div class="row last">
+            <div class="row-label">
+              <svg id="icon-set-horror" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 3C7 3 4 7 4 11c0 3 1 4 1 7h14c0-3 1-4 1-7 0-4-3-8-8-8z" fill="none" stroke="#C24A3A" stroke-width="2"/>
+                <circle cx="9" cy="12" r="1.8" fill="#C24A3A"/>
+                <circle cx="15" cy="12" r="1.8" fill="#C24A3A"/>
+                <path d="M9 18l1.5-2 1.5 2 1.5-2 1.5 2" fill="none" stroke="#C24A3A" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">惊吓音效</div><div class="rl-desc">突发尖叫 / Jump Scare</div></div>
+            </div>
+            <div class="switch"><div class="switch-knob"></div></div>
+          </div>
+        </div>
+
+        <div class="sect-title"><div class="st-bar"></div><span class="st-name">音量</span></div>
+        <div class="panel">
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-vol-master" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M4 9v6h4l5 4V5L8 9z" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">主音量</div></div>
+            </div>
+            <div class="row-label">
+              <div class="slider"><div class="slider-track"><div class="slider-fill sl-62"></div><div class="slider-knob"></div></div></div>
+              <span class="slider-val">62</span>
+            </div>
+          </div>
+          <div class="row last">
+            <div class="row-label">
+              <svg id="icon-set-vol-voice" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="#8FA29B" stroke-width="2"/>
+                <path d="M6 11a6 6 0 0 0 12 0M12 17v4" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">语音</div></div>
+            </div>
+            <div class="row-label">
+              <div class="slider"><div class="slider-track"><div class="slider-fill sl-40"></div><div class="slider-knob"></div></div></div>
+              <span class="slider-val">40</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- display & system column -->
+      <div class="col-2">
+        <div class="sect-title"><div class="st-bar"></div><span class="st-name">显示</span></div>
+        <div class="panel">
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-bright" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="4.5" fill="none" stroke="#C9A23A" stroke-width="2"/>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="#C9A23A" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">亮度</div><div class="rl-desc">建议在最暗环境下调节</div></div>
+            </div>
+            <div class="row-label">
+              <div class="slider"><div class="slider-track"><div class="slider-fill sl-40"></div><div class="slider-knob"></div></div></div>
+              <span class="slider-val">35</span>
+            </div>
+          </div>
+          <div class="row last">
+            <div class="row-label">
+              <svg id="icon-set-quality" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 3l8 4v6c0 4-3 6-8 8-5-2-8-4-8-8V7z" fill="none" stroke="#8FA29B" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M12 8v8M8 12h8" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">画质</div><div class="rl-desc">影响阴影与后处理</div></div>
+            </div>
+            <div class="seg">
+              <button class="seg-btn"><span class="seg-txt">低</span></button>
+              <button class="seg-btn is-active"><span class="seg-txt">中</span></button>
+              <button class="seg-btn"><span class="seg-txt">高</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sect-title"><div class="st-bar"></div><span class="st-name">系统</span></div>
+        <div class="panel">
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-lang" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="#8FA29B" stroke-width="2"/>
+                <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="#8FA29B" stroke-width="2"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">语言</div><div class="rl-desc">Language</div></div>
+            </div>
+            <div class="picker">
+              <div class="picker-value">简体中文</div>
+              <svg id="icon-set-caret" class="picker-caret" width="18" height="18" viewBox="0 0 18 18">
+                <path d="M4 6l5 5 5-5" fill="none" stroke="#5FD3C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="picker-opt">简体中文</div>
+              <div class="picker-opt">English</div>
+              <div class="picker-opt">日本語</div>
+              <div class="picker-opt">한국어</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-label">
+              <svg id="icon-set-subtitle" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="#8FA29B" stroke-width="2"/>
+                <path d="M6 11h5M13 11h5M6 15h8" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">字幕</div><div class="rl-desc">含环境音提示</div></div>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+          <div class="row last">
+            <div class="row-label">
+              <svg id="icon-set-vibrate" class="rl-ico" width="24" height="24" viewBox="0 0 24 24">
+                <rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="#8FA29B" stroke-width="2"/>
+                <path d="M3 9v6M21 9v6" stroke="#8FA29B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="rl-text"><div class="rl-name">手柄震动</div><div class="rl-desc">心跳加剧时反馈</div></div>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

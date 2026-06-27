@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --cream: #FFF6EE;
+  --cream2: #FFEFE2;
+  --card: #FFFFFF;
+  --pink: #FF9EC4;
+  --pink-soft: #FFE2EE;
+  --mint: #7FD6C2;
+  --mint-soft: #DBF5EE;
+  --lemon: #FFD479;
+  --lemon-soft: #FFF0CE;
+  --lilac: #B7A6F0;
+  --ink: #6B5B73;
+  --ink-dim: #A99CB0;
+  --line: #F2E4DA;
+  --gold: #F4A93C;
+  --track: #EFE6DD;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--cream);
+  padding: 88px 72px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.win-badge {
+  width: 240px;
+  height: 240px;
+  border-radius: 120px;
+  background-color: var(--card);
+  border-width: 8px;
+  border-color: var(--mint);
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.win-title { font-size: 72px; color: var(--ink); font-weight: bold; white-space: normal; -unity-text-align: middle-center; }
+.win-game { font-size: 30px; color: var(--ink-dim); font-weight: bold; white-space: normal; margin-top: 8px; margin-bottom: 48px; }
+
+/* ---------- stars ---------- */
+.stars { flex-direction: row; align-items: center; justify-content: center; margin-bottom: 48px; }
+.star-wrap { width: 132px; height: 132px; align-items: center; justify-content: center; margin-right: 20px; }
+.star-wrap-last { margin-right: 0; }
+.star-mid { width: 156px; height: 156px; }
+
+/* ---------- score card ---------- */
+.score-card {
+  width: 100%;
+  flex-direction: column;
+  background-color: var(--card);
+  border-radius: 48px;
+  border-width: 4px;
+  border-color: var(--line);
+  padding: 48px 56px;
+  margin-bottom: 36px;
+}
+.sc-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 96px;
+}
+.sc-row-div { border-color: var(--line); border-bottom-width: 2px; }
+.sc-left { flex-direction: row; align-items: center; }
+.sc-ico-wrap {
+  width: 64px; height: 64px; border-radius: 18px;
+  background-color: var(--pink-soft);
+  align-items: center; justify-content: center; margin-right: 20px;
+}
+.sc-ico-wrap-mint { background-color: var(--mint-soft); }
+.sc-name { font-size: 30px; color: var(--ink); font-weight: bold; white-space: normal; }
+.sc-val { font-size: 40px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+/* ---------- reward ---------- */
+.reward {
+  width: 100%;
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 140px; border-radius: 40px;
+  background-color: var(--lemon-soft);
+  border-width: 3px; border-color: var(--lemon);
+  margin-bottom: 64px;
+}
+.reward-ico { width: 64px; height: 64px; margin-right: 20px; }
+.reward-tx { font-size: 40px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+/* ---------- buttons ---------- */
+.btns { flex-direction: column; align-items: center; flex-grow: 1; justify-content: flex-end; }
+.btn-again {
+  width: 720px; height: 180px; border-radius: 50px;
+  background-color: var(--pink);
+  border-width: 5px; border-color: #FFB8D4;
+  flex-direction: row; align-items: center; justify-content: center;
+  margin-bottom: 32px;
+}
+.btn-again-ico { width: 52px; height: 52px; margin-right: 20px; }
+.btn-again-tx { font-size: 48px; color: #FFFFFF; font-weight: bold; white-space: normal; }
+.btn-home {
+  width: 720px; height: 140px; border-radius: 44px;
+  background-color: var(--card);
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center;
+}
+.btn-home-tx { font-size: 40px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="win-badge">
+      <svg id="icon-trophy" width="130" height="130" viewBox="0 0 130 130">
+        <path d="M40 28 L90 28 L88 60 A23 23 0 0 1 42 60 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M40 36 L26 36 L26 48 A14 14 0 0 0 40 60" fill="none" stroke="#F4A93C" stroke-width="4"/>
+        <path d="M90 36 L104 36 L104 48 A14 14 0 0 1 90 60" fill="none" stroke="#F4A93C" stroke-width="4"/>
+        <rect x="56" y="80" width="18" height="18" fill="#F4A93C"/>
+        <rect x="44" y="98" width="42" height="12" rx="4" fill="#F4A93C"/>
+      </svg>
+    </div>
+    <span class="win-title">闯关成功！</span>
+    <span class="win-game">泡泡爆 · 第 12 关</span>
+
+    <div class="stars">
+      <div class="star-wrap">
+        <svg id="icon-star-1" width="120" height="120" viewBox="0 0 120 120">
+          <path d="M60 12 L74 46 L112 50 L82 76 L92 114 L60 92 L28 114 L38 76 L8 50 L46 46 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="star-wrap star-mid">
+        <svg id="icon-star-2" width="144" height="144" viewBox="0 0 120 120">
+          <path d="M60 12 L74 46 L112 50 L82 76 L92 114 L60 92 L28 114 L38 76 L8 50 L46 46 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="star-wrap star-wrap-last">
+        <svg id="icon-star-3" width="120" height="120" viewBox="0 0 120 120">
+          <path d="M60 12 L74 46 L112 50 L82 76 L92 114 L60 92 L28 114 L38 76 L8 50 L46 46 Z" fill="#EFE6DD" stroke="#D9CABE" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div class="sc-row sc-row-div">
+        <div class="sc-left">
+          <div class="sc-ico-wrap">
+            <svg id="icon-flag" width="38" height="38" viewBox="0 0 38 38">
+              <path d="M10 6 L10 34" stroke="#FF7FB0" stroke-width="4" stroke-linecap="round"/>
+              <path d="M10 8 L30 8 L25 16 L30 24 L10 24 Z" fill="#FF9EC4"/>
+            </svg>
+          </div>
+          <span class="sc-name">本局得分</span>
+        </div>
+        <span class="sc-val">8,420</span>
+      </div>
+      <div class="sc-row">
+        <div class="sc-left">
+          <div class="sc-ico-wrap sc-ico-wrap-mint">
+            <svg id="icon-crown-r" width="38" height="38" viewBox="0 0 38 38">
+              <path d="M6 28 L6 14 L14 20 L19 9 L24 20 L32 14 L32 28 Z" fill="#7FD6C2" stroke="#4FBFA6" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="sc-name">历史最高</span>
+        </div>
+        <span class="sc-val">8,420</span>
+      </div>
+    </div>
+
+    <div class="reward">
+      <svg id="icon-coin-r" class="reward-ico" width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="25" fill="#FFD479" stroke="#F4A93C" stroke-width="5"/>
+        <circle cx="32" cy="32" r="13" fill="#FFF0CE"/>
+        <path d="M32 22 L32 42 M25 27 L39 37" stroke="#F4A93C" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span class="reward-tx">奖励金币 + 84</span>
+    </div>
+
+    <div class="btns">
+      <div class="btn-again">
+        <svg id="icon-replay" class="btn-again-ico" width="52" height="52" viewBox="0 0 52 52">
+          <path d="M11 26 A15 15 0 1 1 16 37" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M8 15 L11 28 L24 25" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="btn-again-tx">再玩一次</span>
+      </div>
+      <div class="btn-home">
+        <span class="btn-home-tx">返回合集</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

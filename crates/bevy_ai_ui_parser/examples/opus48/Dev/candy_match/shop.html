@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #3A1858;
+  --bg1: #54237E;
+  --panel: #6B2E9E;
+  --panel2: #7E3AB5;
+  --line: #9B5BD0;
+  --pink: #FF6FB5;
+  --pink-d: #E0408F;
+  --yellow: #FFD24B;
+  --yellow-d: #E0A81C;
+  --mint: #4FE0C4;
+  --mint-d: #28B89E;
+  --blue: #5BB8FF;
+  --red: #FF6B7A;
+  --text: #FFF4FB;
+  --text-dim: #C9A8E0;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 96px; margin-bottom: 36px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--bg1);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 56px; color: var(--yellow); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- life refill card ---------- */
+.life-card {
+  flex-direction: row; align-items: center;
+  background-color: var(--bg1);
+  border-radius: 36px;
+  border-width: 4px; border-color: var(--red);
+  padding: 32px 36px;
+  margin-bottom: 40px;
+}
+.life-big {
+  width: 132px; height: 132px;
+  background-color: var(--red);
+  border-radius: 40px;
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.life-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.life-name { font-size: 44px; min-height: 52px; color: var(--text); font-weight: bold; white-space: normal; }
+.life-sub { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+.life-buy {
+  flex-direction: row; align-items: center; justify-content: center;
+  min-width: 180px; height: 100px;
+  background-color: var(--mint);
+  border-radius: 28px;
+  border-width: 3px; border-color: var(--mint-d);
+  padding: 0 26px;
+}
+.life-buy-tx { font-size: 38px; min-height: 46px; color: #064038; font-weight: bold; white-space: normal; }
+
+/* ---------- coin packs ---------- */
+.sec-label { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 22px; }
+.packs { flex-direction: column; flex-grow: 1; }
+.pack-row { flex-direction: row; align-items: stretch; height: 300px; margin-bottom: 28px; }
+.pack {
+  flex-direction: column; align-items: center; justify-content: space-between;
+  flex-grow: 1;
+  background-color: var(--panel);
+  border-radius: 32px;
+  border-width: 4px; border-color: var(--line);
+  padding: 24px 16px;
+  margin-right: 28px;
+}
+.pack-last { margin-right: 0; }
+.pack-hot { border-color: var(--yellow); }
+.pack-art {
+  width: 120px; height: 120px;
+  align-items: center; justify-content: center;
+}
+.pack-amt { font-size: 40px; min-height: 48px; color: var(--yellow); font-weight: bold; white-space: normal; }
+.pack-buy {
+  flex-direction: row; align-items: center; justify-content: center;
+  align-self: stretch; height: 84px;
+  background-color: var(--yellow);
+  border-radius: 24px;
+}
+.pack-buy-tx { font-size: 34px; min-height: 42px; color: #4A2E00; font-weight: bold; white-space: normal; }
+.tag {
+  flex-direction: row; align-items: center; justify-content: center;
+  min-width: 110px; height: 48px;
+  background-color: var(--pink);
+  border-radius: 24px;
+  padding: 0 18px;
+}
+.tag-tx { font-size: 24px; min-height: 30px; color: #FFFFFF; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M30 10 L16 24 L30 38" stroke="#C9A8E0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">糖果商店</span>
+        <span class="subtitle">SHOP · 补充体力与金币</span>
+      </div>
+    </div>
+
+    <div class="life-card">
+      <div class="life-big">
+        <svg id="icon-heart" width="76" height="76" viewBox="0 0 76 76">
+          <path d="M38 64 C12 44 12 24 28 24 C34 24 38 30 38 30 C38 30 42 24 48 24 C64 24 64 44 38 64 Z" fill="#FFF4FB"/>
+        </svg>
+      </div>
+      <div class="life-txw">
+        <span class="life-name">补满体力</span>
+        <span class="life-sub">立即恢复 5 颗心心</span>
+      </div>
+      <div class="life-buy">
+        <span class="life-buy-tx">免费</span>
+      </div>
+    </div>
+
+    <span class="sec-label">— 金币礼包 COIN PACKS —</span>
+    <div class="packs">
+
+      <div class="pack-row">
+        <div class="pack">
+          <div class="pack-art">
+            <svg id="p1" width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="45" cy="45" r="34" fill="#FFD24B"/>
+              <circle cx="45" cy="45" r="22" fill="none" stroke="#E0A81C" stroke-width="6"/>
+            </svg>
+          </div>
+          <span class="pack-amt">1,200</span>
+          <div class="pack-buy"><span class="pack-buy-tx">¥6</span></div>
+        </div>
+        <div class="pack pack-hot pack-last">
+          <div class="tag"><span class="tag-tx">热卖</span></div>
+          <div class="pack-art">
+            <svg id="p2" width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="32" cy="50" r="26" fill="#FFD24B"/>
+              <circle cx="58" cy="40" r="26" fill="#E0A81C"/>
+            </svg>
+          </div>
+          <span class="pack-amt">6,500</span>
+          <div class="pack-buy"><span class="pack-buy-tx">¥30</span></div>
+        </div>
+      </div>
+
+      <div class="pack-row">
+        <div class="pack">
+          <div class="pack-art">
+            <svg id="p3" width="90" height="90" viewBox="0 0 90 90">
+              <path d="M16 30 L74 30 L66 72 L24 72 Z" fill="#FFD24B"/>
+              <path d="M28 30 L34 14 L56 14 L62 30 Z" fill="#E0A81C"/>
+            </svg>
+          </div>
+          <span class="pack-amt">15,000</span>
+          <div class="pack-buy"><span class="pack-buy-tx">¥68</span></div>
+        </div>
+        <div class="pack pack-last">
+          <div class="pack-art">
+            <svg id="p4" width="90" height="90" viewBox="0 0 90 90">
+              <path d="M14 26 L76 26 L68 76 L22 76 Z" fill="#FF6FB5"/>
+              <path d="M14 26 L45 6 L76 26 Z" fill="#FFD24B"/>
+            </svg>
+          </div>
+          <span class="pack-amt">38,000</span>
+          <div class="pack-buy"><span class="pack-buy-tx">¥128</span></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

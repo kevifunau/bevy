@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #07301C;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+}
+
+/* ===== Top scoreboard bar ===== */
+.scorebar {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 132px;
+  background-color: #0B1220;
+  border-bottom-width: 3px; border-bottom-color: #26E07F;
+  padding: 0 40px;
+}
+.team-block { flex-direction: row; align-items: center; width: 520px; }
+.team-block-away { justify-content: flex-end; }
+.sb-crest {
+  width: 76px; height: 76px; border-radius: 16px;
+  align-items: center; justify-content: center;
+}
+.sb-crest-home { background-color: #143A2A; border-width: 2px; border-color: #26E07F; }
+.sb-crest-away { background-color: #3A1418; border-width: 2px; border-color: #FF5C6C; }
+.sb-team-text { margin-left: 20px; }
+.sb-team-text-away { margin-left: 0; margin-right: 20px; align-items: flex-end; }
+.sb-team-name { font-size: 32px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.sb-team-sub { font-size: 14px; color: #6E7E9B; margin-top: 4px; letter-spacing: 1px; }
+
+.score-center { flex-direction: row; align-items: center; justify-content: center; width: 480px; }
+.score-num {
+  width: 96px; height: 96px; border-radius: 18px;
+  background-color: #0F1A2E; border-width: 2px; border-color: #1B2740;
+  align-items: center; justify-content: center;
+  font-size: 64px; color: #FFFFFF; -unity-font-style: bold;
+  -unity-text-align: middle-center;
+}
+.score-mid { align-items: center; justify-content: center; width: 180px; }
+.live-pill {
+  flex-direction: row; align-items: center;
+  height: 32px; padding: 0 14px; border-radius: 16px;
+  background-color: #FF5C6C; margin-bottom: 8px;
+}
+.live-dot { width: 10px; height: 10px; border-radius: 5px; background-color: #FFFFFF; margin-right: 8px; }
+.live-text { font-size: 15px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 2px; }
+.clock { font-size: 44px; color: #FFC53D; -unity-font-style: bold; letter-spacing: 1px; }
+.half-label { font-size: 14px; color: #9DB0D0; margin-top: 4px; letter-spacing: 2px; }
+
+/* ===== Field area (center) ===== */
+.field {
+  position: relative;
+  flex-grow: 1;
+  margin: 0;
+  overflow: hidden;
+}
+.field-mid-line { position: absolute; top: 0; left: 958px; width: 4px; height: 816px; background-color: #1E6E44; }
+.field-circle {
+  position: absolute; top: 318px; left: 850px;
+  width: 220px; height: 180px; border-radius: 110px;
+  border-width: 4px; border-color: #1E6E44; background-color: #07301C;
+}
+.field-box-l { position: absolute; top: 248px; left: 0; width: 220px; height: 320px; border-width: 4px; border-color: #1E6E44; border-left-width: 0; }
+.field-box-r { position: absolute; top: 248px; right: 0; width: 220px; height: 320px; border-width: 4px; border-color: #1E6E44; border-right-width: 0; }
+
+/* Possession indicator (floating panel top center over field) */
+.poss-panel {
+  position: absolute; top: 28px; left: 660px;
+  width: 600px; height: 96px;
+  background-color: #0B1220;
+  border-radius: 20px;
+  border-width: 1px; border-color: #25406B;
+  padding: 18px 24px;
+}
+.poss-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.poss-lab { font-size: 15px; color: #6E7E9B; letter-spacing: 2px; }
+.poss-num-home { font-size: 20px; color: #26E07F; -unity-font-style: bold; }
+.poss-num-away { font-size: 20px; color: #FF5C6C; -unity-font-style: bold; }
+.poss-bar { flex-direction: row; height: 14px; border-radius: 7px; overflow: hidden; background-color: #11203A; }
+.poss-fill-home { height: 14px; width: 372px; background-color: #26E07F; }
+.poss-fill-away { height: 14px; flex-grow: 1; background-color: #FF5C6C; }
+
+/* Possession ball marker */
+.ball-marker { position: absolute; top: 388px; left: 780px; align-items: center; }
+
+/* ===== Event ticker (right side overlay) ===== */
+.ticker {
+  position: absolute; top: 156px; right: 28px;
+  width: 420px;
+  background-color: #0B1220;
+  border-radius: 20px;
+  border-width: 1px; border-color: #25406B;
+  padding: 20px 22px;
+}
+.ticker-head { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.ticker-title { font-size: 18px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 2px; margin-left: 10px; }
+.ev {
+  flex-direction: row; align-items: center;
+  height: 56px; margin-bottom: 10px;
+  padding: 0 14px; border-radius: 12px;
+  background-color: #11203A;
+}
+.ev-min {
+  width: 48px; font-size: 18px; color: #FFC53D; -unity-font-style: bold;
+  -unity-text-align: middle-left;
+}
+.ev-ico {
+  width: 36px; height: 36px; border-radius: 9px; margin-right: 12px;
+  background-color: #0B1220; align-items: center; justify-content: center;
+}
+.ev-text { flex-grow: 1; font-size: 16px; color: #E6EDF8; }
+.ev-goal { border-left-width: 4px; border-left-color: #26E07F; }
+.ev-card-y { border-left-width: 4px; border-left-color: #FFC53D; }
+
+/* ===== Bottom control dock ===== */
+.dock {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  height: 132px;
+  background-color: #0B1220;
+  border-top-width: 3px; border-top-color: #26E07F;
+  padding: 0 48px;
+}
+.dock-left { flex-direction: row; align-items: center; }
+.dock-stat {
+  align-items: center; width: 120px;
+  border-right-width: 1px; border-right-color: #1B2740;
+}
+.dock-stat-last { border-right-width: 0; }
+.dock-stat-num { font-size: 30px; color: #FFFFFF; -unity-font-style: bold; }
+.dock-stat-lab { font-size: 13px; color: #6E7E9B; margin-top: 4px; letter-spacing: 1px; }
+
+.dock-actions { flex-direction: row; align-items: center; }
+.act-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 80px; padding: 0 30px; margin-left: 18px;
+  background-color: #11203A; border-radius: 18px;
+  border-width: 1px; border-color: #25406B;
+}
+.act-btn-prime { background-color: #26E07F; border-color: #26E07F; }
+.act-btn-warn { background-color: #11203A; border-color: #FFC53D; }
+.act-btn-text { font-size: 22px; color: #E6EDF8; -unity-font-style: bold; margin-left: 14px; }
+.act-btn-text-dark { color: #04130A; }
+.act-btn-text-amber { color: #FFC53D; }
+.pause-btn {
+  width: 80px; height: 80px; border-radius: 18px;
+  background-color: #11203A; border-width: 1px; border-color: #25406B;
+  align-items: center; justify-content: center;
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- Scoreboard -->
+    <div class="scorebar">
+      <div class="team-block">
+        <div class="sb-crest sb-crest-home">
+          <svg id="icon-hud-crest-home" width="46" height="46" viewBox="0 0 36 36">
+            <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#26E07F"/>
+            <path d="M18 9 V28 M11 14 H25" stroke="#0B1220" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sb-team-text">
+          <div class="sb-team-name">NORTHGATE</div>
+          <div class="sb-team-sub">HOME · 4-3-3</div>
+        </div>
+      </div>
+
+      <div class="score-center">
+        <div class="score-num">2</div>
+        <div class="score-mid">
+          <div class="live-pill"><div class="live-dot"></div><span class="live-text">LIVE</span></div>
+          <div class="clock">67:14</div>
+          <div class="half-label">2ND HALF</div>
+        </div>
+        <div class="score-num">1</div>
+      </div>
+
+      <div class="team-block team-block-away">
+        <div class="sb-team-text sb-team-text-away">
+          <div class="sb-team-name">RIVERSIDE</div>
+          <div class="sb-team-sub">AWAY · 4-4-2</div>
+        </div>
+        <div class="sb-crest sb-crest-away">
+          <svg id="icon-hud-crest-away" width="46" height="46" viewBox="0 0 36 36">
+            <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#FF5C6C"/>
+            <path d="M11 11 L25 25 M25 11 L11 25" stroke="#0B1220" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Field -->
+    <div class="field">
+      <div class="field-mid-line"></div>
+      <div class="field-circle"></div>
+      <div class="field-box-l"></div>
+      <div class="field-box-r"></div>
+
+      <div class="ball-marker">
+        <svg id="icon-hud-ball" width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="18" fill="#FFFFFF" stroke="#0B1220" stroke-width="2"/>
+          <path d="M22 12 L27 18 L24 25 H20 L17 18 Z" fill="#0B1220"/>
+          <path d="M22 12 V6 M27 18 L33 16 M24 25 L28 31 M20 25 L16 31 M17 18 L11 16" stroke="#0B1220" stroke-width="1.6"/>
+        </svg>
+      </div>
+
+      <!-- Possession panel -->
+      <div class="poss-panel">
+        <div class="poss-top">
+          <span class="poss-num-home">62%</span>
+          <span class="poss-lab">BALL POSSESSION</span>
+          <span class="poss-num-away">38%</span>
+        </div>
+        <div class="poss-bar">
+          <div class="poss-fill-home"></div>
+          <div class="poss-fill-away"></div>
+        </div>
+      </div>
+
+      <!-- Event ticker -->
+      <div class="ticker">
+        <div class="ticker-head">
+          <svg id="icon-hud-ticker" width="24" height="24" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="#26E07F" stroke-width="2"/>
+            <path d="M6 9 H14 M6 13 H18 M6 16 H11" stroke="#26E07F" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="ticker-title">KEY EVENTS</span>
+        </div>
+
+        <div class="ev ev-goal">
+          <span class="ev-min">64'</span>
+          <div class="ev-ico">
+            <svg id="icon-ev-goal-1" width="22" height="22" viewBox="0 0 22 22">
+              <circle cx="11" cy="11" r="8.5" fill="#26E07F"/>
+              <path d="M11 6 L13 9.5 L11 13 H9 L7 9.5 Z" fill="#0B1220"/>
+            </svg>
+          </div>
+          <span class="ev-text">GOAL! Carver finishes near post</span>
+        </div>
+
+        <div class="ev ev-card-y">
+          <span class="ev-min">58'</span>
+          <div class="ev-ico">
+            <svg id="icon-ev-card-1" width="22" height="22" viewBox="0 0 22 22">
+              <rect x="6" y="3" width="10" height="16" rx="2" fill="#FFC53D"/>
+            </svg>
+          </div>
+          <span class="ev-text">Yellow — Diallo, late tackle</span>
+        </div>
+
+        <div class="ev">
+          <span class="ev-min">52'</span>
+          <div class="ev-ico">
+            <svg id="icon-ev-sub-1" width="22" height="22" viewBox="0 0 22 22">
+              <path d="M5 7 H14 L11 4 M17 15 H8 L11 18" stroke="#58C7FF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="ev-text">SUB — Velez on, Marsh off</span>
+        </div>
+
+        <div class="ev ev-goal">
+          <span class="ev-min">41'</span>
+          <div class="ev-ico">
+            <svg id="icon-ev-goal-2" width="22" height="22" viewBox="0 0 22 22">
+              <circle cx="11" cy="11" r="8.5" fill="#26E07F"/>
+              <path d="M11 6 L13 9.5 L11 13 H9 L7 9.5 Z" fill="#0B1220"/>
+            </svg>
+          </div>
+          <span class="ev-text">GOAL! Tanaka long-range strike</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom dock -->
+    <div class="dock">
+      <div class="dock-left">
+        <div class="dock-stat">
+          <span class="dock-stat-num">9</span>
+          <span class="dock-stat-lab">SHOTS</span>
+        </div>
+        <div class="dock-stat">
+          <span class="dock-stat-num">6</span>
+          <span class="dock-stat-lab">ON TARGET</span>
+        </div>
+        <div class="dock-stat">
+          <span class="dock-stat-num">4</span>
+          <span class="dock-stat-lab">CORNERS</span>
+        </div>
+        <div class="dock-stat dock-stat-last">
+          <span class="dock-stat-num">2/3</span>
+          <span class="dock-stat-lab">SUBS LEFT</span>
+        </div>
+      </div>
+
+      <div class="dock-actions">
+        <button class="act-btn act-btn-warn">
+          <svg id="icon-act-tactic" width="28" height="28" viewBox="0 0 28 28">
+            <rect x="3" y="4" width="22" height="20" rx="3" fill="none" stroke="#FFC53D" stroke-width="2.2"/>
+            <circle cx="9" cy="10" r="2.6" fill="#FFC53D"/>
+            <circle cx="18" cy="17" r="2.6" fill="#26E07F"/>
+            <path d="M9 10 L18 17" stroke="#9DB0D0" stroke-width="1.8"/>
+          </svg>
+          <span class="act-btn-text act-btn-text-amber">TACTICS</span>
+        </button>
+        <button class="act-btn">
+          <svg id="icon-act-sub" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M5 9 H18 L14 5 M23 19 H10 L14 23" stroke="#58C7FF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="act-btn-text">SUB</span>
+        </button>
+        <button class="act-btn act-btn-prime">
+          <svg id="icon-act-poss" width="28" height="28" viewBox="0 0 28 28">
+            <circle cx="14" cy="14" r="11" fill="none" stroke="#04130A" stroke-width="2.4"/>
+            <path d="M14 7 L17 12 L14 16 H11 L8 12 Z" fill="#04130A"/>
+          </svg>
+          <span class="act-btn-text act-btn-text-dark">SHOUT</span>
+        </button>
+        <button class="pause-btn">
+          <svg id="icon-act-pause" width="28" height="28" viewBox="0 0 28 28">
+            <rect x="8" y="6" width="4.5" height="16" rx="1.5" fill="#9DB0D0"/>
+            <rect x="15.5" y="6" width="4.5" height="16" rx="1.5" fill="#9DB0D0"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0A0F14;
+  flex-direction: column;
+}
+
+/* victory banner */
+.banner {
+  flex-direction: row;
+  align-items: center;
+  height: 150px;
+  padding: 0 48px;
+  background-color: #102229;
+  border-bottom-width: 3px;
+  border-bottom-color: #2DE2C8;
+}
+.banner-icon { width: 78px; height: 78px; margin-right: 26px; }
+.banner-text { flex-direction: column; }
+.banner-result {
+  font-size: 64px;
+  color: #2DE2C8;
+  -unity-font-style: bold;
+  letter-spacing: 10px;
+}
+.banner-sub { font-size: 18px; color: #8AA0AC; letter-spacing: 4px; margin-top: 4px; }
+.banner-spacer { flex-grow: 1; }
+.banner-mode { flex-direction: column; align-items: flex-end; }
+.banner-mode-name { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; }
+.banner-mode-map { font-size: 15px; color: #6E8794; margin-top: 6px; letter-spacing: 2px; }
+
+.body {
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 30px 48px;
+}
+
+/* left personal */
+.left-col {
+  width: 560px;
+  margin-right: 30px;
+  flex-direction: column;
+}
+.personal-card {
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.personal-head {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 22px;
+  border-bottom-width: 1px;
+  border-bottom-color: #16222B;
+}
+.personal-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background-color: #14222C;
+  border-width: 2px;
+  border-color: #2DE2C8;
+  margin-right: 18px;
+  align-items: center;
+  justify-content: center;
+}
+.personal-meta { flex-direction: column; flex-grow: 1; }
+.personal-name { font-size: 26px; color: #FFFFFF; -unity-font-style: bold; }
+.personal-role { font-size: 15px; color: #2DE2C8; margin-top: 6px; letter-spacing: 2px; }
+.mvp-tag {
+  height: 36px;
+  padding: 0 18px;
+  background-color: #FF7A2D;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+.mvp-icon { width: 20px; height: 20px; margin-right: 8px; }
+.mvp-txt { font-size: 16px; color: #0A0F14; -unity-font-style: bold; letter-spacing: 2px; }
+
+.kda-grid { flex-direction: row; }
+.kda-cell {
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0;
+  margin-right: 12px;
+  background-color: #0A1218;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.kda-cell-last { margin-right: 0; }
+.kda-val { font-size: 38px; color: #FFFFFF; -unity-font-style: bold; }
+.kda-val-k { color: #2DE2C8; }
+.kda-val-d { color: #FF7A2D; }
+.kda-key { font-size: 13px; color: #6E8794; margin-top: 8px; letter-spacing: 2px; }
+
+.score-card {
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 26px;
+}
+.score-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.score-title { font-size: 16px; color: #6E8794; letter-spacing: 3px; }
+.score-total { font-size: 30px; color: #2DE2C8; -unity-font-style: bold; }
+.metric-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 4px;
+  border-bottom-width: 1px;
+  border-bottom-color: #14202A;
+}
+.metric-name { flex-direction: row; align-items: center; }
+.metric-dot { width: 8px; height: 8px; border-radius: 4px; background-color: #2DE2C8; margin-right: 12px; }
+.metric-label { font-size: 16px; color: #C4D2DA; }
+.metric-val { font-size: 17px; color: #FFFFFF; -unity-font-style: bold; }
+
+/* center team comparison */
+.center-col {
+  flex-grow: 1;
+  flex-direction: column;
+  margin-right: 30px;
+}
+.team-card {
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 24px;
+}
+.team-card-title { font-size: 16px; color: #6E8794; letter-spacing: 3px; margin-bottom: 16px; }
+.team-section { flex-direction: column; margin-bottom: 18px; }
+.team-section-head {
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
+  margin-bottom: 8px;
+}
+.team-tag {
+  width: 80px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  border-radius: 5px;
+  font-size: 14px;
+  -unity-font-style: bold;
+  letter-spacing: 1px;
+  margin-right: 14px;
+}
+.tag-blue { background-color: #14323A; color: #2DE2C8; }
+.tag-red { background-color: #3A1A14; color: #FF7A2D; }
+.team-section-score { font-size: 22px; -unity-font-style: bold; }
+.team-section-score-blue { color: #2DE2C8; }
+.team-section-score-red { color: #FF7A2D; }
+.team-row {
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+  padding: 0 12px;
+  margin-bottom: 6px;
+  background-color: #0A1218;
+  border-radius: 6px;
+}
+.team-row-self { border-left-width: 3px; border-left-color: #2DE2C8; }
+.tr-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background-color: #16222B;
+  margin-right: 12px;
+  align-items: center;
+  justify-content: center;
+}
+.tr-name { font-size: 16px; color: #FFFFFF; flex-grow: 1; }
+.tr-kda { font-size: 15px; color: #8AA0AC; width: 90px; -unity-text-align: middle-right; }
+.tr-score { font-size: 15px; color: #C4D2DA; width: 70px; -unity-text-align: middle-right; -unity-font-style: bold; }
+
+/* right rewards */
+.right-col {
+  width: 380px;
+  flex-direction: column;
+}
+.reward-card {
+  flex-direction: column;
+  background-color: #0E161D;
+  border-width: 1px;
+  border-color: #1E2E39;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.reward-title { font-size: 16px; color: #6E8794; letter-spacing: 3px; margin-bottom: 18px; }
+.xp-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.xp-lvl { flex-direction: row; align-items: center; }
+.xp-lvl-badge {
+  width: 44px;
+  height: 30px;
+  background-color: #2DE2C8;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  -unity-text-align: middle-center;
+  font-size: 16px;
+  color: #0A0F14;
+  -unity-font-style: bold;
+}
+.xp-lvl-txt { font-size: 16px; color: #C4D2DA; }
+.xp-gain { font-size: 18px; color: #2DE2C8; -unity-font-style: bold; }
+.bar {
+  flex-direction: row;
+  width: 100%;
+  height: 14px;
+  background-color: #0A1218;
+  border-radius: 6px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.bar-fill { height: 12px; border-radius: 6px; background-color: #2DE2C8; }
+.fill-xp { width: 72%; }
+.reward-currency {
+  flex-direction: row;
+  align-items: center;
+  height: 70px;
+  margin-top: 16px;
+  padding: 0 16px;
+  background-color: #0A1218;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: #16222B;
+}
+.rc-icon { width: 40px; height: 40px; margin-right: 16px; }
+.rc-info { flex-direction: column; flex-grow: 1; }
+.rc-label { font-size: 13px; color: #6E8794; letter-spacing: 2px; }
+.rc-val { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; margin-top: 4px; }
+.rc-plus { font-size: 18px; color: #2DE2C8; -unity-font-style: bold; }
+
+.actions-row { flex-direction: row; }
+.action-btn {
+  flex-grow: 1;
+  height: 78px;
+  margin-right: 16px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+.action-btn-last { margin-right: 0; }
+.action-primary { background-color: #2DE2C8; }
+.action-ghost { background-color: #0E161D; border-width: 2px; border-color: #1E2E39; }
+.action-icon { width: 28px; height: 28px; margin-right: 12px; }
+.action-primary-txt { font-size: 22px; color: #0A0F14; -unity-font-style: bold; letter-spacing: 2px; }
+.action-ghost-txt { font-size: 20px; color: #C4D2DA; -unity-font-style: bold; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="banner">
+      <svg id="icon-victory" class="banner-icon" width="78" height="78" viewBox="0 0 78 78">
+        <path d="M20 12h38v14c0 12-8 20-19 22C28 46 20 38 20 26z" fill="#102830" stroke="#2DE2C8" stroke-width="3"/>
+        <path d="M20 16H8v8a12 12 0 0012 12M58 16h12v8a12 12 0 01-12 12" fill="none" stroke="#2DE2C8" stroke-width="3"/>
+        <path d="M34 56h10v8H34zM28 64h22v6H28z" fill="#2DE2C8"/>
+        <path d="M33 24l4 8 9 1-6 6 1 9-7-4-7 4 1-9-6-6 9-1z" fill="#FF7A2D"/>
+      </svg>
+      <div class="banner-text">
+        <span class="banner-result">VICTORY</span>
+        <span class="banner-sub">OBJECTIVE SECURED — ROUND 13</span>
+      </div>
+      <div class="banner-spacer"></div>
+      <div class="banner-mode">
+        <span class="banner-mode-name">RANKED · SEARCH &amp; DESTROY</span>
+        <span class="banner-mode-map">MAP: DUST COMPLEX · 18:42</span>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="left-col">
+        <div class="personal-card">
+          <div class="personal-head">
+            <div class="personal-avatar">
+              <svg id="icon-result-avatar" width="44" height="44" viewBox="0 0 44 44">
+                <path d="M22 6c-9 0-14 6-14 15v6h6l2 6h12l2-6h6v-6c0-9-5-15-14-15z" fill="#0A1218" stroke="#2DE2C8" stroke-width="2"/>
+                <circle cx="18" cy="20" r="2" fill="#FF7A2D"/>
+                <circle cx="26" cy="20" r="2" fill="#FF7A2D"/>
+              </svg>
+            </div>
+            <div class="personal-meta">
+              <span class="personal-name">REAPER_07</span>
+              <span class="personal-role">ENTRY FRAGGER</span>
+            </div>
+            <div class="mvp-tag">
+              <svg id="icon-mvp-star" class="mvp-icon" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M10 1l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z" fill="#0A0F14"/>
+              </svg>
+              <span class="mvp-txt">MVP</span>
+            </div>
+          </div>
+          <div class="kda-grid">
+            <div class="kda-cell">
+              <span class="kda-val kda-val-k">24</span>
+              <span class="kda-key">KILLS</span>
+            </div>
+            <div class="kda-cell">
+              <span class="kda-val kda-val-d">9</span>
+              <span class="kda-key">DEATHS</span>
+            </div>
+            <div class="kda-cell">
+              <span class="kda-val">11</span>
+              <span class="kda-key">ASSISTS</span>
+            </div>
+            <div class="kda-cell kda-cell-last">
+              <span class="kda-val">2.67</span>
+              <span class="kda-key">K/D</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-card">
+          <div class="score-head">
+            <span class="score-title">PERFORMANCE</span>
+            <span class="score-total">8,420</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-name"><div class="metric-dot"></div><span class="metric-label">Headshots</span></div>
+            <span class="metric-val">14</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-name"><div class="metric-dot"></div><span class="metric-label">Damage Dealt</span></div>
+            <span class="metric-val">4,238</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-name"><div class="metric-dot"></div><span class="metric-label">Objectives</span></div>
+            <span class="metric-val">3 Defused</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-name"><div class="metric-dot"></div><span class="metric-label">Longest Streak</span></div>
+            <span class="metric-val">7 Kills</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-col">
+        <div class="team-card">
+          <span class="team-card-title">TEAM COMPARISON</span>
+
+          <div class="team-section">
+            <div class="team-section-head">
+              <div class="team-tag tag-blue">VANGUARD</div>
+              <span class="team-section-score team-section-score-blue">13</span>
+            </div>
+            <div class="team-row team-row-self">
+              <div class="tr-avatar"><svg id="icon-team-b1" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#2DE2C8"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#2DE2C8"/></svg></div>
+              <span class="tr-name">REAPER_07</span>
+              <span class="tr-kda">24 / 9 / 11</span>
+              <span class="tr-score">8420</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-b2" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#6E8794"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#6E8794"/></svg></div>
+              <span class="tr-name">GHOST</span>
+              <span class="tr-kda">18 / 12 / 6</span>
+              <span class="tr-score">6710</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-b3" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#6E8794"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#6E8794"/></svg></div>
+              <span class="tr-name">NOMAD</span>
+              <span class="tr-kda">15 / 11 / 9</span>
+              <span class="tr-score">6020</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-b4" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#6E8794"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#6E8794"/></svg></div>
+              <span class="tr-name">BLAZE</span>
+              <span class="tr-kda">12 / 14 / 8</span>
+              <span class="tr-score">5340</span>
+            </div>
+          </div>
+
+          <div class="team-section">
+            <div class="team-section-head">
+              <div class="team-tag tag-red">SABOTEUR</div>
+              <span class="team-section-score team-section-score-red">11</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-r1" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#FF7A2D"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#FF7A2D"/></svg></div>
+              <span class="tr-name">VIPER</span>
+              <span class="tr-kda">20 / 13 / 5</span>
+              <span class="tr-score">7180</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-r2" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#8AA0AC"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#8AA0AC"/></svg></div>
+              <span class="tr-name">BANDIT_X</span>
+              <span class="tr-kda">16 / 15 / 7</span>
+              <span class="tr-score">6240</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-r3" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#8AA0AC"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#8AA0AC"/></svg></div>
+              <span class="tr-name">SLAYER</span>
+              <span class="tr-kda">14 / 16 / 10</span>
+              <span class="tr-score">5610</span>
+            </div>
+            <div class="team-row">
+              <div class="tr-avatar"><svg id="icon-team-r4" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="#8AA0AC"/><path d="M3 16c0-3 3-5 6-5s6 2 6 5z" fill="#8AA0AC"/></svg></div>
+              <span class="tr-name">NOVA_9</span>
+              <span class="tr-kda">11 / 17 / 6</span>
+              <span class="tr-score">4830</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="reward-card">
+          <span class="reward-title">PROGRESSION</span>
+          <div class="xp-head">
+            <div class="xp-lvl">
+              <div class="xp-lvl-badge">88</div>
+              <span class="xp-lvl-txt">Operator Level</span>
+            </div>
+            <span class="xp-gain">+2,150 XP</span>
+          </div>
+          <div class="bar"><div class="bar-fill fill-xp"></div></div>
+
+          <div class="reward-currency">
+            <svg id="icon-reward-credit" class="rc-icon" width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="15" fill="#14222C" stroke="#2DE2C8" stroke-width="2.5"/>
+              <path d="M20 10v20M14 14h9a3 3 0 010 6h-9" fill="none" stroke="#2DE2C8" stroke-width="2.5"/>
+            </svg>
+            <div class="rc-info">
+              <span class="rc-label">CREDITS EARNED</span>
+              <span class="rc-val">+1,240</span>
+            </div>
+            <span class="rc-plus">2X</span>
+          </div>
+
+          <div class="reward-currency">
+            <svg id="icon-reward-pass" class="rc-icon" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M20 5l12 9-12 21L8 14z" fill="#14222C" stroke="#C18BFF" stroke-width="2.5"/>
+              <circle cx="20" cy="16" r="3" fill="#C18BFF"/>
+            </svg>
+            <div class="rc-info">
+              <span class="rc-label">PASS PROGRESS</span>
+              <span class="rc-val">+3 TIERS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button class="action-btn action-ghost">
+            <svg id="icon-action-lobby" class="action-icon" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M14 4L4 12v12h7v-7h6v7h7V12z" fill="none" stroke="#C4D2DA" stroke-width="2.5"/>
+            </svg>
+            <span class="action-ghost-txt">LOBBY</span>
+          </button>
+          <button class="action-btn action-primary action-btn-last">
+            <svg id="icon-action-replay" class="action-icon" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M6 14h12M14 8l6 6-6 6" stroke="#0A0F14" stroke-width="3" fill="none"/>
+            </svg>
+            <span class="action-primary-txt">PLAY AGAIN</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

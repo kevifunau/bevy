@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #FFF1DC;
+  padding: 0;
+}
+
+/* ===== Top resource bar ===== */
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 96px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 32px;
+}
+.brand {
+  flex-direction: row;
+  align-items: center;
+  width: 320px;
+  height: 96px;
+}
+.brand-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background-color: #E8503A;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.brand-text {
+  flex-direction: column;
+  justify-content: center;
+}
+.brand-title { font-size: 28px; color: #5A3E2B; font-weight: bold; }
+.brand-sub { font-size: 15px; color: #B08968; margin-top: 2px; }
+
+.res-group {
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: center;
+}
+.res-chip {
+  flex-direction: row;
+  align-items: center;
+  height: 58px;
+  background-color: #FFF6E9;
+  border-radius: 29px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 0 22px 0 12px;
+  margin-right: 18px;
+}
+.res-ico {
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+.res-meta { flex-direction: column; justify-content: center; }
+.res-label { font-size: 13px; color: #B08968; }
+.res-val { font-size: 22px; color: #5A3E2B; font-weight: bold; }
+.res-plus {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #5FB67A;
+  align-items: center;
+  justify-content: center;
+  margin-left: 14px;
+}
+
+.profile {
+  flex-direction: row;
+  align-items: center;
+  width: 220px;
+  height: 96px;
+  justify-content: flex-end;
+}
+.lvl-pill {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  margin-right: 14px;
+}
+.lvl-num { font-size: 22px; color: #5A3E2B; font-weight: bold; }
+.lvl-tag { font-size: 13px; color: #B08968; }
+.avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 31px;
+  background-color: #F5A623;
+  border-width: 3px;
+  border-color: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Body ===== */
+.body {
+  flex-direction: row;
+  width: 1920px;
+  height: 824px;
+  padding: 28px 32px;
+}
+
+/* left scene */
+.scene {
+  flex-grow: 1;
+  height: 768px;
+  margin-right: 28px;
+  background-color: #FCE3BD;
+  border-radius: 28px;
+  border-width: 3px;
+  border-color: #F0C98A;
+  padding: 24px;
+}
+.scene-head {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 64px;
+  margin-bottom: 20px;
+}
+.scene-title { font-size: 30px; color: #5A3E2B; font-weight: bold; }
+.scene-status {
+  flex-direction: row;
+  align-items: center;
+  height: 48px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  padding: 0 20px;
+}
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #5FB67A;
+  margin-right: 10px;
+}
+.scene-status-txt { font-size: 18px; color: #5A3E2B; font-weight: bold; }
+
+.scene-canvas {
+  width: 100%;
+  height: 540px;
+  background-color: #FFE9C4;
+  border-radius: 20px;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0;
+  overflow: hidden;
+}
+.sky {
+  width: 100%;
+  height: 300px;
+  background-color: #BFE3F0;
+  align-items: center;
+  justify-content: center;
+}
+.sun {
+  width: 110px;
+  height: 110px;
+  border-radius: 55px;
+  background-color: #FFD66B;
+  margin-top: 30px;
+  margin-right: 700px;
+}
+.ground {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 240px;
+  background-color: #C8E6A0;
+  padding: 0 40px 30px 40px;
+}
+.bld {
+  width: 200px;
+  height: 170px;
+  margin: 0 18px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 14px;
+}
+.bld-roof {
+  width: 200px;
+  height: 56px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.bld-a { background-color: #E8503A; }
+.bld-b { background-color: #F5A623; }
+.bld-c { background-color: #7C5CBF; }
+.bld-name { font-size: 16px; color: #FFFFFF; font-weight: bold; }
+
+/* right HUD */
+.hud {
+  width: 460px;
+  height: 768px;
+  flex-direction: column;
+}
+.revenue {
+  width: 460px;
+  height: 224px;
+  background-color: #E8503A;
+  border-radius: 24px;
+  padding: 26px;
+  margin-bottom: 24px;
+}
+.rev-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.rev-label { font-size: 18px; color: #FFD9CF; }
+.rev-trend {
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
+  background-color: #FFFFFF;
+  border-radius: 18px;
+  padding: 0 14px;
+}
+.rev-trend-txt { font-size: 16px; color: #5FB67A; font-weight: bold; margin-left: 6px; }
+.rev-big { font-size: 56px; color: #FFFFFF; font-weight: bold; margin-top: 10px; }
+.rev-sub { font-size: 16px; color: #FFD9CF; margin-top: 4px; }
+.rev-bar {
+  flex-direction: row;
+  width: 100%;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #C2402E;
+  margin-top: 18px;
+}
+.rev-bar-fill {
+  height: 14px;
+  width: 68%;
+  border-radius: 7px;
+  background-color: #FFD66B;
+}
+
+.quick-title { font-size: 20px; color: #5A3E2B; font-weight: bold; margin-bottom: 14px; }
+.quick-list { flex-direction: column; flex-grow: 1; }
+.quick {
+  flex-direction: row;
+  align-items: center;
+  width: 460px;
+  height: 92px;
+  background-color: #FFFFFF;
+  border-radius: 18px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 0 18px;
+  margin-bottom: 16px;
+}
+.quick-ico {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.q-orange { background-color: #FCEBD2; }
+.q-green { background-color: #DFF3E3; }
+.q-purple { background-color: #EBE3F7; }
+.quick-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.quick-name { font-size: 19px; color: #5A3E2B; font-weight: bold; }
+.quick-desc { font-size: 14px; color: #B08968; margin-top: 3px; }
+.quick-go {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #FFF1DC;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Bottom nav ===== */
+.navbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 1920px;
+  height: 160px;
+  background-color: #FFFFFF;
+  border-top-width: 4px;
+  border-top-color: #F0D9B5;
+  padding: 0 32px;
+}
+.nav {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 120px;
+  border-radius: 22px;
+  margin: 0 14px;
+}
+.nav.is-active { background-color: #FFF1DC; }
+.nav-ico {
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.nav-txt { font-size: 18px; color: #B08968; }
+.nav.is-active .nav-txt { color: #E8503A; font-weight: bold; }
+.nav-center {
+  width: 110px;
+  height: 110px;
+  border-radius: 55px;
+  background-color: #E8503A;
+  align-items: center;
+  justify-content: center;
+  margin: 0 20px;
+  border-width: 6px;
+  border-color: #FFFFFF;
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- top resource bar -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge">
+          <svg id="icon-chef-hat" width="38" height="38" viewBox="0 0 38 38">
+            <path d="M9 28h20v4a2 2 0 0 1-2 2H11a2 2 0 0 1-2-2z" fill="#FFFFFF"/>
+            <path d="M19 6c4 0 6 2 7 4 4 0 7 3 7 7 0 4-3 6-6 6H11c-3 0-6-2-6-6 0-4 3-7 7-7 1-2 3-4 7-4z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Cozy Kitchen</span>
+          <span class="brand-sub">Town Restaurant</span>
+        </div>
+      </div>
+
+      <div class="res-group">
+        <div class="res-chip">
+          <div class="res-ico">
+            <svg id="icon-coin" width="34" height="34" viewBox="0 0 34 34">
+              <circle cx="17" cy="17" r="15" fill="#F5A623"/>
+              <circle cx="17" cy="17" r="11" fill="#FFD66B"/>
+              <path d="M17 9v16M13 13h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6" fill="none" stroke="#C9851A" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="res-meta">
+            <span class="res-label">Coins</span>
+            <span class="res-val">24,860</span>
+          </div>
+          <div class="res-plus">
+            <svg id="icon-plus" width="18" height="18" viewBox="0 0 18 18">
+              <path d="M9 3v12M3 9h12" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="res-chip">
+          <div class="res-ico">
+            <svg id="icon-gem" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M9 6h16l5 8-13 14L4 14z" fill="#5AC8E8"/>
+              <path d="M9 6l4 8h8l4-8M4 14h26M17 28l-4-14M17 28l4-14" fill="none" stroke="#3A9BC4" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="res-meta">
+            <span class="res-label">Gems</span>
+            <span class="res-val">182</span>
+          </div>
+          <div class="res-plus">
+            <svg id="icon-plus-2" width="18" height="18" viewBox="0 0 18 18">
+              <path d="M9 3v12M3 9h12" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="res-chip">
+          <div class="res-ico">
+            <svg id="icon-energy" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M19 3L8 19h7l-2 12 11-16h-7z" fill="#F5A623"/>
+            </svg>
+          </div>
+          <div class="res-meta">
+            <span class="res-label">Energy</span>
+            <span class="res-val">76 / 80</span>
+          </div>
+          <div class="res-plus">
+            <svg id="icon-plus-3" width="18" height="18" viewBox="0 0 18 18">
+              <path d="M9 3v12M3 9h12" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile">
+        <div class="lvl-pill">
+          <span class="lvl-num">Lv.27</span>
+          <span class="lvl-tag">Head Chef</span>
+        </div>
+        <div class="avatar">
+          <svg id="icon-avatar" width="36" height="36" viewBox="0 0 36 36">
+            <circle cx="18" cy="13" r="7" fill="#FFFFFF"/>
+            <path d="M6 31c0-6 5-10 12-10s12 4 12 10z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- body -->
+    <div class="body">
+      <div class="scene">
+        <div class="scene-head">
+          <span class="scene-title">Maple Street Diner</span>
+          <div class="scene-status">
+            <div class="dot"></div>
+            <span class="scene-status-txt">Open · 38 guests dining</span>
+          </div>
+        </div>
+        <div class="scene-canvas">
+          <div class="sky">
+            <div class="sun"></div>
+          </div>
+          <div class="ground">
+            <div class="bld">
+              <div class="bld-roof bld-a"></div>
+              <span class="bld-name">Diner</span>
+            </div>
+            <div class="bld">
+              <div class="bld-roof bld-b"></div>
+              <span class="bld-name">Bakery</span>
+            </div>
+            <div class="bld">
+              <div class="bld-roof bld-c"></div>
+              <span class="bld-name">Cafe</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="revenue">
+          <div class="rev-row">
+            <span class="rev-label">Today's Revenue</span>
+            <div class="rev-trend">
+              <svg id="icon-trend-up" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M3 14l5-5 3 3 6-7" fill="none" stroke="#5FB67A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13 5h4v4" fill="none" stroke="#5FB67A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="rev-trend-txt">+18%</span>
+            </div>
+          </div>
+          <span class="rev-big">$ 4,720</span>
+          <span class="rev-sub">Daily goal $ 6,900 · keep it up!</span>
+          <div class="rev-bar">
+            <div class="rev-bar-fill"></div>
+          </div>
+        </div>
+
+        <span class="quick-title">Quick Actions</span>
+        <div class="quick-list">
+          <div class="quick">
+            <div class="quick-ico q-orange">
+              <svg id="icon-order-bell" width="32" height="32" viewBox="0 0 32 32">
+                <path d="M16 5a8 8 0 0 1 8 8v6l3 4H5l3-4v-6a8 8 0 0 1 8-8z" fill="#E8503A"/>
+                <path d="M13 27a3 3 0 0 0 6 0" fill="none" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="quick-meta">
+              <span class="quick-name">New Orders</span>
+              <span class="quick-desc">5 waiting to be claimed</span>
+            </div>
+            <div class="quick-go">
+              <svg id="icon-chevron-1" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M7 4l7 6-7 6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="quick">
+            <div class="quick-ico q-green">
+              <svg id="icon-hammer" width="32" height="32" viewBox="0 0 32 32">
+                <path d="M18 6l8 8-3 3-8-8z" fill="#5FB67A"/>
+                <path d="M14 11l-8 8 4 4 8-8" fill="none" stroke="#5FB67A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="quick-meta">
+              <span class="quick-name">Upgrade Bakery</span>
+              <span class="quick-desc">Ready · +30% output</span>
+            </div>
+            <div class="quick-go">
+              <svg id="icon-chevron-2" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M7 4l7 6-7 6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="quick">
+            <div class="quick-ico q-purple">
+              <svg id="icon-staff-q" width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="12" r="6" fill="#7C5CBF"/>
+                <path d="M5 28c0-5 5-9 11-9s11 4 11 9z" fill="#7C5CBF"/>
+              </svg>
+            </div>
+            <div class="quick-meta">
+              <span class="quick-name">Hire Staff</span>
+              <span class="quick-desc">2 open posts in kitchen</span>
+            </div>
+            <div class="quick-go">
+              <svg id="icon-chevron-3" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M7 4l7 6-7 6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom nav -->
+    <div class="navbar">
+      <div class="nav is-active">
+        <div class="nav-ico">
+          <svg id="icon-nav-home" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M24 7L8 21v18a3 3 0 0 0 3 3h26a3 3 0 0 0 3-3V21z" fill="#E8503A"/>
+            <path d="M19 42V28h10v14" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Home</span>
+      </div>
+      <div class="nav">
+        <div class="nav-ico">
+          <svg id="icon-nav-build" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M30 10l8 8-4 4-8-8z" fill="#B08968"/>
+            <path d="M24 16L10 30l8 8 14-14" fill="none" stroke="#B08968" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Build</span>
+      </div>
+      <div class="nav">
+        <div class="nav-ico">
+          <svg id="icon-nav-orders" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M12 8h24a2 2 0 0 1 2 2v30l-6-4-4 3-4-3-4 3-4-3-6 4V10a2 2 0 0 1 2-2z" fill="#B08968"/>
+            <path d="M17 18h14M17 26h10" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Orders</span>
+      </div>
+
+      <div class="nav-center">
+        <svg id="icon-nav-play" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="22" fill="#FFFFFF"/>
+          <path d="M23 18l16 10-16 10z" fill="#E8503A"/>
+        </svg>
+      </div>
+
+      <div class="nav">
+        <div class="nav-ico">
+          <svg id="icon-nav-staff" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="18" r="8" fill="#B08968"/>
+            <path d="M8 40c0-8 7-13 16-13s16 5 16 13z" fill="#B08968"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Staff</span>
+      </div>
+      <div class="nav">
+        <div class="nav-ico">
+          <svg id="icon-nav-shop" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M10 16h28l-3 22a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2z" fill="#B08968"/>
+            <path d="M17 16a7 7 0 0 1 14 0" fill="none" stroke="#B08968" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Shop</span>
+      </div>
+      <div class="nav">
+        <div class="nav-ico">
+          <svg id="icon-nav-settings" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="7" fill="none" stroke="#B08968" stroke-width="4"/>
+            <path d="M24 6v6M24 36v6M6 24h6M36 24h6M11 11l4 4M33 33l4 4M37 11l-4 4M15 33l-4 4" stroke="#B08968" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="nav-txt">Settings</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

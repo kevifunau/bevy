@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+  .stage {
+    width: 1920px;
+    height: 1080px;
+    background-color: #12141F;
+    padding: 0;
+    flex-direction: column;
+  }
+
+  /* ===== Top resource bar ===== */
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 96px;
+    padding: 0 48px;
+    background-color: #1A1D2C;
+    border-bottom-width: 2px;
+    border-bottom-color: #2C3142;
+  }
+  .player {
+    flex-direction: row;
+    align-items: center;
+  }
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background-color: #2C3142;
+    border-width: 3px;
+    border-color: #F2C14E;
+    margin-right: 18px;
+    align-items: center;
+    justify-content: center;
+  }
+  .player-meta { flex-direction: column; }
+  .player-name { font-size: 26px; color: #F4F6FF; -unity-font-style: bold; }
+  .player-tier { font-size: 16px; color: #4FD6C9; margin-top: 4px; }
+
+  .res-group { flex-direction: row; align-items: center; }
+  .res {
+    flex-direction: row;
+    align-items: center;
+    height: 52px;
+    padding: 0 18px;
+    margin-left: 16px;
+    background-color: #232739;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .res-icon { width: 28px; height: 28px; margin-right: 10px; }
+  .res-val { font-size: 22px; color: #F4F6FF; -unity-font-style: bold; }
+
+  /* ===== Body ===== */
+  .body {
+    flex-direction: row;
+    flex-grow: 1;
+    padding: 44px 48px;
+  }
+
+  /* Left brand + start */
+  .left {
+    width: 1120px;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 40px;
+  }
+  .brand { flex-direction: column; }
+  .brand-row { flex-direction: row; align-items: center; }
+  .logo-mark {
+    width: 96px;
+    height: 96px;
+    margin-right: 24px;
+    border-radius: 20px;
+    background-color: #1F2333;
+    border-width: 2px;
+    border-color: #F2C14E;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-title { font-size: 78px; color: #F2C14E; -unity-font-style: bold; letter-spacing: 6px; }
+  .brand-sub { font-size: 24px; color: #8B93AD; margin-top: 12px; letter-spacing: 4px; }
+
+  .start-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 220px;
+    padding: 0 56px;
+    border-radius: 28px;
+    background-color: #2A2440;
+    border-width: 2px;
+    border-color: #A878F0;
+  }
+  .start-left { flex-direction: column; }
+  .start-kicker { font-size: 20px; color: #A878F0; letter-spacing: 4px; -unity-font-style: bold; }
+  .start-title { font-size: 56px; color: #F4F6FF; -unity-font-style: bold; margin-top: 8px; }
+  .start-desc { font-size: 20px; color: #9AA1BC; margin-top: 12px; }
+  .start-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 320px;
+    height: 110px;
+    border-radius: 22px;
+    background-color: #F2C14E;
+    border-width: 0;
+  }
+  .start-btn-ic { width: 44px; height: 44px; margin-right: 16px; }
+  .start-btn-tx { font-size: 36px; color: #1A1320; -unity-font-style: bold; }
+
+  /* Right player panel */
+  .right {
+    width: 600px;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 24px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 32px;
+  }
+  .panel-title { font-size: 26px; color: #F4F6FF; -unity-font-style: bold; margin-bottom: 24px; }
+  .rank-row {
+    flex-direction: row;
+    align-items: center;
+    height: 110px;
+    padding: 0 24px;
+    border-radius: 18px;
+    background-color: #232739;
+    margin-bottom: 24px;
+  }
+  .rank-badge {
+    width: 78px;
+    height: 78px;
+    border-radius: 16px;
+    background-color: #1F2333;
+    border-width: 2px;
+    border-color: #F2C14E;
+    align-items: center;
+    justify-content: center;
+    margin-right: 22px;
+  }
+  .rank-meta { flex-direction: column; flex-grow: 1; }
+  .rank-name { font-size: 28px; color: #F2C14E; -unity-font-style: bold; }
+  .rank-pts { font-size: 18px; color: #9AA1BC; margin-top: 6px; }
+  .rank-num { font-size: 40px; color: #F4F6FF; -unity-font-style: bold; }
+
+  /* LP progress to next rank */
+  .lp-label { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .lp-cap { font-size: 18px; color: #9AA1BC; }
+  .lp-val { font-size: 18px; color: #4FD6C9; -unity-font-style: bold; }
+  .bar {
+    flex-direction: row;
+    width: 536px;
+    height: 18px;
+    background-color: #12141F;
+    border-radius: 9px;
+    margin-bottom: 28px;
+  }
+  .bar-fill {
+    height: 18px;
+    width: 380px;
+    background-color: #4FD6C9;
+    border-radius: 9px;
+  }
+
+  .stat-row { flex-direction: row; justify-content: space-between; }
+  .stat {
+    width: 168px;
+    height: 120px;
+    border-radius: 16px;
+    background-color: #232739;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .stat-num { font-size: 38px; color: #F4F6FF; -unity-font-style: bold; }
+  .stat-cap { font-size: 16px; color: #8B93AD; margin-top: 8px; }
+
+  /* ===== Secondary entries ===== */
+  .entries {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 48px 44px 48px;
+  }
+  .entry {
+    width: 590px;
+    height: 150px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 32px;
+    border-radius: 20px;
+    background-color: #1A1D2C;
+    border-width: 1px;
+    border-color: #2C3142;
+  }
+  .entry-ic {
+    width: 84px;
+    height: 84px;
+    border-radius: 18px;
+    background-color: #232739;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
+  }
+  .entry-meta { flex-direction: column; }
+  .entry-title { font-size: 28px; color: #F4F6FF; -unity-font-style: bold; }
+  .entry-desc { font-size: 18px; color: #8B93AD; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- Top resource bar -->
+    <div class="topbar">
+      <div class="player">
+        <div class="avatar">
+          <svg id="icon-avatar" width="36" height="36" viewBox="0 0 36 36">
+            <circle cx="18" cy="13" r="8" fill="#F2C14E"/>
+            <path d="M5 33c0-7 6-11 13-11s13 4 13 11z" fill="#4FD6C9"/>
+          </svg>
+        </div>
+        <div class="player-meta">
+          <span class="player-name">指挥官·星陨</span>
+          <span class="player-tier">钻石 II · 在线</span>
+        </div>
+      </div>
+      <div class="res-group">
+        <div class="res">
+          <svg id="icon-coin" width="28" height="28" viewBox="0 0 28 28">
+            <circle cx="14" cy="14" r="12" fill="#F2C14E"/>
+            <circle cx="14" cy="14" r="8" fill="#D9A638"/>
+            <path d="M14 8v12M10 11h6a2 2 0 010 4h-4a2 2 0 000 4h6" stroke="#FFF3D0" stroke-width="2" fill="none"/>
+          </svg>
+          <span class="res-val">12,480</span>
+        </div>
+        <div class="res">
+          <svg id="icon-gem" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M14 3l9 7-9 15-9-15z" fill="#4FD6C9"/>
+            <path d="M14 3l9 7-9 6-9-6z" fill="#7FE8DD"/>
+          </svg>
+          <span class="res-val">386</span>
+        </div>
+        <div class="res">
+          <svg id="icon-ticket" width="28" height="28" viewBox="0 0 28 28">
+            <rect x="3" y="7" width="22" height="14" rx="3" fill="#A878F0"/>
+            <circle cx="14" cy="14" r="3" fill="#12141F"/>
+          </svg>
+          <span class="res-val">24</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+      <div class="left">
+        <div class="brand">
+          <div class="brand-row">
+            <div class="logo-mark">
+              <svg id="icon-logo-rook" width="56" height="56" viewBox="0 0 56 56">
+                <path d="M14 12h6v6h4v-6h6v6h4v-6h6v14H14z" fill="#F2C14E"/>
+                <rect x="18" y="26" width="20" height="18" fill="#D9A638"/>
+                <rect x="12" y="44" width="32" height="6" rx="2" fill="#F2C14E"/>
+              </svg>
+            </div>
+            <span class="brand-title">符文棋阵</span>
+          </div>
+          <span class="brand-sub">RUNE TACTICS · 八人策略自走棋</span>
+        </div>
+
+        <div class="start-card">
+          <div class="start-left">
+            <span class="start-kicker">RANKED MATCH</span>
+            <span class="start-title">开始匹配</span>
+            <span class="start-desc">八人竞技 · 平均等待 18 秒 · 段位结算开启</span>
+          </div>
+          <button class="start-btn">
+            <svg id="icon-play" width="44" height="44" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="20" fill="#1A1320"/>
+              <path d="M17 13l16 9-16 9z" fill="#F2C14E"/>
+            </svg>
+            <span class="start-btn-tx">匹配</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="right">
+        <span class="panel-title">段位战绩</span>
+        <div class="rank-row">
+          <div class="rank-badge">
+            <svg id="icon-rank-diamond" width="44" height="44" viewBox="0 0 44 44">
+              <path d="M22 4l16 12-16 24L6 16z" fill="#4FD6C9"/>
+              <path d="M22 4l16 12-16 9L6 16z" fill="#9CF0E6"/>
+            </svg>
+          </div>
+          <div class="rank-meta">
+            <span class="rank-name">钻石 II</span>
+            <span class="rank-pts">本赛季最高名次 1st × 14</span>
+          </div>
+          <span class="rank-num">68LP</span>
+        </div>
+
+        <div class="lp-label">
+          <span class="lp-cap">距离 钻石 I</span>
+          <span class="lp-val">68 / 100 LP</span>
+        </div>
+        <div class="bar"><div class="bar-fill"></div></div>
+
+        <div class="stat-row">
+          <div class="stat">
+            <span class="stat-num">236</span>
+            <span class="stat-cap">总场次</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">41%</span>
+            <span class="stat-cap">前四率</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">3.8</span>
+            <span class="stat-cap">平均名次</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Secondary entries -->
+    <div class="entries">
+      <button class="entry">
+        <div class="entry-ic">
+          <svg id="icon-codex-piece" width="48" height="48" viewBox="0 0 48 48">
+            <rect x="8" y="6" width="32" height="36" rx="4" fill="#232739" stroke="#F2C14E" stroke-width="2"/>
+            <circle cx="24" cy="18" r="7" fill="#F2C14E"/>
+            <rect x="14" y="28" width="20" height="4" rx="2" fill="#4FD6C9"/>
+            <rect x="14" y="35" width="14" height="4" rx="2" fill="#8B93AD"/>
+          </svg>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-title">棋子图鉴</span>
+          <span class="entry-desc">62 名棋子 · 费用 / 技能 / 合成树</span>
+        </div>
+      </button>
+
+      <button class="entry">
+        <div class="entry-ic">
+          <svg id="icon-codex-synergy" width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="16" cy="16" r="7" fill="#4FD6C9"/>
+            <circle cx="32" cy="16" r="7" fill="#A878F0"/>
+            <circle cx="24" cy="32" r="7" fill="#F2C14E"/>
+            <path d="M16 16L24 32M32 16L24 32M16 16h16" stroke="#8B93AD" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-title">羁绊图鉴</span>
+          <span class="entry-desc">28 组羁绊 · 激活档位 / 效果联动</span>
+        </div>
+      </button>
+
+      <button class="entry">
+        <div class="entry-ic">
+          <svg id="icon-shop" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M8 14h32l-3 22a3 3 0 01-3 3H14a3 3 0 01-3-3z" fill="#A878F0"/>
+            <path d="M16 14a8 8 0 0116 0" stroke="#F2C14E" stroke-width="3" fill="none"/>
+            <circle cx="19" cy="26" r="2.5" fill="#12141F"/>
+            <circle cx="29" cy="26" r="2.5" fill="#12141F"/>
+          </svg>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-title">商城</span>
+          <span class="entry-desc">棋子皮肤 / 棋盘 / 战令 限时上新</span>
+        </div>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

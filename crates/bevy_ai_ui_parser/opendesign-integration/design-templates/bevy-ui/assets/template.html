@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bevy UI Asset-First Template</title>
+<style>
+/*
+ * Bevy UI asset-first template.
+ *
+ * This file is the structural seed for `index.html`.
+ * It is not the whole deliverable by itself.
+ *
+ * Recommended sibling outputs:
+ *   - ./Asset/
+ *   - ./bevy-ui.assets.json (optional tooling metadata)
+ *
+ * Asset rules:
+ *   - Use relative paths only.
+ *   - Put backgrounds in ./Asset/backgrounds/
+ *   - Put panels in ./Asset/panels/
+ *   - Put buttons in ./Asset/buttons/
+ *   - Put icons in ./Asset/icons/
+ *   - Put sliders in ./Asset/sliders/
+ *   - Put scrollbars in ./Asset/scrollbars/
+ *   - Put atlas sheets in ./Asset/atlas/
+ *
+ * Final game visuals should come from real images, not complex CSS approximation.
+ */
+
+:root {
+  --bg: #111111;
+  --surface: #1c1c1c;
+  --fg: #ffffff;
+  --muted: #888888;
+  --border: #333333;
+  --accent: #f97316;
+  --accent-hover: #e8790e;
+  --accent-active: #d97006;
+  --success: #22c55e;
+  --warn: #fbbf24;
+  --danger: #ef4444;
+
+  --font-display: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-body: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-mono: ui-monospace, "Menlo", "Monaco", "Courier", monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.bevy-ui-root {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.screen-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("Asset/backgrounds/screen_bg.png");
+  background-position: center;
+  background-size: cover;
+  opacity: 0.92;
+}
+
+.screen {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 960px;
+  min-height: 560px;
+  padding: var(--space-8);
+  background-image: url("Asset/panels/main_panel_bg.png");
+  background-position: center;
+  background-size: 100% 100%;
+  border-radius: var(--radius-lg);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.close-btn {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background-color: transparent;
+  background-image: url("Asset/buttons/close_idle.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.close-btn:hover {
+  background-image: url("Asset/buttons/close_hover.png");
+}
+
+.close-btn:active {
+  background-image: url("Asset/buttons/close_pressed.png");
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-6);
+  flex: 1;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.nav-btn {
+  min-height: 64px;
+  border: 0;
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  background-color: transparent;
+  background-image: url("Asset/buttons/nav_idle.png");
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.nav-btn:hover {
+  background-image: url("Asset/buttons/nav_hover.png");
+}
+
+.nav-btn:active {
+  background-image: url("Asset/buttons/nav_pressed.png");
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.icon-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.skill-icon,
+.equip-icon,
+.spinner {
+  width: 56px;
+  height: 56px;
+  background-position: center;
+  background-size: cover;
+}
+
+.skill-icon {
+  background-image: url("Asset/icons/skill_placeholder.png");
+}
+
+.equip-icon {
+  background-image: url("Asset/icons/equip_placeholder.png");
+}
+
+.spinner {
+  background-image: url("Asset/atlas/loading_spinner.png");
+}
+</style>
+</head>
+<body>
+<div class="bevy-ui-root">
+  <div class="screen-bg"></div>
+  <div class="screen">
+    <section id="main_panel" class="panel">
+      <header class="title-row">
+        <div class="title">Bevy UI Screen</div>
+        <button
+          id="close_btn"
+          class="close-btn"
+          type="button"
+          data-action="close_panel"
+          aria-label="Close panel"
+        ></button>
+      </header>
+
+      <div class="content">
+        <nav class="nav">
+          <button class="nav-btn" type="button" data-tab="general" data-tab-group="settings">
+            General
+          </button>
+          <button class="nav-btn" type="button" data-tab="audio" data-tab-group="settings">
+            Audio
+          </button>
+          <button class="nav-btn" type="button" data-tab="video" data-tab-group="settings">
+            Video
+          </button>
+        </nav>
+
+        <main class="main" data-tab-panel="general">
+          <div>Replace placeholder assets with imported or generated production art.</div>
+          <div class="icon-row">
+            <div
+              id="skill_icon"
+              class="skill-icon"
+              data-skill="fireball"
+              aria-label="Fireball skill"
+            ></div>
+            <div
+              id="equip_icon"
+              class="equip-icon"
+              data-equip="shield"
+              aria-label="Shield equipment"
+            ></div>
+            <div id="loading_spinner" class="spinner" aria-label="Loading spinner"></div>
+          </div>
+        </main>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

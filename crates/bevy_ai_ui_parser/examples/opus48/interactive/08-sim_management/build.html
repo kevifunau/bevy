@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #FFF1DC;
+}
+
+/* ===== shared page header ===== */
+.pagehead {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 110px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 36px;
+}
+.back-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background-color: #FFF1DC;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.head-title-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.head-title { font-size: 32px; color: #5A3E2B; font-weight: bold; }
+.head-sub { font-size: 16px; color: #B08968; margin-top: 3px; }
+.head-res {
+  flex-direction: row;
+  align-items: center;
+  height: 110px;
+}
+.hres-chip {
+  flex-direction: row;
+  align-items: center;
+  height: 56px;
+  background-color: #FFF6E9;
+  border-radius: 28px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 0 20px 0 10px;
+  margin-left: 16px;
+}
+.hres-ico { width: 34px; height: 34px; align-items: center; justify-content: center; margin-right: 10px; }
+.hres-val { font-size: 20px; color: #5A3E2B; font-weight: bold; }
+
+/* ===== layout ===== */
+.content {
+  flex-direction: row;
+  width: 1920px;
+  height: 970px;
+  padding: 28px 36px;
+}
+
+/* category rail */
+.cats {
+  width: 280px;
+  height: 914px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 20px;
+  margin-right: 28px;
+}
+.cats-title { font-size: 20px; color: #5A3E2B; font-weight: bold; margin-bottom: 16px; }
+.cat {
+  flex-direction: row;
+  align-items: center;
+  width: 240px;
+  height: 78px;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin-bottom: 12px;
+}
+.cat.is-active { background-color: #FCE3BD; border-width: 2px; border-color: #F0C98A; }
+.cat-ico {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background-color: #FFF1DC;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+}
+.cat.is-active .cat-ico { background-color: #FFFFFF; }
+.cat-meta { flex-direction: column; justify-content: center; }
+.cat-name { font-size: 19px; color: #5A3E2B; font-weight: bold; }
+.cat-count { font-size: 14px; color: #B08968; margin-top: 2px; }
+
+/* cards grid */
+.cards-wrap { flex-direction: column; flex-grow: 1; }
+.cards-row {
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 26px;
+}
+.card {
+  width: 412px;
+  height: 444px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 22px;
+  margin-right: 26px;
+}
+.card-thumb {
+  width: 368px;
+  height: 150px;
+  border-radius: 18px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.t-red { background-color: #FCE0DA; }
+.t-honey { background-color: #FCEBCF; }
+.t-grape { background-color: #EBE3F7; }
+.card-house {
+  width: 96px;
+  height: 96px;
+  align-items: center;
+  justify-content: center;
+}
+.card-head {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 6px;
+}
+.card-name { font-size: 24px; color: #5A3E2B; font-weight: bold; }
+.lvl-tag {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  background-color: #FFF1DC;
+  border-radius: 17px;
+  padding: 0 14px;
+}
+.lvl-tag-txt { font-size: 15px; color: #B08968; font-weight: bold; }
+.card-desc { font-size: 15px; color: #B08968; margin-bottom: 14px; }
+
+.stat-row {
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.stat {
+  flex-grow: 1;
+  flex-basis: 0;
+  height: 64px;
+  background-color: #FFF6E9;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-right: 12px;
+}
+.stat-label { font-size: 13px; color: #B08968; }
+.stat-val { flex-direction: row; align-items: center; margin-top: 4px; }
+.stat-num { font-size: 19px; color: #5A3E2B; font-weight: bold; margin-left: 6px; }
+
+.card-foot {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.cost {
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+}
+.cost-ico { width: 30px; height: 30px; align-items: center; justify-content: center; margin-right: 8px; }
+.cost-num { font-size: 24px; color: #5A3E2B; font-weight: bold; }
+.act-btn {
+  width: 168px;
+  height: 60px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+}
+.act-build { background-color: #E8503A; }
+.act-up { background-color: #5FB67A; }
+.act-lock { background-color: #E7D7BE; }
+.act-txt { font-size: 20px; color: #FFFFFF; font-weight: bold; }
+.act-lock .act-txt { color: #9C7B52; }
+
+.lock-foot {
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  background-color: #FBF0DC;
+  border-radius: 16px;
+  padding: 0 16px;
+}
+.lock-ico { width: 30px; height: 30px; align-items: center; justify-content: center; margin-right: 12px; }
+.lock-txt { font-size: 16px; color: #9C7B52; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="pagehead">
+      <div class="back-btn">
+        <svg id="icon-back-build" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M20 6L10 16l10 10" fill="none" stroke="#5A3E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="head-title-wrap">
+        <span class="head-title">Build &amp; Upgrade</span>
+        <span class="head-sub">Expand your restaurant town</span>
+      </div>
+      <div class="head-res">
+        <div class="hres-chip">
+          <div class="hres-ico">
+            <svg id="icon-coin-b" width="30" height="30" viewBox="0 0 30 30">
+              <circle cx="15" cy="15" r="13" fill="#F5A623"/>
+              <circle cx="15" cy="15" r="9" fill="#FFD66B"/>
+            </svg>
+          </div>
+          <span class="hres-val">24,860</span>
+        </div>
+        <div class="hres-chip">
+          <div class="hres-ico">
+            <svg id="icon-gem-b" width="30" height="30" viewBox="0 0 30 30">
+              <path d="M8 6h14l4 7-11 11L4 13z" fill="#5AC8E8"/>
+            </svg>
+          </div>
+          <span class="hres-val">182</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- category rail -->
+      <div class="cats">
+        <span class="cats-title">Categories</span>
+        <div class="cat is-active">
+          <div class="cat-ico">
+            <svg id="icon-cat-food" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M9 4v10a3 3 0 0 0 6 0V4M12 4v24" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M22 4c-3 0-4 4-4 8s2 5 4 5v11" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-name">Eateries</span>
+            <span class="cat-count">6 buildings</span>
+          </div>
+        </div>
+        <div class="cat">
+          <div class="cat-ico">
+            <svg id="icon-cat-prod" width="32" height="32" viewBox="0 0 32 32">
+              <rect x="5" y="12" width="22" height="16" rx="2" fill="#F5A623"/>
+              <path d="M9 12V8a7 7 0 0 1 14 0v4" fill="none" stroke="#F5A623" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-name">Production</span>
+            <span class="cat-count">4 buildings</span>
+          </div>
+        </div>
+        <div class="cat">
+          <div class="cat-ico">
+            <svg id="icon-cat-deco" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M16 3l3.5 8L28 12l-6 6 1.5 9L16 23l-7.5 4L10 18l-6-6 8.5-1z" fill="#7C5CBF"/>
+            </svg>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-name">Decoration</span>
+            <span class="cat-count">8 buildings</span>
+          </div>
+        </div>
+        <div class="cat">
+          <div class="cat-ico">
+            <svg id="icon-cat-util" width="32" height="32" viewBox="0 0 32 32">
+              <circle cx="16" cy="16" r="6" fill="none" stroke="#5FB67A" stroke-width="3"/>
+              <path d="M16 4v4M16 24v4M4 16h4M24 16h4" stroke="#5FB67A" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-name">Utilities</span>
+            <span class="cat-count">3 buildings</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- cards -->
+      <div class="cards-wrap">
+        <div class="cards-row">
+
+          <!-- card: upgrade -->
+          <div class="card">
+            <div class="card-thumb t-red">
+              <div class="card-house">
+                <svg id="icon-house-diner" width="84" height="84" viewBox="0 0 84 84">
+                  <path d="M42 14L14 38v32a3 3 0 0 0 3 3h50a3 3 0 0 0 3-3V38z" fill="#E8503A"/>
+                  <path d="M10 40L42 14l32 26" fill="none" stroke="#C2402E" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="34" y="50" width="16" height="23" fill="#FFFFFF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Maple Diner</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">Lv.3</span></div>
+            </div>
+            <span class="card-desc">Your flagship diner. Serves classic comfort plates.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s1" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 320</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Capacity</span>
+                <div class="stat-val">
+                  <svg id="icon-seat1" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4" fill="#7C5CBF"/><path d="M3 17c0-3 3-5 7-5s7 2 7 5z" fill="#7C5CBF"/></svg>
+                  <span class="stat-num">48</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-foot">
+              <div class="cost">
+                <div class="cost-ico">
+                  <svg id="icon-coin-c1" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#F5A623"/><circle cx="14" cy="14" r="8" fill="#FFD66B"/></svg>
+                </div>
+                <span class="cost-num">5,200</span>
+              </div>
+              <div class="act-btn act-up"><span class="act-txt">Upgrade</span></div>
+            </div>
+          </div>
+
+          <!-- card: build -->
+          <div class="card">
+            <div class="card-thumb t-honey">
+              <div class="card-house">
+                <svg id="icon-house-bakery" width="84" height="84" viewBox="0 0 84 84">
+                  <rect x="16" y="34" width="52" height="38" rx="3" fill="#F5A623"/>
+                  <path d="M12 34h60l-8-14H20z" fill="#E8923A"/>
+                  <circle cx="42" cy="52" r="9" fill="#FFFFFF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Corner Bakery</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">New</span></div>
+            </div>
+            <span class="card-desc">Fresh bread &amp; pastries draw morning crowds.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s2" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 180</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Build time</span>
+                <div class="stat-val">
+                  <svg id="icon-clock1" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#5FB67A" stroke-width="2"/><path d="M10 6v4l3 2" fill="none" stroke="#5FB67A" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span class="stat-num">2h</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-foot">
+              <div class="cost">
+                <div class="cost-ico">
+                  <svg id="icon-coin-c2" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#F5A623"/><circle cx="14" cy="14" r="8" fill="#FFD66B"/></svg>
+                </div>
+                <span class="cost-num">3,400</span>
+              </div>
+              <div class="act-btn act-build"><span class="act-txt">Build</span></div>
+            </div>
+          </div>
+
+          <!-- card: locked -->
+          <div class="card">
+            <div class="card-thumb t-grape">
+              <div class="card-house">
+                <svg id="icon-house-cafe" width="84" height="84" viewBox="0 0 84 84">
+                  <rect x="20" y="30" width="44" height="42" rx="3" fill="#7C5CBF"/>
+                  <path d="M16 30h52l-6 12H22z" fill="#634AA0"/>
+                  <path d="M36 50h12v8a6 6 0 0 1-12 0z" fill="#FFFFFF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Rooftop Cafe</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">Locked</span></div>
+            </div>
+            <span class="card-desc">A cozy rooftop spot for late-night sippers.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s3" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 540</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Capacity</span>
+                <div class="stat-val">
+                  <svg id="icon-seat3" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4" fill="#7C5CBF"/><path d="M3 17c0-3 3-5 7-5s7 2 7 5z" fill="#7C5CBF"/></svg>
+                  <span class="stat-num">60</span>
+                </div>
+              </div>
+            </div>
+            <div class="lock-foot">
+              <div class="lock-ico">
+                <svg id="icon-lock1" width="28" height="28" viewBox="0 0 28 28">
+                  <rect x="6" y="13" width="16" height="11" rx="2" fill="#9C7B52"/>
+                  <path d="M9 13v-3a5 5 0 0 1 10 0v3" fill="none" stroke="#9C7B52" stroke-width="2.5"/>
+                </svg>
+              </div>
+              <span class="lock-txt">Reach Level 30 to unlock</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="cards-row">
+
+          <!-- card 4: upgrade -->
+          <div class="card">
+            <div class="card-thumb t-honey">
+              <div class="card-house">
+                <svg id="icon-house-grill" width="84" height="84" viewBox="0 0 84 84">
+                  <rect x="18" y="32" width="48" height="40" rx="3" fill="#F5A623"/>
+                  <path d="M14 32h56l-7-13H21z" fill="#E8923A"/>
+                  <rect x="34" y="48" width="16" height="24" fill="#FFFFFF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Grill House</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">Lv.2</span></div>
+            </div>
+            <span class="card-desc">Sizzling steaks and smoky barbecue platters.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s4" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 260</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Capacity</span>
+                <div class="stat-val">
+                  <svg id="icon-seat4" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4" fill="#7C5CBF"/><path d="M3 17c0-3 3-5 7-5s7 2 7 5z" fill="#7C5CBF"/></svg>
+                  <span class="stat-num">36</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-foot">
+              <div class="cost">
+                <div class="cost-ico">
+                  <svg id="icon-coin-c4" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#F5A623"/><circle cx="14" cy="14" r="8" fill="#FFD66B"/></svg>
+                </div>
+                <span class="cost-num">4,100</span>
+              </div>
+              <div class="act-btn act-up"><span class="act-txt">Upgrade</span></div>
+            </div>
+          </div>
+
+          <!-- card 5: build -->
+          <div class="card">
+            <div class="card-thumb t-red">
+              <div class="card-house">
+                <svg id="icon-house-pizza" width="84" height="84" viewBox="0 0 84 84">
+                  <path d="M42 16L18 64h48z" fill="#E8503A"/>
+                  <circle cx="36" cy="46" r="4" fill="#FFFFFF"/>
+                  <circle cx="48" cy="42" r="4" fill="#FFFFFF"/>
+                  <circle cx="42" cy="56" r="4" fill="#FFFFFF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Pizza Parlor</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">New</span></div>
+            </div>
+            <span class="card-desc">Wood-fired pizzas with a loyal weekend following.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s5" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 300</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Build time</span>
+                <div class="stat-val">
+                  <svg id="icon-clock5" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#5FB67A" stroke-width="2"/><path d="M10 6v4l3 2" fill="none" stroke="#5FB67A" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span class="stat-num">3h</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-foot">
+              <div class="cost">
+                <div class="cost-ico">
+                  <svg id="icon-coin-c5" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#F5A623"/><circle cx="14" cy="14" r="8" fill="#FFD66B"/></svg>
+                </div>
+                <span class="cost-num">5,800</span>
+              </div>
+              <div class="act-btn act-build"><span class="act-txt">Build</span></div>
+            </div>
+          </div>
+
+          <!-- card 6: locked -->
+          <div class="card">
+            <div class="card-thumb t-grape">
+              <div class="card-house">
+                <svg id="icon-house-sushi" width="84" height="84" viewBox="0 0 84 84">
+                  <rect x="18" y="34" width="48" height="38" rx="3" fill="#7C5CBF"/>
+                  <path d="M14 34h56l-7-12H21z" fill="#634AA0"/>
+                  <circle cx="42" cy="54" r="10" fill="#FFFFFF"/>
+                  <circle cx="42" cy="54" r="4" fill="#7C5CBF"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-head">
+              <span class="card-name">Sushi Bar</span>
+              <div class="lvl-tag"><span class="lvl-tag-txt">Locked</span></div>
+            </div>
+            <span class="card-desc">Premium rolls crafted by a master chef.</span>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-label">Output / h</span>
+                <div class="stat-val">
+                  <svg id="icon-coin-s6" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#F5A623"/><circle cx="10" cy="10" r="5" fill="#FFD66B"/></svg>
+                  <span class="stat-num">+ 720</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Capacity</span>
+                <div class="stat-val">
+                  <svg id="icon-seat6" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="7" r="4" fill="#7C5CBF"/><path d="M3 17c0-3 3-5 7-5s7 2 7 5z" fill="#7C5CBF"/></svg>
+                  <span class="stat-num">28</span>
+                </div>
+              </div>
+            </div>
+            <div class="lock-foot">
+              <div class="lock-ico">
+                <svg id="icon-lock6" width="28" height="28" viewBox="0 0 28 28">
+                  <rect x="6" y="13" width="16" height="11" rx="2" fill="#9C7B52"/>
+                  <path d="M9 13v-3a5 5 0 0 1 10 0v3" fill="none" stroke="#9C7B52" stroke-width="2.5"/>
+                </svg>
+              </div>
+              <span class="lock-txt">Finish "Gourmet" questline</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

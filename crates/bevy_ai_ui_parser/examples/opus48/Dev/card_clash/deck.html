@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #16102E;
+  --bg1: #1F1742;
+  --panel: #2A1F58;
+  --panel2: #362873;
+  --line: #4A3A8C;
+  --gold: #F2C14E;
+  --gold-d: #C9971F;
+  --rune: #B06BFF;
+  --rune-d: #7E3FD6;
+  --mana: #3FC8E8;
+  --mana-d: #1E96B8;
+  --text: #EDE8FF;
+  --text-dim: #9486C4;
+  --red: #FF5A6E;
+  --green: #5BE0A0;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 56px 48px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 88px; margin-bottom: 32px; }
+.back {
+  width: 80px; height: 80px;
+  background-color: var(--panel);
+  border-radius: 24px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 24px;
+}
+.title { font-size: 52px; color: var(--text); font-weight: bold; white-space: normal; flex-grow: 1; }
+.count-chip {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 72px;
+  background-color: var(--panel);
+  border-radius: 22px;
+  border-width: 3px; border-color: var(--gold);
+  padding: 0 28px;
+}
+.count-tx { font-size: 36px; min-height: 44px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+/* ---------- mana curve ---------- */
+.curve-card {
+  flex-direction: column;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  border-width: 3px; border-color: var(--line);
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.curve-head { flex-direction: row; align-items: center; justify-content: space-between; height: 44px; margin-bottom: 20px; }
+.curve-title { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.curve-deck { font-size: 28px; min-height: 34px; color: var(--mana); font-weight: bold; white-space: normal; }
+.curve-bars { flex-direction: row; align-items: flex-end; height: 160px; }
+.cb-col { flex-direction: column; align-items: center; justify-content: flex-end; flex-grow: 1; height: 160px; margin-right: 12px; }
+.cb-bar { width: 56px; background-color: var(--rune); border-radius: 8px; }
+.cb-bar-hi { width: 56px; background-color: var(--gold); }
+.cb-lbl { font-size: 24px; min-height: 30px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 10px; }
+
+/* ---------- collection grid ---------- */
+.coll-label { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 20px; }
+.grid { flex-direction: column; flex-grow: 1; }
+.grid-row { flex-direction: row; align-items: stretch; height: 312px; margin-bottom: 24px; }
+.card {
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: var(--panel);
+  border-radius: 24px;
+  border-width: 4px; border-color: var(--line);
+  padding: 16px;
+  margin-right: 24px;
+}
+.card-last { margin-right: 0; }
+.card-rune { border-color: var(--rune); }
+.card-gold { border-color: var(--gold); }
+.card-mana { border-color: var(--mana); }
+.card-top { flex-direction: row; align-items: center; justify-content: space-between; height: 56px; }
+.card-cost {
+  width: 56px; height: 56px;
+  background-color: var(--mana);
+  border-radius: 28px;
+  align-items: center; justify-content: center;
+}
+.card-cost-tx { font-size: 34px; min-height: 42px; color: #08222A; font-weight: bold; white-space: normal; }
+.card-cnt { font-size: 26px; min-height: 32px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.card-art {
+  flex-grow: 1;
+  background-color: var(--bg1);
+  border-radius: 16px;
+  align-items: center; justify-content: center;
+  margin: 14px 0;
+}
+.card-name { font-size: 28px; min-height: 36px; color: var(--text); font-weight: bold; white-space: normal; }
+.card-stats { flex-direction: row; align-items: center; justify-content: space-between; height: 40px; margin-top: 8px; }
+.card-atk { font-size: 30px; min-height: 38px; color: var(--gold); font-weight: bold; white-space: normal; }
+.card-hp { font-size: 30px; min-height: 38px; color: var(--red); font-weight: bold; white-space: normal; }
+
+/* ---------- bottom save ---------- */
+.save {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 130px;
+  background-color: var(--gold);
+  border-radius: 36px;
+  border-width: 4px; border-color: var(--gold-d);
+  margin-top: 16px;
+}
+.save-tx { font-size: 44px; min-height: 54px; color: #2A1F02; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M28 10 L14 22 L28 34" stroke="#9486C4" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="title">奥术卡组</span>
+      <div class="count-chip">
+        <span class="count-tx">30 / 30</span>
+      </div>
+    </div>
+
+    <div class="curve-card">
+      <div class="curve-head">
+        <span class="curve-title">法力曲线 MANA CURVE</span>
+        <span class="curve-deck">攻击型</span>
+      </div>
+      <div class="curve-bars">
+        <div class="cb-col"><div class="cb-bar" style="height:40px"></div><span class="cb-lbl">1</span></div>
+        <div class="cb-col"><div class="cb-bar" style="height:90px"></div><span class="cb-lbl">2</span></div>
+        <div class="cb-col"><div class="cb-bar cb-bar-hi" style="height:130px"></div><span class="cb-lbl">3</span></div>
+        <div class="cb-col"><div class="cb-bar" style="height:100px"></div><span class="cb-lbl">4</span></div>
+        <div class="cb-col"><div class="cb-bar" style="height:70px"></div><span class="cb-lbl">5</span></div>
+        <div class="cb-col"><div class="cb-bar" style="height:48px"></div><span class="cb-lbl">6</span></div>
+        <div class="cb-col"><div class="cb-bar" style="height:30px"></div><span class="cb-lbl">7+</span></div>
+      </div>
+    </div>
+
+    <span class="coll-label">— 收藏 COLLECTION —</span>
+    <div class="grid">
+      <div class="grid-row">
+        <div class="card card-gold">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">3</span></div>
+            <span class="card-cnt">x2</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd1" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="30" r="16" fill="#F2C14E"/>
+              <path d="M18 66 C18 50 30 44 40 44 C50 44 62 50 62 66 Z" fill="#F2C14E"/>
+            </svg>
+          </div>
+          <span class="card-name">秘法骑士</span>
+          <div class="card-stats">
+            <span class="card-atk">4</span>
+            <span class="card-hp">5</span>
+          </div>
+        </div>
+        <div class="card card-rune">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">2</span></div>
+            <span class="card-cnt">x2</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd2" width="80" height="80" viewBox="0 0 80 80">
+              <path d="M40 14 L28 42 L40 34 L52 42 Z" fill="#B06BFF"/>
+              <circle cx="40" cy="56" r="12" fill="#B06BFF"/>
+            </svg>
+          </div>
+          <span class="card-name">符文精灵</span>
+          <div class="card-stats">
+            <span class="card-atk">3</span>
+            <span class="card-hp">2</span>
+          </div>
+        </div>
+        <div class="card card-mana card-last">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">5</span></div>
+            <span class="card-cnt">x1</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd3" width="80" height="80" viewBox="0 0 80 80">
+              <path d="M40 12 L60 30 L40 68 L20 30 Z" fill="#3FC8E8"/>
+              <path d="M20 30 L60 30 L40 68 Z" fill="#2A9BB8"/>
+            </svg>
+          </div>
+          <span class="card-name">寒冰巨像</span>
+          <div class="card-stats">
+            <span class="card-atk">6</span>
+            <span class="card-hp">7</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-row">
+        <div class="card card-rune">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">1</span></div>
+            <span class="card-cnt">x2</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd4" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="20" fill="none" stroke="#B06BFF" stroke-width="6"/>
+              <circle cx="40" cy="40" r="8" fill="#B06BFF"/>
+            </svg>
+          </div>
+          <span class="card-name">奥术飞弹</span>
+          <div class="card-stats">
+            <span class="card-atk">法术</span>
+            <span class="card-hp">2点</span>
+          </div>
+        </div>
+        <div class="card card-gold">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">4</span></div>
+            <span class="card-cnt">x1</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd5" width="80" height="80" viewBox="0 0 80 80">
+              <path d="M40 10 L48 30 L70 32 L52 46 L58 68 L40 56 L22 68 L28 46 L10 32 L32 30 Z" fill="#F2C14E"/>
+            </svg>
+          </div>
+          <span class="card-name">圣光守卫</span>
+          <div class="card-stats">
+            <span class="card-atk">5</span>
+            <span class="card-hp">6</span>
+          </div>
+        </div>
+        <div class="card card-last">
+          <div class="card-top">
+            <div class="card-cost"><span class="card-cost-tx">6</span></div>
+            <span class="card-cnt">x1</span>
+          </div>
+          <div class="card-art">
+            <svg id="cd6" width="80" height="80" viewBox="0 0 80 80">
+              <path d="M40 12 C26 30 26 46 40 64 C54 46 54 30 40 12 Z" fill="#FF5A6E"/>
+            </svg>
+          </div>
+          <span class="card-name">炎魔领主</span>
+          <div class="card-stats">
+            <span class="card-atk">7</span>
+            <span class="card-hp">8</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save">
+      <span class="save-tx">保存卡组</span>
+    </div>
+
+  </div>
+</body>
+</html>

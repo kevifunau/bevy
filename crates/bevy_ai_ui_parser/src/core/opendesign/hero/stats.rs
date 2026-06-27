@@ -1,0 +1,82 @@
+use crate::core::model::{bui_node, text_node, BuiNode};
+
+pub(super) fn hero_game_ui_base_stats(
+) -> [(&'static str, &'static str, &'static str, &'static str); 5] {
+    [
+        ("⚔", "武力", "136.28", "+18"),
+        ("♞", "统帅", "136.2", "+186"),
+        ("✦", "智谋", "136.3", "+86"),
+        ("⚡", "速度", "28.66", "+210"),
+        ("⌂", "政务", "206.2", "+186"),
+    ]
+}
+
+pub(super) fn hero_game_ui_stat_row(
+    index: usize,
+    icon: &str,
+    label: &str,
+    base: &str,
+    bonus: &str,
+) -> BuiNode {
+    let mut row = bui_node(&format!("hero_stat_row_{index}"), "node");
+    row.markers.push("class:stat-row".to_string());
+    row.layout.styles.display = Some("grid".to_string());
+    row.layout.styles.grid_template_columns = Some("flex(1) auto auto".to_string());
+    row.layout.styles.align_items = Some("center".to_string());
+    row.layout.styles.column_gap = Some("10px".to_string());
+    row.layout.styles.padding = Some("0 8px".to_string());
+    row.layout.styles.min_height = Some("40px".to_string());
+    row.style.visuals.background_color = Some("#6D5A6333".to_string());
+
+    let mut label_node = bui_node(&format!("hero_stat_label_{index}"), "node");
+    label_node.markers.push("class:stat-label".to_string());
+    label_node.layout.styles.display = Some("flex".to_string());
+    label_node.layout.styles.align_items = Some("center".to_string());
+    label_node.layout.styles.column_gap = Some("11px".to_string());
+    label_node.layout.styles.min_width = Some("0".to_string());
+    label_node.children.push(text_node(
+        &format!("hero_stat_icon_text_{index}"),
+        icon,
+        22.0,
+        "#E9DDC8",
+        Some("Apple Symbols.ttf"),
+    ));
+    label_node.children.push(text_node(
+        &format!("hero_stat_label_text_{index}"),
+        label,
+        24.0,
+        "#F0E7D8",
+        Some("Hiragino Sans GB.ttc"),
+    ));
+
+    let mut base_node = bui_node(&format!("hero_stat_base_{index}"), "node");
+    base_node.markers.push("class:stat-base".to_string());
+    base_node.layout.styles.display = Some("flex".to_string());
+    base_node.layout.styles.justify_content = Some("flex-end".to_string());
+    base_node.layout.styles.align_items = Some("center".to_string());
+    base_node.children.push(text_node(
+        &format!("hero_stat_base_text_{index}"),
+        base,
+        24.0,
+        "#F6EBDD",
+        Some("Palatino.ttc"),
+    ));
+
+    let mut bonus_node = bui_node(&format!("hero_stat_bonus_{index}"), "node");
+    bonus_node.markers.push("class:stat-bonus".to_string());
+    bonus_node.layout.styles.display = Some("flex".to_string());
+    bonus_node.layout.styles.justify_content = Some("flex-end".to_string());
+    bonus_node.layout.styles.align_items = Some("center".to_string());
+    bonus_node.children.push(text_node(
+        &format!("hero_stat_bonus_text_{index}"),
+        bonus,
+        24.0,
+        "#B7DD6D",
+        Some("Palatino.ttc"),
+    ));
+
+    row.children.push(label_node);
+    row.children.push(base_node);
+    row.children.push(bonus_node);
+    row
+}

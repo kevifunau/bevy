@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "Roguelike 地牢探险游戏 UI 套件,暗黑奇幻风格,横屏 1920x1080,含主菜单/角色天赋/战斗HUD/随机事件/结算共五页。",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index",     "role": "主菜单:品牌区 + 玩家信息,主入口『开始远征』与次级入口" },
+    { "id": "character", "role": "角色与天赋:角色展示、可分配天赋树、属性总览、装备槽" },
+    { "id": "hud",       "role": "战斗HUD:生命/法力/护盾、当前层数与小地图、技能道具快捷栏、敌人信息" },
+    { "id": "event",     "role": "随机事件:事件描述、多个选项按钮、风险/收益提示" },
+    { "id": "result",    "role": "结算:本局战绩、获得战利品、解锁进度、重试/返回入口" }
+  ],
+  "styleAxes": {
+    "mood": "暗黑奇幻地牢 — 阴森、神秘、英雄主义的紧张感",
+    "accent": "琥珀金高光 (#E0A94B) + 血红警示 (#C23B3B),在墨黑石板底色上凸显",
+    "density": "中等密度:横屏分栏布局,卡片化信息块,留白克制但不拥挤",
+    "type": "无衬线粗体标题 + 中等正文,金色描边强调远征/危险等关键字"
+  }
+}

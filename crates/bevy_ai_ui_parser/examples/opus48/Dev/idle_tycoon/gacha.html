@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #211711;
+  --bg1: #2E2018;
+  --panel: #3A2A1E;
+  --panel2: #4A372A;
+  --line: #5E4634;
+  --gold: #FFC247;
+  --gold-d: #D9941C;
+  --emerald: #4FD98A;
+  --emerald-d: #28A862;
+  --wood: #C98A4B;
+  --text: #F5ECE0;
+  --text-dim: #B79C82;
+  --blue: #5BB8FF;
+  --red: #FF6B5A;
+  --purple: #B07BFF;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 48px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 100px; margin-bottom: 36px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--panel);
+  border-radius: 26px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 56px; color: var(--gold); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 2px; }
+
+/* ---------- banner ---------- */
+.banner {
+  flex-direction: column;
+  height: 460px;
+  background-color: var(--bg1);
+  border-radius: 40px;
+  border-width: 4px; border-color: var(--gold);
+  padding: 40px;
+  margin-bottom: 36px;
+  justify-content: space-between;
+}
+.banner-tag {
+  flex-direction: row; align-items: center; justify-content: center;
+  min-width: 220px; height: 60px;
+  background-color: var(--red);
+  border-radius: 30px;
+  padding: 0 26px;
+}
+.banner-tag-tx { font-size: 28px; min-height: 34px; color: #FFFFFF; font-weight: bold; white-space: normal; }
+.banner-mid { flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
+.banner-orb {
+  width: 200px; height: 200px;
+  background-color: var(--panel);
+  border-radius: 100px;
+  border-width: 5px; border-color: var(--purple);
+  align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.banner-name { font-size: 52px; min-height: 64px; color: var(--text); font-weight: bold; white-space: normal; }
+.banner-sub { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 6px; }
+
+/* ---------- pull buttons ---------- */
+.pulls { flex-direction: row; align-items: center; height: 168px; margin-bottom: 40px; }
+.pull {
+  flex-direction: column; align-items: center; justify-content: center;
+  height: 168px;
+  border-radius: 34px;
+  border-width: 4px;
+  flex-grow: 1;
+}
+.pull-1 { background-color: var(--panel); border-color: var(--line); margin-right: 24px; }
+.pull-10 { background-color: var(--gold); border-color: var(--gold-d); }
+.pull-tx { font-size: 44px; min-height: 54px; font-weight: bold; white-space: normal; }
+.pull-tx-1 { color: var(--text); }
+.pull-tx-10 { color: #3A2400; }
+.pull-cost { flex-direction: row; align-items: center; margin-top: 8px; }
+.pull-gem { width: 32px; height: 32px; margin-right: 8px; }
+.pull-cost-tx { font-size: 30px; min-height: 38px; font-weight: bold; white-space: normal; }
+.pull-cost-1 { color: var(--blue); }
+.pull-cost-10 { color: #6B4A10; }
+
+/* ---------- history grid ---------- */
+.sec-label { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 20px; }
+.hist { flex-direction: column; flex-grow: 1; }
+.hist-row { flex-direction: row; align-items: stretch; height: 200px; margin-bottom: 24px; }
+.drop {
+  flex-direction: column; align-items: center; justify-content: center;
+  flex-grow: 1;
+  background-color: var(--panel);
+  border-radius: 26px;
+  border-width: 4px; border-color: var(--line);
+  margin-right: 24px;
+}
+.drop-last { margin-right: 0; }
+.drop-r { border-color: var(--purple); }
+.drop-sr { border-color: var(--gold); }
+.drop-art {
+  width: 92px; height: 92px;
+  align-items: center; justify-content: center;
+  margin-bottom: 12px;
+}
+.drop-name { font-size: 28px; min-height: 36px; color: var(--text); font-weight: bold; white-space: normal; }
+.drop-rar { font-size: 24px; min-height: 30px; font-weight: bold; white-space: normal; margin-top: 4px; }
+.rar-r { color: var(--purple); }
+.rar-sr { color: var(--gold); }
+.rar-n { color: var(--text-dim); }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M30 10 L16 24 L30 38" stroke="#B79C82" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">工匠召唤</span>
+        <span class="subtitle">GACHA · 招募稀有工匠</span>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="banner-tag">
+        <span class="banner-tag-tx">限时 UP · 剩 2 天</span>
+      </div>
+      <div class="banner-mid">
+        <div class="banner-orb">
+          <svg id="icon-orb" width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="40" fill="#B07BFF"/>
+            <path d="M60 28 L70 54 L96 60 L70 66 L60 92 L50 66 L24 60 L50 54 Z" fill="#FFC247"/>
+          </svg>
+        </div>
+        <span class="banner-name">黄金工匠池</span>
+        <span class="banner-sub">SR 概率提升 · 必出稀有工匠</span>
+      </div>
+    </div>
+
+    <div class="pulls">
+      <div class="pull pull-1">
+        <span class="pull-tx pull-tx-1">单次召唤</span>
+        <div class="pull-cost">
+          <svg id="g1" class="pull-gem" width="32" height="32" viewBox="0 0 32 32">
+            <path d="M16 3 L27 12 L16 29 L5 12 Z" fill="#5BB8FF"/>
+          </svg>
+          <span class="pull-cost-tx pull-cost-1">20</span>
+        </div>
+      </div>
+      <div class="pull pull-10">
+        <span class="pull-tx pull-tx-10">十连召唤</span>
+        <div class="pull-cost">
+          <svg id="g10" class="pull-gem" width="32" height="32" viewBox="0 0 32 32">
+            <path d="M16 3 L27 12 L16 29 L5 12 Z" fill="#6B4A10"/>
+          </svg>
+          <span class="pull-cost-tx pull-cost-10">180</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="sec-label">— 最近掉落 RECENT —</span>
+    <div class="hist">
+      <div class="hist-row">
+        <div class="drop drop-sr">
+          <svg id="d1" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#FFC247"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#FFC247"/>
+          </svg>
+          <span class="drop-name">大师铁匠</span>
+          <span class="drop-rar rar-sr">SR</span>
+        </div>
+        <div class="drop drop-r">
+          <svg id="d2" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#B07BFF"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#B07BFF"/>
+          </svg>
+          <span class="drop-name">符文匠人</span>
+          <span class="drop-rar rar-r">R</span>
+        </div>
+        <div class="drop drop-last">
+          <svg id="d3" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#B79C82"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#B79C82"/>
+          </svg>
+          <span class="drop-name">学徒</span>
+          <span class="drop-rar rar-n">N</span>
+        </div>
+      </div>
+      <div class="hist-row">
+        <div class="drop drop-r">
+          <svg id="d4" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#B07BFF"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#B07BFF"/>
+          </svg>
+          <span class="drop-name">机械师</span>
+          <span class="drop-rar rar-r">R</span>
+        </div>
+        <div class="drop">
+          <svg id="d5" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#B79C82"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#B79C82"/>
+          </svg>
+          <span class="drop-name">矿工</span>
+          <span class="drop-rar rar-n">N</span>
+        </div>
+        <div class="drop drop-last">
+          <svg id="d6" class="drop-art" width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="34" r="20" fill="#B79C82"/>
+            <path d="M18 80 C18 58 32 50 46 50 C60 50 74 58 74 80 Z" fill="#B79C82"/>
+          </svg>
+          <span class="drop-name">伐木工</span>
+          <span class="drop-rar rar-n">N</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

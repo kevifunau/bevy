@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: #140E26;
+  padding: 96px 70px 70px 70px;
+  overflow: hidden;
+}
+
+/* header */
+.header {
+  flex-direction: row;
+  align-items: center;
+  height: 92px;
+  margin-bottom: 40px;
+}
+.back-btn {
+  width: 84px;
+  height: 84px;
+  border-radius: 26px;
+  background-color: #1F1638;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  align-items: center;
+  justify-content: center;
+  margin-right: 28px;
+}
+.header-title {
+  font-size: 54px;
+  color: #F4E9C6;
+  font-weight: bold;
+  letter-spacing: 6px;
+  text-shadow: 0 0 20px rgba(232,199,122,0.35);
+}
+
+/* section */
+.section {
+  width: 940px;
+  border-radius: 28px;
+  background-color: #1A1330;
+  border-width: 1px;
+  border-color: #3A2D5E;
+  padding: 36px 40px 16px 40px;
+  margin-bottom: 34px;
+}
+.section-head {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 26px;
+}
+.section-title {
+  font-size: 32px;
+  color: #E8C77A;
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin-left: 16px;
+}
+
+/* row */
+.row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 110px;
+  border-bottom-width: 1px;
+  border-bottom-color: #2A2148;
+}
+.row-last { border-bottom-width: 0; }
+.row-label {
+  flex-direction: column;
+  justify-content: center;
+}
+.label {
+  font-size: 34px;
+  color: #ECE3FB;
+  letter-spacing: 2px;
+}
+.label-hint {
+  font-size: 24px;
+  color: #8C7CB8;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* slider recipe */
+.slider {
+  width: 480px;
+  height: 80px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+.slider-val {
+  font-size: 30px;
+  color: #E8C77A;
+  font-weight: bold;
+  letter-spacing: 1px;
+  width: 78px;
+  text-align: right;
+  margin-right: 22px;
+}
+.slider-track {
+  flex-direction: row;
+  align-items: center;
+  width: 360px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #0F0A1E;
+}
+.slider-fill {
+  height: 16px;
+  border-radius: 8px;
+  background-color: #E8C77A;
+}
+.sl-85 { width: 306px; }
+.sl-70 { width: 252px; }
+.sl-60 { width: 216px; }
+.sl-45 { width: 162px; }
+.slider-knob {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background-color: #FFFFFF;
+  border-width: 4px;
+  border-color: #E8C77A;
+}
+
+/* toggle recipe */
+.switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 110px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #2A2148;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  padding: 0 7px;
+}
+.switch.is-on {
+  background-color: #E8C77A;
+  border-color: #F4E4B0;
+  justify-content: flex-end;
+}
+.switch-knob {
+  width: 46px;
+  height: 46px;
+  border-radius: 23px;
+  background-color: #FFFFFF;
+}
+
+/* segmented chooser recipe */
+.seg {
+  flex-direction: row;
+  width: 440px;
+  height: 80px;
+  background-color: #0F0A1E;
+  border-radius: 20px;
+  padding: 6px;
+}
+.seg-btn {
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  height: 68px;
+  border-radius: 16px;
+  background-color: #0F0A1E;
+  margin-right: 6px;
+}
+.seg-btn-last { margin-right: 0; }
+.seg-btn-label {
+  font-size: 28px;
+  color: #9A88C6;
+  letter-spacing: 2px;
+}
+.seg-btn.is-active { background-color: #E8C77A; }
+.seg-btn.is-active .seg-btn-label { color: #2A1D08; font-weight: bold; }
+
+/* picker recipe */
+.picker {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 320px;
+  height: 80px;
+  background-color: #0F0A1E;
+  border-width: 2px;
+  border-color: #4A3A7A;
+  border-radius: 18px;
+  padding: 0 24px;
+}
+.picker-value {
+  font-size: 30px;
+  color: #ECE3FB;
+  letter-spacing: 2px;
+}
+.picker-caret {
+  font-size: 26px;
+  color: #E8C77A;
+}
+
+/* restore default button */
+.restore {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 940px;
+  height: 116px;
+  border-radius: 28px;
+  background-color: #1F1638;
+  border-width: 2px;
+  border-color: #6B3A48;
+  margin-top: 6px;
+}
+.restore-label {
+  font-size: 34px;
+  color: #E8849A;
+  font-weight: bold;
+  letter-spacing: 6px;
+  margin-left: 18px;
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <button class="back-btn">
+        <svg id="icon-back-settings" width="36" height="36" viewBox="0 0 36 36">
+          <path d="M22 7 L11 18 L22 29" stroke="#C9B8F0" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="header-title">设置</span>
+    </div>
+
+    <!-- TEXT section -->
+    <div class="section">
+      <div class="section-head">
+        <svg id="icon-sec-text" width="34" height="34" viewBox="0 0 34 34">
+          <path d="M6 8 H28 M6 8 V11 M17 8 V26 M28 8 V11 M12 26 H22" stroke="#E8C77A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="section-title">文本</span>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <span class="label">文字速度</span>
+          <span class="label-hint">对话逐字显示的快慢</span>
+        </div>
+        <div class="slider">
+          <span class="slider-val">快</span>
+          <div class="slider-track">
+            <div class="slider-fill sl-85"></div>
+            <div class="slider-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row row-last">
+        <div class="row-label">
+          <span class="label">自动播放间隔</span>
+          <span class="label-hint">AUTO 模式翻页等待时长</span>
+        </div>
+        <div class="seg">
+          <button class="seg-btn"><span class="seg-btn-label">短</span></button>
+          <button class="seg-btn is-active"><span class="seg-btn-label">中</span></button>
+          <button class="seg-btn seg-btn-last"><span class="seg-btn-label">长</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOUND section -->
+    <div class="section">
+      <div class="section-head">
+        <svg id="icon-sec-sound" width="34" height="34" viewBox="0 0 34 34">
+          <path d="M6 13 H11 L18 7 V27 L11 21 H6 Z" fill="#E8C77A"/>
+          <path d="M22 12 A6 6 0 0 1 22 22 M25 8 A11 11 0 0 1 25 26" stroke="#E8C77A" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="section-title">音量</span>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <span class="label">背景音乐</span>
+          <span class="label-hint">BGM</span>
+        </div>
+        <div class="slider">
+          <span class="slider-val">85</span>
+          <div class="slider-track">
+            <div class="slider-fill sl-85"></div>
+            <div class="slider-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <span class="label">音效</span>
+          <span class="label-hint">SFX</span>
+        </div>
+        <div class="slider">
+          <span class="slider-val">70</span>
+          <div class="slider-track">
+            <div class="slider-fill sl-70"></div>
+            <div class="slider-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row row-last">
+        <div class="row-label">
+          <span class="label">语音</span>
+          <span class="label-hint">VOICE</span>
+        </div>
+        <div class="slider">
+          <span class="slider-val">60</span>
+          <div class="slider-track">
+            <div class="slider-fill sl-60"></div>
+            <div class="slider-knob"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERAL section -->
+    <div class="section">
+      <div class="section-head">
+        <svg id="icon-sec-general" width="34" height="34" viewBox="0 0 34 34">
+          <path d="M17 22a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" fill="none" stroke="#E8C77A" stroke-width="3"/>
+          <path d="M17 3v5M17 26v5M3 17h5M26 17h5M7 7l3.5 3.5M23.5 23.5L27 27M27 7l-3.5 3.5M10.5 23.5L7 27" stroke="#E8C77A" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="section-title">通用</span>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <span class="label">语言</span>
+          <span class="label-hint">界面与字幕语言</span>
+        </div>
+        <div class="picker">
+          <span class="picker-value">简体中文</span>
+          <span class="picker-caret">▾</span>
+          <span class="picker-opt">简体中文</span>
+          <span class="picker-opt">繁體中文</span>
+          <span class="picker-opt">English</span>
+          <span class="picker-opt">日本語</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <span class="label">已读文本跳过</span>
+          <span class="label-hint">SKIP 时仅跳过看过的剧情</span>
+        </div>
+        <div class="switch is-on"><div class="switch-knob"></div></div>
+      </div>
+
+      <div class="row row-last">
+        <div class="row-label">
+          <span class="label">全屏震动反馈</span>
+          <span class="label-hint">关键剧情时的触感震动</span>
+        </div>
+        <div class="switch"><div class="switch-knob"></div></div>
+      </div>
+    </div>
+
+    <button class="restore">
+      <svg id="icon-restore-settings" width="36" height="36" viewBox="0 0 36 36">
+        <path d="M18 7 A11 11 0 1 0 28 13" stroke="#E8849A" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <path d="M28 5 L28 13 L20 13" stroke="#E8849A" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="restore-label">恢复默认设置</span>
+    </button>
+  </div>
+</body>
+</html>

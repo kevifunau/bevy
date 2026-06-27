@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "卡通奇幻·塔防 FAIRY GUARD:明亮圆润、低龄友好、糖果色渐变、毛玻璃卡片 + 可爱魔法元素(精灵/水晶/法杖)。竖屏 4 页(主菜单/关卡选择/英雄图鉴/设置)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "main-menu — 卡通 LOGO + 开始/英雄/设置 圆角大按钮 + 资源条" },
+    { "id": "levels", "role": "level-select — 关卡卡片网格(通关星级/当前/锁定)" },
+    { "id": "heroes", "role": "hero-codex — 英雄图鉴卡片(已解锁/未解锁 + 稀有度)" },
+    { "id": "settings", "role": "settings — 音乐/音效/震动 开关 + 语言/账号" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "portrait-card",
+    "mood": "cartoon-fantasy-bright",
+    "accentFamily": "candy-purple-teal",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": ["button", "toggle"]
+}

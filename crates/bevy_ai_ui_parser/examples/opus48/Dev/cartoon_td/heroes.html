@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #2A1B5E;
+  --bg1: #4A2D9C;
+  --card: #FFFFFF;
+  --card-soft: #F3EEFF;
+  --purple: #9B6BFF;
+  --purple-d: #6E3FE0;
+  --teal: #3FD9C4;
+  --teal-d: #1FB6A2;
+  --pink: #FF8FC8;
+  --pink-d: #E85AA6;
+  --gold: #FFC94D;
+  --gold-d: #F0A521;
+  --ink: #3A2B66;
+  --ink-dim: #9B8FC4;
+  --white-dim: #D9CEFF;
+  --lock: #6B5B9E;
+  --orange: #FF9D5C;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 72px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 110px; margin-bottom: 36px; }
+.back {
+  width: 96px; height: 96px;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  border-width: 4px; border-color: var(--purple);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 60px; color: var(--gold); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--white-dim); font-weight: bold; white-space: normal; }
+.count-chip {
+  flex-direction: row; align-items: center;
+  height: 80px;
+  background-color: var(--bg1);
+  border-radius: 40px;
+  border-width: 4px; border-color: var(--purple);
+  padding: 0 30px 0 16px;
+}
+.count-ico { width: 48px; height: 48px; margin-right: 12px; }
+.count-tx { font-size: 36px; min-height: 44px; color: var(--purple); font-weight: bold; white-space: normal; }
+
+/* ---------- featured hero ---------- */
+.feature {
+  flex-direction: row; align-items: center;
+  background-color: var(--bg1);
+  border-radius: 48px;
+  border-width: 5px; border-color: var(--gold);
+  padding: 36px;
+  margin-bottom: 40px;
+}
+.feat-portrait {
+  width: 200px; height: 200px;
+  background-color: var(--purple);
+  border-radius: 40px;
+  align-items: center; justify-content: center;
+  margin-right: 36px;
+}
+.feat-info { flex-direction: column; justify-content: center; flex-grow: 1; }
+.feat-rare { flex-direction: row; align-items: center; height: 44px; margin-bottom: 12px; }
+.feat-rare-star { width: 36px; height: 36px; margin-right: 6px; }
+.feat-name { font-size: 56px; color: var(--gold); font-weight: bold; white-space: normal; }
+.feat-role { font-size: 30px; min-height: 36px; color: var(--white-dim); font-weight: bold; white-space: normal; margin-top: 6px; }
+.feat-tags { flex-direction: row; align-items: center; margin-top: 18px; }
+.feat-tag {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 52px;
+  background-color: var(--bg0);
+  border-radius: 26px;
+  padding: 0 24px; margin-right: 16px;
+}
+.feat-tag-tx { font-size: 26px; min-height: 32px; color: var(--teal); font-weight: bold; white-space: normal; }
+
+/* ---------- codex grid ---------- */
+.sec-title { font-size: 34px; min-height: 42px; color: var(--white-dim); font-weight: bold; white-space: normal; margin-bottom: 24px; }
+.cgrid { flex-direction: column; flex-grow: 1; }
+.crow { flex-direction: row; margin-bottom: 32px; }
+.hcard {
+  width: 290px; height: 360px;
+  background-color: var(--card);
+  border-radius: 40px;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px;
+}
+.hcard-mid { margin: 0 25px; }
+.hcard.is-lock { background-color: var(--bg1); }
+.hcard-port {
+  width: 150px; height: 150px;
+  border-radius: 36px;
+  align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+.port-teal { background-color: var(--teal); }
+.port-pink { background-color: var(--pink); }
+.port-orange { background-color: var(--orange); }
+.port-lock { background-color: #38256E; }
+.hcard-name { font-size: 32px; min-height: 40px; color: var(--ink); font-weight: bold; white-space: normal; margin-bottom: 14px; }
+.hcard-name-lock { color: var(--white-dim); }
+.hcard-rare { flex-direction: row; align-items: center; height: 36px; }
+.hcard-star { width: 30px; height: 30px; margin-right: 4px; }
+.hcard-lock-tx { font-size: 26px; min-height: 32px; color: var(--lock); font-weight: bold; white-space: normal; height: 36px; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="52" height="52" viewBox="0 0 52 52">
+          <path d="M32 12 L18 26 L32 40" stroke="#D9CEFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">英雄图鉴</span>
+        <span class="subtitle">收集精灵守卫者</span>
+      </div>
+      <div class="count-chip">
+        <svg id="icon-codex" class="count-ico" width="48" height="48" viewBox="0 0 48 48">
+          <rect x="10" y="8" width="28" height="32" rx="5" fill="none" stroke="#9B6BFF" stroke-width="4"/>
+          <rect x="16" y="16" width="16" height="4" fill="#9B6BFF"/>
+          <rect x="16" y="24" width="16" height="4" fill="#9B6BFF"/>
+        </svg>
+        <span class="count-tx">5 / 12</span>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feat-portrait">
+        <svg id="icon-feat" width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="44" r="26" fill="#FFFFFF"/>
+          <path d="M22 104 C22 78 42 70 60 70 C78 70 98 78 98 104 Z" fill="#FFFFFF"/>
+          <path d="M60 14 L70 30 L86 24 L78 40 Z" fill="#FFC94D"/>
+        </svg>
+      </div>
+      <div class="feat-info">
+        <div class="feat-rare">
+          <svg class="feat-rare-star" id="fr1" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4 L22 13 L32 14 L24 21 L27 31 L18 25 L9 31 L12 21 L4 14 L14 13 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <svg class="feat-rare-star" id="fr2" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4 L22 13 L32 14 L24 21 L27 31 L18 25 L9 31 L12 21 L4 14 L14 13 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <svg class="feat-rare-star" id="fr3" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4 L22 13 L32 14 L24 21 L27 31 L18 25 L9 31 L12 21 L4 14 L14 13 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <svg class="feat-rare-star" id="fr4" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4 L22 13 L32 14 L24 21 L27 31 L18 25 L9 31 L12 21 L4 14 L14 13 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <svg class="feat-rare-star" id="fr5" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4 L22 13 L32 14 L24 21 L27 31 L18 25 L9 31 L12 21 L4 14 L14 13 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="feat-name">月光精灵</span>
+        <span class="feat-role">远程魔法 · 范围减速</span>
+        <div class="feat-tags">
+          <div class="feat-tag"><span class="feat-tag-tx">冰霜</span></div>
+          <div class="feat-tag"><span class="feat-tag-tx">控制</span></div>
+        </div>
+      </div>
+    </div>
+
+    <span class="sec-title">全部守卫</span>
+
+    <div class="cgrid">
+      <div class="crow">
+        <div class="hcard">
+          <div class="hcard-port port-teal">
+            <svg id="h1" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="30" r="17" fill="#FFFFFF"/>
+              <path d="M14 70 C14 52 28 46 40 46 C52 46 66 52 66 70 Z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="hcard-name">森林弓手</span>
+          <div class="hcard-rare">
+            <svg class="hcard-star" id="hs1a" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs1b" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs1c" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="hcard hcard-mid">
+          <div class="hcard-port port-pink">
+            <svg id="h2" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="30" r="17" fill="#FFFFFF"/>
+              <path d="M14 70 C14 52 28 46 40 46 C52 46 66 52 66 70 Z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="hcard-name">花仙治愈</span>
+          <div class="hcard-rare">
+            <svg class="hcard-star" id="hs2a" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs2b" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs2c" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs2d" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="hcard">
+          <div class="hcard-port port-orange">
+            <svg id="h3" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="30" r="17" fill="#FFFFFF"/>
+              <path d="M14 70 C14 52 28 46 40 46 C52 46 66 52 66 70 Z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="hcard-name">烈焰法师</span>
+          <div class="hcard-rare">
+            <svg class="hcard-star" id="hs3a" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs3b" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <svg class="hcard-star" id="hs3c" width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L18 11 L27 12 L20 17 L23 26 L15 21 L7 26 L10 17 L3 12 L12 11 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="crow">
+        <div class="hcard is-lock">
+          <div class="hcard-port port-lock">
+            <svg id="hl1" width="72" height="72" viewBox="0 0 72 72">
+              <rect x="20" y="34" width="32" height="26" rx="6" fill="#6B5B9E"/>
+              <path d="M27 34 L27 25 A9 9 0 0 1 45 25 L45 34" stroke="#6B5B9E" stroke-width="6" fill="none"/>
+            </svg>
+          </div>
+          <span class="hcard-name hcard-name-lock">？？？</span>
+          <span class="hcard-lock-tx">未解锁</span>
+        </div>
+        <div class="hcard hcard-mid is-lock">
+          <div class="hcard-port port-lock">
+            <svg id="hl2" width="72" height="72" viewBox="0 0 72 72">
+              <rect x="20" y="34" width="32" height="26" rx="6" fill="#6B5B9E"/>
+              <path d="M27 34 L27 25 A9 9 0 0 1 45 25 L45 34" stroke="#6B5B9E" stroke-width="6" fill="none"/>
+            </svg>
+          </div>
+          <span class="hcard-name hcard-name-lock">？？？</span>
+          <span class="hcard-lock-tx">未解锁</span>
+        </div>
+        <div class="hcard is-lock">
+          <div class="hcard-port port-lock">
+            <svg id="hl3" width="72" height="72" viewBox="0 0 72 72">
+              <rect x="20" y="34" width="32" height="26" rx="6" fill="#6B5B9E"/>
+              <path d="M27 34 L27 25 A9 9 0 0 1 45 25 L45 34" stroke="#6B5B9E" stroke-width="6" fill="none"/>
+            </svg>
+          </div>
+          <span class="hcard-name hcard-name-lock">？？？</span>
+          <span class="hcard-lock-tx">未解锁</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

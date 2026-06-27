@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage { width: 1920px; height: 1080px; background-color: #FFF1DC; }
+
+.pagehead {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 110px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 36px;
+}
+.back-btn { width: 64px; height: 64px; border-radius: 20px; background-color: #FFF1DC; align-items: center; justify-content: center; margin-right: 20px; }
+.head-title-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.head-title { font-size: 32px; color: #5A3E2B; font-weight: bold; }
+.head-sub { font-size: 16px; color: #B08968; margin-top: 3px; }
+
+.content { flex-direction: row; width: 1920px; height: 970px; padding: 28px 36px; }
+.col { flex-direction: column; flex-grow: 1; flex-basis: 0; margin-right: 28px; }
+
+.panel {
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 26px 28px;
+  margin-bottom: 24px;
+}
+.panel-head { flex-direction: row; align-items: center; margin-bottom: 20px; }
+.panel-ico { width: 52px; height: 52px; border-radius: 15px; align-items: center; justify-content: center; margin-right: 14px; }
+.pi-audio { background-color: #FCE0DA; }
+.pi-display { background-color: #EBE3F7; }
+.pi-notify { background-color: #FCEBCF; }
+.pi-account { background-color: #DFF3E3; }
+.panel-title { font-size: 24px; color: #5A3E2B; font-weight: bold; }
+
+.row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 84px;
+  border-bottom-width: 2px;
+  border-bottom-color: #F6EAD6;
+}
+.row-last { border-bottom-width: 0; }
+.row-label-col { flex-direction: column; justify-content: center; }
+.row-label { font-size: 21px; color: #5A3E2B; font-weight: bold; }
+.row-hint { font-size: 14px; color: #B08968; margin-top: 3px; }
+
+/* switch recipe */
+.switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 96px;
+  height: 52px;
+  border-radius: 26px;
+  background-color: #E0D2BB;
+  padding: 0 6px;
+}
+.switch.is-on { background-color: #5FB67A; justify-content: flex-end; }
+.switch-knob { width: 40px; height: 40px; border-radius: 20px; background-color: #FFFFFF; }
+
+/* slider recipe */
+.slider { width: 360px; height: 56px; justify-content: center; }
+.slider-track {
+  flex-direction: row;
+  align-items: center;
+  width: 360px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #F0E2C8;
+}
+.slider-fill { height: 14px; border-radius: 7px; background-color: #E8503A; }
+.sl-75 { width: 270px; }
+.sl-60 { width: 216px; }
+.slider-knob {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #FFFFFF;
+  border-width: 4px;
+  border-color: #E8503A;
+}
+
+/* seg recipe */
+.seg {
+  flex-direction: row;
+  align-items: center;
+  height: 52px;
+  background-color: #FFF6E9;
+  border-radius: 26px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 5px;
+}
+.seg-btn {
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 20px;
+  padding: 0 22px;
+  margin-right: 4px;
+  background-color: #FFF6E9;
+}
+.seg-btn.is-active { background-color: #E8503A; }
+.seg-txt { font-size: 17px; color: #B08968; font-weight: bold; }
+.seg-btn.is-active .seg-txt { color: #FFFFFF; }
+
+/* picker recipe */
+.picker {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 260px;
+  height: 56px;
+  background-color: #FFF6E9;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  border-radius: 16px;
+  padding: 0 18px;
+}
+.picker-value { font-size: 19px; color: #5A3E2B; font-weight: bold; }
+.picker-caret-box { width: 24px; height: 24px; align-items: center; justify-content: center; }
+.picker-opt { font-size: 18px; color: #5A3E2B; }
+
+/* restore button */
+.restore {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 72px;
+  border-radius: 18px;
+  background-color: #FBE3D8;
+  border-width: 2px;
+  border-color: #F0C2B0;
+  margin-top: 4px;
+}
+.restore-ico { width: 28px; height: 28px; align-items: center; justify-content: center; margin-right: 12px; }
+.restore-txt { font-size: 20px; color: #E8503A; font-weight: bold; }
+
+/* account rows */
+.acct-row {
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 84px;
+  border-bottom-width: 2px;
+  border-bottom-color: #F6EAD6;
+}
+.acct-ico { width: 44px; height: 44px; border-radius: 12px; background-color: #FFF1DC; align-items: center; justify-content: center; margin-right: 14px; }
+.acct-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.acct-name { font-size: 20px; color: #5A3E2B; font-weight: bold; }
+.acct-sub { font-size: 14px; color: #B08968; margin-top: 2px; }
+.acct-go { width: 36px; height: 36px; border-radius: 18px; background-color: #FFF1DC; align-items: center; justify-content: center; }
+.version { font-size: 15px; color: #C7B398; margin-top: 16px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="pagehead">
+      <div class="back-btn">
+        <svg id="icon-back-settings" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M20 6L10 16l10 10" fill="none" stroke="#5A3E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="head-title-wrap">
+        <span class="head-title">Settings</span>
+        <span class="head-sub">Tune your restaurant experience</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- left column -->
+      <div class="col">
+        <!-- Audio -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-ico pi-audio">
+              <svg id="icon-set-audio" width="32" height="32" viewBox="0 0 32 32">
+                <path d="M6 12h6l8-6v20l-8-6H6z" fill="#E8503A"/>
+                <path d="M23 11a6 6 0 0 1 0 10M26 7a11 11 0 0 1 0 18" fill="none" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="panel-title">Audio</span>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Music</span>
+              <span class="row-hint">Background tunes &amp; jingles</span>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Sound FX</span>
+              <span class="row-hint">Clicks, sizzles, coin chimes</span>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Music Volume</span>
+              <span class="row-hint">75%</span>
+            </div>
+            <div class="slider"><div class="slider-track"><div class="slider-fill sl-75"></div><div class="slider-knob"></div></div></div>
+          </div>
+
+          <div class="row row-last">
+            <div class="row-label-col">
+              <span class="row-label">SFX Volume</span>
+              <span class="row-hint">60%</span>
+            </div>
+            <div class="slider"><div class="slider-track"><div class="slider-fill sl-60"></div><div class="slider-knob"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Display -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-ico pi-display">
+              <svg id="icon-set-display" width="32" height="32" viewBox="0 0 32 32">
+                <rect x="4" y="6" width="24" height="16" rx="2" fill="#7C5CBF"/>
+                <path d="M11 26h10M16 22v4" stroke="#7C5CBF" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="panel-title">Display</span>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Graphics Quality</span>
+              <span class="row-hint">Higher quality uses more battery</span>
+            </div>
+            <div class="seg">
+              <div class="seg-btn"><span class="seg-txt">Low</span></div>
+              <div class="seg-btn is-active"><span class="seg-txt">Medium</span></div>
+              <div class="seg-btn"><span class="seg-txt">High</span></div>
+            </div>
+          </div>
+
+          <div class="row row-last">
+            <div class="row-label-col">
+              <span class="row-label">Show FPS</span>
+              <span class="row-hint">Display frame counter</span>
+            </div>
+            <div class="switch"><div class="switch-knob"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right column -->
+      <div class="col">
+        <!-- Notifications -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-ico pi-notify">
+              <svg id="icon-set-notify" width="32" height="32" viewBox="0 0 32 32">
+                <path d="M16 4a8 8 0 0 1 8 8v6l3 4H5l3-4v-6a8 8 0 0 1 8-8z" fill="#F5A623"/>
+                <path d="M13 26a3 3 0 0 0 6 0" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="panel-title">Notifications</span>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Push Notifications</span>
+              <span class="row-hint">Order ready, building done</span>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Daily Reminder</span>
+              <span class="row-hint">Nudge to collect your reward</span>
+            </div>
+            <div class="switch is-on"><div class="switch-knob"></div></div>
+          </div>
+
+          <div class="row row-last">
+            <div class="row-label-col">
+              <span class="row-label">Event Offers</span>
+              <span class="row-hint">Limited-time shop deals</span>
+            </div>
+            <div class="switch"><div class="switch-knob"></div></div>
+          </div>
+        </div>
+
+        <!-- Language + Account -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-ico pi-account">
+              <svg id="icon-set-globe" width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="12" fill="none" stroke="#5FB67A" stroke-width="2.5"/>
+                <path d="M4 16h24M16 4c4 4 4 20 0 24M16 4c-4 4-4 20 0 24" fill="none" stroke="#5FB67A" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="panel-title">Language &amp; Account</span>
+          </div>
+
+          <div class="row">
+            <div class="row-label-col">
+              <span class="row-label">Language</span>
+              <span class="row-hint">Game text &amp; menus</span>
+            </div>
+            <div class="picker">
+              <span class="picker-value">English</span>
+              <div class="picker-caret-box">
+                <svg id="icon-caret-lang" width="20" height="20" viewBox="0 0 20 20"><path d="M5 7l5 6 5-6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="picker-opt">English</span>
+              <span class="picker-opt">中文</span>
+              <span class="picker-opt">日本語</span>
+              <span class="picker-opt">Español</span>
+            </div>
+          </div>
+
+          <div class="acct-row">
+            <div class="acct-ico">
+              <svg id="icon-acct-cloud" width="26" height="26" viewBox="0 0 26 26"><path d="M7 20a5 5 0 0 1 0-10 6 6 0 0 1 11-2 4 4 0 0 1 1 8z" fill="#5FB67A"/></svg>
+            </div>
+            <div class="acct-meta">
+              <span class="acct-name">Cloud Save</span>
+              <span class="acct-sub">Last synced 2 min ago</span>
+            </div>
+            <div class="acct-go"><svg id="icon-acct-go1" width="18" height="18" viewBox="0 0 18 18"><path d="M6 3l6 6-6 6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+
+          <div class="acct-row">
+            <div class="acct-ico">
+              <svg id="icon-acct-help" width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="#F5A623"/><path d="M10 10a3 3 0 0 1 5 2c0 2-2 2-2 4" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="19" r="1.5" fill="#FFFFFF"/></svg>
+            </div>
+            <div class="acct-meta">
+              <span class="acct-name">Help &amp; Support</span>
+              <span class="acct-sub">FAQ and contact us</span>
+            </div>
+            <div class="acct-go"><svg id="icon-acct-go2" width="18" height="18" viewBox="0 0 18 18"><path d="M6 3l6 6-6 6" fill="none" stroke="#B08968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+
+          <div class="restore">
+            <div class="restore-ico">
+              <svg id="icon-restore" width="26" height="26" viewBox="0 0 26 26">
+                <path d="M5 13a8 8 0 1 1 2.5 5.8" fill="none" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M5 6v5h5" fill="none" stroke="#E8503A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="restore-txt">Restore Defaults</span>
+          </div>
+
+          <span class="version">Cozy Kitchen v2.4.1 · build 1180</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

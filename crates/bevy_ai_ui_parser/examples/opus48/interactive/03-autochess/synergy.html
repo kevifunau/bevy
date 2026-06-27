@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+  .stage {
+    width: 1920px;
+    height: 1080px;
+    background-color: #12141F;
+    flex-direction: column;
+  }
+
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 96px;
+    padding: 0 40px;
+    background-color: #1A1D2C;
+    border-bottom-width: 2px;
+    border-bottom-color: #2C3142;
+  }
+  .head-left { flex-direction: row; align-items: center; }
+  .back-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+    margin-right: 24px;
+  }
+  .back-ic { width: 22px; height: 22px; margin-right: 8px; }
+  .back-tx { font-size: 18px; color: #F4F6FF; -unity-font-style: bold; }
+  .page-title { font-size: 32px; color: #F2C14E; -unity-font-style: bold; letter-spacing: 2px; }
+
+  /* segmented filter chooser */
+  .seg {
+    flex-direction: row;
+    height: 56px;
+    padding: 5px;
+    border-radius: 14px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .seg-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 132px;
+    height: 46px;
+    border-radius: 10px;
+    background-color: #232739;
+  }
+  .seg-btn.is-active { background-color: #F2C14E; }
+  .seg-tx { font-size: 18px; color: #9AA1BC; -unity-font-style: bold; }
+  .seg-btn.is-active .seg-tx { color: #1A1320; }
+
+  .body { flex-grow: 1; flex-direction: row; padding: 32px 40px; }
+
+  /* synergy list (left) */
+  .list { width: 760px; flex-direction: column; margin-right: 32px; }
+  .syn-card {
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 18px;
+    border-width: 1px;
+    border-color: #2C3142;
+    border-left-width: 5px;
+    border-left-color: #A878F0;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .syn-card.sel { border-color: #F2C14E; border-left-color: #F2C14E; background-color: #221F2E; }
+  .syn-top { flex-direction: row; align-items: center; margin-bottom: 16px; }
+  .syn-emblem {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+    margin-right: 18px;
+  }
+  .syn-head-meta { flex-direction: column; flex-grow: 1; }
+  .syn-head-name { font-size: 26px; color: #F4F6FF; -unity-font-style: bold; }
+  .syn-head-sub { font-size: 16px; color: #8B93AD; margin-top: 4px; }
+  .syn-progress {
+    flex-direction: row;
+    align-items: center;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 22px;
+    background-color: #232739;
+  }
+  .syn-progress.on { background-color: #2C2718; border-width: 1px; border-color: #F2C14E; }
+  .syn-progress-tx { font-size: 18px; color: #9AA1BC; -unity-font-style: bold; }
+  .syn-progress.on .syn-progress-tx { color: #F2C14E; }
+
+  /* tier rows */
+  .tier {
+    flex-direction: row;
+    align-items: center;
+    height: 52px;
+    padding: 0 16px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    background-color: #161927;
+  }
+  .tier.active { background-color: #1B2A26; border-width: 1px; border-color: #4FD6C9; }
+  .tier-badge {
+    width: 64px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: #232739;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+  }
+  .tier-badge.active { background-color: #4FD6C9; }
+  .tier-badge-tx { font-size: 16px; color: #9AA1BC; -unity-font-style: bold; }
+  .tier-badge.active .tier-badge-tx { color: #0E1A18; }
+  .tier-effect { font-size: 17px; color: #C2C8DE; flex-grow: 1; white-space: normal; }
+  .tier.active .tier-effect { color: #EAFBF8; }
+
+  /* detail (right): related pieces */
+  .detail {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 30px;
+  }
+  .detail-title { font-size: 28px; color: #F4F6FF; -unity-font-style: bold; margin-bottom: 8px; }
+  .detail-sub { font-size: 18px; color: #8B93AD; margin-bottom: 26px; white-space: normal; }
+  .related-head { font-size: 20px; color: #4FD6C9; -unity-font-style: bold; margin-bottom: 18px; }
+  .piece-grid { flex-direction: row; flex-wrap: wrap; }
+  .piece-cell {
+    width: 158px;
+    height: 196px;
+    margin-right: 18px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    background-color: #232739;
+    border-bottom-width: 4px;
+    border-bottom-color: #A878F0;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 10px;
+  }
+  .piece-cell.r-blue { border-bottom-color: #4F76D6; }
+  .piece-cell.r-gold { border-bottom-color: #F2C14E; }
+  .piece-cell.r-green { border-bottom-color: #57C77A; }
+  .pc-art {
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .pc-name { font-size: 18px; color: #F4F6FF; -unity-font-style: bold; }
+  .pc-cost { flex-direction: row; align-items: center; margin-top: 8px; }
+  .pc-cost-ic { width: 18px; height: 18px; margin-right: 5px; }
+  .pc-cost-tx { font-size: 16px; color: #F2C14E; -unity-font-style: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="topbar">
+      <div class="head-left">
+        <button class="back-btn">
+          <svg id="sy-back" width="22" height="22" viewBox="0 0 22 22" class="back-ic"><path d="M14 4l-7 7 7 7" stroke="#F4F6FF" stroke-width="3" fill="none"/></svg>
+          <span class="back-tx">返回</span>
+        </button>
+        <span class="page-title">羁绊图鉴</span>
+      </div>
+      <div class="seg">
+        <button class="seg-btn is-active"><span class="seg-tx">全部</span></button>
+        <button class="seg-btn"><span class="seg-tx">职业</span></button>
+        <button class="seg-btn"><span class="seg-tx">种族</span></button>
+        <button class="seg-btn"><span class="seg-tx">已激活</span></button>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <!-- Synergy list -->
+      <div class="list">
+        <div class="syn-card sel">
+          <div class="syn-top">
+            <div class="syn-emblem"><svg id="sy-mage" width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="12" fill="#A878F0"/><path d="M18 6v24M6 18h24" stroke="#FFF" stroke-width="2.5"/></svg></div>
+            <div class="syn-head-meta">
+              <span class="syn-head-name">奥术师</span>
+              <span class="syn-head-sub">技能法力消耗后回复额外法力,提升全队法术强度</span>
+            </div>
+            <div class="syn-progress on"><span class="syn-progress-tx">3 / 6 激活</span></div>
+          </div>
+          <div class="tier active">
+            <div class="tier-badge active"><span class="tier-badge-tx">3</span></div>
+            <span class="tier-effect">全队法术强度 +45,施法后回复 10 法力</span>
+          </div>
+          <div class="tier">
+            <div class="tier-badge"><span class="tier-badge-tx">6</span></div>
+            <span class="tier-effect">全队法术强度 +110,技能可暴击(150%)</span>
+          </div>
+        </div>
+
+        <div class="syn-card">
+          <div class="syn-top">
+            <div class="syn-emblem"><svg id="sy-warden" width="36" height="36" viewBox="0 0 36 36"><path d="M18 4l12 5v9c0 8-6 13-12 14-6-1-12-6-12-14V9z" fill="#F2C14E"/><path d="M18 11v12M11 17h14" stroke="#1A1320" stroke-width="2.5"/></svg></div>
+            <div class="syn-head-meta">
+              <span class="syn-head-name">守护者</span>
+              <span class="syn-head-sub">开局为前排提供护盾,激活越多护盾越厚</span>
+            </div>
+            <div class="syn-progress on"><span class="syn-progress-tx">4 / 4 激活</span></div>
+          </div>
+          <div class="tier active">
+            <div class="tier-badge active"><span class="tier-badge-tx">2</span></div>
+            <span class="tier-effect">守护者获得 200 点护盾</span>
+          </div>
+          <div class="tier active">
+            <div class="tier-badge active"><span class="tier-badge-tx">4</span></div>
+            <span class="tier-effect">全队护盾 +30%,护盾破碎时反弹伤害</span>
+          </div>
+        </div>
+
+        <div class="syn-card">
+          <div class="syn-top">
+            <div class="syn-emblem"><svg id="sy-hunter" width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="13" fill="none" stroke="#57C77A" stroke-width="2.5"/><circle cx="18" cy="18" r="4" fill="#57C77A"/><path d="M18 2v7M18 27v7M2 18h7M27 18h7" stroke="#57C77A" stroke-width="2.5"/></svg></div>
+            <div class="syn-head-meta">
+              <span class="syn-head-name">游侠</span>
+              <span class="syn-head-sub">攻击有概率触发额外箭矢,造成穿透伤害</span>
+            </div>
+            <div class="syn-progress"><span class="syn-progress-tx">2 / 4 激活</span></div>
+          </div>
+          <div class="tier">
+            <div class="tier-badge"><span class="tier-badge-tx">2</span></div>
+            <span class="tier-effect">游侠 30% 概率发射追加箭矢</span>
+          </div>
+          <div class="tier">
+            <div class="tier-badge"><span class="tier-badge-tx">4</span></div>
+            <span class="tier-effect">概率提升至 65%,箭矢可穿透两名敌人</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail / related pieces -->
+      <div class="detail">
+        <span class="detail-title">奥术师 · 关联棋子</span>
+        <span class="detail-sub">凑齐对应数量的奥术师棋子即可激活档位效果;3 名激活第一档,6 名解锁满档暴击。</span>
+        <span class="related-head">该羁绊棋子</span>
+        <div class="piece-grid">
+          <div class="piece-cell r-green">
+            <div class="pc-art"><svg id="sy-pc1" width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="27" r="15" fill="#57C77A"/><path d="M12 62c0-12 11-18 23-18s23 6 23 18z" fill="#3E8F58"/></svg></div>
+            <span class="pc-name">林语者</span>
+            <div class="pc-cost"><svg id="sy-cc1" width="18" height="18" viewBox="0 0 18 18" class="pc-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="pc-cost-tx">1</span></div>
+          </div>
+          <div class="piece-cell r-blue">
+            <div class="pc-art"><svg id="sy-pc2" width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="27" r="15" fill="#4F76D6"/><path d="M12 62c0-12 11-18 23-18s23 6 23 18z" fill="#345799"/></svg></div>
+            <span class="pc-name">寒霜法师</span>
+            <div class="pc-cost"><svg id="sy-cc2" width="18" height="18" viewBox="0 0 18 18" class="pc-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="pc-cost-tx">2</span></div>
+          </div>
+          <div class="piece-cell r-purple">
+            <div class="pc-art"><svg id="sy-pc3" width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="27" r="15" fill="#A878F0"/><path d="M12 62c0-12 11-18 23-18s23 6 23 18z" fill="#7B53B8"/></svg></div>
+            <span class="pc-name">虚空祭司</span>
+            <div class="pc-cost"><svg id="sy-cc3" width="18" height="18" viewBox="0 0 18 18" class="pc-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="pc-cost-tx">4</span></div>
+          </div>
+          <div class="piece-cell r-gold">
+            <div class="pc-art"><svg id="sy-pc4" width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="27" r="15" fill="#F2C14E"/><path d="M12 62c0-12 11-18 23-18s23 6 23 18z" fill="#C99B33"/></svg></div>
+            <span class="pc-name">星界主宰</span>
+            <div class="pc-cost"><svg id="sy-cc4" width="18" height="18" viewBox="0 0 18 18" class="pc-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="pc-cost-tx">5</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

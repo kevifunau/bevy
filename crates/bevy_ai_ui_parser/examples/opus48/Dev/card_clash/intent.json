@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "策略卡牌对战 ARCANE CLASH:神秘奥术风、深靛底 + 鎏金描边 + 符文紫/法力青光,卡牌质感与法力水晶。竖屏 4 页(主菜单/卡组编辑/对战界面/设置)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "main-menu — 品牌LOGO + 天梯段位 + 对战/卡组/商店/设置入口" },
+    { "id": "deck", "role": "deck-builder — 当前卡组列表 + 法力曲线 + 卡牌收藏网格" },
+    { "id": "battle", "role": "battle — 双方血量/法力水晶 + 战场随从 + 手牌列" },
+    { "id": "settings", "role": "settings — 声音/体验/账号 开关" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "portrait-card",
+    "mood": "arcane-mystic-dark",
+    "accentFamily": "gold-rune-purple",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": ["button", "toggle"]
+}

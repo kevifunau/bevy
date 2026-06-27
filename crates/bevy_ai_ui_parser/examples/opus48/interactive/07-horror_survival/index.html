@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #07090A;
+  padding: 0;
+  overflow: hidden;
+}
+/* layered atmospheric backdrop (DOM order = stacking) */
+.bg-deep {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #0A0E0D;
+}
+.bg-vignette {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #05070700;
+  border-width: 220px;
+  border-color: #04060600;
+  border-top-color: #020303;
+  border-bottom-color: #020303;
+}
+.bg-glow {
+  position: absolute;
+  top: 120px; left: 660px;
+  width: 600px;
+  height: 600px;
+  border-radius: 300px;
+  background-color: #0E1F1C;
+  opacity: 0.55;
+}
+.grain {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #11181600;
+  opacity: 0.18;
+  border-width: 2px;
+  border-color: #15201D;
+}
+/* top status strip */
+.topbar {
+  position: absolute;
+  top: 0; left: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1920px;
+  height: 72px;
+  padding: 0 48px;
+  background-color: #0A0F0E;
+  border-bottom-width: 1px;
+  border-bottom-color: #1B2522;
+}
+.brandmark { flex-direction: row; align-items: center; }
+.brandmark .bm-ico { width: 30px; height: 30px; margin-right: 12px; }
+.bm-text { font-size: 18px; color: #5FD3C0; letter-spacing: 6px; }
+.build { flex-direction: row; align-items: center; }
+.build .b-ico { width: 18px; height: 18px; margin-right: 8px; }
+.build-text { font-size: 14px; color: #4A5A55; letter-spacing: 2px; }
+
+/* center hero */
+.hero {
+  position: absolute;
+  top: 250px; left: 160px;
+  width: 900px;
+  align-items: flex-start;
+}
+.kicker {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.kicker-line { width: 56px; height: 2px; background-color: #8E2B2B; margin-right: 16px; }
+.kicker-text { font-size: 16px; color: #9B5A52; letter-spacing: 8px; }
+.title-main {
+  font-size: 132px;
+  color: #DDE9E4;
+  font-weight: bold;
+  letter-spacing: 10px;
+  text-shadow: 0 0 24px #5FD3C055;
+  margin-bottom: 6px;
+}
+.title-sub {
+  font-size: 44px;
+  color: #6F8C84;
+  letter-spacing: 28px;
+  margin-bottom: 34px;
+}
+.tagline {
+  width: 640px;
+  font-size: 20px;
+  color: #7C8B85;
+  white-space: normal;
+  margin-bottom: 56px;
+}
+/* warning ribbon */
+.warn {
+  flex-direction: row;
+  align-items: center;
+  width: 560px;
+  height: 56px;
+  padding: 0 22px;
+  background-color: #1A0E0D;
+  border-width: 1px;
+  border-color: #4A2220;
+  border-left-width: 4px;
+  border-left-color: #8E2B2B;
+  border-radius: 4px;
+}
+.warn .w-ico { width: 24px; height: 24px; margin-right: 14px; }
+.warn-text { font-size: 15px; color: #B07A72; letter-spacing: 2px; }
+
+/* menu panel right */
+.menu {
+  position: absolute;
+  top: 300px; left: 1180px;
+  width: 600px;
+  padding: 12px 0;
+}
+.menu-btn {
+  flex-direction: row;
+  align-items: center;
+  width: 600px;
+  height: 96px;
+  margin-bottom: 18px;
+  padding: 0 28px;
+  background-color: #0E1413;
+  border-width: 1px;
+  border-color: #1E2A27;
+  border-left-width: 3px;
+  border-left-color: #1E2A27;
+  border-radius: 6px;
+}
+.menu-btn.primary {
+  background-color: #112320;
+  border-color: #2E5E56;
+  border-left-color: #5FD3C0;
+}
+.mb-ico {
+  width: 44px;
+  height: 44px;
+  margin-right: 22px;
+}
+.mb-body { align-items: flex-start; flex-grow: 1; }
+.mb-title { font-size: 26px; color: #D6E4DF; letter-spacing: 4px; margin-bottom: 4px; }
+.mb-title.accent { color: #5FD3C0; }
+.mb-desc { font-size: 14px; color: #5C6B66; letter-spacing: 1px; }
+.mb-arrow { width: 22px; height: 22px; }
+
+/* bottom hint */
+.footer {
+  position: absolute;
+  bottom: 0; left: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1920px;
+  height: 64px;
+  padding: 0 48px;
+  background-color: #0A0F0E;
+  border-top-width: 1px;
+  border-top-color: #1B2522;
+}
+.hint-group { flex-direction: row; align-items: center; }
+.hint { flex-direction: row; align-items: center; margin-right: 40px; }
+.hint .h-ico { width: 20px; height: 20px; margin-right: 10px; }
+.hint-text { font-size: 14px; color: #5C6B66; letter-spacing: 2px; }
+.copy { font-size: 13px; color: #3E4A46; letter-spacing: 3px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg-deep"></div>
+    <div class="bg-glow"></div>
+    <div class="grain"></div>
+    <div class="bg-vignette"></div>
+
+    <div class="topbar">
+      <div class="brandmark">
+        <svg id="icon-brand-cross" class="bm-ico" width="30" height="30" viewBox="0 0 30 30">
+          <rect x="12" y="3" width="6" height="24" rx="1" fill="#5FD3C0"/>
+          <rect x="3" y="12" width="24" height="6" rx="1" fill="#5FD3C0"/>
+          <rect x="12" y="3" width="6" height="24" rx="1" fill="#0A0F0E" opacity="0.25"/>
+        </svg>
+        <span class="bm-text">WARD 13</span>
+      </div>
+      <div class="build">
+        <svg id="icon-skull-small" class="b-ico" width="18" height="18" viewBox="0 0 18 18">
+          <path d="M9 1C5 1 2.5 3.6 2.5 7c0 2 1 3.4 2 4.2V14h2v-2h1v2h2v-2h1v2h2v-2.8c1-.8 2-2.2 2-4.2C15.5 3.6 13 1 9 1z" fill="#3A4A45"/>
+          <circle cx="6.4" cy="7" r="1.5" fill="#07090A"/>
+          <circle cx="11.6" cy="7" r="1.5" fill="#07090A"/>
+        </svg>
+        <span class="build-text">v0.9.4 — QUARANTINE BUILD</span>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="kicker">
+        <div class="kicker-line"></div>
+        <span class="kicker-text">SURVIVAL HORROR</span>
+      </div>
+      <div class="title-main">SILENT</div>
+      <div class="title-sub">WARD</div>
+      <div class="tagline">废弃精神病院深处的灯光早已熄灭。你只有一盏将尽的手电与逐渐崩坏的理智。在它找到你之前,找到出口。</div>
+      <div class="warn">
+        <svg id="icon-warn-tri" class="w-ico" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M12 3 22 21H2L12 3z" fill="none" stroke="#8E2B2B" stroke-width="2" stroke-linejoin="round"/>
+          <rect x="11" y="9" width="2" height="6" rx="1" fill="#B07A72"/>
+          <rect x="11" y="17" width="2" height="2" rx="1" fill="#B07A72"/>
+        </svg>
+        <span class="warn-text">含惊吓元素 · 建议佩戴耳机游玩</span>
+      </div>
+    </div>
+
+    <div class="menu">
+      <button class="menu-btn primary">
+        <svg id="icon-play" class="mb-ico" width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#5FD3C0" stroke-width="2"/>
+          <path d="M18 14 31 22 18 30z" fill="#5FD3C0"/>
+        </svg>
+        <div class="mb-body">
+          <div class="mb-title accent">新的逃脱</div>
+          <div class="mb-desc">START — 从被锁的隔离病房苏醒</div>
+        </div>
+        <svg id="icon-arrow-r1" class="mb-arrow" width="22" height="22" viewBox="0 0 22 22">
+          <path d="M6 4 14 11 6 18" fill="none" stroke="#5FD3C0" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button class="menu-btn">
+        <svg id="icon-continue" class="mb-ico" width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#3A4A45" stroke-width="2"/>
+          <path d="M22 11a11 11 0 1 0 11 11" fill="none" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 5l5 6-7 1z" fill="#9BB0A9"/>
+        </svg>
+        <div class="mb-body">
+          <div class="mb-title">继续游戏</div>
+          <div class="mb-desc">CONTINUE — 二楼东翼 · 存活 14:22</div>
+        </div>
+        <svg id="icon-arrow-r2" class="mb-arrow" width="22" height="22" viewBox="0 0 22 22">
+          <path d="M6 4 14 11 6 18" fill="none" stroke="#6E7B75" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button class="menu-btn">
+        <svg id="icon-gear-menu" class="mb-ico" width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#3A4A45" stroke-width="2"/>
+          <path d="M22 15a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" fill="#9BB0A9"/>
+          <rect x="20.5" y="9" width="3" height="5" rx="1" fill="#9BB0A9"/>
+          <rect x="20.5" y="30" width="3" height="5" rx="1" fill="#9BB0A9"/>
+        </svg>
+        <div class="mb-body">
+          <div class="mb-title">设置</div>
+          <div class="mb-desc">SETTINGS — 音画 · 操作 · 语言</div>
+        </div>
+        <svg id="icon-arrow-r3" class="mb-arrow" width="22" height="22" viewBox="0 0 22 22">
+          <path d="M6 4 14 11 6 18" fill="none" stroke="#6E7B75" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button class="menu-btn">
+        <svg id="icon-exit" class="mb-ico" width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#3A4A45" stroke-width="2"/>
+          <path d="M25 14h-9v16h9" fill="none" stroke="#9BB0A9" stroke-width="2"/>
+          <path d="M27 18l5 4-5 4M22 22h10" fill="none" stroke="#9BB0A9" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="mb-body">
+          <div class="mb-title">退出</div>
+          <div class="mb-desc">QUIT — 离开 WARD 13</div>
+        </div>
+        <svg id="icon-arrow-r4" class="mb-arrow" width="22" height="22" viewBox="0 0 22 22">
+          <path d="M6 4 14 11 6 18" fill="none" stroke="#6E7B75" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="footer">
+      <div class="hint-group">
+        <div class="hint">
+          <svg id="icon-key-enter" class="h-ico" width="20" height="20" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="12" rx="2" fill="none" stroke="#5C6B66" stroke-width="1.5"/>
+            <path d="M13 8v3H7M9 9l-2 2 2 2" fill="none" stroke="#5C6B66" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="hint-text">ENTER 确认</span>
+        </div>
+        <div class="hint">
+          <svg id="icon-key-esc" class="h-ico" width="20" height="20" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="12" rx="2" fill="none" stroke="#5C6B66" stroke-width="1.5"/>
+            <path d="M7 8l6 4M13 8l-6 4" fill="none" stroke="#5C6B66" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="hint-text">ESC 返回</span>
+        </div>
+      </div>
+      <span class="copy">© 2026 ROTTEN PIXEL STUDIO</span>
+    </div>
+  </div>
+</body>
+</html>

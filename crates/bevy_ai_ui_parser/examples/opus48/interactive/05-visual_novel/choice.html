@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: #140E26;
+  overflow: hidden;
+}
+
+/* dim scene behind the choice */
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  background-color: #221646;
+}
+.scene-glow {
+  position: absolute;
+  top: 80px;
+  left: 280px;
+  width: 520px;
+  height: 520px;
+  border-radius: 260px;
+  background-color: #38276B;
+  opacity: 0.65;
+}
+.veil {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  background-color: #100A20;
+  opacity: 0.6;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  padding: 110px 80px 90px 80px;
+}
+
+/* header */
+.header {
+  align-items: center;
+  margin-bottom: 64px;
+}
+.header-kicker {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.kicker-line {
+  width: 56px;
+  height: 2px;
+  background-color: #E8C77A;
+}
+.kicker-text {
+  font-size: 28px;
+  color: #E8C77A;
+  letter-spacing: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.header-title {
+  font-size: 56px;
+  color: #F4E9C6;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 0 24px rgba(232,199,122,0.4);
+}
+
+/* situation card */
+.situation {
+  width: 920px;
+  border-radius: 32px;
+  background-color: #1A1330;
+  border-width: 2px;
+  border-color: #4A3A7A;
+  padding: 44px 48px;
+  margin-bottom: 64px;
+}
+.sit-row {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 26px;
+}
+.sit-badge {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 28px;
+  background-color: #2E2152;
+  border-width: 1px;
+  border-color: #E8C77A;
+}
+.sit-badge-text {
+  font-size: 26px;
+  color: #E8C77A;
+  letter-spacing: 4px;
+  margin-left: 12px;
+}
+.sit-text {
+  font-size: 38px;
+  color: #D8CCF4;
+  letter-spacing: 1px;
+  line-height: 58px;
+}
+
+/* prompt */
+.prompt {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 44px;
+}
+.prompt-text {
+  font-size: 34px;
+  color: #B9A6E8;
+  letter-spacing: 6px;
+  margin-left: 16px;
+}
+
+/* choices */
+.choices {
+  align-items: center;
+}
+.choice {
+  flex-direction: row;
+  align-items: center;
+  width: 920px;
+  height: 168px;
+  border-radius: 28px;
+  background-color: #241844;
+  border-width: 2px;
+  border-color: #4A3A7A;
+  padding: 0 40px;
+  margin-bottom: 34px;
+}
+.choice-primary {
+  background-color: #2E2152;
+  border-color: #E8C77A;
+}
+.choice-index {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  background-color: #1A1330;
+  border-width: 2px;
+  border-color: #5B458F;
+  align-items: center;
+  justify-content: center;
+  margin-right: 32px;
+}
+.choice-index-primary {
+  background-color: #E8C77A;
+  border-color: #F4E4B0;
+}
+.choice-index-text {
+  font-size: 38px;
+  color: #C9B8F0;
+  font-weight: bold;
+}
+.choice-index-text-primary { color: #2A1D08; }
+.choice-body {
+  flex-grow: 1;
+}
+.choice-text {
+  font-size: 38px;
+  color: #ECE3FB;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.choice-meta {
+  flex-direction: row;
+  align-items: center;
+}
+.route-pill {
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  background-color: #1A1330;
+  margin-right: 16px;
+}
+.route-pill-text {
+  font-size: 24px;
+  color: #9A88C6;
+  letter-spacing: 2px;
+  margin-left: 10px;
+}
+.aff-up {
+  flex-direction: row;
+  align-items: center;
+}
+.aff-text {
+  font-size: 24px;
+  color: #E8849A;
+  letter-spacing: 2px;
+  margin-left: 8px;
+}
+.aff-text-cool {
+  color: #6FB6E8;
+}
+.choice-arrow {
+  width: 56px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* footer route bar */
+.routebar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 920px;
+  height: 96px;
+  border-radius: 24px;
+  background-color: #1A1330;
+  border-width: 1px;
+  border-color: #3A2D5E;
+  padding: 0 36px;
+  margin-top: 14px;
+}
+.route-left {
+  flex-direction: row;
+  align-items: center;
+}
+.route-label {
+  font-size: 28px;
+  color: #8C7CB8;
+  letter-spacing: 4px;
+  margin-left: 14px;
+}
+.route-track {
+  flex-direction: row;
+  align-items: center;
+  width: 360px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #0F0A1E;
+}
+.route-fill {
+  height: 16px;
+  width: 230px;
+  border-radius: 8px;
+  background-color: #E8C77A;
+}
+.route-pct {
+  font-size: 28px;
+  color: #E8C77A;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-left: 18px;
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="scene">
+      <div class="scene-glow"></div>
+    </div>
+    <div class="veil"></div>
+
+    <div class="content">
+      <div class="header">
+        <div class="header-kicker">
+          <div class="kicker-line"></div>
+          <span class="kicker-text">DECISION</span>
+          <div class="kicker-line"></div>
+        </div>
+        <div class="header-title">命运的岔路</div>
+      </div>
+
+      <div class="situation">
+        <div class="sit-row">
+          <div class="sit-badge">
+            <svg id="icon-scene-marker" width="26" height="26" viewBox="0 0 26 26">
+              <path d="M13 2 C8 2 4 6 4 11 C4 18 13 24 13 24 C13 24 22 18 22 11 C22 6 18 2 13 2 Z" fill="none" stroke="#E8C77A" stroke-width="2.4"/>
+              <circle cx="13" cy="11" r="3.4" fill="#E8C77A"/>
+            </svg>
+            <span class="sit-badge-text">星屑之海 · 黄昏</span>
+          </div>
+        </div>
+        <span class="sit-text">莉雅伸出手,星光在她指尖流转。海风带着咸涩,远处的钟声正一点点逼近。此刻的选择,将决定你们之间故事的走向——</span>
+      </div>
+
+      <div class="prompt">
+        <svg id="icon-prompt-quill" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M27 5 C20 7 11 14 7 24 L9 26 C19 22 26 13 28 6 Z" fill="none" stroke="#B9A6E8" stroke-width="2.6" stroke-linejoin="round"/>
+          <path d="M7 24 L4 28" stroke="#B9A6E8" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <span class="prompt-text">你会怎么做?</span>
+      </div>
+
+      <div class="choices">
+        <button class="choice choice-primary">
+          <div class="choice-index choice-index-primary">
+            <span class="choice-index-text choice-index-text-primary">1</span>
+          </div>
+          <div class="choice-body">
+            <span class="choice-text">握住她的手,留下来陪她看完这场流星雨</span>
+            <div class="choice-meta">
+              <div class="route-pill">
+                <svg id="icon-route-light" width="22" height="22" viewBox="0 0 22 22">
+                  <path d="M11 2 L13.3 8 L19 8.6 L14.6 12.4 L16 18 L11 14.8 L6 18 L7.4 12.4 L3 8.6 L8.7 8 Z" fill="#E8C77A"/>
+                </svg>
+                <span class="route-pill-text">星光线</span>
+              </div>
+              <div class="aff-up">
+                <svg id="icon-heart-up" width="24" height="24" viewBox="0 0 24 24">
+                  <path d="M12 21 C12 21 3 14 3 8 C3 5 5 3 8 3 C10 3 11.5 4.5 12 5.5 C12.5 4.5 14 3 16 3 C19 3 21 5 21 8 C21 14 12 21 12 21 Z" fill="#E8849A"/>
+                </svg>
+                <span class="aff-text">莉雅好感 +3</span>
+              </div>
+            </div>
+          </div>
+          <div class="choice-arrow">
+            <svg id="icon-choice-arrow-1" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M12 7 L23 17 L12 27" stroke="#E8C77A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
+        <button class="choice">
+          <div class="choice-index">
+            <span class="choice-index-text">2</span>
+          </div>
+          <div class="choice-body">
+            <span class="choice-text">问她钟声背后,究竟隐藏着什么秘密</span>
+            <div class="choice-meta">
+              <div class="route-pill">
+                <svg id="icon-route-mystery" width="22" height="22" viewBox="0 0 22 22">
+                  <circle cx="11" cy="11" r="8" fill="none" stroke="#9A88C6" stroke-width="2.2"/>
+                  <path d="M8.5 8.5 A2.6 2.6 0 1 1 11 12 V13.5" stroke="#9A88C6" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                  <circle cx="11" cy="16.5" r="1.4" fill="#9A88C6"/>
+                </svg>
+                <span class="route-pill-text">真相线</span>
+              </div>
+              <div class="aff-up">
+                <svg id="icon-mind-up" width="24" height="24" viewBox="0 0 24 24">
+                  <path d="M12 3 C7 3 4 7 5 12 C2 14 4 19 8 18 C9 21 15 21 16 18 C20 19 22 14 19 12 C20 7 17 3 12 3 Z" fill="none" stroke="#6FB6E8" stroke-width="2.2"/>
+                </svg>
+                <span class="aff-text aff-text-cool">信任 +2</span>
+              </div>
+            </div>
+          </div>
+          <div class="choice-arrow">
+            <svg id="icon-choice-arrow-2" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M12 7 L23 17 L12 27" stroke="#8C7CB8" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
+        <button class="choice">
+          <div class="choice-index">
+            <span class="choice-index-text">3</span>
+          </div>
+          <div class="choice-body">
+            <span class="choice-text">沉默地转身离开,独自走向钟声的方向</span>
+            <div class="choice-meta">
+              <div class="route-pill">
+                <svg id="icon-route-lone" width="22" height="22" viewBox="0 0 22 22">
+                  <path d="M11 3 C8 3 6 6 6 9 C6 13 11 19 11 19 C11 19 16 13 16 9 C16 6 14 3 11 3 Z" fill="none" stroke="#7A6AA8" stroke-width="2.2"/>
+                </svg>
+                <span class="route-pill-text">孤途线</span>
+              </div>
+              <div class="aff-up">
+                <svg id="icon-heart-down" width="24" height="24" viewBox="0 0 24 24">
+                  <path d="M12 21 C12 21 3 14 3 8 C3 5 5 3 8 3 C10 3 11.5 4.5 12 5.5 C12.5 4.5 14 3 16 3 C19 3 21 5 21 8 C21 14 12 21 12 21 Z" fill="none" stroke="#7A6AA8" stroke-width="2.2"/>
+                </svg>
+                <span class="aff-text aff-text-cool">莉雅好感 -1</span>
+              </div>
+            </div>
+          </div>
+          <div class="choice-arrow">
+            <svg id="icon-choice-arrow-3" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M12 7 L23 17 L12 27" stroke="#8C7CB8" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+      </div>
+
+      <div class="routebar">
+        <div class="route-left">
+          <svg id="icon-route-tree" width="30" height="30" viewBox="0 0 30 30">
+            <circle cx="7" cy="15" r="3.4" fill="#E8C77A"/>
+            <circle cx="23" cy="7" r="3.4" fill="none" stroke="#8C7CB8" stroke-width="2.4"/>
+            <circle cx="23" cy="23" r="3.4" fill="none" stroke="#8C7CB8" stroke-width="2.4"/>
+            <path d="M10 15 L20 8 M10 15 L20 22" stroke="#8C7CB8" stroke-width="2.4"/>
+          </svg>
+          <span class="route-label">星光线进度</span>
+        </div>
+        <div class="route-track">
+          <div class="route-fill"></div>
+        </div>
+        <span class="route-pct">64%</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

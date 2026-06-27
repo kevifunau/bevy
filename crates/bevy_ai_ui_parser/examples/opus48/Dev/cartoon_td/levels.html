@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #2A1B5E;
+  --bg1: #4A2D9C;
+  --card: #FFFFFF;
+  --card-soft: #F3EEFF;
+  --purple: #9B6BFF;
+  --purple-d: #6E3FE0;
+  --teal: #3FD9C4;
+  --teal-d: #1FB6A2;
+  --pink: #FF8FC8;
+  --pink-d: #E85AA6;
+  --gold: #FFC94D;
+  --gold-d: #F0A521;
+  --ink: #3A2B66;
+  --ink-dim: #9B8FC4;
+  --white-dim: #D9CEFF;
+  --lock: #6B5B9E;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 72px 56px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 110px; margin-bottom: 40px; }
+.back {
+  width: 96px; height: 96px;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  border-width: 4px; border-color: var(--purple);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 60px; color: var(--gold); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--white-dim); font-weight: bold; white-space: normal; }
+.star-chip {
+  flex-direction: row; align-items: center;
+  height: 80px;
+  background-color: var(--bg1);
+  border-radius: 40px;
+  border-width: 4px; border-color: var(--gold);
+  padding: 0 30px 0 16px;
+}
+.star-chip-ico { width: 48px; height: 48px; margin-right: 12px; }
+.star-chip-tx { font-size: 36px; min-height: 44px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+/* ---------- chapter tabs ---------- */
+.chaps { flex-direction: row; align-items: center; margin-bottom: 36px; }
+.chap {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 76px;
+  background-color: var(--bg1);
+  border-radius: 38px;
+  padding: 0 36px; margin-right: 22px;
+}
+.chap.is-on { background-color: var(--teal); }
+.chap-tx { font-size: 30px; min-height: 36px; color: var(--white-dim); font-weight: bold; white-space: normal; }
+.chap.is-on .chap-tx { color: #0C3A33; }
+
+/* ---------- level grid ---------- */
+.grid { flex-direction: column; flex-grow: 1; }
+.grow { flex-direction: row; margin-bottom: 36px; }
+.lv-card {
+  width: 460px; height: 380px;
+  background-color: var(--card);
+  border-radius: 48px;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px;
+}
+.lv-card-first { margin-right: 48px; }
+.lv-card.is-cur { border-width: 6px; border-color: var(--teal); }
+.lv-card.is-lock { background-color: var(--bg1); }
+
+.lv-badge {
+  width: 132px; height: 132px;
+  border-radius: 40px;
+  align-items: center; justify-content: center;
+  margin-bottom: 22px;
+}
+.lv-badge-done { width: 132px; height: 132px; background-color: var(--card-soft); }
+.lv-badge-cur { width: 132px; height: 132px; background-color: var(--teal); }
+.lv-badge-lock { width: 132px; height: 132px; background-color: #38256E; }
+.lv-num { font-size: 72px; font-weight: bold; white-space: normal; }
+.lv-num-done { color: var(--purple); }
+.lv-num-cur { color: #FFFFFF; }
+
+.lv-name { font-size: 34px; min-height: 42px; color: var(--ink); font-weight: bold; white-space: normal; margin-bottom: 18px; }
+.lv-name-lock { color: var(--white-dim); }
+
+.lv-stars { flex-direction: row; align-items: center; height: 48px; }
+.lv-star { width: 44px; height: 44px; margin-right: 10px; }
+.lv-star-last { margin-right: 0; }
+.lv-lock-row { flex-direction: row; align-items: center; height: 48px; }
+.lv-lock-ico { width: 40px; height: 40px; margin-right: 12px; }
+.lv-lock-tx { font-size: 28px; min-height: 34px; color: var(--lock); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="52" height="52" viewBox="0 0 52 52">
+          <path d="M32 12 L18 26 L32 40" stroke="#D9CEFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">选择关卡</span>
+        <span class="subtitle">第一章 · 翡翠森林</span>
+      </div>
+      <div class="star-chip">
+        <svg id="icon-star-top" class="star-chip-ico" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M24 5 L30 18 L44 20 L34 30 L37 44 L24 37 L11 44 L14 30 L4 20 L18 18 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <span class="star-chip-tx">14 / 24</span>
+      </div>
+    </div>
+
+    <div class="chaps">
+      <div class="chap is-on">
+        <span class="chap-tx">翡翠森林</span>
+      </div>
+      <div class="chap">
+        <span class="chap-tx">熔岩洞穴</span>
+      </div>
+      <div class="chap">
+        <span class="chap-tx">云端神殿</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="grow">
+        <div class="lv-card lv-card-first">
+          <div class="lv-badge lv-badge-done">
+            <span class="lv-num lv-num-done">1</span>
+          </div>
+          <span class="lv-name">起始营地</span>
+          <div class="lv-stars">
+            <svg class="lv-star" id="l1a" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/></svg>
+            <svg class="lv-star" id="l1b" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/></svg>
+            <svg class="lv-star lv-star-last" id="l1c" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="lv-card">
+          <div class="lv-badge lv-badge-done">
+            <span class="lv-num lv-num-done">2</span>
+          </div>
+          <span class="lv-name">迷雾小径</span>
+          <div class="lv-stars">
+            <svg class="lv-star" id="l2a" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/></svg>
+            <svg class="lv-star" id="l2b" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="2" stroke-linejoin="round"/></svg>
+            <svg class="lv-star lv-star-last" id="l2c" width="44" height="44" viewBox="0 0 44 44"><path d="M22 5 L27 16 L39 17 L30 26 L33 38 L22 31 L11 38 L14 26 L5 17 L17 16 Z" fill="#3A2B66" stroke="#6B5B9E" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="grow">
+        <div class="lv-card lv-card-first is-cur">
+          <div class="lv-badge lv-badge-cur">
+            <span class="lv-num lv-num-cur">3</span>
+          </div>
+          <span class="lv-name">精灵泉眼</span>
+          <div class="lv-lock-row">
+            <svg id="icon-now" class="lv-lock-ico" width="40" height="40" viewBox="0 0 40 40">
+              <path d="M14 8 L30 20 L14 32 Z" fill="#3FD9C4"/>
+            </svg>
+            <span class="lv-lock-tx" style="color:#1FB6A2">挑战中</span>
+          </div>
+        </div>
+        <div class="lv-card is-lock">
+          <div class="lv-badge lv-badge-lock">
+            <svg id="icon-lock4" width="64" height="64" viewBox="0 0 64 64">
+              <rect x="18" y="30" width="28" height="22" rx="5" fill="#6B5B9E"/>
+              <path d="M24 30 L24 22 A8 8 0 0 1 40 22 L40 30" stroke="#6B5B9E" stroke-width="5" fill="none"/>
+              <circle cx="32" cy="40" r="4" fill="#38256E"/>
+            </svg>
+          </div>
+          <span class="lv-name lv-name-lock">未知之地</span>
+          <div class="lv-lock-row">
+            <svg id="icon-lock-s" class="lv-lock-ico" width="40" height="40" viewBox="0 0 40 40">
+              <rect x="11" y="18" width="18" height="14" rx="3" fill="#6B5B9E"/>
+              <path d="M15 18 L15 13 A5 5 0 0 1 25 13 L25 18" stroke="#6B5B9E" stroke-width="3" fill="none"/>
+            </svg>
+            <span class="lv-lock-tx">通关解锁</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

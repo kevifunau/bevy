@@ -1,0 +1,1898 @@
+{
+  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
+  "specVersion": "1.0.0",
+  "name": "example-bevy-ui-screen",
+  "title": "Bevy UI Screen",
+  "title_i18n": {
+    "en": "Bevy UI Screen",
+    "zh-CN": "Bevy UI 游戏界面"
+  },
+  "version": "0.1.0",
+  "description": "Role-based Bevy UI production for HUDs, menus, dialogs, and inventory panels. UX plans first, then visual, optionally motion, and finally program roles hand off before the final Bevy-safe index.html plus Asset/ delivery. bevy-ui.assets.json is optional tooling metadata.",
+  "description_i18n": {
+    "en": "Role-based Bevy UI production for HUDs, menus, dialogs, and inventory panels. UX plans first, then visual, optionally motion, and finally program roles hand off before the final Bevy-safe index.html plus Asset/ delivery. bevy-ui.assets.json is optional tooling metadata.",
+    "zh-CN": "面向 HUD、菜单、弹窗和背包面板的角色接力式 Bevy UI 生产插件。先由 UX 规划，再由 UI 美术产出静态视觉；如制作人需要，再进入 UI TA / 动效；最后交给 UI程序输出符合 Bevy 约束的 index.html 与 Asset/。bevy-ui.assets.json 只是可选工具元数据。"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Open Design",
+    "url": "https://github.com/nexu-io"
+  },
+  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/bevy-ui-screen",
+  "tags": [
+    "example",
+    "first-party",
+    "prototype",
+    "game-ui",
+    "bevy-ui",
+    "hud",
+    "menu",
+    "inventory",
+    "dialog",
+    "desktop",
+    "web"
+  ],
+  "compat": {
+    "agentSkills": [
+      {
+        "path": "./SKILL.md"
+      }
+    ]
+  },
+  "od": {
+    "kind": "scenario",
+    "taskKind": "new-generation",
+    "mode": "prototype",
+    "platform": "game-pc",
+    "scenario": "gaming",
+    "featured": 0.03,
+    "surface": "web",
+    "preview": {
+      "type": "html",
+      "entry": "./example.html"
+    },
+    "useCase": {
+      "query": {
+        "en": "Build a Bevy UI game screen through a role-based workflow: let UX clarify and output the text wireframe first, then let visual continue, optionally add motion, and finally let the program role assemble index.html plus Asset/. Add bevy-ui.assets.json only as optional tooling metadata when useful.",
+        "zh-CN": "使用这个插件完成以下任务：Build a Bevy UI game screen through a role-based workflow: let UX clarify and output the text wireframe first, then let visual continue, optionally add motion, and finally let the program role assemble index.html plus Asset/. Add bevy-ui.assets.json only as optional tooling metadata when useful."
+      },
+      "exampleOutputs": [
+        {
+          "path": "./example.html",
+          "title": "Bevy UI Screen"
+        }
+      ]
+    },
+    "inputs": [
+      {
+        "name": "gameGenre",
+        "type": "select",
+        "required": true,
+        "default": "slg",
+        "label": "Game genre",
+        "label_i18n": {
+          "zh-CN": "游戏品类"
+        },
+        "options": [
+          "slg",
+          "mmorpg",
+          "arpg",
+          "card-rpg",
+          "survival",
+          "strategy",
+          "racing",
+          "shooter",
+          "casual"
+        ],
+        "optionLabels": {
+          "slg": "SLG / Strategy",
+          "mmorpg": "MMORPG",
+          "arpg": "Action RPG",
+          "card-rpg": "Card RPG",
+          "survival": "Survival",
+          "strategy": "Tactical Strategy",
+          "racing": "Racing",
+          "shooter": "Shooter",
+          "casual": "Casual / Light"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "slg": "SLG / 策略",
+            "mmorpg": "MMORPG",
+            "arpg": "动作 RPG",
+            "card-rpg": "卡牌 RPG",
+            "survival": "生存",
+            "strategy": "战棋 / 策略",
+            "racing": "竞速",
+            "shooter": "射击",
+            "casual": "休闲 / 轻度"
+          }
+        },
+        "placeholder": "Select genre",
+        "placeholder_i18n": {
+          "zh-CN": "选择游戏品类"
+        }
+      },
+      {
+        "name": "gameTheme",
+        "type": "select",
+        "required": true,
+        "default": "dark-fantasy",
+        "label": "Game theme / world",
+        "label_i18n": {
+          "zh-CN": "游戏主题 / 世界观"
+        },
+        "options": [
+          "dark-fantasy",
+          "medieval-war",
+          "sci-fi",
+          "cyberpunk",
+          "post-apocalypse",
+          "wuxia-xianxia",
+          "mythic-east",
+          "cute-fantasy"
+        ],
+        "optionLabels": {
+          "dark-fantasy": "Dark Fantasy",
+          "medieval-war": "Medieval War",
+          "sci-fi": "Sci-Fi",
+          "cyberpunk": "Cyberpunk",
+          "post-apocalypse": "Post-apocalypse",
+          "wuxia-xianxia": "Wuxia / Xianxia",
+          "mythic-east": "Mythic East",
+          "cute-fantasy": "Cute Fantasy"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "dark-fantasy": "暗黑幻想",
+            "medieval-war": "中世纪战争",
+            "sci-fi": "科幻",
+            "cyberpunk": "赛博朋克",
+            "post-apocalypse": "废土 / 末世",
+            "wuxia-xianxia": "武侠 / 仙侠",
+            "mythic-east": "东方神话",
+            "cute-fantasy": "轻幻想 / 可爱奇幻"
+          }
+        },
+        "placeholder": "Select theme",
+        "placeholder_i18n": {
+          "zh-CN": "选择游戏主题"
+        }
+      },
+      {
+        "name": "targetPlatform",
+        "type": "select",
+        "required": true,
+        "default": "game-pc",
+        "label": "Target platform",
+        "label_i18n": {
+          "zh-CN": "目标平台"
+        },
+        "options": [
+          "game-pc",
+          "game-console",
+          "game-mobile"
+        ],
+        "optionLabels": {
+          "game-pc": "PC Game (KB/Mouse)",
+          "game-console": "Console Game (Gamepad/TV)",
+          "game-mobile": "Mobile Game (Touch)"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "game-pc": "PC 游戏 (键鼠)",
+            "game-console": "主机游戏 (手柄/TV)",
+            "game-mobile": "移动游戏 (触屏)"
+          }
+        }
+      },
+      {
+        "name": "screenType",
+        "type": "select",
+        "required": true,
+        "default": "login",
+        "label": "Screen function",
+        "label_i18n": {
+          "zh-CN": "游戏界面功能"
+        },
+        "options": [
+          "login",
+          "lobby",
+          "hud",
+          "inventory",
+          "quest",
+          "map",
+          "shop",
+          "dialog",
+          "settings",
+          "loading"
+        ],
+        "optionLabels": {
+          "login": "Login Screen",
+          "lobby": "Lobby / Main Menu",
+          "hud": "Battle HUD",
+          "inventory": "Inventory / Bag",
+          "quest": "Quest / Mission",
+          "map": "Map / World Map",
+          "shop": "Shop / Store",
+          "dialog": "Dialog / Modal",
+          "settings": "Settings",
+          "loading": "Loading / Transition"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "login": "登录界面",
+            "lobby": "大厅 / 主菜单",
+            "hud": "战斗 HUD",
+            "inventory": "背包 / 仓库",
+            "quest": "任务 / 委托",
+            "map": "地图 / 世界地图",
+            "shop": "商城 / 商店",
+            "dialog": "弹窗 / 对话框",
+            "settings": "设置",
+            "loading": "加载 / 过场"
+          }
+        },
+        "placeholder": "Select screen function",
+        "placeholder_i18n": {
+          "zh-CN": "选择页面功能"
+        }
+      },
+      {
+        "name": "uiVisualStyle",
+        "type": "select",
+        "required": true,
+        "default": "ornate-dark",
+        "label": "UI visual style",
+        "label_i18n": {
+          "zh-CN": "界面 UI 风格"
+        },
+        "options": [
+          "ornate-dark",
+          "realistic-heavy",
+          "stylized-fantasy",
+          "sci-fi-clean",
+          "holographic-tech",
+          "anime-bright",
+          "pixel-retro",
+          "minimal-flat"
+        ],
+        "optionLabels": {
+          "ornate-dark": "Ornate Dark / Gothic",
+          "realistic-heavy": "Realistic Heavy",
+          "stylized-fantasy": "Stylized Fantasy",
+          "sci-fi-clean": "Sci-Fi Clean",
+          "holographic-tech": "Holographic Tech",
+          "anime-bright": "Anime Bright",
+          "pixel-retro": "Pixel Retro",
+          "minimal-flat": "Minimal Flat"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "ornate-dark": "暗黑雕饰 / 哥特",
+            "realistic-heavy": "写实厚重",
+            "stylized-fantasy": "风格化幻想",
+            "sci-fi-clean": "简洁科幻",
+            "holographic-tech": "全息科技",
+            "anime-bright": "二次元亮彩",
+            "pixel-retro": "像素复古",
+            "minimal-flat": "极简扁平"
+          }
+        },
+        "placeholder": "Select UI style",
+        "placeholder_i18n": {
+          "zh-CN": "选择 UI 风格"
+        }
+      },
+      {
+        "name": "inputMode",
+        "type": "select",
+        "required": false,
+        "default": "kb-mouse",
+        "label": "Primary input mode",
+        "label_i18n": {
+          "zh-CN": "主要输入方式"
+        },
+        "options": [
+          "kb-mouse",
+          "gamepad",
+          "touch"
+        ],
+        "optionLabels": {
+          "kb-mouse": "Keyboard / Mouse",
+          "gamepad": "Gamepad",
+          "touch": "Touch"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "kb-mouse": "键盘 / 鼠标",
+            "gamepad": "手柄",
+            "touch": "触屏"
+          }
+        }
+      },
+      {
+        "name": "targetResolution",
+        "type": "select",
+        "required": false,
+        "default": "1920x1080",
+        "label": "Target resolution",
+        "label_i18n": {
+          "zh-CN": "目标分辨率"
+        },
+        "options": [
+          "1920x1080",
+          "2560x1440",
+          "3840x2160",
+          "2532x1170",
+          "2436x1125",
+          "2340x1080"
+        ],
+        "placeholder": "1920x1080",
+        "placeholder_i18n": {
+          "zh-CN": "选择目标分辨率"
+        }
+      },
+      {
+        "name": "assetStrategy",
+        "type": "select",
+        "required": false,
+        "default": "reuse-first",
+        "label": "Asset strategy",
+        "label_i18n": {
+          "zh-CN": "素材策略"
+        },
+        "options": [
+          "reuse-first",
+          "mixed-assets",
+          "generate-missing-only"
+        ],
+        "optionLabels": {
+          "reuse-first": "Reuse first",
+          "mixed-assets": "Mix existing + new",
+          "generate-missing-only": "Generate missing only"
+        },
+        "optionLabels_i18n": {
+          "zh-CN": {
+            "reuse-first": "优先复用现有素材",
+            "mixed-assets": "现有素材 + 新素材混合",
+            "generate-missing-only": "只补缺失素材"
+          }
+        }
+      },
+      {
+        "name": "artDirection",
+        "type": "text",
+        "required": false,
+        "label": "Extra art keywords",
+        "label_i18n": {
+          "zh-CN": "补充美术关键词"
+        },
+        "placeholder": "e.g. dark bronze, cathedral candles, cold moonlight, worn iron",
+        "placeholder_i18n": {
+          "zh-CN": "例如：暗铜、教堂烛火、冷月光、磨损铁艺"
+        }
+      },
+      {
+        "name": "mustHaveModules",
+        "type": "text",
+        "required": false,
+        "label": "Must-have UI modules",
+        "label_i18n": {
+          "zh-CN": "必带模块 / 组件"
+        },
+        "placeholder": "e.g. account, password, notice, social login, version info",
+        "placeholder_i18n": {
+          "zh-CN": "例如：账号、密码、公告、社交登录、版本号"
+        }
+      },
+      {
+        "name": "briefNotes",
+        "type": "text",
+        "required": false,
+        "label": "Producer notes",
+        "label_i18n": {
+          "zh-CN": "制作人补充说明"
+        },
+        "placeholder": "Anything special the team should respect in this screen",
+        "placeholder_i18n": {
+          "zh-CN": "还有哪些必须遵守的业务或表现要求"
+        }
+      }
+    ],
+    "inputGroups": [
+      {
+        "id": "game-brief",
+        "title": "Game brief",
+        "title_i18n": {
+          "zh-CN": "游戏基本信息"
+        },
+        "fields": [
+          "gameGenre",
+          "gameTheme",
+          "targetPlatform",
+          "inputMode"
+        ]
+      },
+      {
+        "id": "screen-brief",
+        "title": "Screen brief",
+        "title_i18n": {
+          "zh-CN": "页面需求"
+        },
+        "fields": [
+          "screenType",
+          "mustHaveModules",
+          "targetResolution"
+        ]
+      },
+      {
+        "id": "visual-brief",
+        "title": "Visual brief",
+        "title_i18n": {
+          "zh-CN": "视觉方向"
+        },
+        "fields": [
+          "uiVisualStyle",
+          "assetStrategy",
+          "artDirection",
+          "briefNotes"
+        ]
+      }
+    ],
+    "context": {
+      "skills": [
+        {
+          "path": "./SKILL.md"
+        }
+      ],
+      "designSystem": {
+        "primary": true,
+        "ref": "bevy-ui"
+      },
+      "craft": [
+        "anti-ai-slop",
+        "state-coverage",
+        "animation-discipline"
+      ],
+      "atoms": [
+        "discovery-question-form",
+        "direction-picker",
+        "todo-write",
+        "file-read",
+        "media-image",
+        "file-write",
+        "live-artifact",
+        "critique-theater"
+      ],
+      "assets": [
+        "./AUTHORING.md",
+        "./assets/template.html",
+        "./bevy-ui.assets.example.json",
+        "./example.html",
+        "./references/layouts.md",
+        "./references/prompt-recipes.md",
+        "./references/slicing-profiles.md"
+      ]
+    },
+    "subAgents": [
+      {
+        "agentId": "bevy-ux-planner",
+        "roleId": "ux",
+        "roleLabel": "UX交互策划",
+        "skillPath": "skills/bevy-ux-planner/SKILL.md",
+        "handoffPath": ".od-temp/bevy-ui/handoffs/ux-handoff.json",
+        "workspaceRoots": [
+          "design/bevy-ui/ux",
+          ".od-temp/bevy-ui/handoffs"
+        ]
+      },
+      {
+        "agentId": "bevy-ui-artist",
+        "roleId": "art",
+        "roleLabel": "UI美术",
+        "skillPath": "skills/bevy-ui-artist/SKILL.md",
+        "handoffPath": ".od-temp/bevy-ui/handoffs/artist-handoff.json",
+        "workspaceRoots": [
+          "design/bevy-ui/art",
+          "Asset",
+          ".od-temp/bevy-ui/handoffs"
+        ]
+      },
+      {
+        "agentId": "bevy-ui-ta",
+        "roleId": "ta",
+        "roleLabel": "UI TA / 动效",
+        "skillPath": "skills/bevy-ui-ta/SKILL.md",
+        "handoffPath": ".od-temp/bevy-ui/handoffs/ta-handoff.json",
+        "workspaceRoots": [
+          "design/bevy-ui/motion",
+          ".od-temp/bevy-ui/handoffs"
+        ]
+      },
+      {
+        "agentId": "bevy-ui-programmer",
+        "roleId": "program",
+        "roleLabel": "UI程序",
+        "skillPath": "skills/bevy-ui-programmer/SKILL.md",
+        "handoffPath": ".od-temp/bevy-ui/handoffs/program-handoff.json",
+        "workspaceRoots": [
+          ".",
+          "Asset",
+          ".od-temp/bevy-ui/handoffs",
+          ".od-temp/bevy-ui/validation"
+        ]
+      }
+    ],
+    "pipeline": {
+      "stages": [
+        {
+          "id": "pm-brief",
+          "title": "UX交互策划",
+          "owner": "PMAgent",
+          "ownerRole": "pm",
+          "kind": "agent-stage",
+          "summary": "UX交互策划只负责需求澄清、字段盘点、布局策略、边界状态和线框/结构交接，不负责素材翻找、历史工程复用、切图或最终 HTML/CSS/manifest 交付。",
+          "atoms": [
+            "discovery-question-form",
+            "file-write"
+          ],
+          "workspace": {
+            "agentExecutor": "pm-brief",
+            "subAgent": {
+              "agentId": "bevy-ux-planner",
+              "roleId": "ux",
+              "roleLabel": "UX交互策划",
+              "skillPath": "skills/bevy-ux-planner/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ux-handoff.json"
+            },
+            "previewPath": ".od-temp/bevy-ui/pm/pm-brief.md",
+            "summary": "UX交互策划先澄清需求和布局策略，再进入线框阶段，避免线框图建立在错误假设上；这一棒不能越界到素材资产处理或最终工程交付。",
+            "checklist": [
+              "界面的功能目的和第一版范围是否已明确？",
+              "界面上需要展示的数据和字段是否已列出？",
+              "玩家可执行的操作和交互方式是否已确认？",
+              "布局模式和信息的视觉优先级是否已确定？",
+              "目标平台、分辨率和输入方式是否已锁定？",
+              "这一阶段是否仍然停留在需求澄清、文本线框和语义结构交接范围，没有越界到素材翻找、历史工程参考、切图或最终交付？"
+            ],
+            "pmTracks": [
+              {
+                "id": "purpose",
+                "label": "功能目的",
+                "summary": "先搞清楚这个界面在游戏里干什么用、玩家要完成什么事，避免线框图建立在错误定位上。",
+                "questionMatchers": [
+                  "功能",
+                  "目的",
+                  "目标",
+                  "动作",
+                  "完成",
+                  "范围",
+                  "不做",
+                  "核心"
+                ],
+                "answerGuidance": "用策划语言回答这个界面的功能定位和第一版的范围边界。",
+                "provenanceLabel": "来自功能定位不明确",
+                "provenanceSummary": "PM 仍然不确定这个界面的功能定位和范围边界，继续往下会让线框图建立在错误假设上。",
+                "rationale": "这决定线框图应该把什么放在主位、什么可以不做。",
+                "downstreamImpact": "直接影响线框图的区域划分、核心按钮和信息层级。",
+                "followUpPrompts": [
+                  "玩家打开这个界面最想完成的事是什么？",
+                  "有哪些功能明确不进入第一版？"
+                ],
+                "answerChecklist": [
+                  "写清界面的功能定位",
+                  "写清第一版核心功能",
+                  "写清第一版不做的功能"
+                ]
+              },
+              {
+                "id": "data-fields",
+                "label": "数据与字段",
+                "summary": "先确认界面上要展示哪些信息，哪些是实时变化的，线框图才能画出正确的数据区域。",
+                "questionMatchers": [
+                  "数据",
+                  "字段",
+                  "信息",
+                  "展示",
+                  "动态",
+                  "静态",
+                  "实时",
+                  "变化"
+                ],
+                "answerGuidance": "列出界面上需要展示的关键信息，并区分哪些是动态变化的。",
+                "provenanceLabel": "来自数据展示不明确",
+                "provenanceSummary": "PM 仍不清楚界面上需要展示哪些数据，线框图如果画错数据区域会导致后续大面积返工。",
+                "rationale": "这决定线框图里哪些区域需要为动态数据预留空间。",
+                "downstreamImpact": "直接影响线框图的区域大小、布局方式和状态设计。",
+                "followUpPrompts": [
+                  "界面上需要展示哪些关键信息？",
+                  "这些信息里哪些是实时变化的？"
+                ],
+                "answerChecklist": [
+                  "列出关键数据和字段",
+                  "区分动态和静态数据",
+                  "说明数据的展示方式（数字、图标、进度条等）"
+                ]
+              },
+              {
+                "id": "interaction",
+                "label": "页面交互",
+                "summary": "先确认玩家在这个界面上能做哪些操作，线框图才能为交互元素预留正确的位置和大小。",
+                "questionMatchers": [
+                  "操作",
+                  "交互",
+                  "点击",
+                  "拖拽",
+                  "切换",
+                  "确认",
+                  "反馈",
+                  "动画",
+                  "按钮"
+                ],
+                "answerGuidance": "列出玩家能做的操作，以及哪些操作需要确认或反馈。",
+                "provenanceLabel": "来自交互方式不明确",
+                "provenanceSummary": "PM 仍不清楚玩家在这个界面上能做哪些操作，线框图可能遗漏关键交互元素。",
+                "rationale": "这决定线框图里按钮、操作区域的位置和大小。",
+                "downstreamImpact": "直接影响线框图的交互元素布局、按钮大小和操作区域划分。",
+                "followUpPrompts": [
+                  "玩家在这个界面上能做哪些操作？",
+                  "哪些操作需要二次确认或动画反馈？"
+                ],
+                "answerChecklist": [
+                  "列出玩家可执行的操作",
+                  "说明哪些操作需要确认弹窗",
+                  "说明哪些操作需要动画或反馈效果"
+                ]
+              },
+              {
+                "id": "layout-strategy",
+                "label": "布局策略",
+                "summary": "确认界面适合什么布局模式、哪些信息放主位、哪些收进次级区域，线框图才能画出正确的区域划分。",
+                "questionMatchers": [
+                  "布局",
+                  "排版",
+                  "主位",
+                  "次级",
+                  "区域",
+                  "锚点",
+                  "分栏",
+                  "弹窗",
+                  "居中",
+                  "层级",
+                  "优先级"
+                ],
+                "answerGuidance": "说明界面适合什么布局模式，以及信息的视觉优先级。",
+                "provenanceLabel": "来自布局策略不明确",
+                "provenanceSummary": "UX策划仍不确定界面应该用什么布局模式，线框图如果画错区域划分会导致后续需要大幅返工。",
+                "rationale": "这决定线框图的整体布局结构和信息层级。",
+                "downstreamImpact": "直接影响线框图的区域划分、信息优先级和交互元素位置。",
+                "followUpPrompts": [
+                  "这个界面适合什么布局模式？（四角锚点分散、居中弹窗、左右分栏等）",
+                  "哪些信息要放在最显眼的位置，哪些可以收进次级区域？"
+                ],
+                "answerChecklist": [
+                  "确认布局模式",
+                  "确认信息优先级",
+                  "确认主位和次级区域划分"
+                ]
+              },
+              {
+                "id": "device",
+                "label": "目标设备",
+                "summary": "先确认目标平台、分辨率和输入方式，线框图才能按正确的尺寸和交互模式来设计。",
+                "questionMatchers": [
+                  "平台",
+                  "分辨率",
+                  "设备",
+                  "输入",
+                  "键鼠",
+                  "手柄",
+                  "触屏",
+                  "手机",
+                  "PC"
+                ],
+                "answerGuidance": "确认目标设备信息，特别是输入方式对布局的影响。",
+                "provenanceLabel": "来自设备信息不明确",
+                "provenanceSummary": "PM 仍不确定目标设备和输入方式，线框图如果用错尺寸或交互模式会导致后续全面返工。",
+                "rationale": "这决定线框图的整体尺寸、按钮大小和交互模式。",
+                "downstreamImpact": "直接影响线框图的画布尺寸、触控区域大小和布局方向。",
+                "followUpPrompts": [
+                  "目标平台和分辨率是什么？",
+                  "玩家用键鼠、手柄还是触屏操作？"
+                ],
+                "answerChecklist": [
+                  "确认目标平台",
+                  "确认目标分辨率",
+                  "确认输入方式（键鼠/手柄/触屏）"
+                ]
+              }
+            ],
+            "pmQuestions": [
+              {
+                "question": "这个界面在游戏里承担什么功能？玩家打开它要完成什么事？",
+                "trackId": "purpose",
+                "blocking": true
+              },
+              {
+                "question": "第一版只做哪些核心功能，哪些先不做？",
+                "trackId": "purpose",
+                "blocking": true
+              },
+              {
+                "question": "界面上需要展示哪些关键信息？（比如：玩家血量、物品名称+图标+数量、技能冷却时间）",
+                "trackId": "data-fields",
+                "blocking": true
+              },
+              {
+                "question": "这些信息里，哪些是动态变化的（实时更新），哪些是静态的？",
+                "trackId": "data-fields",
+                "blocking": true
+              },
+              {
+                "question": "玩家在这个界面上能做哪些操作？（比如：点击按钮、拖拽物品、切换标签页）",
+                "trackId": "interaction",
+                "blocking": true
+              },
+              {
+                "question": "这些操作里，有没有需要确认、反馈或动画效果的？（比如：丢弃物品需要二次确认、切换标签需要过渡动画）",
+                "trackId": "interaction"
+              },
+              {
+                "question": "这个界面适合什么布局？（比如：四角锚点分散适合HUD、居中弹窗适合菜单、左右分栏适合背包）",
+                "trackId": "layout-strategy",
+                "blocking": true
+              },
+              {
+                "question": "哪些信息要放在最显眼的位置，哪些可以收进次级区域？",
+                "trackId": "layout-strategy"
+              },
+              {
+                "question": "目标平台和分辨率是什么？（当前默认：PC / 1920×1080，如需修改请说明）",
+                "trackId": "device",
+                "blocking": true
+              },
+              {
+                "question": "玩家用什么方式操作？键鼠、手柄还是触屏？",
+                "trackId": "device",
+                "blocking": true
+              }
+            ],
+            "pmRoundStrategy": {
+              "mode": "track-sequential",
+              "trackOrder": [
+                "purpose",
+                "data-fields",
+                "interaction",
+                "layout-strategy",
+                "device"
+              ],
+              "maxQuestionsPerRound": 2,
+              "prioritizeBlocking": true
+            },
+            "actions": [
+              {
+                "label": "UX策划交接合同",
+                "path": ".od-temp/bevy-ui/contracts/pm-brief.json"
+              },
+              {
+                "label": "UX策划简报",
+                "path": ".od-temp/bevy-ui/pm/pm-brief.md"
+              },
+              {
+                "label": "结构化简报",
+                "path": ".od-temp/bevy-ui/pm/pm-brief.json"
+              }
+            ]
+          },
+          "produces": [
+            ".od-temp/bevy-ui/contracts/pm-brief.json",
+            ".od-temp/bevy-ui/pm/pm-brief.json",
+            ".od-temp/bevy-ui/pm/pm-brief.md"
+          ]
+        },
+        {
+          "id": "pm-brief-review",
+          "title": "UX策划审批",
+          "owner": "PMAgent",
+          "ownerRole": "pm",
+          "kind": "review-gate",
+          "summary": "UX策划审批：制作人确认需求和布局策略后再进入线框阶段。",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/pm/pm-brief.json",
+            ".od-temp/bevy-ui/pm/pm-brief.md"
+          ],
+          "blocksUntilApproved": true,
+          "workspace": {
+            "previewPath": ".od-temp/bevy-ui/pm/pm-brief.md",
+            "previewLabel": "UX策划简报",
+            "summary": "这一步不是让 Agent 自动往后走，而是让制作人先确认需求和布局策略是否准确。",
+            "checklist": [
+              "功能目的和范围是否正确？",
+              "数据和字段是否完整？",
+              "交互操作是否已列出？",
+              "布局策略和信息优先级是否合理？",
+              "目标设备信息是否准确？",
+              "是否可以进入线框阶段？"
+            ],
+            "actions": [
+              {
+                "label": "UX策划简报",
+                "path": ".od-temp/bevy-ui/pm/pm-brief.md"
+              },
+              {
+                "label": "结构化简报",
+                "path": ".od-temp/bevy-ui/pm/pm-brief.json"
+              }
+            ],
+            "subAgent": {
+              "agentId": "bevy-ux-planner",
+              "roleId": "ux",
+              "roleLabel": "UX交互策划",
+              "skillPath": "skills/bevy-ux-planner/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ux-handoff.json"
+            }
+          },
+          "review": {
+            "questions": [
+              "功能结构是否正确？",
+              "页面区域划分是否正确？",
+              "是否进入线框阶段？"
+            ],
+            "decisionGuidance": {
+              "approveWhen": [
+                "UX策划简报已准确描述界面目标、玩家结果、布局策略和第一版范围。",
+                "阻塞 wireframe 的 PM 澄清问题已经回答，而不是留到后面再说。",
+                "Bevy-safe 约束已经足够明确，可以进入线框阶段。"
+              ],
+              "revisitIf": [
+                "界面范围仍然模糊，或混入多个屏幕目标。",
+                "关键交互状态、解析器约束或资源策略还没有说清楚。",
+                "继续进入线框阶段会让后续 Agent 建立在错误前提上。"
+              ]
+            },
+            "requiredEvidence": [
+              ".od-temp/bevy-ui/pm/pm-brief.md",
+              ".od-temp/bevy-ui/pm/pm-brief.json"
+            ],
+            "validationRules": [
+              "pm_answers_required"
+            ],
+            "revisionFocusOptions": [
+              "purpose",
+              "data-fields",
+              "interaction",
+              "layout-strategy",
+              "device"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "pm-revisit-purpose",
+                "label": "重新确认功能目的",
+                "focus": [
+                  "purpose"
+                ],
+                "note": "重新确认这个界面的功能定位和第一版范围。"
+              },
+              {
+                "id": "pm-revisit-data-fields",
+                "label": "重新确认数据字段",
+                "focus": [
+                  "data-fields"
+                ],
+                "note": "重新确认界面上需要展示哪些数据和字段。"
+              },
+              {
+                "id": "pm-revisit-interaction",
+                "label": "重新确认页面交互",
+                "focus": [
+                  "interaction"
+                ],
+                "note": "重新确认玩家在这个界面上能做哪些操作。"
+              },
+              {
+                "id": "pm-revisit-layout-strategy",
+                "label": "重新确认布局策略",
+                "focus": [
+                  "layout-strategy"
+                ],
+                "note": "重新确认界面布局模式和信息的视觉优先级。"
+              },
+              {
+                "id": "pm-revisit-device",
+                "label": "重新确认目标设备",
+                "focus": [
+                  "device"
+                ],
+                "note": "重新确认目标平台、分辨率和输入方式。"
+              },
+              {
+                "id": "pm-revisit-brief",
+                "label": "重新过一遍完整需求",
+                "focus": [
+                  "purpose",
+                  "data-fields",
+                  "interaction",
+                  "layout-strategy",
+                  "device"
+                ],
+                "note": "UX策划简报需要完整再过一轮澄清，再进入线框图。"
+              }
+            ],
+            "reviseTarget": "pm-brief",
+            "rollbackTarget": "pm-brief",
+            "variantPolicy": "none",
+            "blockers": [
+              "存在未回答的 UX策划澄清问题时，禁止通过"
+            ]
+          }
+        },
+        {
+          "id": "wireframe",
+          "title": "Wireframe",
+          "owner": "WireframeAgent",
+          "ownerRole": "wireframe",
+          "kind": "agent-stage",
+          "summary": "Produce a low-fidelity frame that validates layout, hierarchy, and interaction regions without art direction noise.",
+          "atoms": [
+            "file-read",
+            "file-write"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/pm/pm-brief.md"
+          ],
+          "workspace": {
+            "agentExecutor": "wireframe",
+            "subAgent": {
+              "agentId": "bevy-ux-planner",
+              "roleId": "ux",
+              "roleLabel": "UX交互策划",
+              "skillPath": "skills/bevy-ux-planner/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ux-handoff.json"
+            },
+            "previewPath": "design/bevy-ui/ux/wireframe.html",
+            "summary": "线框阶段只检查结构和信息层级，不在这里解决美术问题。",
+            "checklist": [
+              "主要区域是否完整？",
+              "玩家最重要的操作是否已经放在正确位置？",
+              "是否仍保持低保真而没有提前混入正式美术判断？"
+            ],
+            "actions": [
+              {
+                "label": "Wireframe handoff contract",
+                "path": ".od-temp/bevy-ui/contracts/wireframe.json"
+              },
+              {
+                "label": "UX线框预览",
+                "path": "design/bevy-ui/ux/wireframe.html"
+              },
+              {
+                "label": "UX线框说明",
+                "path": "design/bevy-ui/ux/wireframe.md"
+              }
+            ]
+          },
+          "produces": [
+            ".od-temp/bevy-ui/contracts/wireframe.json",
+            "design/bevy-ui/ux/wireframe.html",
+            "design/bevy-ui/ux/wireframe.md",
+            ".od-temp/bevy-ui/handoffs/ux-handoff.json"
+          ]
+        },
+        {
+          "id": "wireframe-review",
+          "title": "Wireframe Review",
+          "owner": "WireframeAgent",
+          "ownerRole": "wireframe",
+          "kind": "review-gate",
+          "summary": "Review the frame while it is still cheap to change, before structure and assets start hardening around a bad layout.",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            "design/bevy-ui/ux/wireframe.html",
+            "design/bevy-ui/ux/wireframe.md"
+          ],
+          "blocksUntilApproved": true,
+          "workspace": {
+            "previewPath": "design/bevy-ui/ux/wireframe.html",
+            "previewLabel": "UX线框预览",
+            "summary": "这里要确认框图和层级，而不是开始挑资源细节。",
+            "checklist": [
+              "区域框图是否正确？",
+              "信息层级是否正确？",
+              "是否进入结构预览阶段？"
+            ],
+            "compareEntries": [
+              {
+                "id": "pm-brief",
+                "label": "UX策划简报",
+                "path": ".od-temp/bevy-ui/pm/pm-brief.md"
+              },
+              {
+                "id": "wireframe",
+                "label": "UX线框输出",
+                "path": "design/bevy-ui/ux/wireframe.html"
+              }
+            ],
+            "reviewSignals": {
+              "acceptanceFacts": [
+                "这一步只验证区域框图、层级和主要操作位置，不检查正式美术。",
+                "如果线框里还没有清晰操作目标，就不应该进入结构阶段。"
+              ],
+              "reviewRisks": [
+                "如果主要 CTA 或导航块缺失，后续结构 Agent 会围绕错误布局继续展开。"
+              ],
+              "diffInsights": [
+                "优先比较 UX策划简报中的主要区域承诺，是否都在线框中有落位。"
+              ]
+            },
+            "actions": [
+              {
+                "label": "UX线框预览",
+                "path": "design/bevy-ui/ux/wireframe.html"
+              },
+              {
+                "label": "UX线框说明",
+                "path": "design/bevy-ui/ux/wireframe.md"
+              }
+            ],
+            "subAgent": {
+              "agentId": "bevy-ux-planner",
+              "roleId": "ux",
+              "roleLabel": "UX交互策划",
+              "skillPath": "skills/bevy-ux-planner/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ux-handoff.json"
+            }
+          },
+          "review": {
+            "questions": [
+              "区域框图是否正确？",
+              "信息层级是否正确？",
+              "是否进入结构预览阶段？"
+            ],
+            "decisionGuidance": {
+              "approveWhen": [
+                "主要区域和层级关系在不依赖正式美术的情况下已经清晰。",
+                "导航与主要操作区域的位置已经正确。",
+                "当前仍然是低保真线框，而不是用视觉细节掩盖布局问题。"
+              ],
+              "revisitIf": [
+                "玩家会错过主要操作，或者导航流仍然令人困惑。",
+                "重要区域缺失、重复或顺序错误。",
+                "线框已经提前依赖视觉润色，而不是先把布局说清楚。"
+              ]
+            },
+            "requiredEvidence": [
+              "design/bevy-ui/ux/wireframe.html",
+              "design/bevy-ui/ux/wireframe.md"
+            ],
+            "validationRules": [
+              "wireframe_action_targets",
+              "wireframe_action_hooks"
+            ],
+            "revisionFocusOptions": [
+              "layout",
+              "navigation",
+              "actions",
+              "hierarchy"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "wireframe-layout",
+                "label": "Revisit layout",
+                "focus": [
+                  "layout"
+                ],
+                "note": "Revisit the low-fidelity layout before structure generation begins."
+              },
+              {
+                "id": "wireframe-navigation",
+                "label": "Revisit navigation",
+                "focus": [
+                  "navigation"
+                ],
+                "note": "Adjust the navigation flow before locking the wireframe."
+              },
+              {
+                "id": "wireframe-actions",
+                "label": "Revisit actions",
+                "focus": [
+                  "actions"
+                ],
+                "note": "Reconfirm primary actions and their placement in the wireframe."
+              },
+              {
+                "id": "wireframe-hierarchy",
+                "label": "Revisit hierarchy",
+                "focus": [
+                  "hierarchy"
+                ],
+                "note": "Rebalance the visual hierarchy before moving into structure."
+              }
+            ],
+            "reviseTarget": "wireframe",
+            "rollbackTarget": "pm-brief",
+            "variantPolicy": "none",
+            "blockers": [
+              "没有主要操作区域或线框没有表达核心交互时，禁止通过。"
+            ]
+          }
+        },
+        {
+          "id": "structure-preview",
+          "title": "Structure Preview",
+          "owner": "StructureAgent",
+          "ownerRole": "structure",
+          "kind": "agent-stage",
+          "summary": "Turn the approved wireframe into a usable Bevy-safe structure preview with stable ids, layout semantics, and parser-facing hooks.",
+          "atoms": [
+            "file-read",
+            "file-write",
+            "live-artifact"
+          ],
+          "requires": [
+            "design/bevy-ui/ux/wireframe.html"
+          ],
+          "workspace": {
+            "agentExecutor": "structure-preview",
+            "previewPath": ".od-temp/bevy-ui/structure/index.html",
+            "summary": "结构预览是给用户先试“能不能用”，而不是等美术完成后再发现布局不对。",
+            "checklist": [
+              "结构是否已经接近可用？",
+              "稳定 id 和数据钩子是否足够支撑后续解析？",
+              "是否在不依赖正式资产的情况下验证了主要交互区？"
+            ],
+            "actions": [
+              {
+                "label": "UI程序结构交接契约",
+                "path": ".od-temp/bevy-ui/contracts/structure-preview.json"
+              },
+              {
+                "label": "UI程序结构预览",
+                "path": ".od-temp/bevy-ui/structure/index.html"
+              },
+              {
+                "label": "UI程序结构契约",
+                "path": ".od-temp/bevy-ui/structure/structure.json"
+              }
+            ],
+            "subAgent": {
+              "agentId": "bevy-ui-programmer",
+              "roleId": "program",
+              "roleLabel": "UI程序",
+              "skillPath": "skills/bevy-ui-programmer/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/program-handoff.json"
+            }
+          },
+          "produces": [
+            ".od-temp/bevy-ui/contracts/structure-preview.json",
+            ".od-temp/bevy-ui/structure/index.html",
+            ".od-temp/bevy-ui/structure/structure.json"
+          ]
+        },
+        {
+          "id": "structure-review",
+          "title": "Structure Review",
+          "owner": "StructureAgent",
+          "ownerRole": "structure",
+          "kind": "review-gate",
+          "summary": "Approve the usable structure before the workflow spends effort on asset direction and art production.",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/structure/index.html",
+            ".od-temp/bevy-ui/structure/structure.json"
+          ],
+          "blocksUntilApproved": true,
+          "workspace": {
+            "previewPath": ".od-temp/bevy-ui/structure/index.html",
+            "previewLabel": "Structure preview",
+            "summary": "如果结构阶段没通过，就不应该进入资产生产。",
+            "checklist": [
+              "布局顺序是否正确？",
+              "功能入口是否缺失？",
+              "是否进入资产方向阶段？"
+            ],
+            "compareEntries": [
+              {
+                "id": "wireframe",
+                "label": "UX线框输入",
+                "path": "design/bevy-ui/ux/wireframe.html"
+              },
+              {
+                "id": "structure",
+                "label": "UI程序结构输出",
+                "path": ".od-temp/bevy-ui/structure/index.html"
+              }
+            ],
+            "reviewSignals": {
+              "acceptanceFacts": [
+                "这一步关注可解析结构、稳定 id、data-action 和主要节点骨架。",
+                "此时仍允许视觉粗糙，但不允许结构语义缺失。"
+              ],
+              "reviewRisks": [
+                "如果按钮没有稳定 id 或 data-action，Bevy parser 侧接入会明显不稳。"
+              ],
+              "diffInsights": [
+                "对比线框与结构预览时，优先看操作区是否被保留、语义节点是否变得更明确。"
+              ]
+            },
+            "actions": [
+              {
+                "label": "Structure preview",
+                "path": ".od-temp/bevy-ui/structure/index.html"
+              },
+              {
+                "label": "Structure contract",
+                "path": ".od-temp/bevy-ui/structure/structure.json"
+              }
+            ],
+            "subAgent": {
+              "agentId": "bevy-ui-programmer",
+              "roleId": "program",
+              "roleLabel": "UI程序",
+              "skillPath": "skills/bevy-ui-programmer/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/program-handoff.json"
+            }
+          },
+          "review": {
+            "questions": [
+              "布局顺序是否正确？",
+              "功能入口是否缺失？",
+              "是否进入资产方向阶段？"
+            ],
+            "decisionGuidance": {
+              "approveWhen": [
+                "结构已经足够稳定，可进入 parser-facing 映射。",
+                "稳定 id、data-action 和主要节点语义已经完整。",
+                "在没有正式美术资源的情况下，这个界面已经接近可用。"
+              ],
+              "revisitIf": [
+                "稳定 id 或 data-action 仍然缺失。",
+                "结构仍在改变核心布局，而不是只做 parser-safe 落地。",
+                "继续进入资产阶段会把资源绑定在不稳定结构上。"
+              ]
+            },
+            "requiredEvidence": [
+              ".od-temp/bevy-ui/structure/index.html",
+              ".od-temp/bevy-ui/structure/structure.json"
+            ],
+            "validationRules": [
+              "structure_stable_ids",
+              "structure_data_actions"
+            ],
+            "revisionFocusOptions": [
+              "layout",
+              "ids",
+              "data-actions",
+              "semantic-structure"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "structure-layout",
+                "label": "Revisit structure layout",
+                "focus": [
+                  "layout"
+                ],
+                "note": "Revisit the structure layout before asset work starts."
+              },
+              {
+                "id": "structure-ids",
+                "label": "Revisit stable ids",
+                "focus": [
+                  "ids"
+                ],
+                "note": "Rework stable ids before parser mapping continues."
+              },
+              {
+                "id": "structure-data-actions",
+                "label": "Revisit action hooks",
+                "focus": [
+                  "data-actions"
+                ],
+                "note": "Clarify data-action hooks before moving into asset direction."
+              },
+              {
+                "id": "structure-semantics",
+                "label": "Revisit semantics",
+                "focus": [
+                  "semantic-structure"
+                ],
+                "note": "Strengthen semantic structure before asset generation begins."
+              }
+            ],
+            "reviseTarget": "structure-preview",
+            "rollbackTarget": "wireframe",
+            "variantPolicy": "none",
+            "blockers": [
+              "缺失稳定 id 或交互钩子时，禁止进入资产生产。"
+            ]
+          }
+        },
+        {
+          "id": "asset-direction",
+          "title": "Asset Direction",
+          "owner": "AssetAgent",
+          "ownerRole": "asset",
+          "kind": "agent-stage",
+          "atoms": [
+            "file-read",
+            "media-image",
+            "file-write"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/structure/index.html"
+          ],
+          "produces": [
+            ".od-temp/bevy-ui/contracts/asset-direction.json",
+            ".od-temp/bevy-ui/assets-draft/asset-direction-board.md",
+            ".od-temp/bevy-ui/assets-draft/candidates"
+          ],
+          "allowVariants": true,
+          "workspace": {
+            "agentExecutor": "asset-direction",
+            "subAgent": {
+              "agentId": "bevy-ui-artist",
+              "roleId": "art",
+              "roleLabel": "UI美术",
+              "skillPath": "skills/bevy-ui-artist/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/artist-handoff.json"
+            },
+            "assetRevisionStrategy": {
+              "preserveUnfocused": true,
+              "focusToKinds": [
+                {
+                  "focus": "art-direction",
+                  "assetKinds": [
+                    "background",
+                    "panel",
+                    "button",
+                    "icon"
+                  ]
+                },
+                {
+                  "focus": "palette",
+                  "assetKinds": [
+                    "background",
+                    "panel",
+                    "button",
+                    "icon"
+                  ]
+                },
+                {
+                  "focus": "component-coverage",
+                  "assetKinds": [
+                    "panel",
+                    "button",
+                    "icon"
+                  ]
+                },
+                {
+                  "focus": "asset-gaps",
+                  "assetKinds": [
+                    "background",
+                    "panel",
+                    "button",
+                    "icon"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "asset-direction-review",
+          "title": "Asset Direction Review",
+          "owner": "AssetAgent",
+          "ownerRole": "asset",
+          "kind": "review-gate",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/assets-draft/asset-direction-board.md"
+          ],
+          "blocksUntilApproved": true,
+          "allowVariants": true,
+          "review": {
+            "questions": [
+              "背景方向是否正确？",
+              "面板与按钮语言是否正确？",
+              "是否进入正式资产生产？"
+            ],
+            "decisionGuidance": {
+              "approveWhen": [
+                "当前方向包已经能代表这个界面的目标美术方向。",
+                "面板、按钮和配色语言可以扩展为正式资源包。",
+                "主要资产缺口已经被识别，不会在 final pass 才暴露。"
+              ],
+              "revisitIf": [
+                "方向本身看起来不错，但不适合这个具体界面。",
+                "配色、面板语言或按钮风格仍然不统一。",
+                "太多关键资产类别仍然缺失。"
+              ]
+            },
+            "requiredEvidence": [
+              ".od-temp/bevy-ui/assets-draft/asset-direction-board.md"
+            ],
+            "validationRules": [
+              "variant_selected",
+              "variant_artifacts_ready"
+            ],
+            "variantCompareStrategy": {
+              "mode": "selected-vs-first-alternative",
+              "manifestDiff": false
+            },
+            "variantEvidence": {
+              "requireBoard": true,
+              "requirePreviewAsset": true,
+              "requireManifest": false,
+              "requireAssetFiles": true
+            },
+            "revisionFocusOptions": [
+              "art-direction",
+              "palette",
+              "component-coverage",
+              "asset-gaps"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "asset-direction-art",
+                "label": "Revisit art direction",
+                "focus": [
+                  "art-direction"
+                ],
+                "note": "Revisit the overall art direction before generating final assets."
+              },
+              {
+                "id": "asset-direction-palette",
+                "label": "Revisit palette",
+                "focus": [
+                  "palette"
+                ],
+                "note": "Adjust the palette before final asset production continues."
+              },
+              {
+                "id": "asset-direction-coverage",
+                "label": "Revisit coverage",
+                "focus": [
+                  "component-coverage"
+                ],
+                "note": "Expand component coverage in the asset direction pass."
+              },
+              {
+                "id": "asset-direction-gaps",
+                "label": "Revisit asset gaps",
+                "focus": [
+                  "asset-gaps"
+                ],
+                "note": "Close the major asset gaps before moving to the final asset pack."
+              }
+            ],
+            "reviseTarget": "asset-direction",
+            "rollbackTarget": "structure-preview",
+            "variantPolicy": "require-selection",
+            "blockers": [
+              "没有选中候选方向包时，禁止通过。",
+              "方向包缺失背景、面板或按钮等关键资源时，禁止进入正式资产生产。"
+            ]
+          },
+          "workspace": {
+            "subAgent": {
+              "agentId": "bevy-ui-artist",
+              "roleId": "art",
+              "roleLabel": "UI美术",
+              "skillPath": "skills/bevy-ui-artist/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/artist-handoff.json"
+            }
+          }
+        },
+        {
+          "id": "asset-final",
+          "title": "Asset Final",
+          "owner": "AssetAgent",
+          "ownerRole": "asset",
+          "kind": "agent-stage",
+          "atoms": [
+            "file-read",
+            "media-image",
+            "file-write"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/assets-draft/asset-direction-board.md"
+          ],
+          "produces": [
+            ".od-temp/bevy-ui/contracts/asset-final.json",
+            ".od-temp/bevy-ui/assets-draft/asset-review-board.md",
+            ".od-temp/bevy-ui/assets-draft/asset-manifest-draft.json",
+            "Asset"
+          ],
+          "allowVariants": true,
+          "workspace": {
+            "agentExecutor": "asset-final",
+            "subAgent": {
+              "agentId": "bevy-ui-artist",
+              "roleId": "art",
+              "roleLabel": "UI美术",
+              "skillPath": "skills/bevy-ui-artist/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/artist-handoff.json"
+            },
+            "assetRevisionStrategy": {
+              "preserveUnfocused": true,
+              "focusToKinds": [
+                {
+                  "focus": "panel-shell",
+                  "assetKinds": [
+                    "panel"
+                  ]
+                },
+                {
+                  "focus": "button-group",
+                  "assetKinds": [
+                    "button"
+                  ]
+                },
+                {
+                  "focus": "icons",
+                  "assetKinds": [
+                    "icon"
+                  ]
+                },
+                {
+                  "focus": "state-coverage",
+                  "assetKinds": [
+                    "button"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "asset-final-review",
+          "title": "Asset Final Review",
+          "owner": "AssetAgent",
+          "ownerRole": "asset",
+          "kind": "review-gate",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/assets-draft/asset-review-board.md",
+            ".od-temp/bevy-ui/assets-draft/asset-manifest-draft.json"
+          ],
+          "blocksUntilApproved": true,
+          "allowVariants": true,
+          "review": {
+            "questions": [
+              "资产成品是否满意？",
+              "是否有资源需要局部重做？",
+              "是否进入最终装配？"
+            ],
+            "decisionGuidance": {
+              "approveWhen": [
+                "当前选中的资源包已经覆盖这个界面真实需要的 UI 组件。",
+                "manifest 草案和状态资源已经足够支撑装配阶段。",
+                "如果只剩细节润色，已经不需要再整体回到方向阶段。"
+              ],
+              "revisitIf": [
+                "关键按钮态、图标或面板壳资源仍然缺失。",
+                "manifest 草案无法稳定描述资源使用方式。",
+                "继续装配只会把资源缺口带到最终 HTML/manifest 里。"
+              ]
+            },
+            "requiredEvidence": [
+              ".od-temp/bevy-ui/assets-draft/asset-review-board.md",
+              ".od-temp/bevy-ui/assets-draft/asset-manifest-draft.json"
+            ],
+            "validationRules": [
+              "variant_selected",
+              "variant_artifacts_ready",
+              "manifest_ready"
+            ],
+            "variantCompareStrategy": {
+              "mode": "selected-vs-first-alternative",
+              "manifestDiff": true
+            },
+            "variantEvidence": {
+              "requireBoard": true,
+              "requirePreviewAsset": true,
+              "requireManifest": true,
+              "requireAssetFiles": true
+            },
+            "revisionFocusOptions": [
+              "panel-shell",
+              "button-group",
+              "icons",
+              "state-coverage"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "asset-final-panel-shell",
+                "label": "Revisit panel shell",
+                "focus": [
+                  "panel-shell"
+                ],
+                "note": "Rework the panel shell assets before assembly."
+              },
+              {
+                "id": "asset-final-button-group",
+                "label": "Revisit button group",
+                "focus": [
+                  "button-group"
+                ],
+                "note": "Tune the button group assets and states before assembly."
+              },
+              {
+                "id": "asset-final-icons",
+                "label": "Revisit icons",
+                "focus": [
+                  "icons"
+                ],
+                "note": "Refine the icon pass before final packaging."
+              },
+              {
+                "id": "asset-final-state-coverage",
+                "label": "Revisit state coverage",
+                "focus": [
+                  "state-coverage"
+                ],
+                "note": "Fill in missing hover, pressed, disabled, or selected states before assembly."
+              }
+            ],
+            "reviseTarget": "asset-final",
+            "rollbackTarget": "asset-direction",
+            "variantPolicy": "require-selection",
+            "blockers": [
+              "成品资源包缺图、状态图不全或 manifest 草案不完整时，禁止进入最终装配。"
+            ]
+          },
+          "workspace": {
+            "subAgent": {
+              "agentId": "bevy-ui-artist",
+              "roleId": "art",
+              "roleLabel": "UI美术",
+              "skillPath": "skills/bevy-ui-artist/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/artist-handoff.json"
+            }
+          }
+        },
+        {
+          "id": "ui-ta",
+          "title": "UI TA / 动效",
+          "owner": "MotionAgent",
+          "ownerRole": "ta",
+          "kind": "agent-stage",
+          "atoms": [
+            "file-read",
+            "file-write",
+            "live-artifact"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/handoffs/ux-handoff.json",
+            ".od-temp/bevy-ui/assets-draft/asset-manifest-draft.json"
+          ],
+          "produces": [
+            "design/bevy-ui/motion/interaction-states.json",
+            "design/bevy-ui/motion/motion-notes.md",
+            "design/bevy-ui/motion/preview-patch.js",
+            ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+          ],
+          "workspace": {
+            "agentExecutor": "ui-ta",
+            "subAgent": {
+              "agentId": "bevy-ui-ta",
+              "roleId": "ta",
+              "roleLabel": "UI TA / 动效",
+              "skillPath": "skills/bevy-ui-ta/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+            },
+            "previewPath": "design/bevy-ui/motion/motion-notes.md",
+            "summary": "UI TA / 动效只负责状态反馈、点击节奏和浏览器可见交互补丁，不重开 UX 或美术方向。"
+          }
+        },
+        {
+          "id": "ui-ta-review",
+          "title": "UI TA / 动效 Review",
+          "owner": "MotionAgent",
+          "ownerRole": "ta",
+          "kind": "review-gate",
+          "atoms": [
+            "direction-picker"
+          ],
+          "requires": [
+            "design/bevy-ui/motion/interaction-states.json",
+            ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+          ],
+          "blocksUntilApproved": true,
+          "review": {
+            "questions": [
+              "核心按钮状态反馈是否清晰？",
+              "PLAY 或主操作的状态流转是否符合预期？",
+              "是否交给 UI程序最终装配？"
+            ],
+            "requiredEvidence": [
+              "design/bevy-ui/motion/interaction-states.json",
+              ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+            ],
+            "validationRules": [],
+            "revisionFocusOptions": [
+              "button-feedback",
+              "selected-state",
+              "play-flow"
+            ],
+            "reviseTarget": "ui-ta",
+            "rollbackTarget": "asset-final",
+            "variantPolicy": "none",
+            "blockers": [
+              "核心 data-action 没有可见状态反馈时，禁止进入最终装配。"
+            ]
+          },
+          "workspace": {
+            "subAgent": {
+              "agentId": "bevy-ui-ta",
+              "roleId": "ta",
+              "roleLabel": "UI TA / 动效",
+              "skillPath": "skills/bevy-ui-ta/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+            }
+          }
+        },
+        {
+          "id": "assembly",
+          "title": "Assembly",
+          "owner": "AssemblyAgent",
+          "ownerRole": "assembly",
+          "kind": "finalization",
+          "atoms": [
+            "file-read",
+            "file-write",
+            "live-artifact"
+          ],
+          "requires": [
+            ".od-temp/bevy-ui/structure/index.html",
+            ".od-temp/bevy-ui/assets-draft/asset-manifest-draft.json",
+            ".od-temp/bevy-ui/handoffs/ta-handoff.json"
+          ],
+          "workspace": {
+            "actions": [
+              {
+                "label": "Assembly handoff contract",
+                "path": ".od-temp/bevy-ui/contracts/assembly.json"
+              }
+            ],
+            "agentExecutor": "assembly",
+            "subAgent": {
+              "agentId": "bevy-ui-programmer",
+              "roleId": "program",
+              "roleLabel": "UI程序",
+              "skillPath": "skills/bevy-ui-programmer/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/program-handoff.json"
+            }
+          },
+          "produces": [
+            ".od-temp/bevy-ui/contracts/assembly.json",
+            "index.html",
+            "Asset"
+          ]
+        },
+        {
+          "id": "final-review",
+          "title": "Final Review",
+          "owner": "CritiqueAgent",
+          "ownerRole": "critique",
+          "kind": "review-gate",
+          "atoms": [
+            "critique-theater"
+          ],
+          "requires": [
+            "index.html",
+            "Asset"
+          ],
+          "workspace": {
+            "subAgent": {
+              "agentId": "bevy-ui-programmer",
+              "roleId": "program",
+              "roleLabel": "UI程序",
+              "skillPath": "skills/bevy-ui-programmer/SKILL.md",
+              "handoffPath": ".od-temp/bevy-ui/handoffs/program-handoff.json"
+            }
+          },
+          "blocksUntilApproved": true,
+          "review": {
+            "questions": [
+              "最终页面是否可接受？",
+              "是否达到 Bevy UI 交付要求？",
+              "是否进入 Bevy parser 测试？"
+            ],
+            "structureCompare": {
+              "enabled": true,
+              "snapshotMetrics": [
+                "buttons",
+                "action-hooks",
+                "stable-ids",
+                "headings"
+              ]
+            },
+            "finalEvidence": {
+              "requireHtml": true,
+              "requireManifest": false,
+              "requireAssetsDirectory": true
+            },
+            "decisionGuidance": {
+              "approveWhen": [
+                "最终 index.html 和 Asset/ 已完整产出；可选 manifest 如存在也能解析。",
+                "结构、资源语义和装配结果已达到进入 parser 测试的标准。",
+                "当前结果是可交付的 Bevy UI 资产化产物，而不是纯网页草稿。"
+              ],
+              "revisitIf": [
+                "HTML 或关键资源目录仍然缺失。",
+                "最终装配结果还没有体现真实游戏 UI 资源，而只是网页近似物。",
+                "继续进入 Bevy parser 测试会把明显缺口留到引擎侧。"
+              ]
+            },
+            "requiredEvidence": [
+              "index.html",
+              "Asset"
+            ],
+            "revisionFocusOptions": [
+              "assembly",
+              "manifest",
+              "bevy-safety",
+              "polish"
+            ],
+            "quickRevisionActions": [
+              {
+                "id": "final-assembly",
+                "label": "Revisit assembly",
+                "focus": [
+                  "assembly"
+                ],
+                "note": "Revisit the assembled surface before final handoff."
+              },
+              {
+                "id": "final-manifest",
+                "label": "Revisit optional metadata",
+                "focus": [
+                  "manifest"
+                ],
+                "note": "Correct optional asset metadata if tooling hints are present; parser input remains index.html plus Asset/."
+              },
+              {
+                "id": "final-bevy-safety",
+                "label": "Revisit Bevy safety",
+                "focus": [
+                  "bevy-safety"
+                ],
+                "note": "Recheck Bevy-safe structure and parser assumptions before signoff."
+              },
+              {
+                "id": "final-polish",
+                "label": "Revisit polish",
+                "focus": [
+                  "polish"
+                ],
+                "note": "Polish the final pass without weakening the Bevy-safe contract."
+              }
+            ],
+            "reviseTarget": "assembly",
+            "rollbackTarget": "assembly",
+            "variantPolicy": "none",
+            "blockers": [
+              "HTML 与 manifest 产物缺失时，禁止把它当成可交付的 Bevy UI 结果。"
+            ]
+          }
+        }
+      ]
+    },
+    "capabilities": [
+      "prompt:inject",
+      "fs:write"
+    ]
+  }
+}

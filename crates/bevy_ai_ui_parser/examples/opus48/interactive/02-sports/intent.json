@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "Football (soccer) club management & match game UI suite — landscape 1920x1080, dynamic broadcast-grade sports style.",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index",  "role": "Main menu — team brand, player profile, big START MATCH entry, secondary entries (lineup/season/shop)." },
+    { "id": "lineup", "role": "Lineup — on-field formation diagram with player slots, selectable player list, team overall rating, tactic selection." },
+    { "id": "player", "role": "Player detail — portrait, six-stat ability bars, growth & training entries, contract/status info." },
+    { "id": "hud",    "role": "Match HUD — both-side score + crests, match clock, possession/substitution/tactic buttons, key-event ticker." },
+    { "id": "result", "role": "Post-match result — final score, MVP, data stats (shots/possession% etc.), rewards, next-match entry." }
+  ],
+  "styleAxes": {
+    "mood": "Dynamic broadcast-grade pro football: energetic, confident, stadium-night atmosphere.",
+    "accent": "Electric pitch-green (#26E07F) + amber spotlight (#FFC53D) on deep midnight navy (#0B1220).",
+    "density": "Medium-high: rich data cards and HUD chrome, but with clear hierarchy and generous breathing room around primary actions.",
+    "type": "Bold condensed-feel sans for numerals/headlines, calm regular weight for body and labels; strong size contrast."
+  }
+}

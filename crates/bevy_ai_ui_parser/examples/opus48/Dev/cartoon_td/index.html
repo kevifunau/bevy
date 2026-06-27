@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #2A1B5E;
+  --bg1: #4A2D9C;
+  --card: #FFFFFF;
+  --card-soft: #F3EEFF;
+  --purple: #9B6BFF;
+  --purple-d: #6E3FE0;
+  --teal: #3FD9C4;
+  --teal-d: #1FB6A2;
+  --pink: #FF8FC8;
+  --pink-d: #E85AA6;
+  --gold: #FFC94D;
+  --gold-d: #F0A521;
+  --ink: #3A2B66;
+  --ink-dim: #9B8FC4;
+  --white-dim: #D9CEFF;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 80px 64px;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- top resource bar ---------- */
+.res-bar { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; height: 100px; margin-bottom: 60px; }
+.res-chip {
+  flex-direction: row; align-items: center;
+  height: 88px;
+  background-color: var(--bg1);
+  border-radius: 44px;
+  border-width: 4px; border-color: var(--purple);
+  padding: 0 32px 0 14px;
+}
+.res-ico { width: 60px; height: 60px; margin-right: 14px; }
+.res-tx { font-size: 40px; min-height: 48px; color: var(--gold); font-weight: bold; white-space: normal; }
+.res-tx-teal { color: var(--teal); }
+.res-gap { width: 28px; }
+.avatar {
+  width: 96px; height: 96px;
+  background-color: var(--pink);
+  border-radius: 48px;
+  border-width: 5px; border-color: var(--pink-d);
+  align-items: center; justify-content: center;
+}
+
+/* ---------- logo ---------- */
+.logo-wrap { flex-direction: column; align-items: center; margin-bottom: 36px; }
+.crest {
+  width: 220px; height: 220px;
+  background-color: var(--bg1);
+  border-radius: 60px;
+  border-width: 8px; border-color: var(--teal);
+  align-items: center; justify-content: center;
+  margin-bottom: 32px;
+}
+.logo-l1 { font-size: 132px; color: var(--gold); font-weight: bold; white-space: normal; }
+.logo-l2 { font-size: 92px; color: var(--teal); font-weight: bold; white-space: normal; margin-top: -8px; }
+.logo-sub {
+  flex-direction: row; align-items: center;
+  height: 64px;
+  background-color: var(--bg1);
+  border-radius: 32px;
+  padding: 0 36px;
+  margin-top: 28px;
+}
+.logo-sub-tx { font-size: 32px; min-height: 40px; color: var(--white-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- menu buttons ---------- */
+.menu { flex-direction: column; align-items: center; align-self: stretch; flex-grow: 1; justify-content: center; }
+.mbtn {
+  flex-direction: row; align-items: center;
+  width: 760px; height: 168px;
+  border-radius: 52px;
+  border-width: 0px;
+  padding: 0 48px;
+  margin-bottom: 40px;
+}
+.mbtn-start { background-color: var(--gold); border-width: 6px; border-color: var(--gold-d); }
+.mbtn-hero { background-color: var(--purple); border-width: 6px; border-color: var(--purple-d); }
+.mbtn-set { background-color: var(--teal); border-width: 6px; border-color: var(--teal-d); margin-bottom: 0; }
+.mbtn-ico {
+  width: 96px; height: 96px;
+  border-radius: 30px;
+  background-color: var(--card);
+  align-items: center; justify-content: center;
+  margin-right: 36px;
+}
+.mbtn-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.mbtn-tx { font-size: 56px; font-weight: bold; white-space: normal; }
+.mbtn-tx-dark { color: #4A2D00; }
+.mbtn-tx-light { color: #FFFFFF; }
+.mbtn-sub { font-size: 26px; min-height: 32px; font-weight: bold; white-space: normal; margin-top: 4px; }
+.mbtn-sub-dark { color: #8A6A1A; }
+.mbtn-sub-light { color: #EAF7F4; }
+.mbtn-arr { width: 48px; height: 48px; }
+
+.footer { flex-direction: row; align-items: center; justify-content: center; height: 48px; margin-top: 48px; }
+.footer-tx { font-size: 26px; min-height: 32px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="res-bar">
+      <div class="res-chip">
+        <svg id="icon-gem" class="res-ico" width="60" height="60" viewBox="0 0 60 60">
+          <path d="M20 10 L40 10 L52 26 L30 52 L8 26 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M20 10 L30 26 L8 26 Z" fill="#FFE08A"/>
+          <path d="M40 10 L30 26 L52 26 Z" fill="#FFD86E"/>
+        </svg>
+        <span class="res-tx">2,480</span>
+      </div>
+      <div class="res-chip">
+        <svg id="icon-heart-r" class="res-ico" width="60" height="60" viewBox="0 0 60 60">
+          <path d="M30 50 C8 34 10 16 24 16 C30 16 30 22 30 22 C30 22 30 16 36 16 C50 16 52 34 30 50 Z" fill="#3FD9C4" stroke="#1FB6A2" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+        <span class="res-tx res-tx-teal">30</span>
+      </div>
+      <div class="avatar">
+        <svg id="icon-avatar" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="22" r="12" fill="#FFFFFF"/>
+          <path d="M10 48 C10 36 20 32 28 32 C36 32 46 36 46 48 Z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="logo-wrap">
+      <div class="crest">
+        <svg id="icon-crest" width="120" height="120" viewBox="0 0 120 120">
+          <path d="M60 14 L94 28 L94 60 C94 86 78 100 60 108 C42 100 26 86 26 60 L26 28 Z" fill="#9B6BFF" stroke="#6E3FE0" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M60 38 L68 56 L88 58 L72 70 L78 90 L60 78 L42 90 L48 70 L32 58 L52 56 Z" fill="#FFC94D" stroke="#F0A521" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-l1">FAIRY</span>
+      <span class="logo-l2">GUARD</span>
+      <div class="logo-sub">
+        <span class="logo-sub-tx">奇幻精灵守卫 · 塔防大冒险</span>
+      </div>
+    </div>
+
+    <div class="menu">
+      <div class="mbtn mbtn-start">
+        <div class="mbtn-ico">
+          <svg id="icon-play" width="64" height="64" viewBox="0 0 64 64">
+            <path d="M20 14 L50 32 L20 50 Z" fill="#F0A521"/>
+          </svg>
+        </div>
+        <div class="mbtn-txw">
+          <span class="mbtn-tx mbtn-tx-dark">开始冒险</span>
+          <span class="mbtn-sub mbtn-sub-dark">START ADVENTURE</span>
+        </div>
+        <svg id="icon-arr1" class="mbtn-arr" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M18 12 L34 24 L18 36" stroke="#F0A521" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="mbtn mbtn-hero">
+        <div class="mbtn-ico">
+          <svg id="icon-hero" width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="13" fill="#9B6BFF"/>
+            <path d="M12 54 C12 40 24 36 32 36 C40 36 52 40 52 54 Z" fill="#9B6BFF"/>
+          </svg>
+        </div>
+        <div class="mbtn-txw">
+          <span class="mbtn-tx mbtn-tx-light">英雄图鉴</span>
+          <span class="mbtn-sub mbtn-sub-light">HERO CODEX</span>
+        </div>
+        <svg id="icon-arr2" class="mbtn-arr" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M18 12 L34 24 L18 36" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="mbtn mbtn-set">
+        <div class="mbtn-ico">
+          <svg id="icon-gear" width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="12" fill="none" stroke="#1FB6A2" stroke-width="6"/>
+            <rect x="28" y="6" width="8" height="12" fill="#1FB6A2"/>
+            <rect x="28" y="46" width="8" height="12" fill="#1FB6A2"/>
+            <rect x="6" y="28" width="12" height="8" fill="#1FB6A2"/>
+            <rect x="46" y="28" width="12" height="8" fill="#1FB6A2"/>
+          </svg>
+        </div>
+        <div class="mbtn-txw">
+          <span class="mbtn-tx mbtn-tx-light">设置</span>
+          <span class="mbtn-sub mbtn-sub-light">SETTINGS</span>
+        </div>
+        <svg id="icon-arr3" class="mbtn-arr" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M18 12 L34 24 L18 36" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-tx">© FAIRY GUARD · v1.0 · TAP TO START</span>
+    </div>
+
+  </div>
+</body>
+</html>

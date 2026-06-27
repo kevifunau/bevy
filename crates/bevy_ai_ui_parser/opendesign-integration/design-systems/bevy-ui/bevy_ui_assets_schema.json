@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bevy UI Asset Manifest Schema",
+  "description": "OD-authored asset manifest that mirrors HTML/CSS image references into parser hints for 9-slice, atlas, state textures, and validation. Does NOT replace HTML/CSS layout information.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["version", "screenName", "assets"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest schema version. Current: 1.0.0"
+    },
+    "screenName": {
+      "type": "string",
+      "description": "Logical screen name matching the wireframe/screen brief (e.g., 'main-menu', 'race-hud')."
+    },
+    "sourceHtml": {
+      "type": "string",
+      "description": "Relative path to the index.html this manifest describes."
+    },
+    "wireframeRef": {
+      "type": "string",
+      "description": "Path to the UX wireframe screenshot or HTML used as structural blueprint."
+    },
+    "assets": {
+      "type": "array",
+      "description": "List of asset entries. Each entry maps one or more image files to a UI node.",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "path", "nodeSelector", "role"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique asset identifier within this manifest. Used for variant tracking and selective regeneration."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "background",
+              "panel",
+              "button",
+              "button-state",
+              "icon",
+              "slider-track",
+              "slider-thumb",
+              "scrollbar-track",
+              "scrollbar-thumb",
+              "progress-fill",
+              "border",
+              "divider",
+              "decoration",
+              "atlas",
+              "rasterized-svg",
+              "ai-generated",
+              "hand-painted",
+              "reference-only"
+            ],
+            "description": "Asset role category. Determines how the parser treats slicing, scaling, and state binding."
+          },
+          "path": {
+            "type": "string",
+            "description": "Relative path from project root to the primary image file. Must match a URL referenced in HTML/CSS."
+          },
+          "nodeSelector": {
+            "type": "string",
+            "description": "CSS selector identifying the HTML node this asset binds to. e.g., '#play_button', '.top-bar', '[data-action=start-race]'."
+          },
+          "role": {
+            "type": "string",
+            "enum": ["background", "panel-shell", "button-face", "icon", "fill-bar", "track", "thumb", "border", "divider", "decoration", "text-overlay", "reference"],
+            "description": "Visual role within the UI composition. Guides parser assembly priority."
+          },
+          "states": {
+            "type": "object",
+            "description": "Per-state texture overrides. Keys are interaction states; values are file paths.",
+            "properties": {
+              "idle": { "type": "string" },
+              "hover": { "type": "string" },
+              "pressed": { "type": "string" },
+              "disabled": { "type": "string" },
+              "focused": { "type": "string" },
+              "checked": { "type": "string" },
+              "unchecked": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "slice9": {
+            "type": "object",
+            "description": "9-slice border configuration for panels, buttons, and resizable containers.",
+            "properties": {
+              "left": { "type": "integer", "minimum": 0 },
+              "right": { "type": "integer", "minimum": 0 },
+              "top": { "type": "integer", "minimum": 0 },
+              "bottom": { "type": "integer", "minimum": 0 },
+              "mode": {
+                "type": "string",
+                "enum": ["stretch", "tile", "clamp"],
+                "default": "stretch",
+                "description": "How the center region fills when resized."
+              }
+            },
+            "additionalProperties": false
+          },
+          "atlas": {
+            "type": "object",
+            "description": "Sprite atlas metadata for animated or multi-frame icons.",
+            "properties": {
+              "columns": { "type": "integer", "minimum": 1 },
+              "rows": { "type": "integer", "minimum": 1 },
+              "frameWidth": { "type": "integer", "minimum": 1 },
+              "frameHeight": { "type": "integer", "minimum": 1 },
+              "padding": { "type": "integer", "minimum": 0, "default": 0 },
+              "animationFps": { "type": "number", "minimum": 0 }
+            },
+            "additionalProperties": false
+          },
+          "scaleMode": {
+            "type": "string",
+            "enum": ["stretch", "contain", "cover", "tile-x", "tile-y", "nine-slice", "none"],
+            "default": "stretch",
+            "description": "How the image fills its container. 'nine-slice' requires slice9 config."
+          },
+          "dimensions": {
+            "type": "object",
+            "description": "Expected pixel dimensions at design resolution. Used for validation against browser preview.",
+            "properties": {
+              "width": { "type": "integer", "minimum": 1 },
+              "height": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          },
+          "adoptionStatus": {
+            "type": "string",
+            "enum": ["candidate", "adopted", "pending-slice", "reference-only", "deprecated"],
+            "default": "candidate",
+            "description": "Lifecycle stage of this asset. Only 'adopted' assets are included in final engine build."
+          },
+          "sourceRef": {
+            "type": "object",
+            "description": "Back-reference to upstream artifacts that produced or informed this asset.",
+            "properties": {
+              "wireframeRegion": { "type": "string", "description": "Wireframe zone label, e.g., 'top-bar-left', 'center-play-button'." },
+              "artPrompt": { "type": "string", "description": "MiniMax/ComfyUI prompt ID or description used to generate this asset." },
+              "svgSource": { "type": "string", "description": "If kind is rasterized-svg, path to original .svg file." },
+              "comparisonPath": { "type": "string", "description": "Path to comparison.html showing wireframe vs preview vs final." }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "validationCheckpoints": {
+      "type": "array",
+      "description": "Expected bounds/layout checkpoints for browser-vs-engine visual parity validation.",
+      "items": {
+        "type": "object",
+        "required": ["nodeSelector", "expectedBounds"],
+        "properties": {
+          "nodeSelector": { "type": "string" },
+          "expectedBounds": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "width": { "type": "number" },
+              "height": { "type": "number" }
+            }
+          },
+          "tolerancePx": { "type": "number", "default": 2 }
+        }
+      }
+    },
+    "deliveryNotes": {
+      "type": "string",
+      "description": "Free-form notes from the UI Artist about asset coverage gaps, known issues, or producer feedback."
+    }
+  },
+  "additionalProperties": false
+}

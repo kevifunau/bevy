@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "像素复古·横版平台跳跃 PIXEL LEAP:8bit 点阵质感、硬边方块、低分辨率块面、暗色夜空底 + 霓虹绿/橙撞色、怀旧街机菜单。3 页(标题页/关卡选择/局内HUD)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1920, "height": 1080, "orientation": "landscape", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "title — 像素 LOGO + 开始/继续/设置 复古菜单" },
+    { "id": "levels", "role": "level-select — 横向滚动关卡节点(通关/当前/锁定 + 收集品数量)" },
+    { "id": "hud", "role": "in-game HUD — 生命/金币/计时/暂停 + 横屏移动跳跃操作区" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "landscape-arcade",
+    "mood": "pixel-retro-8bit",
+    "accentFamily": "neon-green-orange",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": ["button"]
+}

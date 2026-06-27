@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "放置挂机 IDLE EMPIRE:温暖工坊风、深棕木底 + 暖金/翡翠收益光、圆润数值卡、离线收益与升级条。竖屏 4 页(主界面/升级/抽卡/设置)",
+  "approval": { "by": "ai-autonomous", "at": "2026-06-05T00:00:00+08:00", "note": "long-task mode, no mid-way confirm" },
+  "targetResolution": { "width": 1080, "height": 1920, "orientation": "portrait", "source": "user-specified" },
+  "pages": [
+    { "id": "index", "role": "main — 离线收益横幅 + 金币/钻石资源 + 产线列表 + 底部主操作" },
+    { "id": "upgrade", "role": "upgrade — 当前等级/加成 + 升级项列表与花费按钮" },
+    { "id": "gacha", "role": "gacha — 抽卡横幅 + 单抽/十连 + 历史掉落网格" },
+    { "id": "settings", "role": "settings — 声音/离线/账号 开关" }
+  ],
+  "styleAxes": {
+    "layoutArchetype": "portrait-list",
+    "mood": "warm-workshop-cozy",
+    "accentFamily": "gold-emerald-brown",
+    "densityProfile": "comfortable"
+  },
+  "inputControls": ["button", "toggle"]
+}

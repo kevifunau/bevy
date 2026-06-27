@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --cream: #FFF6EE;
+  --cream2: #FFEFE2;
+  --card: #FFFFFF;
+  --pink: #FF9EC4;
+  --pink-soft: #FFE2EE;
+  --mint: #7FD6C2;
+  --mint-soft: #DBF5EE;
+  --lemon: #FFD479;
+  --lemon-soft: #FFF0CE;
+  --lilac: #B7A6F0;
+  --lilac-soft: #ECE6FB;
+  --ink: #6B5B73;
+  --ink-dim: #A99CB0;
+  --line: #F2E4DA;
+  --gold: #F4A93C;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--cream);
+  padding: 64px 56px;
+  flex-direction: column;
+}
+
+/* ---------- header ---------- */
+.header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 120px;
+  margin-bottom: 16px;
+}
+.brand { flex-direction: row; align-items: center; }
+.brand-badge {
+  width: 96px;
+  height: 96px;
+  border-radius: 30px;
+  background-color: var(--pink);
+  align-items: center;
+  justify-content: center;
+  margin-right: 24px;
+}
+.brand-tx { flex-direction: column; justify-content: center; }
+.brand-name { font-size: 52px; color: var(--ink); font-weight: bold; white-space: normal; }
+.brand-sub { font-size: 22px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+
+.coin-chip {
+  flex-direction: row;
+  align-items: center;
+  height: 80px;
+  border-radius: 40px;
+  background-color: var(--card);
+  border-width: 3px;
+  border-color: var(--line);
+  padding: 0 28px 0 16px;
+}
+.coin-ico { width: 52px; height: 52px; margin-right: 14px; }
+.coin-num { font-size: 34px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+.sec-title { font-size: 30px; color: var(--ink); font-weight: bold; white-space: normal; margin: 28px 0 24px 0; }
+
+/* ---------- game grid ---------- */
+.grid { flex-direction: column; }
+.grid-row { flex-direction: row; margin-bottom: 28px; }
+.game-card {
+  width: 466px;
+  height: 420px;
+  border-radius: 40px;
+  background-color: var(--card);
+  border-width: 4px;
+  border-color: var(--line);
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px;
+}
+.game-card-first { margin-right: 36px; }
+.game-thumb {
+  width: 200px;
+  height: 200px;
+  border-radius: 50px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.thumb-pink { background-color: var(--pink-soft); }
+.thumb-mint { background-color: var(--mint-soft); }
+.thumb-lemon { background-color: var(--lemon-soft); }
+.thumb-lilac { background-color: var(--lilac-soft); }
+.game-name { font-size: 34px; color: var(--ink); font-weight: bold; white-space: normal; margin-bottom: 18px; }
+
+.score-tag {
+  flex-direction: row;
+  align-items: center;
+  height: 58px;
+  border-radius: 29px;
+  background-color: var(--lemon-soft);
+  padding: 0 24px;
+}
+.score-tag-ico { width: 32px; height: 32px; margin-right: 10px; }
+.score-tag-num { font-size: 26px; min-height: 32px; color: var(--gold); font-weight: bold; white-space: normal; }
+
+.lock-tag {
+  flex-direction: row;
+  align-items: center;
+  height: 58px;
+  border-radius: 29px;
+  background-color: var(--cream2);
+  padding: 0 26px;
+}
+.lock-tag-ico { width: 30px; height: 30px; margin-right: 10px; }
+.lock-tag-tx { font-size: 24px; min-height: 30px; color: var(--ink-dim); font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="header">
+      <div class="brand">
+        <div class="brand-badge">
+          <svg id="icon-dice" width="56" height="56" viewBox="0 0 56 56">
+            <rect x="8" y="8" width="40" height="40" rx="12" fill="none" stroke="#FFFFFF" stroke-width="5"/>
+            <circle cx="20" cy="20" r="4" fill="#FFFFFF"/>
+            <circle cx="36" cy="20" r="4" fill="#FFFFFF"/>
+            <circle cx="28" cy="28" r="4" fill="#FFFFFF"/>
+            <circle cx="20" cy="36" r="4" fill="#FFFFFF"/>
+            <circle cx="36" cy="36" r="4" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="brand-tx">
+          <span class="brand-name">Mini Mix</span>
+          <span class="brand-sub">一分钟欢乐合集</span>
+        </div>
+      </div>
+      <div class="coin-chip">
+        <svg id="icon-coin" class="coin-ico" width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="20" fill="#FFD479" stroke="#F4A93C" stroke-width="4"/>
+          <circle cx="26" cy="26" r="11" fill="#FFF0CE"/>
+          <path d="M26 18 L26 34 M21 22 L31 30" stroke="#F4A93C" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="coin-num">1,280</span>
+      </div>
+    </div>
+
+    <span class="sec-title">选个小游戏玩玩吧</span>
+
+    <div class="grid">
+      <div class="grid-row">
+        <div class="game-card game-card-first">
+          <div class="game-thumb thumb-pink">
+            <svg id="icon-pop" width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="44" cy="48" r="26" fill="#FF9EC4"/>
+              <circle cx="78" cy="70" r="20" fill="#FF7FB0"/>
+              <circle cx="40" cy="80" r="14" fill="#FFC2DA"/>
+              <circle cx="38" cy="42" r="6" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="game-name">泡泡爆</span>
+          <div class="score-tag">
+            <svg id="icon-star-a" class="score-tag-ico" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M16 3 L20 12 L30 13 L22 20 L25 30 L16 24 L7 30 L10 20 L2 13 L12 12 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="score-tag-num">8,420</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-thumb thumb-mint">
+            <svg id="icon-jump" width="120" height="120" viewBox="0 0 120 120">
+              <path d="M24 90 L48 50 L72 78 L96 30" stroke="#7FD6C2" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="96" cy="30" r="12" fill="#4FBFA6"/>
+            </svg>
+          </div>
+          <span class="game-name">弹跳跳</span>
+          <div class="score-tag">
+            <svg id="icon-star-b" class="score-tag-ico" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M16 3 L20 12 L30 13 L22 20 L25 30 L16 24 L7 30 L10 20 L2 13 L12 12 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="score-tag-num">5,160</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-row">
+        <div class="game-card game-card-first">
+          <div class="game-thumb thumb-lemon">
+            <svg id="icon-fruit" width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="66" r="36" fill="#FFD479"/>
+              <path d="M60 30 Q66 18 80 22" stroke="#7FD6C2" stroke-width="8" fill="none" stroke-linecap="round"/>
+              <circle cx="50" cy="60" r="5" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="game-name">切水果</span>
+          <div class="score-tag">
+            <svg id="icon-star-c" class="score-tag-ico" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M16 3 L20 12 L30 13 L22 20 L25 30 L16 24 L7 30 L10 20 L2 13 L12 12 Z" fill="#FFD479" stroke="#F4A93C" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="score-tag-num">12,900</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-thumb thumb-lilac">
+            <svg id="icon-lock-big" width="110" height="110" viewBox="0 0 110 110">
+              <rect x="28" y="50" width="54" height="44" rx="12" fill="#B7A6F0"/>
+              <path d="M38 50 L38 38 A17 17 0 0 1 72 38 L72 50" stroke="#9C87E0" stroke-width="9" fill="none"/>
+              <circle cx="55" cy="70" r="7" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <span class="game-name">迷宫跑</span>
+          <div class="lock-tag">
+            <svg id="icon-lock-s" class="lock-tag-ico" width="30" height="30" viewBox="0 0 30 30">
+              <rect x="7" y="13" width="16" height="13" rx="3" fill="#A99CB0"/>
+              <path d="M10 13 L10 9 A5 5 0 0 1 20 9 L20 13" stroke="#A99CB0" stroke-width="3" fill="none"/>
+            </svg>
+            <span class="lock-tag-tx">100 金币解锁</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

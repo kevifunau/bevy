@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "brief": "策略自走棋手游 UI 套件:主菜单 / 对战棋盘 / 棋子详情 / 羁绊图鉴 / 结算,横屏 1920x1080。",
+  "approval": {
+    "by": "ai-autonomous",
+    "at": "2026-06-05T11:30:00+08:00",
+    "note": "batch autonomous gen"
+  },
+  "targetResolution": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape",
+    "source": "user-specified"
+  },
+  "pages": [
+    { "id": "index",   "role": "Main menu — brand area + player info, big start-matchmaking entry, secondary entries (piece codex / synergy codex / shop), resource bar." },
+    { "id": "board",   "role": "Match board — eight-player health/rank bar, own board + bench, shop refresh area (gold/level/interest), synergy activation panel." },
+    { "id": "piece",   "role": "Piece detail — piece portrait, star tier, skill description, owned synergies, combine hint." },
+    { "id": "synergy", "role": "Synergy codex — synergy list with activation tiers/effects and related pieces." },
+    { "id": "result",  "role": "Result — final placement, comp recap, rating change, play-again/back entries." }
+  ],
+  "styleAxes": {
+    "mood": "幽蓝战棋大厅:深石板暗底 + 符文金描边,庄重策略感,棋盘格清晰、信息层级分明。",
+    "accent": "主符文金 #F2C14E + 青晶 #4FD6C9 + 紫晶 #A878F0,稀有度梯度(灰/绿/蓝/紫/金)用于棋子边框与星级。",
+    "type": "无衬线粗体大标题表达庄严策略感;数字(金币/等级/血量/利息)使用大号粗体强调资源对比。",
+    "density": "横屏分区栅格:顶部信息条 + 中部棋盘/列表 + 侧栏面板,中高密度;圆角卡片 + 细描边,自绘皮肤控件统一调性。"
+  }
+}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #211711;
+  --bg1: #2E2018;
+  --panel: #3A2A1E;
+  --panel2: #4A372A;
+  --line: #5E4634;
+  --gold: #FFC247;
+  --gold-d: #D9941C;
+  --emerald: #4FD98A;
+  --emerald-d: #28A862;
+  --wood: #C98A4B;
+  --text: #F5ECE0;
+  --text-dim: #B79C82;
+  --blue: #5BB8FF;
+  --red: #FF6B5A;
+}
+
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: var(--bg0);
+  padding: 64px 48px;
+  flex-direction: column;
+}
+
+/* ---------- topbar ---------- */
+.topbar { flex-direction: row; align-items: center; height: 100px; margin-bottom: 40px; }
+.back {
+  width: 88px; height: 88px;
+  background-color: var(--panel);
+  border-radius: 26px;
+  border-width: 3px; border-color: var(--line);
+  align-items: center; justify-content: center; margin-right: 28px;
+}
+.titles { flex-direction: column; justify-content: center; flex-grow: 1; }
+.title { font-size: 56px; color: var(--gold); font-weight: bold; white-space: normal; }
+.subtitle { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 2px; }
+
+/* ---------- hero stat card ---------- */
+.hero-card {
+  flex-direction: row; align-items: center;
+  background-color: var(--bg1);
+  border-radius: 36px;
+  border-width: 3px; border-color: var(--gold);
+  padding: 36px 40px;
+  margin-bottom: 40px;
+}
+.hero-medal {
+  width: 132px; height: 132px;
+  background-color: var(--panel);
+  border-radius: 36px;
+  border-width: 4px; border-color: var(--gold-d);
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.hero-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.hero-lbl { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.hero-lv { font-size: 64px; min-height: 76px; color: var(--text); font-weight: bold; white-space: normal; }
+.hero-bonus { font-size: 32px; min-height: 40px; color: var(--emerald); font-weight: bold; white-space: normal; margin-top: 4px; }
+
+/* ---------- upgrade list ---------- */
+.sec-label { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-bottom: 22px; }
+.ups { flex-direction: column; flex-grow: 1; }
+.up {
+  flex-direction: row; align-items: center;
+  height: 168px;
+  background-color: var(--panel);
+  border-radius: 30px;
+  border-width: 3px; border-color: var(--line);
+  padding: 0 28px;
+  margin-bottom: 26px;
+}
+.up-ico {
+  width: 104px; height: 104px;
+  background-color: var(--bg1);
+  border-radius: 26px;
+  border-width: 3px; border-color: var(--wood);
+  align-items: center; justify-content: center;
+  margin-right: 26px;
+}
+.up-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.up-name { font-size: 38px; min-height: 46px; color: var(--text); font-weight: bold; white-space: normal; }
+.up-eff { font-size: 27px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; margin-top: 4px; }
+.up-eff-em { color: var(--emerald); }
+.up-btn {
+  flex-direction: column; align-items: center; justify-content: center;
+  min-width: 200px; height: 116px;
+  background-color: var(--gold);
+  border-radius: 26px;
+  border-width: 3px; border-color: var(--gold-d);
+  padding: 0 20px;
+}
+.up-btn-cost { flex-direction: row; align-items: center; }
+.up-btn-coin { width: 34px; height: 34px; margin-right: 10px; }
+.up-btn-tx { font-size: 38px; min-height: 46px; color: #3A2400; font-weight: bold; white-space: normal; }
+.up-btn-lbl { font-size: 22px; min-height: 28px; color: #6B4A10; font-weight: bold; white-space: normal; margin-top: 2px; }
+.up-btn-lock { background-color: var(--panel2); border-color: var(--line); }
+.up-btn-lock-tx { font-size: 30px; min-height: 38px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+/* ---------- bottom action ---------- */
+.allup {
+  flex-direction: row; align-items: center; justify-content: center;
+  height: 140px;
+  background-color: var(--emerald);
+  border-radius: 38px;
+  border-width: 4px; border-color: var(--emerald-d);
+  margin-top: 16px;
+}
+.allup-tx { font-size: 46px; min-height: 56px; color: #06291A; font-weight: bold; white-space: normal; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="topbar">
+      <div class="back">
+        <svg id="icon-back" width="48" height="48" viewBox="0 0 48 48">
+          <path d="M30 10 L16 24 L30 38" stroke="#B79C82" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titles">
+        <span class="title">升级中心</span>
+        <span class="subtitle">UPGRADE · 提升全局产出</span>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-medal">
+        <svg id="icon-crown" width="72" height="72" viewBox="0 0 72 72">
+          <path d="M12 50 L12 28 L26 40 L36 18 L46 40 L60 28 L60 50 Z" fill="#FFC247"/>
+          <rect x="12" y="50" width="48" height="8" fill="#D9941C"/>
+        </svg>
+      </div>
+      <div class="hero-txw">
+        <span class="hero-lbl">帝国等级 EMPIRE LEVEL</span>
+        <span class="hero-lv">LV 42</span>
+        <span class="hero-bonus">全局产出加成 + 280%</span>
+      </div>
+    </div>
+
+    <span class="sec-label">— 可升级项 UPGRADES —</span>
+    <div class="ups">
+
+      <div class="up">
+        <div class="up-ico">
+          <svg id="up1" width="60" height="60" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="22" fill="#FFC247"/>
+            <circle cx="30" cy="30" r="14" fill="none" stroke="#D9941C" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="up-txw">
+          <span class="up-name">金币产量</span>
+          <span class="up-eff up-eff-em">+ 15% 每级 · 当前 LV 36</span>
+        </div>
+        <div class="up-btn">
+          <div class="up-btn-cost">
+            <svg id="c1" class="up-btn-coin" width="34" height="34" viewBox="0 0 34 34">
+              <circle cx="17" cy="17" r="14" fill="#3A2400"/>
+            </svg>
+            <span class="up-btn-tx">128K</span>
+          </div>
+          <span class="up-btn-lbl">UPGRADE</span>
+        </div>
+      </div>
+
+      <div class="up">
+        <div class="up-ico">
+          <svg id="up2" width="60" height="60" viewBox="0 0 60 60">
+            <path d="M30 8 L38 26 L30 22 L22 26 Z" fill="#4FD98A"/>
+            <circle cx="30" cy="40" r="14" fill="#4FD98A"/>
+          </svg>
+        </div>
+        <div class="up-txw">
+          <span class="up-name">离线效率</span>
+          <span class="up-eff up-eff-em">+ 8% 每级 · 当前 LV 22</span>
+        </div>
+        <div class="up-btn">
+          <div class="up-btn-cost">
+            <svg id="c2" class="up-btn-coin" width="34" height="34" viewBox="0 0 34 34">
+              <circle cx="17" cy="17" r="14" fill="#3A2400"/>
+            </svg>
+            <span class="up-btn-tx">340K</span>
+          </div>
+          <span class="up-btn-lbl">UPGRADE</span>
+        </div>
+      </div>
+
+      <div class="up">
+        <div class="up-ico">
+          <svg id="up3" width="60" height="60" viewBox="0 0 60 60">
+            <rect x="12" y="26" width="36" height="22" rx="4" fill="#C98A4B"/>
+            <path d="M18 26 L30 12 L42 26 Z" fill="#FFC247"/>
+          </svg>
+        </div>
+        <div class="up-txw">
+          <span class="up-name">产线上限</span>
+          <span class="up-eff">解锁第 4 条产线 · 需 LV 50</span>
+        </div>
+        <div class="up-btn up-btn-lock">
+          <span class="up-btn-lock-tx">未解锁</span>
+        </div>
+      </div>
+
+      <div class="up">
+        <div class="up-ico">
+          <svg id="up4" width="60" height="60" viewBox="0 0 60 60">
+            <path d="M30 10 L37 24 L52 26 L41 36 L44 51 L30 43 L16 51 L19 36 L8 26 L23 24 Z" fill="#5BB8FF"/>
+          </svg>
+        </div>
+        <div class="up-txw">
+          <span class="up-name">钻石暴击</span>
+          <span class="up-eff up-eff-em">+ 2% 暴击率每级 · 当前 LV 7</span>
+        </div>
+        <div class="up-btn">
+          <div class="up-btn-cost">
+            <svg id="c4" class="up-btn-coin" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M17 4 L29 13 L17 30 L5 13 Z" fill="#3A2400"/>
+            </svg>
+            <span class="up-btn-tx">42</span>
+          </div>
+          <span class="up-btn-lbl">钻石</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="allup">
+      <span class="allup-tx">一键全部升级</span>
+    </div>
+
+  </div>
+</body>
+</html>

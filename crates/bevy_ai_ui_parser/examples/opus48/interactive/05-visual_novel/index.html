@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.page {
+  width: 1080px;
+  height: 1920px;
+  background-color: #140E26;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ---- key visual backdrop ---- */
+.kv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1180px;
+  background-color: #241844;
+}
+.kv-glow {
+  position: absolute;
+  top: 120px;
+  left: 290px;
+  width: 500px;
+  height: 500px;
+  border-radius: 250px;
+  background-color: #3A2A6B;
+  opacity: 0.75;
+}
+.kv-moon {
+  position: absolute;
+  top: 168px;
+  left: 392px;
+  width: 296px;
+  height: 296px;
+  border-radius: 148px;
+  background-color: #F3E6BD;
+  opacity: 0.9;
+  align-items: center;
+  justify-content: center;
+}
+.kv-silhouette {
+  position: absolute;
+  top: 560px;
+  left: 360px;
+  width: 360px;
+  height: 620px;
+  border-radius: 180px;
+  background-color: #1A1130;
+  opacity: 0.92;
+}
+.kv-veil {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1080px;
+  height: 520px;
+  background-color: #140E26;
+  opacity: 0.55;
+}
+
+/* floating star accents */
+.star {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+}
+.star-a { top: 220px; left: 200px; }
+.star-b { top: 360px; left: 780px; }
+.star-c { top: 620px; left: 150px; }
+.star-d { top: 760px; left: 880px; }
+
+/* ---- content overlay ---- */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  padding: 96px 90px 110px 90px;
+  justify-content: space-between;
+}
+
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 84px;
+}
+.kicker {
+  flex-direction: row;
+  align-items: center;
+}
+.kicker-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #E8C77A;
+  margin-right: 16px;
+}
+.kicker-text {
+  font-size: 26px;
+  color: #C9B8F0;
+  letter-spacing: 8px;
+}
+.icon-btn {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  background-color: #241844;
+  border-width: 1px;
+  border-color: #4A3A7A;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+  margin-top: 760px;
+  align-items: center;
+}
+.crest {
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  background-color: #1F1638;
+  border-width: 2px;
+  border-color: #E8C77A;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.title {
+  font-size: 108px;
+  color: #F4E9C6;
+  font-weight: bold;
+  letter-spacing: 6px;
+  text-align: center;
+  text-shadow: 0 0 32px rgba(232,199,122,0.55);
+  margin-bottom: 14px;
+}
+.subtitle {
+  font-size: 34px;
+  color: #B9A6E8;
+  letter-spacing: 14px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+.tagline {
+  font-size: 28px;
+  color: #8C7CB8;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* ---- menu ---- */
+.menu {
+  align-items: center;
+}
+.btn-primary {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 720px;
+  height: 132px;
+  border-radius: 32px;
+  background-color: #E8C77A;
+  border-width: 2px;
+  border-color: #F4E4B0;
+  margin-bottom: 26px;
+}
+.btn-primary-label {
+  font-size: 42px;
+  color: #2A1D08;
+  font-weight: bold;
+  letter-spacing: 6px;
+  margin-left: 20px;
+}
+.btn-row {
+  flex-direction: row;
+  justify-content: center;
+  width: 720px;
+  margin-bottom: 38px;
+}
+.btn-ghost {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 347px;
+  height: 116px;
+  border-radius: 28px;
+  background-color: #1F1638;
+  border-width: 2px;
+  border-color: #4A3A7A;
+}
+.btn-ghost-first { margin-right: 26px; }
+.btn-ghost-label {
+  font-size: 34px;
+  color: #E5DBFA;
+  letter-spacing: 4px;
+  margin-left: 16px;
+}
+
+.footer {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.foot-link {
+  flex-direction: row;
+  align-items: center;
+  margin-left: 22px;
+  margin-right: 22px;
+}
+.foot-text {
+  font-size: 26px;
+  color: #9A88C6;
+  letter-spacing: 3px;
+  margin-left: 12px;
+}
+.foot-sep {
+  width: 2px;
+  height: 30px;
+  background-color: #3A2D5E;
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <!-- key visual -->
+    <div class="kv">
+      <div class="kv-glow"></div>
+      <div class="kv-moon">
+        <svg id="kv-moon-face" width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="84" fill="#F7EFD2"/>
+          <circle cx="62" cy="74" r="14" fill="#E5D49E"/>
+          <circle cx="116" cy="108" r="20" fill="#E5D49E"/>
+          <circle cx="104" cy="58" r="9" fill="#E5D49E"/>
+        </svg>
+      </div>
+      <div class="kv-silhouette"></div>
+      <div class="kv-veil"></div>
+    </div>
+
+    <div class="star star-a">
+      <svg id="icon-star-a" width="34" height="34" viewBox="0 0 34 34">
+        <path d="M17 2 L20 13 L31 17 L20 21 L17 32 L14 21 L3 17 L14 13 Z" fill="#E8C77A"/>
+      </svg>
+    </div>
+    <div class="star star-b">
+      <svg id="icon-star-b" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M12 1 L14 9 L22 12 L14 15 L12 23 L10 15 L2 12 L10 9 Z" fill="#C9B8F0"/>
+      </svg>
+    </div>
+    <div class="star star-c">
+      <svg id="icon-star-c" width="20" height="20" viewBox="0 0 20 20">
+        <path d="M10 1 L11.6 7.4 L18 10 L11.6 12.6 L10 19 L8.4 12.6 L2 10 L8.4 7.4 Z" fill="#E8C77A"/>
+      </svg>
+    </div>
+    <div class="star star-d">
+      <svg id="icon-star-d" width="28" height="28" viewBox="0 0 28 28">
+        <path d="M14 2 L16.4 10.5 L25 14 L16.4 17.5 L14 26 L11.6 17.5 L3 14 L11.6 10.5 Z" fill="#B9A6E8"/>
+      </svg>
+    </div>
+
+    <!-- overlay content -->
+    <div class="overlay">
+      <div class="topbar">
+        <div class="kicker">
+          <div class="kicker-dot"></div>
+          <span class="kicker-text">FANTASIA NOVEL</span>
+        </div>
+        <button class="icon-btn">
+          <svg id="icon-gear-title" width="38" height="38" viewBox="0 0 38 38">
+            <path d="M19 24a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" fill="none" stroke="#C9B8F0" stroke-width="3"/>
+            <path d="M19 3v6M19 29v6M3 19h6M29 19h6M8 8l4 4M26 26l4 4M30 8l-4 4M12 26l-4 4" stroke="#C9B8F0" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="hero">
+        <div class="crest">
+          <svg id="icon-crest" width="48" height="48" viewBox="0 0 48 48">
+            <path d="M24 4 L40 12 V26 C40 36 24 44 24 44 C24 44 8 36 8 26 V12 Z" fill="none" stroke="#E8C77A" stroke-width="3"/>
+            <path d="M24 16 L26.5 22 L33 22.5 L28 27 L29.5 33.5 L24 30 L18.5 33.5 L20 27 L15 22.5 L21.5 22 Z" fill="#E8C77A"/>
+          </svg>
+        </div>
+        <div class="title">星屑の约</div>
+        <div class="subtitle">PROMISE OF STARDUST</div>
+        <div class="tagline">在黄昏与月光交界处,续写未尽的故事</div>
+      </div>
+
+      <div class="menu">
+        <button class="btn-primary">
+          <svg id="icon-play-title" width="40" height="40" viewBox="0 0 40 40">
+            <path d="M13 9 L31 20 L13 31 Z" fill="#2A1D08"/>
+          </svg>
+          <span class="btn-primary-label">开始新游戏</span>
+        </button>
+        <div class="btn-row">
+          <button class="btn-ghost btn-ghost-first">
+            <svg id="icon-continue-title" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M6 6 L6 28 M12 17 L28 17 M28 17 L21 10 M28 17 L21 24" stroke="#E8C77A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            <span class="btn-ghost-label">继续</span>
+          </button>
+          <button class="btn-ghost">
+            <svg id="icon-load-title" width="34" height="34" viewBox="0 0 34 34">
+              <path d="M5 9 L13 9 L16 13 L29 13 L29 27 L5 27 Z" fill="none" stroke="#C9B8F0" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+            <span class="btn-ghost-label">读取存档</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button class="foot-link">
+          <svg id="icon-gallery-title" width="26" height="26" viewBox="0 0 26 26">
+            <rect x="3" y="5" width="20" height="16" rx="3" fill="none" stroke="#9A88C6" stroke-width="2.4"/>
+            <circle cx="9" cy="11" r="2.6" fill="#9A88C6"/>
+            <path d="M5 19 L11 13 L16 17 L19 14 L23 18" stroke="#9A88C6" stroke-width="2.4" fill="none" stroke-linejoin="round"/>
+          </svg>
+          <span class="foot-text">画廊</span>
+        </button>
+        <div class="foot-sep"></div>
+        <button class="foot-link">
+          <svg id="icon-extra-title" width="26" height="26" viewBox="0 0 26 26">
+            <path d="M13 3 L16 10 L23 11 L18 16 L19.5 23 L13 19.5 L6.5 23 L8 16 L3 11 L10 10 Z" fill="none" stroke="#9A88C6" stroke-width="2.2" stroke-linejoin="round"/>
+          </svg>
+          <span class="foot-text">特典</span>
+        </button>
+        <div class="foot-sep"></div>
+        <button class="foot-link">
+          <svg id="icon-exit-title" width="26" height="26" viewBox="0 0 26 26">
+            <path d="M15 4 L6 4 L6 22 L15 22 M12 13 L23 13 M23 13 L18 8 M23 13 L18 18" stroke="#9A88C6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="foot-text">退出</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+  .stage {
+    width: 1920px;
+    height: 1080px;
+    background-color: #12141F;
+    flex-direction: column;
+  }
+
+  /* ===== Top: eight-player health / rank bar ===== */
+  .hpbar {
+    flex-direction: row;
+    align-items: center;
+    height: 92px;
+    padding: 0 24px;
+    background-color: #1A1D2C;
+    border-bottom-width: 2px;
+    border-bottom-color: #2C3142;
+  }
+  .player-chip {
+    flex-direction: row;
+    align-items: center;
+    width: 218px;
+    height: 64px;
+    margin-right: 10px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .player-chip.is-self { border-color: #F2C14E; background-color: #2A2742; }
+  .player-chip.is-dead { opacity: 0.45; }
+  .chip-portrait {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+  .chip-meta { flex-direction: column; flex-grow: 1; }
+  .chip-name { font-size: 16px; color: #F4F6FF; -unity-font-style: bold; }
+  .chip-hp-track {
+    flex-direction: row;
+    width: 116px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 4px;
+    background-color: #12141F;
+  }
+  .chip-hp-fill { height: 8px; border-radius: 4px; background-color: #4FD6C9; }
+  .hp-90 { width: 104px; }
+  .hp-72 { width: 84px; }
+  .hp-55 { width: 64px; }
+  .hp-40 { width: 46px; }
+  .hp-20 { width: 23px; }
+  .hp-0 { width: 4px; background-color: #5A6076; }
+  .chip-rank { font-size: 24px; color: #F2C14E; -unity-font-style: bold; margin-left: 8px; }
+
+  /* ===== Main play area ===== */
+  .arena {
+    flex-direction: row;
+    flex-grow: 1;
+    padding: 28px;
+  }
+
+  /* Left synergy panel */
+  .synergy-panel {
+    width: 360px;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 24px;
+    margin-right: 28px;
+  }
+  .panel-head { font-size: 24px; color: #F4F6FF; -unity-font-style: bold; margin-bottom: 20px; }
+  .syn-row {
+    flex-direction: row;
+    align-items: center;
+    height: 72px;
+    margin-bottom: 14px;
+    padding: 0 14px;
+    border-radius: 14px;
+    background-color: #232739;
+    border-left-width: 4px;
+    border-left-color: #343A50;
+  }
+  .syn-row.is-active { border-left-color: #F2C14E; background-color: #2A2742; }
+  .syn-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+  }
+  .syn-meta { flex-direction: column; flex-grow: 1; }
+  .syn-name { font-size: 19px; color: #F4F6FF; -unity-font-style: bold; }
+  .syn-tier { font-size: 15px; color: #9AA1BC; margin-top: 4px; }
+  .syn-tier.on { color: #4FD6C9; }
+  .syn-count {
+    width: 50px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+  }
+  .syn-count.on { background-color: #F2C14E; }
+  .syn-count-tx { font-size: 18px; color: #9AA1BC; -unity-font-style: bold; }
+  .syn-count-tx.on { color: #1A1320; }
+
+  /* Center board + bench */
+  .center { flex-grow: 1; flex-direction: column; margin-right: 28px; }
+  .board-wrap {
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #161927;
+    border-radius: 22px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 24px;
+  }
+  .board-tag { font-size: 16px; color: #8B93AD; letter-spacing: 3px; margin-bottom: 18px; -unity-font-style: bold; }
+  .hex-row { flex-direction: row; justify-content: center; margin-bottom: 14px; }
+  .hex-row.shift { padding-left: 44px; }
+  .hex {
+    width: 80px;
+    height: 88px;
+    margin-right: 12px;
+    border-radius: 14px;
+    background-color: #1F2333;
+    border-width: 2px;
+    border-color: #2C3142;
+    align-items: center;
+    justify-content: center;
+  }
+  .hex.enemy { background-color: #261A22; border-color: #3A2530; }
+  .hex.unit-blue { border-color: #4F76D6; background-color: #1B2238; }
+  .hex.unit-purple { border-color: #A878F0; background-color: #251C38; }
+  .hex.unit-gold { border-color: #F2C14E; background-color: #2C2718; }
+  .hex.unit-green { border-color: #57C77A; background-color: #1B2A20; }
+  .unit-orb { width: 46px; height: 46px; border-radius: 23px; background-color: #2C3142; align-items: center; justify-content: center; }
+
+  .bench {
+    flex-direction: row;
+    align-items: center;
+    height: 116px;
+    margin-top: 22px;
+    padding: 0 20px;
+    border-radius: 18px;
+    background-color: #1A1D2C;
+    border-width: 1px;
+    border-color: #2C3142;
+  }
+  .bench-cap { font-size: 16px; color: #8B93AD; -unity-font-style: bold; margin-right: 18px; width: 64px; }
+  .bench-slot {
+    width: 76px;
+    height: 80px;
+    margin-right: 12px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Right shop / economy */
+  .shop-panel {
+    width: 408px;
+    flex-direction: column;
+    background-color: #1A1D2C;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #2C3142;
+    padding: 24px;
+  }
+  .econ-row { flex-direction: row; justify-content: space-between; margin-bottom: 18px; }
+  .econ {
+    width: 110px;
+    height: 92px;
+    border-radius: 14px;
+    background-color: #232739;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .econ.gold { border-width: 1px; border-color: #F2C14E; }
+  .econ-num { font-size: 32px; color: #F4F6FF; -unity-font-style: bold; }
+  .econ-num.gold { color: #F2C14E; }
+  .econ-cap { font-size: 14px; color: #8B93AD; margin-top: 6px; }
+
+  .lvl-block { flex-direction: column; margin-bottom: 18px; }
+  .lvl-head { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .lvl-tx { font-size: 18px; color: #F4F6FF; -unity-font-style: bold; }
+  .lvl-xp { font-size: 15px; color: #4FD6C9; }
+  .bar { flex-direction: row; width: 360px; height: 14px; border-radius: 7px; background-color: #12141F; }
+  .bar-fill { height: 14px; width: 220px; border-radius: 7px; background-color: #4FD6C9; }
+
+  .shop-actions { flex-direction: row; margin-bottom: 18px; }
+  .shop-act {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    height: 64px;
+    border-radius: 12px;
+    background-color: #232739;
+    border-width: 1px;
+    border-color: #343A50;
+  }
+  .shop-act.refresh { margin-right: 14px; border-color: #4FD6C9; }
+  .shop-act.buyxp { border-color: #A878F0; }
+  .shop-act-ic { width: 26px; height: 26px; margin-right: 10px; }
+  .shop-act-tx { font-size: 18px; color: #F4F6FF; -unity-font-style: bold; }
+  .shop-act-cost { font-size: 16px; color: #F2C14E; -unity-font-style: bold; margin-left: 8px; }
+
+  .shop-cards { flex-direction: row; }
+  .card {
+    width: 110px;
+    height: 178px;
+    margin-right: 12px;
+    border-radius: 14px;
+    background-color: #232739;
+    border-bottom-width: 4px;
+    border-bottom-color: #5A6076;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+  }
+  .card.r-green { border-bottom-color: #57C77A; }
+  .card.r-blue { border-bottom-color: #4F76D6; }
+  .card.r-purple { border-bottom-color: #A878F0; }
+  .card-art {
+    width: 86px;
+    height: 86px;
+    border-radius: 12px;
+    background-color: #1F2333;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .card-name { font-size: 16px; color: #F4F6FF; -unity-font-style: bold; }
+  .card-cost { flex-direction: row; align-items: center; margin-top: 8px; }
+  .card-cost-ic { width: 18px; height: 18px; margin-right: 5px; }
+  .card-cost-tx { font-size: 17px; color: #F2C14E; -unity-font-style: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- Eight-player health / rank bar -->
+    <div class="hpbar">
+      <div class="player-chip is-self">
+        <div class="chip-portrait">
+          <svg id="bd-p1" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#F2C14E"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#4FD6C9"/></svg>
+        </div>
+        <div class="chip-meta">
+          <span class="chip-name">你 · 星陨</span>
+          <div class="chip-hp-track"><div class="chip-hp-fill hp-90"></div></div>
+        </div>
+        <span class="chip-rank">1</span>
+      </div>
+      <div class="player-chip">
+        <div class="chip-portrait"><svg id="bd-p2" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#A878F0"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#5A6076"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">夜枭</span><div class="chip-hp-track"><div class="chip-hp-fill hp-72"></div></div></div>
+        <span class="chip-rank">2</span>
+      </div>
+      <div class="player-chip">
+        <div class="chip-portrait"><svg id="bd-p3" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#57C77A"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#5A6076"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">铁壁</span><div class="chip-hp-track"><div class="chip-hp-fill hp-72"></div></div></div>
+        <span class="chip-rank">3</span>
+      </div>
+      <div class="player-chip">
+        <div class="chip-portrait"><svg id="bd-p4" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#4F76D6"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#5A6076"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">疾风</span><div class="chip-hp-track"><div class="chip-hp-fill hp-55"></div></div></div>
+        <span class="chip-rank">4</span>
+      </div>
+      <div class="player-chip">
+        <div class="chip-portrait"><svg id="bd-p5" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#F0B25A"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#5A6076"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">焰心</span><div class="chip-hp-track"><div class="chip-hp-fill hp-40"></div></div></div>
+        <span class="chip-rank">5</span>
+      </div>
+      <div class="player-chip">
+        <div class="chip-portrait"><svg id="bd-p6" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#9AA1BC"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#5A6076"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">幽语</span><div class="chip-hp-track"><div class="chip-hp-fill hp-20"></div></div></div>
+        <span class="chip-rank">6</span>
+      </div>
+      <div class="player-chip is-dead">
+        <div class="chip-portrait"><svg id="bd-p7" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#5A6076"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#3A3F52"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">霜锋</span><div class="chip-hp-track"><div class="chip-hp-fill hp-0"></div></div></div>
+        <span class="chip-rank">7</span>
+      </div>
+      <div class="player-chip is-dead">
+        <div class="chip-portrait"><svg id="bd-p8" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="11" r="6" fill="#5A6076"/><path d="M4 26c0-5 5-8 10-8s10 3 10 8z" fill="#3A3F52"/></svg></div>
+        <div class="chip-meta"><span class="chip-name">残月</span><div class="chip-hp-track"><div class="chip-hp-fill hp-0"></div></div></div>
+        <span class="chip-rank">8</span>
+      </div>
+    </div>
+
+    <!-- Arena -->
+    <div class="arena">
+
+      <!-- Synergy activation panel -->
+      <div class="synergy-panel">
+        <span class="panel-head">羁绊激活</span>
+        <div class="syn-row is-active">
+          <div class="syn-icon"><svg id="syn-warden" width="28" height="28" viewBox="0 0 28 28"><path d="M14 3l9 4v8c0 6-4 9-9 10-5-1-9-4-9-10V7z" fill="#F2C14E"/><path d="M14 8v10M9 13h10" stroke="#1A1320" stroke-width="2"/></svg></div>
+          <div class="syn-meta"><span class="syn-name">守护者</span><span class="syn-tier on">4 / 4 · 全队护盾 +30%</span></div>
+          <div class="syn-count on"><span class="syn-count-tx on">4</span></div>
+        </div>
+        <div class="syn-row is-active">
+          <div class="syn-icon"><svg id="syn-mage" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="9" fill="#A878F0"/><path d="M14 5v18M5 14h18" stroke="#FFF" stroke-width="2"/></svg></div>
+          <div class="syn-meta"><span class="syn-name">奥术师</span><span class="syn-tier on">3 / 6 · 法强 +45</span></div>
+          <div class="syn-count on"><span class="syn-count-tx on">3</span></div>
+        </div>
+        <div class="syn-row">
+          <div class="syn-icon"><svg id="syn-hunter" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#57C77A" stroke-width="2"/><circle cx="14" cy="14" r="3" fill="#57C77A"/><path d="M14 1v6M14 21v6M1 14h6M21 14h6" stroke="#57C77A" stroke-width="2"/></svg></div>
+          <div class="syn-meta"><span class="syn-name">游侠</span><span class="syn-tier">2 / 4 · 待激活</span></div>
+          <div class="syn-count"><span class="syn-count-tx">2</span></div>
+        </div>
+        <div class="syn-row">
+          <div class="syn-icon"><svg id="syn-assassin" width="28" height="28" viewBox="0 0 28 28"><path d="M5 5l18 18M9 5L5 9l14 14 4-4z" stroke="#4FD6C9" stroke-width="2" fill="#1F2333"/></svg></div>
+          <div class="syn-meta"><span class="syn-name">刺客</span><span class="syn-tier">1 / 3 · 待激活</span></div>
+          <div class="syn-count"><span class="syn-count-tx">1</span></div>
+        </div>
+        <div class="syn-row">
+          <div class="syn-icon"><svg id="syn-knight" width="28" height="28" viewBox="0 0 28 28"><rect x="6" y="10" width="16" height="13" rx="2" fill="#4F76D6"/><path d="M9 10V7a5 5 0 0110 0v3" stroke="#9CC3FF" stroke-width="2" fill="none"/></svg></div>
+          <div class="syn-meta"><span class="syn-name">骑士</span><span class="syn-tier">1 / 2 · 待激活</span></div>
+          <div class="syn-count"><span class="syn-count-tx">1</span></div>
+        </div>
+      </div>
+
+      <!-- Board + bench -->
+      <div class="center">
+        <div class="board-wrap">
+          <span class="board-tag">敌方阵列 · 夜枭</span>
+          <div class="hex-row">
+            <div class="hex enemy"></div>
+            <div class="hex enemy"><div class="unit-orb"></div></div>
+            <div class="hex enemy"></div>
+            <div class="hex enemy"><div class="unit-orb"></div></div>
+            <div class="hex enemy"></div>
+            <div class="hex enemy"></div>
+          </div>
+          <div class="hex-row shift">
+            <div class="hex enemy"><div class="unit-orb"></div></div>
+            <div class="hex enemy"></div>
+            <div class="hex enemy"><div class="unit-orb"></div></div>
+            <div class="hex enemy"></div>
+            <div class="hex enemy"></div>
+          </div>
+          <span class="board-tag">己方阵列 · 你</span>
+          <div class="hex-row shift">
+            <div class="hex unit-gold"><div class="unit-orb"></div></div>
+            <div class="hex"></div>
+            <div class="hex unit-purple"><div class="unit-orb"></div></div>
+            <div class="hex"></div>
+            <div class="hex unit-blue"><div class="unit-orb"></div></div>
+          </div>
+          <div class="hex-row">
+            <div class="hex unit-green"><div class="unit-orb"></div></div>
+            <div class="hex"></div>
+            <div class="hex unit-purple"><div class="unit-orb"></div></div>
+            <div class="hex unit-gold"><div class="unit-orb"></div></div>
+            <div class="hex"></div>
+            <div class="hex unit-blue"><div class="unit-orb"></div></div>
+          </div>
+        </div>
+
+        <div class="bench">
+          <span class="bench-cap">备战席</span>
+          <div class="bench-slot"><div class="unit-orb"></div></div>
+          <div class="bench-slot"><div class="unit-orb"></div></div>
+          <div class="bench-slot"></div>
+          <div class="bench-slot"><div class="unit-orb"></div></div>
+          <div class="bench-slot"></div>
+          <div class="bench-slot"></div>
+          <div class="bench-slot"><div class="unit-orb"></div></div>
+          <div class="bench-slot"></div>
+          <div class="bench-slot"></div>
+        </div>
+      </div>
+
+      <!-- Shop / economy -->
+      <div class="shop-panel">
+        <div class="econ-row">
+          <div class="econ gold">
+            <span class="econ-num gold">52</span>
+            <span class="econ-cap">金币</span>
+          </div>
+          <div class="econ">
+            <span class="econ-num">7</span>
+            <span class="econ-cap">等级</span>
+          </div>
+          <div class="econ">
+            <span class="econ-num">+5</span>
+            <span class="econ-cap">利息</span>
+          </div>
+        </div>
+
+        <div class="lvl-block">
+          <div class="lvl-head">
+            <span class="lvl-tx">Lv.7</span>
+            <span class="lvl-xp">28 / 36 XP</span>
+          </div>
+          <div class="bar"><div class="bar-fill"></div></div>
+        </div>
+
+        <div class="shop-actions">
+          <button class="shop-act refresh">
+            <svg id="bd-refresh" width="26" height="26" viewBox="0 0 26 26" class="shop-act-ic"><path d="M21 13a8 8 0 11-2.3-5.6" stroke="#4FD6C9" stroke-width="2.5" fill="none"/><path d="M21 4v5h-5" stroke="#4FD6C9" stroke-width="2.5" fill="none"/></svg>
+            <span class="shop-act-tx">刷新</span>
+            <span class="shop-act-cost">2</span>
+          </button>
+          <button class="shop-act buyxp">
+            <svg id="bd-xp" width="26" height="26" viewBox="0 0 26 26" class="shop-act-ic"><path d="M13 3l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#A878F0"/></svg>
+            <span class="shop-act-tx">买经验</span>
+            <span class="shop-act-cost">4</span>
+          </button>
+        </div>
+
+        <div class="shop-cards">
+          <div class="card r-green">
+            <div class="card-art"><svg id="shop-c1" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="22" r="12" fill="#57C77A"/><path d="M10 50c0-9 8-14 18-14s18 5 18 14z" fill="#3E8F58"/></svg></div>
+            <span class="card-name">林语者</span>
+            <div class="card-cost"><svg id="shop-cc1" width="18" height="18" viewBox="0 0 18 18" class="card-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="card-cost-tx">1</span></div>
+          </div>
+          <div class="card r-blue">
+            <div class="card-art"><svg id="shop-c2" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="22" r="12" fill="#4F76D6"/><path d="M10 50c0-9 8-14 18-14s18 5 18 14z" fill="#345799"/></svg></div>
+            <span class="card-name">霜卫</span>
+            <div class="card-cost"><svg id="shop-cc2" width="18" height="18" viewBox="0 0 18 18" class="card-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="card-cost-tx">3</span></div>
+          </div>
+          <div class="card r-purple">
+            <div class="card-art"><svg id="shop-c3" width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="22" r="12" fill="#A878F0"/><path d="M10 50c0-9 8-14 18-14s18 5 18 14z" fill="#7B53B8"/></svg></div>
+            <span class="card-name">虚空祭司</span>
+            <div class="card-cost"><svg id="shop-cc3" width="18" height="18" viewBox="0 0 18 18" class="card-cost-ic"><circle cx="9" cy="9" r="8" fill="#F2C14E"/></svg><span class="card-cost-tx">4</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

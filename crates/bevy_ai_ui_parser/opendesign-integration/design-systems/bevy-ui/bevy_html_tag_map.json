@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bevy HTML Tag to BUI IR Node Type Mapping",
+  "description": "Maps standard HTML tags to Bevy AI UI Parser BuiNodeType values. Generated from bevy_ai_ui_parser/src/core/model/ir.rs and spawn.rs.",
+  "version": "1.0.0",
+  "buiNodeTypes": {
+    "Node": "Generic visual container (div-like). Renders as Bevy Node with Flex layout.",
+    "Text": "Text label node. Renders text content via Bevy Text component.",
+    "TextInput": "Editable text input field. Mirrors to a hidden DOM input for browser preview.",
+    "Toggle": "Checkbox/toggle switch. Maps to Bevy Checkable + Checked components.",
+    "Button": "Interactive button. Maps to Bevy Button component with Interaction tracking.",
+    "Slider": "Range slider control. Maps to bevy_ui_widgets::Slider with value/range/step.",
+    "Image": "Image display node. Loads texture via AssetServer, supports atlas layouts."
+  },
+  "tagMappings": {
+    "supported": {
+      "containers": {
+        "tags": ["div", "section", "nav", "main", "header", "footer", "aside", "article", "form", "fieldset"],
+        "buiNodeType": "Node",
+        "notes": "All block-level semantic containers map to generic Node. Layout is driven by CSS flex/grid."
+      },
+      "text": {
+        "tags": ["span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "label", "a", "strong", "em", "small", "b", "i", "u", "code", "pre", "blockquote", "cite", "abbr", "time", "mark", "del", "ins", "sub", "sup"],
+        "buiNodeType": "Text",
+        "notes": "All inline and block text elements map to Text. Font styling comes from CSS. <a> tags do NOT produce clickable links in-game; use data-action instead."
+      },
+      "button": {
+        "tags": ["button"],
+        "buiNodeType": "Button",
+        "notes": "Must have data-action attribute for interaction binding. Optional: data-action-event (click|hover_enter|hover_exit|focus|blur)."
+      },
+      "input_text": {
+        "tags": ["input"],
+        "buiNodeType": "TextInput",
+        "condition": "type='text' or type='password' or type='email' or type='number' or type='search' or type='tel' or type='url' or absent (defaults to text)",
+        "notes": "Must have id attribute for state binding. Placeholder text supported via placeholder attribute."
+      },
+      "input_checkbox": {
+        "tags": ["input"],
+        "buiNodeType": "Toggle",
+        "condition": "type='checkbox'",
+        "notes": "Initial checked state from 'checked' attribute. Must have id for state binding."
+      },
+      "input_range": {
+        "tags": ["input"],
+        "buiNodeType": "Slider",
+        "condition": "type='range'",
+        "notes": "min/max/step attributes map to SliderRange and SliderStep. Default: min=0, max=100, step=1."
+      },
+      "select": {
+        "tags": ["select"],
+        "buiNodeType": "Node",
+        "notes": "Dropdown is NOT a native BuiNodeType. Rendered as Node container with child Button items. Use data-action on each option button. Future: DropdownField may be added to parser."
+      },
+      "img": {
+        "tags": ["img"],
+        "buiNodeType": "Image",
+        "notes": "src attribute maps to asset path. Supports PNG, JPG, WEBP. Atlas slicing via data-atlas-* attributes."
+      },
+      "style": {
+        "tags": ["style"],
+        "buiNodeType": "None",
+        "notes": "Parser reads CSS from <style> blocks before compiling UI nodes. Keep CSS contract-compliant; prefer external stylesheets for OD package output when possible."
+      }
+    },
+    "forbidden": {
+      "table_layout": {
+        "tags": ["table", "thead", "tbody", "tr", "td", "th", "caption", "colgroup", "col"],
+        "reason": "Table layout has no Bevy UI equivalent. Use CSS Grid or Flexbox instead.",
+        "alternative": "Replace with div.grid or div.flex structure."
+      },
+      "media": {
+        "tags": ["canvas", "video", "audio", "source", "track", "embed", "object"],
+        "reason": "No engine equivalent for embedded media playback or canvas rendering within UI tree.",
+        "alternative": "Use Image nodes for static visuals. Video/audio must be handled outside the UI parser."
+      },
+      "iframe": {
+        "tags": ["iframe"],
+        "reason": "No sandboxed browsing context in game UI.",
+        "alternative": "None. Embedding external content is not supported."
+      },
+      "script": {
+        "tags": ["script"],
+        "reason": "Arbitrary JavaScript execution is not supported. Interactions use data-action -> ECS event binding.",
+        "alternative": "Use data-action attributes on interactive elements. Logic lives in Bevy ECS systems."
+      },
+      "meta_link_favicon": {
+        "tags": ["meta", "link[rel='icon']"],
+        "reason": "Browser metadata has no meaning in game UI context.",
+        "alternative": "Omit entirely from game UI HTML."
+      },
+      "list_semantic": {
+        "tags": ["ul", "ol", "li", "dl", "dt", "dd"],
+        "reason": "Semantic list elements have no dedicated BuiNodeType. They render as Node but lose semantic meaning.",
+        "alternative": "Use div with role='list' or plain div.children structure. Visual bullets via ::before pseudo-elements in CSS."
+      },
+      "form_controls_advanced": {
+        "tags": ["textarea", "datalist", "optgroup", "option", "output", "progress", "meter"],
+        "reason": "These controls have no direct BuiNodeType mapping. textarea -> TextInput (single-line only). progress/meter -> custom Node with fill overlay.",
+        "alternative": "textarea: use TextInput with multiline workaround (not recommended). progress: use Node with child Image fill bar."
+      }
+    }
+  },
+  "attributeRequirements": {
+    "id": {
+      "requiredFor": ["TextInput", "Toggle", "Slider", "any element with data-binding"],
+      "purpose": "State binding target. Must be unique within document.",
+      "format": "alphanumeric + underscore, no spaces"
+    },
+    "data-action": {
+      "requiredFor": ["Button", "any interactive Node"],
+      "purpose": "ECS event emission key. Format: 'action_name' or 'action_name:param'.",
+      "events": ["click", "hover_enter", "hover_exit", "focus", "blur"]
+    },
+    "data-action-event": {
+      "requiredFor": [],
+      "optionalFor": ["Button", "Node with data-action"],
+      "purpose": "Override default click event. Values: click | hover_enter | hover_exit | focus | blur.",
+      "default": "click"
+    },
+    "data-binding": {
+      "requiredFor": ["elements that reflect runtime state"],
+      "purpose": "Two-way state binding source. Format: 'state_key' matching BuiStateModel.values.",
+      "examples": ["player_level", "gold_amount", "selected_car_name"]
+    },
+    "data-atlas-columns": {
+      "requiredFor": ["img with sprite atlas"],
+      "purpose": "Number of columns in sprite atlas texture.",
+      "type": "integer"
+    },
+    "data-atlas-rows": {
+      "requiredFor": ["img with sprite atlas"],
+      "purpose": "Number of rows in sprite atlas texture.",
+      "type": "integer"
+    },
+    "data-atlas-index": {
+      "requiredFor": ["img with sprite atlas"],
+      "purpose": "Frame index within atlas (row-major order).",
+      "type": "integer"
+    }
+  },
+  "generatedFrom": {
+    "bevyParser": "/Volumes/DockCase/CodeRep/bevy/crates/bevy_ai_ui_parser/src/core/model/ir.rs",
+    "bevySpawn": "/Volumes/DockCase/CodeRep/bevy/crates/bevy_ai_ui_parser/src/core/runtime/spawn.rs",
+    "odDesignContract": "/Volumes/DockCase/CodeRep/open-design/design-systems/bevy-ui/DESIGN.md"
+  }
+}

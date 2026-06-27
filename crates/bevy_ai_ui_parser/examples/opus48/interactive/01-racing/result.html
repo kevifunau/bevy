@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  flex-direction: row;
+  background-color: #070B18;
+}
+
+/* left: placement hero */
+.hero {
+  width: 760px;
+  height: 1080px;
+  background-color: #0B1430;
+  border-right-width: 2px;
+  border-right-color: #16203F;
+  padding: 64px 56px;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-kicker { font-size: 22px; color: #00E5FF; letter-spacing: 8px; margin-bottom: 12px; }
+.hero-title { font-size: 64px; color: #FFFFFF; font-weight: bold; letter-spacing: 4px; margin-bottom: 40px; }
+.place-badge {
+  width: 320px;
+  height: 320px;
+  border-radius: 160px;
+  background-color: #101F40;
+  border-width: 6px;
+  border-color: #FFE100;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.place-inner { flex-direction: column; align-items: center; justify-content: center; }
+.place-num { flex-direction: row; align-items: flex-start; justify-content: center; }
+.place-val { font-size: 150px; color: #FFE100; font-weight: bold; }
+.place-suffix { font-size: 44px; color: #FFE100; font-weight: bold; margin-top: 34px; }
+.place-label { font-size: 22px; color: #9FB0DE; letter-spacing: 6px; margin-top: 4px; }
+
+.hero-car { flex-direction: row; align-items: center; }
+.hero-car-thumb {
+  width: 150px;
+  height: 90px;
+  border-radius: 14px;
+  background-color: #060B1A;
+  border-width: 1px;
+  border-color: #14203E;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.hero-car-meta { flex-direction: column; justify-content: center; }
+.hero-car-name { font-size: 28px; color: #FFFFFF; font-weight: bold; margin-bottom: 4px; }
+.hero-car-track { font-size: 16px; color: #6B7CA8; }
+
+/* right: details */
+.details {
+  width: 1160px;
+  height: 1080px;
+  padding: 64px 64px;
+  flex-direction: column;
+}
+.det-section-title { font-size: 18px; color: #6B7CA8; letter-spacing: 4px; margin-bottom: 22px; }
+
+/* time + stats grid */
+.stat-row { flex-direction: row; width: 1032px; height: 150px; margin-bottom: 26px; }
+.stat-card {
+  flex-direction: column;
+  justify-content: center;
+  width: 248px;
+  height: 150px;
+  margin-right: 20px;
+  border-radius: 18px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 22px;
+}
+.stat-card.last { margin-right: 0; }
+.stat-card.best { border-color: #00E5FF; }
+.stat-card-label { flex-direction: row; align-items: center; margin-bottom: 12px; }
+.stat-card-label-txt { font-size: 15px; color: #6B7CA8; letter-spacing: 2px; margin-left: 8px; }
+.stat-card-val { font-size: 40px; color: #FFFFFF; font-weight: bold; }
+.stat-card-val.cyan { color: #00E5FF; }
+.stat-card-sub { font-size: 14px; color: #FF2D7E; margin-top: 4px; font-weight: bold; }
+
+/* rewards */
+.rewards {
+  width: 1032px;
+  height: 240px;
+  border-radius: 22px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #16203F;
+  padding: 30px;
+  flex-direction: column;
+  margin-bottom: 26px;
+}
+.rew-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.rew-title { font-size: 24px; color: #FFFFFF; font-weight: bold; letter-spacing: 2px; }
+.rew-mult {
+  flex-direction: row;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 19px;
+  background-color: #FF2D7E;
+}
+.rew-mult-txt { font-size: 16px; color: #FFFFFF; font-weight: bold; }
+.rew-grid { flex-direction: row; align-items: center; }
+.rew-item {
+  flex-direction: row;
+  align-items: center;
+  width: 310px;
+  height: 88px;
+  margin-right: 26px;
+  border-radius: 16px;
+  background-color: #101F40;
+  border-width: 1px;
+  border-color: #1E3A5C;
+  padding: 16px;
+}
+.rew-item.last { margin-right: 0; }
+.rew-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background-color: #0A1024;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.rew-txt { flex-direction: column; justify-content: center; }
+.rew-amt { font-size: 30px; color: #FFFFFF; font-weight: bold; }
+.rew-name { font-size: 14px; color: #6B7CA8; }
+
+/* unlock banner */
+.unlock {
+  flex-direction: row;
+  align-items: center;
+  width: 1032px;
+  height: 110px;
+  border-radius: 18px;
+  background-color: #160C2E;
+  border-width: 2px;
+  border-color: #9B6BFF;
+  padding: 22px;
+  margin-bottom: 38px;
+}
+.unlock-icon {
+  width: 66px;
+  height: 66px;
+  border-radius: 16px;
+  background-color: #251447;
+  align-items: center;
+  justify-content: center;
+  margin-right: 22px;
+}
+.unlock-txt { flex-direction: column; justify-content: center; }
+.unlock-kicker { font-size: 14px; color: #C7A6FF; letter-spacing: 4px; margin-bottom: 4px; }
+.unlock-name { font-size: 26px; color: #FFFFFF; font-weight: bold; }
+
+/* actions */
+.actions { flex-direction: row; width: 1032px; height: 110px; }
+.act-btn {
+  height: 110px;
+  border-radius: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28px;
+}
+.act-btn.menu {
+  width: 300px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #1E2C52;
+  margin-right: 24px;
+}
+.act-btn.retry {
+  width: 320px;
+  background-color: #0E1730;
+  border-width: 2px;
+  border-color: #FFE100;
+  margin-right: 24px;
+}
+.act-btn.next {
+  flex-grow: 1;
+  background-color: #00E5FF;
+}
+.act-icon { margin-right: 14px; align-items: center; justify-content: center; }
+.act-txt { font-size: 26px; font-weight: bold; letter-spacing: 2px; }
+.act-txt.menu { color: #9FB0DE; }
+.act-txt.retry { color: #FFE100; }
+.act-txt.next { color: #052230; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="hero">
+      <span class="hero-kicker">RACE FINISHED</span>
+      <span class="hero-title">PODIUM!</span>
+      <div class="place-badge">
+        <div class="place-inner">
+          <div class="place-num">
+            <span class="place-val">1</span>
+            <span class="place-suffix">ST</span>
+          </div>
+          <span class="place-label">PLACE</span>
+        </div>
+      </div>
+      <div class="hero-car">
+        <div class="hero-car-thumb">
+          <svg id="icon-result-car" width="120" height="66" viewBox="0 0 120 66">
+            <path d="M8 46 L30 46 L46 26 L84 22 L106 34 L112 46 L8 46 Z" fill="#10204A" stroke="#00E5FF" stroke-width="2"/>
+            <circle cx="36" cy="48" r="10" fill="#060B1A" stroke="#FF2D7E" stroke-width="3"/>
+            <circle cx="92" cy="48" r="10" fill="#060B1A" stroke="#FF2D7E" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="hero-car-meta">
+          <span class="hero-car-name">VECTRA GT-R</span>
+          <span class="hero-car-track">HARBOR LOOP · 2 LAPS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="details">
+      <span class="det-section-title">RESULT SUMMARY</span>
+
+      <div class="stat-row">
+        <div class="stat-card best">
+          <div class="stat-card-label">
+            <svg id="icon-clock" width="22" height="22" viewBox="0 0 22 22">
+              <circle cx="11" cy="11" r="9" fill="none" stroke="#00E5FF" stroke-width="2"/>
+              <path d="M11 5 V11 L15 14" stroke="#00E5FF" stroke-width="2" fill="none"/>
+            </svg>
+            <span class="stat-card-label-txt">YOUR TIME</span>
+          </div>
+          <span class="stat-card-val cyan">01:38.4</span>
+          <span class="stat-card-sub">▼ NEW BEST -4.4s</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">
+            <svg id="icon-topspeed" width="22" height="22" viewBox="0 0 22 22">
+              <path d="M3 16 A10 10 0 0 1 19 16" fill="none" stroke="#FF2D7E" stroke-width="2"/>
+              <path d="M11 16 L16 8" stroke="#FF2D7E" stroke-width="2"/>
+            </svg>
+            <span class="stat-card-label-txt">TOP SPEED</span>
+          </div>
+          <span class="stat-card-val">281 km/h</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">
+            <svg id="icon-drift" width="22" height="22" viewBox="0 0 22 22">
+              <path d="M3 15 C8 15 8 7 14 7 L19 7" fill="none" stroke="#FFE100" stroke-width="2"/>
+              <path d="M16 4 L20 7 L16 10" fill="none" stroke="#FFE100" stroke-width="2"/>
+            </svg>
+            <span class="stat-card-label-txt">DRIFT SCORE</span>
+          </div>
+          <span class="stat-card-val">12,840</span>
+        </div>
+        <div class="stat-card last">
+          <div class="stat-card-label">
+            <svg id="icon-nitro-r" width="22" height="22" viewBox="0 0 22 22">
+              <path d="M13 2 L6 13 L10 13 L9 20 L16 8 L11 8 Z" fill="#9B6BFF"/>
+            </svg>
+            <span class="stat-card-label-txt">NITRO USED</span>
+          </div>
+          <span class="stat-card-val">6x</span>
+        </div>
+      </div>
+
+      <div class="rewards">
+        <div class="rew-head">
+          <span class="rew-title">REWARDS EARNED</span>
+          <div class="rew-mult"><span class="rew-mult-txt">1ST PLACE x2.0</span></div>
+        </div>
+        <div class="rew-grid">
+          <div class="rew-item">
+            <div class="rew-icon">
+              <svg id="icon-coin-r" width="34" height="34" viewBox="0 0 34 34">
+                <circle cx="17" cy="17" r="14" fill="#FFE100"/>
+                <circle cx="17" cy="17" r="8" fill="#0C1226"/>
+                <circle cx="17" cy="17" r="6" fill="#FFE100"/>
+              </svg>
+            </div>
+            <div class="rew-txt">
+              <span class="rew-amt">+5,000</span>
+              <span class="rew-name">金币</span>
+            </div>
+          </div>
+          <div class="rew-item">
+            <div class="rew-icon">
+              <svg id="icon-gem-r" width="34" height="34" viewBox="0 0 34 34">
+                <path d="M8 5 H26 L31 12 L17 30 L3 12 Z" fill="#00E5FF"/>
+                <path d="M8 5 L17 12 L26 5 M3 12 H31" stroke="#0C1226" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="rew-txt">
+              <span class="rew-amt">+30</span>
+              <span class="rew-name">钻石</span>
+            </div>
+          </div>
+          <div class="rew-item last">
+            <div class="rew-icon">
+              <svg id="icon-xp-r" width="34" height="34" viewBox="0 0 34 34">
+                <path d="M17 3 L21 13 L31 13 L23 20 L26 30 L17 24 L8 30 L11 20 L3 13 L13 13 Z" fill="#FF2D7E"/>
+              </svg>
+            </div>
+            <div class="rew-txt">
+              <span class="rew-amt">+1,250</span>
+              <span class="rew-name">经验值</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unlock">
+        <div class="unlock-icon">
+          <svg id="icon-unlock" width="38" height="38" viewBox="0 0 38 38">
+            <rect x="10" y="17" width="18" height="15" rx="3" fill="#C7A6FF"/>
+            <path d="M14 17 V12 A5 5 0 0 1 24 12" fill="none" stroke="#C7A6FF" stroke-width="3"/>
+            <circle cx="19" cy="24" r="3" fill="#160C2E"/>
+          </svg>
+        </div>
+        <div class="unlock-txt">
+          <span class="unlock-kicker">NEW UNLOCK</span>
+          <span class="unlock-name">解锁赛道:SKYLINE DASH</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="act-btn menu">
+          <div class="act-icon">
+            <svg id="icon-home" width="30" height="30" viewBox="0 0 30 30">
+              <path d="M4 14 L15 4 L26 14 V26 H4 Z" fill="none" stroke="#9FB0DE" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="act-txt menu">MENU</span>
+        </div>
+        <div class="act-btn retry">
+          <div class="act-icon">
+            <svg id="icon-retry" width="30" height="30" viewBox="0 0 30 30">
+              <path d="M24 9 A11 11 0 1 0 26 18" fill="none" stroke="#FFE100" stroke-width="2.5"/>
+              <path d="M24 3 V10 H17" fill="none" stroke="#FFE100" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <span class="act-txt retry">RETRY</span>
+        </div>
+        <div class="act-btn next">
+          <div class="act-icon">
+            <svg id="icon-next" width="30" height="30" viewBox="0 0 30 30">
+              <path d="M8 6 L20 15 L8 24 Z" fill="#052230"/>
+              <path d="M22 6 V24" stroke="#052230" stroke-width="3"/>
+            </svg>
+          </div>
+          <span class="act-txt next">NEXT RACE</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

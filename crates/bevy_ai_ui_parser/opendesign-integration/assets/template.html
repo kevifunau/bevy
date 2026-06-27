@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bevy UI Screen</title>
+    <style>
+      :root {
+        --bevy-bg: #09131e;
+        --bevy-panel: rgba(9, 18, 29, 0.9);
+        --bevy-line: rgba(126, 169, 227, 0.2);
+        --bevy-text: #ecf3ff;
+        --bevy-muted: #8da0bd;
+        --bevy-accent: #f3ba67;
+        --bevy-radius-xl: 28px;
+        --bevy-radius-lg: 22px;
+        --bevy-radius-md: 16px;
+        --bevy-gap-lg: 24px;
+        --bevy-gap-md: 16px;
+        --bevy-gap-sm: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: radial-gradient(circle at top, rgba(68, 121, 191, 0.22), transparent 32%), var(--bevy-bg);
+        color: var(--bevy-text);
+        font-family: "Inter", "SF Pro Display", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      .bevy-ui-root {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      .bevy-screen {
+        position: relative;
+        min-height: 100vh;
+        padding: 32px;
+      }
+
+      .bevy-panel {
+        position: relative;
+        border: 1px solid var(--bevy-line);
+        border-radius: var(--bevy-radius-lg);
+        background: var(--bevy-panel);
+      }
+
+      .bevy-stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--bevy-gap-md);
+      }
+
+      .bevy-row {
+        display: flex;
+        align-items: center;
+        gap: var(--bevy-gap-md);
+      }
+
+      .bevy-grid {
+        display: grid;
+        gap: var(--bevy-gap-md);
+      }
+
+      .bevy-fill {
+        flex: 1 1 auto;
+      }
+
+      .bevy-title {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 56px);
+        line-height: 1;
+      }
+
+      .bevy-copy {
+        margin: 0;
+        color: var(--bevy-muted);
+        line-height: 1.6;
+      }
+
+      .bevy-button {
+        min-height: 44px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 999px;
+        font: inherit;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .bevy-image-frame {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bevy-ui-root" data-od-id="bevy-ui-root">
+      <main class="bevy-screen">
+        <!--
+          Use this as the assembly root for Bevy-safe game UI.
+
+          Recommended output bundle:
+          - index.html
+          - Asset/backgrounds/
+          - Asset/panels/
+          - Asset/buttons/
+          - Asset/icons/
+          - Asset/sliders/
+          - Asset/scrollbars/
+          - Asset/atlas/
+          - bevy-ui.assets.json (optional tooling metadata)
+
+          Keep ids stable for manifest selectors.
+          Prefer background-image or img nodes for painted art.
+        -->
+      </main>
+    </div>
+  </body>
+</html>

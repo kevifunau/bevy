@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+:root {
+  --bg0: #0C111B;
+  --bg1: #141C2B;
+  --panel: #1B2536;
+  --panel2: #243047;
+  --line: #2E3D58;
+  --ember: #FF6A2B;
+  --ember-d: #C8420F;
+  --blue: #38C6FF;
+  --blue-d: #1A8FC4;
+  --red: #FF3B4E;
+  --gold: #FFC24B;
+  --text: #E8EEFA;
+  --text-dim: #7E8DAB;
+  --green: #4BE08A;
+}
+
+.page {
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--bg0);
+  padding: 56px 64px;
+  flex-direction: row;
+}
+
+/* ---------- left brand ---------- */
+.left {
+  width: 880px;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 64px;
+}
+.tag-row { flex-direction: row; align-items: center; height: 48px; margin-bottom: 40px; }
+.tag-bar { width: 56px; height: 10px; background-color: var(--ember); margin-right: 18px; }
+.tag-tx { font-size: 28px; min-height: 34px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+.logo1 { font-size: 168px; color: var(--text); font-weight: bold; white-space: normal; }
+.logo2 { font-size: 168px; color: var(--ember); font-weight: bold; white-space: normal; margin-top: -24px; }
+.logo-sub { flex-direction: row; align-items: center; margin-top: 32px; }
+.logo-sub-tx { font-size: 34px; min-height: 42px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+
+.power-line { flex-direction: row; align-items: center; margin-top: 72px; }
+.power-box {
+  flex-direction: row; align-items: center;
+  height: 96px;
+  background-color: var(--panel);
+  border-width: 3px; border-color: var(--line);
+  padding: 0 32px 0 18px;
+  margin-right: 28px;
+}
+.power-ico { width: 56px; height: 56px; margin-right: 18px; }
+.power-txw { flex-direction: column; justify-content: center; }
+.power-lbl { font-size: 22px; min-height: 28px; color: var(--text-dim); font-weight: bold; white-space: normal; }
+.power-val { font-size: 40px; min-height: 48px; color: var(--ember); font-weight: bold; white-space: normal; }
+.power-val-blue { color: var(--blue); }
+
+/* ---------- right menu ---------- */
+.right {
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+.r-head { flex-direction: row; align-items: center; justify-content: space-between; height: 80px; margin-bottom: 36px; }
+.r-title { font-size: 36px; color: var(--text); font-weight: bold; white-space: normal; }
+.avatar-chip {
+  flex-direction: row; align-items: center;
+  height: 80px;
+  background-color: var(--panel);
+  border-width: 3px; border-color: var(--line);
+  padding: 0 24px 0 12px;
+}
+.avatar {
+  width: 56px; height: 56px;
+  background-color: var(--blue-d);
+  align-items: center; justify-content: center;
+  margin-right: 16px;
+}
+.avatar-tx { font-size: 28px; min-height: 34px; color: var(--text); font-weight: bold; white-space: normal; }
+
+.mbtn {
+  flex-direction: row; align-items: center;
+  height: 150px;
+  border-width: 4px;
+  padding: 0 40px;
+  margin-bottom: 28px;
+}
+.mbtn-start { background-color: var(--ember); border-color: var(--ember-d); }
+.mbtn-sub2 { background-color: var(--panel); border-color: var(--line); }
+.mbtn-last { margin-bottom: 0; }
+.mbtn-ico {
+  width: 84px; height: 84px;
+  background-color: var(--bg0);
+  align-items: center; justify-content: center;
+  margin-right: 32px;
+}
+.mbtn-ico-light { background-color: #2A1003; }
+.mbtn-txw { flex-direction: column; justify-content: center; flex-grow: 1; }
+.mbtn-tx { font-size: 48px; font-weight: bold; white-space: normal; }
+.mbtn-tx-dark { color: #2A1003; }
+.mbtn-tx-light { color: var(--text); }
+.mbtn-d { font-size: 24px; min-height: 30px; font-weight: bold; white-space: normal; margin-top: 4px; }
+.mbtn-d-dark { color: #7A3A12; }
+.mbtn-d-dim { color: var(--text-dim); }
+.mbtn-arr { width: 44px; height: 44px; }
+
+.sub-row { flex-direction: row; }
+.sub-btn {
+  flex-direction: row; align-items: center;
+  height: 150px;
+  background-color: var(--panel);
+  border-width: 4px; border-color: var(--line);
+  padding: 0 32px;
+  flex-grow: 1;
+}
+.sub-btn-first { margin-right: 28px; }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="left">
+      <div class="tag-row">
+        <div class="tag-bar"></div>
+        <span class="tag-tx">ACTION ROGUELITE · SEASON 3</span>
+      </div>
+      <span class="logo1">BLADE</span>
+      <span class="logo2">RUSH</span>
+      <div class="logo-sub">
+        <span class="logo-sub-tx">刀锋疾袭 · 横版动作闯关</span>
+      </div>
+
+      <div class="power-line">
+        <div class="power-box">
+          <svg id="icon-power" class="power-ico" width="56" height="56" viewBox="0 0 56 56">
+            <path d="M30 6 L16 32 L26 32 L24 50 L40 22 L30 22 Z" fill="#FF6A2B"/>
+          </svg>
+          <div class="power-txw">
+            <span class="power-lbl">战力 POWER</span>
+            <span class="power-val">48,260</span>
+          </div>
+        </div>
+        <div class="power-box">
+          <svg id="icon-coin" class="power-ico" width="56" height="56" viewBox="0 0 56 56">
+            <circle cx="28" cy="28" r="20" fill="none" stroke="#38C6FF" stroke-width="5"/>
+            <path d="M28 18 L28 38 M22 23 L34 33" stroke="#38C6FF" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div class="power-txw">
+            <span class="power-lbl">金币 GOLD</span>
+            <span class="power-val power-val-blue">12,940</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="r-head">
+        <span class="r-title">— MAIN MENU —</span>
+        <div class="avatar-chip">
+          <div class="avatar">
+            <svg id="icon-av" width="36" height="36" viewBox="0 0 36 36">
+              <circle cx="18" cy="14" r="8" fill="#E8EEFA"/>
+              <path d="M5 32 C5 24 12 21 18 21 C24 21 31 24 31 32 Z" fill="#E8EEFA"/>
+            </svg>
+          </div>
+          <span class="avatar-tx">Lv.42 剑客</span>
+        </div>
+      </div>
+
+      <div class="mbtn mbtn-start">
+        <div class="mbtn-ico mbtn-ico-light">
+          <svg id="icon-play" width="52" height="52" viewBox="0 0 52 52">
+            <path d="M16 10 L42 26 L16 42 Z" fill="#FF6A2B"/>
+          </svg>
+        </div>
+        <div class="mbtn-txw">
+          <span class="mbtn-tx mbtn-tx-dark">开始战斗</span>
+          <span class="mbtn-d mbtn-d-dark">CHAPTER 5 · 熔火峡谷</span>
+        </div>
+        <svg id="icon-arr1" class="mbtn-arr" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M16 10 L30 22 L16 34" stroke="#2A1003" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="mbtn mbtn-sub2">
+        <div class="mbtn-ico">
+          <svg id="icon-hero" width="52" height="52" viewBox="0 0 52 52">
+            <circle cx="26" cy="18" r="11" fill="#38C6FF"/>
+            <path d="M8 44 C8 32 18 28 26 28 C34 28 44 32 44 44 Z" fill="#38C6FF"/>
+          </svg>
+        </div>
+        <div class="mbtn-txw">
+          <span class="mbtn-tx mbtn-tx-light">英雄养成</span>
+          <span class="mbtn-d mbtn-d-dim">HEROES · 6 名可用</span>
+        </div>
+        <svg id="icon-arr2" class="mbtn-arr" width="44" height="44" viewBox="0 0 44 44">
+          <path d="M16 10 L30 22 L16 34" stroke="#7E8DAB" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="sub-row">
+        <div class="sub-btn sub-btn-first">
+          <div class="mbtn-ico">
+            <svg id="icon-shop" width="52" height="52" viewBox="0 0 52 52">
+              <path d="M10 18 L42 18 L38 40 L14 40 Z" fill="#FFC24B"/>
+              <path d="M18 18 L18 12 A8 8 0 0 1 34 12 L34 18" stroke="#FFC24B" stroke-width="4" fill="none"/>
+            </svg>
+          </div>
+          <div class="mbtn-txw">
+            <span class="mbtn-tx mbtn-tx-light" style="font-size:40px">商店</span>
+            <span class="mbtn-d mbtn-d-dim">SHOP</span>
+          </div>
+        </div>
+        <div class="sub-btn">
+          <div class="mbtn-ico">
+            <svg id="icon-gear" width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="10" fill="none" stroke="#7E8DAB" stroke-width="5"/>
+              <rect x="22" y="4" width="8" height="10" fill="#7E8DAB"/>
+              <rect x="22" y="38" width="8" height="10" fill="#7E8DAB"/>
+              <rect x="4" y="22" width="10" height="8" fill="#7E8DAB"/>
+              <rect x="38" y="22" width="10" height="8" fill="#7E8DAB"/>
+            </svg>
+          </div>
+          <div class="mbtn-txw">
+            <span class="mbtn-tx mbtn-tx-light" style="font-size:40px">设置</span>
+            <span class="mbtn-d mbtn-d-dim">SETTINGS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

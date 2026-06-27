@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage { width: 1920px; height: 1080px; background-color: #FFF1DC; }
+
+.pagehead {
+  flex-direction: row;
+  align-items: center;
+  width: 1920px;
+  height: 110px;
+  background-color: #FFFFFF;
+  border-bottom-width: 4px;
+  border-bottom-color: #F0D9B5;
+  padding: 0 36px;
+}
+.back-btn { width: 64px; height: 64px; border-radius: 20px; background-color: #FFF1DC; align-items: center; justify-content: center; margin-right: 20px; }
+.head-title-wrap { flex-direction: column; justify-content: center; flex-grow: 1; }
+.head-title { font-size: 32px; color: #5A3E2B; font-weight: bold; }
+.head-sub { font-size: 16px; color: #B08968; margin-top: 3px; }
+.hire-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  border-radius: 18px;
+  background-color: #E8503A;
+  padding: 0 26px;
+}
+.hire-ico { width: 30px; height: 30px; align-items: center; justify-content: center; margin-right: 10px; }
+.hire-txt { font-size: 20px; color: #FFFFFF; font-weight: bold; }
+
+.content { flex-direction: row; width: 1920px; height: 970px; padding: 28px 36px; }
+
+/* left: roster */
+.roster { flex-direction: column; flex-grow: 1; margin-right: 28px; }
+.roster-title-row { flex-direction: row; align-items: center; margin-bottom: 18px; height: 40px; }
+.roster-title { font-size: 24px; color: #5A3E2B; font-weight: bold; margin-right: 12px; }
+.roster-tip { font-size: 16px; color: #B08968; }
+.staff-row { flex-direction: row; width: 100%; margin-bottom: 22px; }
+.staff {
+  width: 558px;
+  height: 280px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 22px;
+  margin-right: 22px;
+}
+.staff-top { flex-direction: row; align-items: center; margin-bottom: 18px; }
+.staff-ava {
+  width: 78px;
+  height: 78px;
+  border-radius: 22px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+.a-chef { background-color: #FCE0DA; }
+.a-bake { background-color: #FCEBCF; }
+.a-wait { background-color: #DFF3E3; }
+.a-mgr { background-color: #EBE3F7; }
+.staff-id { flex-direction: column; justify-content: center; flex-grow: 1; }
+.staff-name { font-size: 24px; color: #5A3E2B; font-weight: bold; }
+.staff-post-row { flex-direction: row; align-items: center; margin-top: 6px; }
+.staff-post { font-size: 16px; color: #B08968; }
+.star-row { flex-direction: row; align-items: center; margin-left: 12px; }
+.staff-lv {
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background-color: #FFF1DC;
+}
+.staff-lv-num { font-size: 26px; color: #E8503A; font-weight: bold; }
+.staff-lv-tag { font-size: 12px; color: #B08968; }
+
+.attrs { flex-direction: column; margin-bottom: 16px; }
+.attr { flex-direction: row; align-items: center; margin-bottom: 10px; }
+.attr-label { font-size: 15px; color: #B08968; width: 100px; }
+.bar {
+  flex-direction: row;
+  width: 300px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: #F0E2C8;
+  margin-right: 12px;
+}
+.bar-fill { height: 14px; border-radius: 7px; }
+.fill-red { background-color: #E8503A; }
+.fill-honey { background-color: #F5A623; }
+.fill-green { background-color: #5FB67A; }
+.bar-85 { width: 85%; }
+.bar-72 { width: 72%; }
+.bar-60 { width: 60%; }
+.bar-95 { width: 95%; }
+.bar-50 { width: 50%; }
+.bar-40 { width: 40%; }
+.attr-num { font-size: 15px; color: #5A3E2B; font-weight: bold; }
+
+.staff-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+.assign {
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+  background-color: #FFF6E9;
+  border-radius: 16px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 0 16px;
+}
+.assign-ico { width: 24px; height: 24px; align-items: center; justify-content: center; margin-right: 8px; }
+.assign-txt { font-size: 16px; color: #5A3E2B; font-weight: bold; }
+.upg-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 168px;
+  height: 50px;
+  border-radius: 16px;
+  background-color: #5FB67A;
+}
+.upg-ico { width: 24px; height: 24px; align-items: center; justify-content: center; margin-right: 8px; }
+.upg-txt { font-size: 18px; color: #FFFFFF; font-weight: bold; }
+
+/* right: posts + recruit */
+.side { width: 440px; height: 914px; flex-direction: column; }
+.posts {
+  width: 440px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  border-width: 2px;
+  border-color: #F0D9B5;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+.side-title { font-size: 22px; color: #5A3E2B; font-weight: bold; margin-bottom: 16px; }
+.post {
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 78px;
+  background-color: #FFF6E9;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+}
+.post-ico { width: 48px; height: 48px; border-radius: 14px; background-color: #FFFFFF; align-items: center; justify-content: center; margin-right: 14px; }
+.post-meta { flex-direction: column; justify-content: center; flex-grow: 1; }
+.post-name { font-size: 18px; color: #5A3E2B; font-weight: bold; }
+.post-state { font-size: 14px; color: #B08968; margin-top: 2px; }
+.post-tag {
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  border-radius: 17px;
+  padding: 0 14px;
+}
+.pt-filled { background-color: #DFF3E3; }
+.pt-filled-txt { font-size: 14px; color: #2F8B52; font-weight: bold; }
+.pt-open { background-color: #FBE3D8; }
+.pt-open-txt { font-size: 14px; color: #E8503A; font-weight: bold; }
+
+.recruit {
+  width: 440px;
+  background-color: #FCE3BD;
+  border-radius: 24px;
+  border-width: 3px;
+  border-color: #F0C98A;
+  padding: 24px;
+}
+.recruit-head { flex-direction: row; align-items: center; margin-bottom: 14px; }
+.recruit-badge { width: 56px; height: 56px; border-radius: 16px; background-color: #E8503A; align-items: center; justify-content: center; margin-right: 14px; }
+.recruit-title { font-size: 22px; color: #5A3E2B; font-weight: bold; }
+.recruit-desc { font-size: 15px; color: #9C7B52; margin-bottom: 18px; }
+.recruit-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 64px;
+  border-radius: 18px;
+  background-color: #E8503A;
+}
+.recruit-btn-ico { width: 28px; height: 28px; align-items: center; justify-content: center; margin-right: 10px; }
+.recruit-btn-txt { font-size: 20px; color: #FFFFFF; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="pagehead">
+      <div class="back-btn">
+        <svg id="icon-back-staff" width="32" height="32" viewBox="0 0 32 32">
+          <path d="M20 6L10 16l10 10" fill="none" stroke="#5A3E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="head-title-wrap">
+        <span class="head-title">Staff Management</span>
+        <span class="head-sub">Hire, train, and assign your crew</span>
+      </div>
+      <div class="hire-btn">
+        <div class="hire-ico">
+          <svg id="icon-hire-plus" width="28" height="28" viewBox="0 0 28 28">
+            <circle cx="11" cy="10" r="6" fill="#FFFFFF"/>
+            <path d="M2 25c0-5 4-8 9-8s9 3 9 8z" fill="#FFFFFF"/>
+            <path d="M22 8v8M18 12h8" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="hire-txt">Hire Staff</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- roster -->
+      <div class="roster">
+        <div class="roster-title-row">
+          <span class="roster-title">Your Crew</span>
+          <span class="roster-tip">4 of 6 posts staffed</span>
+        </div>
+
+        <div class="staff-row">
+          <!-- staff 1 -->
+          <div class="staff">
+            <div class="staff-top">
+              <div class="staff-ava a-chef">
+                <svg id="icon-staff-chef" width="46" height="46" viewBox="0 0 46 46">
+                  <path d="M23 8c5 0 8 3 9 5 4 0 7 3 7 7 0 4-3 6-6 6H14c-3 0-7-2-7-7 0-4 3-7 7-7 1-2 4-4 8-4z" fill="#E8503A"/>
+                  <path d="M13 30h20v6a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2z" fill="#E8503A"/>
+                </svg>
+              </div>
+              <div class="staff-id">
+                <span class="staff-name">Marco</span>
+                <div class="staff-post-row">
+                  <span class="staff-post">Head Chef</span>
+                  <div class="star-row">
+                    <svg id="icon-star-m1" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-m2" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-m3" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="staff-lv">
+                <span class="staff-lv-num">12</span>
+                <span class="staff-lv-tag">LEVEL</span>
+              </div>
+            </div>
+            <div class="attrs">
+              <div class="attr">
+                <span class="attr-label">Cooking</span>
+                <div class="bar"><div class="bar-fill fill-red bar-85"></div></div>
+                <span class="attr-num">85</span>
+              </div>
+              <div class="attr">
+                <span class="attr-label">Speed</span>
+                <div class="bar"><div class="bar-fill fill-honey bar-72"></div></div>
+                <span class="attr-num">72</span>
+              </div>
+            </div>
+            <div class="staff-foot">
+              <div class="assign">
+                <div class="assign-ico"><svg id="icon-pin-1" width="22" height="22" viewBox="0 0 22 22"><path d="M11 2a6 6 0 0 1 6 6c0 4-6 12-6 12S5 12 5 8a6 6 0 0 1 6-6z" fill="#E8503A"/><circle cx="11" cy="8" r="2.5" fill="#FFFFFF"/></svg></div>
+                <span class="assign-txt">Maple Diner</span>
+              </div>
+              <div class="upg-btn">
+                <div class="upg-ico"><svg id="icon-up-1" width="22" height="22" viewBox="0 0 22 22"><path d="M11 4l6 7h-4v7H9v-7H5z" fill="#FFFFFF"/></svg></div>
+                <span class="upg-txt">Upgrade</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- staff 2 -->
+          <div class="staff">
+            <div class="staff-top">
+              <div class="staff-ava a-bake">
+                <svg id="icon-staff-baker" width="46" height="46" viewBox="0 0 46 46">
+                  <circle cx="23" cy="16" r="9" fill="#F5A623"/>
+                  <path d="M8 40c0-7 7-12 15-12s15 5 15 12z" fill="#F5A623"/>
+                  <path d="M16 13h14" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="staff-id">
+                <span class="staff-name">Lena</span>
+                <div class="staff-post-row">
+                  <span class="staff-post">Baker</span>
+                  <div class="star-row">
+                    <svg id="icon-star-l1" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-l2" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="staff-lv">
+                <span class="staff-lv-num">8</span>
+                <span class="staff-lv-tag">LEVEL</span>
+              </div>
+            </div>
+            <div class="attrs">
+              <div class="attr">
+                <span class="attr-label">Baking</span>
+                <div class="bar"><div class="bar-fill fill-honey bar-95"></div></div>
+                <span class="attr-num">95</span>
+              </div>
+              <div class="attr">
+                <span class="attr-label">Charm</span>
+                <div class="bar"><div class="bar-fill fill-green bar-60"></div></div>
+                <span class="attr-num">60</span>
+              </div>
+            </div>
+            <div class="staff-foot">
+              <div class="assign">
+                <div class="assign-ico"><svg id="icon-pin-2" width="22" height="22" viewBox="0 0 22 22"><path d="M11 2a6 6 0 0 1 6 6c0 4-6 12-6 12S5 12 5 8a6 6 0 0 1 6-6z" fill="#F5A623"/><circle cx="11" cy="8" r="2.5" fill="#FFFFFF"/></svg></div>
+                <span class="assign-txt">Corner Bakery</span>
+              </div>
+              <div class="upg-btn">
+                <div class="upg-ico"><svg id="icon-up-2" width="22" height="22" viewBox="0 0 22 22"><path d="M11 4l6 7h-4v7H9v-7H5z" fill="#FFFFFF"/></svg></div>
+                <span class="upg-txt">Upgrade</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="staff-row">
+          <!-- staff 3 -->
+          <div class="staff">
+            <div class="staff-top">
+              <div class="staff-ava a-wait">
+                <svg id="icon-staff-waiter" width="46" height="46" viewBox="0 0 46 46">
+                  <circle cx="23" cy="15" r="8" fill="#5FB67A"/>
+                  <path d="M9 39c0-7 6-12 14-12s14 5 14 12z" fill="#5FB67A"/>
+                  <circle cx="34" cy="22" r="6" fill="#FFFFFF"/>
+                </svg>
+              </div>
+              <div class="staff-id">
+                <span class="staff-name">Theo</span>
+                <div class="staff-post-row">
+                  <span class="staff-post">Waiter</span>
+                  <div class="star-row">
+                    <svg id="icon-star-t1" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-t2" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="staff-lv">
+                <span class="staff-lv-num">6</span>
+                <span class="staff-lv-tag">LEVEL</span>
+              </div>
+            </div>
+            <div class="attrs">
+              <div class="attr">
+                <span class="attr-label">Service</span>
+                <div class="bar"><div class="bar-fill fill-green bar-72"></div></div>
+                <span class="attr-num">72</span>
+              </div>
+              <div class="attr">
+                <span class="attr-label">Stamina</span>
+                <div class="bar"><div class="bar-fill fill-honey bar-50"></div></div>
+                <span class="attr-num">50</span>
+              </div>
+            </div>
+            <div class="staff-foot">
+              <div class="assign">
+                <div class="assign-ico"><svg id="icon-pin-3" width="22" height="22" viewBox="0 0 22 22"><path d="M11 2a6 6 0 0 1 6 6c0 4-6 12-6 12S5 12 5 8a6 6 0 0 1 6-6z" fill="#5FB67A"/><circle cx="11" cy="8" r="2.5" fill="#FFFFFF"/></svg></div>
+                <span class="assign-txt">Front of House</span>
+              </div>
+              <div class="upg-btn">
+                <div class="upg-ico"><svg id="icon-up-3" width="22" height="22" viewBox="0 0 22 22"><path d="M11 4l6 7h-4v7H9v-7H5z" fill="#FFFFFF"/></svg></div>
+                <span class="upg-txt">Upgrade</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- staff 4 -->
+          <div class="staff">
+            <div class="staff-top">
+              <div class="staff-ava a-mgr">
+                <svg id="icon-staff-mgr" width="46" height="46" viewBox="0 0 46 46">
+                  <circle cx="23" cy="15" r="8" fill="#7C5CBF"/>
+                  <path d="M9 39c0-7 6-12 14-12s14 5 14 12z" fill="#7C5CBF"/>
+                  <path d="M18 23h10v6H18z" fill="#FFFFFF"/>
+                </svg>
+              </div>
+              <div class="staff-id">
+                <span class="staff-name">Iris</span>
+                <div class="staff-post-row">
+                  <span class="staff-post">Manager</span>
+                  <div class="star-row">
+                    <svg id="icon-star-i1" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-i2" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                    <svg id="icon-star-i3" width="18" height="18" viewBox="0 0 18 18"><path d="M9 2l2 4 5 1-3.5 3.5L13 16l-4-2-4 2 .5-5.5L2 7l5-1z" fill="#F5A623"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="staff-lv">
+                <span class="staff-lv-num">15</span>
+                <span class="staff-lv-tag">LEVEL</span>
+              </div>
+            </div>
+            <div class="attrs">
+              <div class="attr">
+                <span class="attr-label">Leadership</span>
+                <div class="bar"><div class="bar-fill fill-red bar-85"></div></div>
+                <span class="attr-num">85</span>
+              </div>
+              <div class="attr">
+                <span class="attr-label">Marketing</span>
+                <div class="bar"><div class="bar-fill fill-green bar-72"></div></div>
+                <span class="attr-num">72</span>
+              </div>
+            </div>
+            <div class="staff-foot">
+              <div class="assign">
+                <div class="assign-ico"><svg id="icon-pin-4" width="22" height="22" viewBox="0 0 22 22"><path d="M11 2a6 6 0 0 1 6 6c0 4-6 12-6 12S5 12 5 8a6 6 0 0 1 6-6z" fill="#7C5CBF"/><circle cx="11" cy="8" r="2.5" fill="#FFFFFF"/></svg></div>
+                <span class="assign-txt">Town Office</span>
+              </div>
+              <div class="upg-btn">
+                <div class="upg-ico"><svg id="icon-up-4" width="22" height="22" viewBox="0 0 22 22"><path d="M11 4l6 7h-4v7H9v-7H5z" fill="#FFFFFF"/></svg></div>
+                <span class="upg-txt">Upgrade</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- side -->
+      <div class="side">
+        <div class="posts">
+          <span class="side-title">Post Assignments</span>
+          <div class="post">
+            <div class="post-ico"><svg id="icon-post-kitchen" width="30" height="30" viewBox="0 0 30 30"><path d="M9 4v9a3 3 0 0 0 6 0V4M12 4v22" stroke="#E8503A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M21 4c-2 0-3 4-3 7s2 4 3 4v11" stroke="#E8503A" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+            <div class="post-meta">
+              <span class="post-name">Kitchen</span>
+              <span class="post-state">Marco · Lena</span>
+            </div>
+            <div class="post-tag pt-filled"><span class="pt-filled-txt">Staffed</span></div>
+          </div>
+          <div class="post">
+            <div class="post-ico"><svg id="icon-post-hall" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="11" r="6" fill="#5FB67A"/><path d="M5 26c0-5 4-8 10-8s10 3 10 8z" fill="#5FB67A"/></svg></div>
+            <div class="post-meta">
+              <span class="post-name">Dining Hall</span>
+              <span class="post-state">Theo</span>
+            </div>
+            <div class="post-tag pt-open"><span class="pt-open-txt">1 Open</span></div>
+          </div>
+          <div class="post">
+            <div class="post-ico"><svg id="icon-post-counter" width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="12" width="20" height="13" rx="2" fill="#F5A623"/><path d="M5 12l3-5h14l3 5" fill="none" stroke="#F5A623" stroke-width="2.5"/></svg></div>
+            <div class="post-meta">
+              <span class="post-name">Counter</span>
+              <span class="post-state">Unassigned</span>
+            </div>
+            <div class="post-tag pt-open"><span class="pt-open-txt">1 Open</span></div>
+          </div>
+          <div class="post">
+            <div class="post-ico"><svg id="icon-post-office" width="30" height="30" viewBox="0 0 30 30"><rect x="6" y="6" width="18" height="18" rx="2" fill="#7C5CBF"/><path d="M11 12h8M11 18h5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            <div class="post-meta">
+              <span class="post-name">Town Office</span>
+              <span class="post-state">Iris</span>
+            </div>
+            <div class="post-tag pt-filled"><span class="pt-filled-txt">Staffed</span></div>
+          </div>
+        </div>
+
+        <div class="recruit">
+          <div class="recruit-head">
+            <div class="recruit-badge">
+              <svg id="icon-recruit" width="36" height="36" viewBox="0 0 36 36">
+                <circle cx="14" cy="13" r="7" fill="#FFFFFF"/>
+                <path d="M3 31c0-6 5-10 11-10s11 4 11 10z" fill="#FFFFFF"/>
+                <path d="M27 10v10M22 15h10" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="recruit-title">Recruit Center</span>
+          </div>
+          <span class="recruit-desc">New chefs and waiters arrive daily. Spend gems to summon a 3-star candidate instantly.</span>
+          <div class="recruit-btn">
+            <div class="recruit-btn-ico">
+              <svg id="icon-recruit-gem" width="26" height="26" viewBox="0 0 26 26"><path d="M6 5h14l4 7-11 12L2 12z" fill="#5AC8E8"/></svg>
+            </div>
+            <span class="recruit-btn-txt">Summon · 80 Gems</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

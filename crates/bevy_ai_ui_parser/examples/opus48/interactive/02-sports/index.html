@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #0B1220;
+  padding: 0;
+  flex-direction: column;
+}
+
+/* ===== Top bar ===== */
+.topbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 96px;
+  padding: 0 56px;
+  background-color: #0E1626;
+  border-bottom-width: 2px;
+  border-bottom-color: #1B2740;
+}
+.brand-left { flex-direction: row; align-items: center; }
+.brand-right { flex-direction: row; align-items: center; }
+.crest {
+  width: 60px; height: 60px;
+  border-radius: 14px;
+  background-color: #11203A;
+  border-width: 2px; border-color: #26E07F;
+  align-items: center; justify-content: center;
+  margin-right: 18px;
+}
+.club-name { font-size: 30px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.club-sub { font-size: 15px; color: #6E7E9B; margin-top: 2px; }
+.coin-pill {
+  flex-direction: row; align-items: center;
+  height: 52px; padding: 0 20px;
+  background-color: #11203A;
+  border-radius: 26px;
+  border-width: 1px; border-color: #25406B;
+  margin-left: 16px;
+}
+.coin-pill-text { font-size: 22px; color: #FFC53D; -unity-font-style: bold; margin-left: 10px; }
+.gem-pill-text { font-size: 22px; color: #58C7FF; -unity-font-style: bold; margin-left: 10px; }
+.profile-chip {
+  flex-direction: row; align-items: center;
+  height: 60px; padding: 6px 22px 6px 6px;
+  background-color: #11203A;
+  border-radius: 30px;
+  border-width: 1px; border-color: #25406B;
+  margin-left: 24px;
+}
+.avatar {
+  width: 48px; height: 48px; border-radius: 24px;
+  background-color: #1C2F50;
+  align-items: center; justify-content: center;
+  margin-right: 14px;
+}
+.mgr-name { font-size: 19px; color: #FFFFFF; -unity-font-style: bold; }
+.mgr-rank { font-size: 13px; color: #26E07F; margin-top: 2px; }
+
+/* ===== Body ===== */
+.body {
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 40px 56px 44px 56px;
+}
+
+/* ----- Left hero / start ----- */
+.hero {
+  width: 1130px;
+  height: 856px;
+  margin-right: 36px;
+  background-color: #0F1A2E;
+  border-radius: 28px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 48px;
+  justify-content: space-between;
+}
+.hero-head { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+.season-tag {
+  flex-direction: row; align-items: center;
+  height: 44px; padding: 0 20px;
+  background-color: #11203A; border-radius: 22px;
+  border-width: 1px; border-color: #25406B;
+}
+.season-tag-text { font-size: 17px; color: #9DB0D0; -unity-font-style: bold; letter-spacing: 2px; margin-left: 10px; }
+.form-row { flex-direction: row; align-items: center; }
+.form-label { font-size: 15px; color: #6E7E9B; margin-right: 14px; letter-spacing: 1px; }
+.form-dot {
+  width: 30px; height: 30px; border-radius: 8px;
+  margin-left: 8px;
+  align-items: center; justify-content: center;
+  font-size: 15px; color: #04130A; -unity-font-style: bold;
+  -unity-text-align: middle-center;
+}
+.form-w { background-color: #26E07F; }
+.form-d { background-color: #FFC53D; color: #2A1A00; }
+.form-l { background-color: #FF5C6C; color: #2A0008; }
+
+.hero-center { align-items: center; justify-content: center; }
+.headline { font-size: 92px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 2px; -unity-text-align: middle-center; }
+.headline-accent { font-size: 92px; color: #26E07F; -unity-font-style: bold; letter-spacing: 2px; -unity-text-align: middle-center; }
+.tagline { font-size: 22px; color: #8DA0C0; margin-top: 18px; letter-spacing: 4px; -unity-text-align: middle-center; }
+
+.next-card {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  width: 1034px; height: 132px;
+  background-color: #11203A;
+  border-radius: 20px;
+  border-width: 1px; border-color: #25406B;
+  padding: 0 36px;
+  margin-bottom: 28px;
+}
+.next-side { flex-direction: row; align-items: center; width: 320px; }
+.next-side-right { justify-content: flex-end; }
+.mini-crest {
+  width: 56px; height: 56px; border-radius: 12px;
+  background-color: #1C2F50; align-items: center; justify-content: center;
+}
+.next-team { font-size: 24px; color: #FFFFFF; -unity-font-style: bold; margin-left: 16px; }
+.next-team-right { margin-left: 0; margin-right: 16px; -unity-text-align: middle-right; }
+.next-mid { align-items: center; }
+.next-vs-label { font-size: 14px; color: #6E7E9B; letter-spacing: 3px; }
+.next-time { font-size: 30px; color: #FFC53D; -unity-font-style: bold; margin-top: 4px; }
+
+.start-btn {
+  flex-direction: row; align-items: center; justify-content: center;
+  width: 1034px; height: 124px;
+  background-color: #26E07F;
+  border-radius: 22px;
+}
+.start-btn-text { font-size: 44px; color: #04130A; -unity-font-style: bold; letter-spacing: 3px; margin-left: 20px; }
+
+/* ----- Right column ----- */
+.side { width: 626px; height: 856px; justify-content: space-between; }
+
+.squad-card {
+  height: 268px;
+  background-color: #0F1A2E;
+  border-radius: 24px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 28px 30px;
+}
+.card-head { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.card-title { font-size: 22px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 1px; }
+.card-link { font-size: 16px; color: #26E07F; -unity-font-style: bold; }
+.ovr-row { flex-direction: row; align-items: center; }
+.ovr-badge {
+  width: 116px; height: 116px;
+  border-radius: 22px;
+  background-color: #11203A;
+  border-width: 2px; border-color: #26E07F;
+  align-items: center; justify-content: center;
+  margin-right: 28px;
+}
+.ovr-num { font-size: 56px; color: #26E07F; -unity-font-style: bold; }
+.ovr-lab { font-size: 13px; color: #6E7E9B; letter-spacing: 2px; }
+.ovr-stats { flex-grow: 1; }
+.stat-line { flex-direction: row; align-items: center; justify-content: space-between; height: 32px; }
+.stat-line-name { font-size: 17px; color: #9DB0D0; width: 110px; }
+.stat-bar { flex-direction: row; height: 12px; width: 250px; border-radius: 6px; background-color: #11203A; }
+.stat-bar-fill { height: 12px; border-radius: 6px; background-color: #26E07F; }
+.sf-att { width: 218px; }
+.sf-mid { width: 195px; }
+.sf-def { width: 175px; }
+.stat-line-val { font-size: 17px; color: #FFFFFF; -unity-font-style: bold; width: 36px; -unity-text-align: middle-right; }
+
+.menu-grid { flex-direction: row; height: 248px; }
+.menu-tile {
+  width: 198px; height: 248px;
+  margin-right: 16px;
+  background-color: #0F1A2E;
+  border-radius: 24px;
+  border-width: 2px; border-color: #1B2740;
+  padding: 26px;
+  justify-content: space-between;
+}
+.menu-tile-last { margin-right: 0; }
+.tile-icon {
+  width: 70px; height: 70px; border-radius: 18px;
+  align-items: center; justify-content: center;
+}
+.tile-icon-green { background-color: #143A2A; }
+.tile-icon-amber { background-color: #3A2E10; }
+.tile-icon-blue { background-color: #11293F; }
+.tile-name { font-size: 24px; color: #FFFFFF; -unity-font-style: bold; }
+.tile-sub { font-size: 14px; color: #6E7E9B; margin-top: 6px; }
+.tile-badge {
+  position: absolute; top: 22px; right: 22px;
+  height: 26px; padding: 0 12px; border-radius: 13px;
+  background-color: #FF5C6C; align-items: center; justify-content: center;
+}
+.tile-badge-text { font-size: 13px; color: #FFFFFF; -unity-font-style: bold; }
+
+.footer-card {
+  flex-direction: row; align-items: center; justify-content: space-between;
+  height: 76px;
+  background-color: #0F1A2E;
+  border-radius: 20px;
+  border-width: 1px; border-color: #1B2740;
+  padding: 0 28px;
+}
+.footer-item { flex-direction: row; align-items: center; }
+.footer-text { font-size: 17px; color: #9DB0D0; margin-left: 12px; }
+.footer-text-amber { color: #FFC53D; -unity-font-style: bold; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-left">
+        <div class="crest">
+          <svg id="icon-shield-main" width="36" height="36" viewBox="0 0 36 36">
+            <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#26E07F"/>
+            <path d="M18 9 L18 28 M11 14 L25 14" stroke="#0B1220" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="club-name">NORTHGATE UNITED</div>
+          <div class="club-sub">Founded 1924 · Division 1</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        <div class="coin-pill">
+          <svg id="icon-coin-main" width="24" height="24" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="#FFC53D"/>
+            <circle cx="12" cy="12" r="6.5" fill="#0B1220" opacity="0.16"/>
+            <path d="M12 7 V17 M9.5 9.5 H13 a2 2 0 0 1 0 4 H10" stroke="#7A5400" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span class="coin-pill-text">128,400</span>
+        </div>
+        <div class="coin-pill">
+          <svg id="icon-gem-main" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M6 4 H18 L22 9 L12 21 L2 9 Z" fill="#58C7FF"/>
+            <path d="M2 9 H22 M9 4 L6 9 L12 21 M15 4 L18 9 L12 21" stroke="#0B1220" stroke-width="1.1" opacity="0.4" fill="none"/>
+          </svg>
+          <span class="gem-pill-text">640</span>
+        </div>
+        <div class="profile-chip">
+          <div class="avatar">
+            <svg id="icon-mgr-main" width="30" height="30" viewBox="0 0 30 30">
+              <circle cx="15" cy="11" r="6" fill="#26E07F"/>
+              <path d="M4 27 C4 19 26 19 26 27 Z" fill="#26E07F"/>
+            </svg>
+          </div>
+          <div class="mgr-text">
+            <div class="mgr-name">A. MORGAN</div>
+            <div class="mgr-rank">Manager · Lv.27</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-head">
+          <div class="season-tag">
+            <svg id="icon-trophy-main" width="22" height="22" viewBox="0 0 22 22">
+              <path d="M5 3 H17 V7 C17 11 14 13 11 13 C8 13 5 11 5 7 Z" fill="#FFC53D"/>
+              <path d="M5 5 H2 V7 C2 9 4 10 5 10 M17 5 H20 V7 C20 9 18 10 17 10" stroke="#FFC53D" stroke-width="1.6" fill="none"/>
+              <path d="M11 13 V17 M7 19 H15 V17 H7 Z" stroke="#FFC53D" stroke-width="1.6" fill="#FFC53D"/>
+            </svg>
+            <span class="season-tag-text">SEASON 12 · MATCHDAY 18</span>
+          </div>
+          <div class="form-block">
+            <div class="form-row">
+              <span class="form-label">RECENT FORM</span>
+              <div class="form-dot form-w">W</div>
+              <div class="form-dot form-w">W</div>
+              <div class="form-dot form-d">D</div>
+              <div class="form-dot form-w">W</div>
+              <div class="form-dot form-l">L</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-center">
+          <div class="headline">READY FOR</div>
+          <div class="headline-accent">KICK-OFF</div>
+          <div class="tagline">YOUR CLUB · YOUR TACTICS · YOUR GLORY</div>
+        </div>
+
+        <div class="hero-foot">
+          <div class="next-card">
+            <div class="next-side">
+              <div class="mini-crest">
+                <svg id="icon-shield-home" width="34" height="34" viewBox="0 0 36 36">
+                  <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#26E07F"/>
+                </svg>
+              </div>
+              <span class="next-team">NORTHGATE</span>
+            </div>
+            <div class="next-mid">
+              <span class="next-vs-label">NEXT FIXTURE · HOME</span>
+              <span class="next-time">SAT 20:45</span>
+            </div>
+            <div class="next-side next-side-right">
+              <span class="next-team next-team-right">RIVERSIDE FC</span>
+              <div class="mini-crest">
+                <svg id="icon-shield-away" width="34" height="34" viewBox="0 0 36 36">
+                  <path d="M18 3 L31 8 V18 C31 26 25 31 18 34 C11 31 5 26 5 18 V8 Z" fill="#FF5C6C"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <button class="start-btn">
+            <svg id="icon-play-main" width="46" height="46" viewBox="0 0 46 46">
+              <circle cx="23" cy="23" r="21" fill="#04130A" opacity="0.14"/>
+              <path d="M18 14 L33 23 L18 32 Z" fill="#04130A"/>
+            </svg>
+            <span class="start-btn-text">START MATCH</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="side">
+        <!-- Squad rating -->
+        <div class="squad-card">
+          <div class="card-head">
+            <span class="card-title">SQUAD STRENGTH</span>
+            <span class="card-link">DETAILS ›</span>
+          </div>
+          <div class="ovr-row">
+            <div class="ovr-badge">
+              <span class="ovr-num">84</span>
+              <span class="ovr-lab">OVERALL</span>
+            </div>
+            <div class="ovr-stats">
+              <div class="stat-line">
+                <span class="stat-line-name">Attack</span>
+                <div class="stat-bar"><div class="stat-bar-fill sf-att"></div></div>
+                <span class="stat-line-val">87</span>
+              </div>
+              <div class="stat-line">
+                <span class="stat-line-name">Midfield</span>
+                <div class="stat-bar"><div class="stat-bar-fill sf-mid"></div></div>
+                <span class="stat-line-val">78</span>
+              </div>
+              <div class="stat-line">
+                <span class="stat-line-name">Defense</span>
+                <div class="stat-bar"><div class="stat-bar-fill sf-def"></div></div>
+                <span class="stat-line-val">70</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu tiles -->
+        <div class="menu-grid">
+          <button class="menu-tile">
+            <div class="tile-icon tile-icon-green">
+              <svg id="icon-lineup-main" width="40" height="40" viewBox="0 0 40 40">
+                <rect x="5" y="6" width="30" height="28" rx="3" fill="none" stroke="#26E07F" stroke-width="2.4"/>
+                <circle cx="20" cy="20" r="5" fill="none" stroke="#26E07F" stroke-width="2.4"/>
+                <path d="M5 20 H35 M14 6 V12 H26 V6 M14 34 V28 H26 V34" stroke="#26E07F" stroke-width="2.4" fill="none"/>
+              </svg>
+            </div>
+            <div class="tile-text">
+              <div class="tile-name">LINEUP</div>
+              <div class="tile-sub">Formation · Tactics</div>
+            </div>
+          </button>
+          <button class="menu-tile">
+            <div class="tile-icon tile-icon-amber">
+              <svg id="icon-season-main" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M11 6 H29 V11 C29 18 24 22 20 22 C16 22 11 18 11 11 Z" fill="#FFC53D"/>
+                <path d="M11 9 H6 V12 C6 16 9 17 11 17 M29 9 H34 V12 C34 16 31 17 29 17" stroke="#FFC53D" stroke-width="2.2" fill="none"/>
+                <path d="M20 22 V30 M13 34 H27 V30 H13 Z" stroke="#FFC53D" stroke-width="2.2" fill="#FFC53D"/>
+              </svg>
+            </div>
+            <div class="tile-text">
+              <div class="tile-name">SEASON</div>
+              <div class="tile-sub">League · Cup</div>
+            </div>
+          </button>
+          <button class="menu-tile menu-tile-last">
+            <div class="tile-badge"><span class="tile-badge-text">NEW</span></div>
+            <div class="tile-icon tile-icon-blue">
+              <svg id="icon-shop-main" width="40" height="40" viewBox="0 0 40 40">
+                <path d="M8 12 H32 L30 32 H10 Z" fill="none" stroke="#58C7FF" stroke-width="2.4"/>
+                <path d="M14 12 V9 a6 6 0 0 1 12 0 V12" fill="none" stroke="#58C7FF" stroke-width="2.4"/>
+              </svg>
+            </div>
+            <div class="tile-text">
+              <div class="tile-name">SHOP</div>
+              <div class="tile-sub">Packs · Kits</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-card">
+          <div class="footer-item">
+            <svg id="icon-energy-main" width="26" height="26" viewBox="0 0 26 26">
+              <path d="M14 2 L6 15 H12 L11 24 L20 10 H14 Z" fill="#FFC53D"/>
+            </svg>
+            <span class="footer-text">Energy <span class="footer-text-amber">94/100</span></span>
+          </div>
+          <div class="footer-item">
+            <svg id="icon-fans-main" width="26" height="26" viewBox="0 0 26 26">
+              <circle cx="9" cy="9" r="4" fill="#26E07F"/>
+              <circle cx="18" cy="10" r="3.4" fill="#58C7FF"/>
+              <path d="M2 22 C2 16 16 16 16 22 Z M14 22 C14 17 24 17 24 22 Z" fill="#9DB0D0"/>
+            </svg>
+            <span class="footer-text">Fans <span class="footer-text-amber">42.8K</span></span>
+          </div>
+          <div class="footer-item">
+            <svg id="icon-cal-main" width="26" height="26" viewBox="0 0 26 26">
+              <rect x="3" y="5" width="20" height="18" rx="3" fill="none" stroke="#9DB0D0" stroke-width="2"/>
+              <path d="M3 10 H23 M8 2 V7 M18 2 V7" stroke="#9DB0D0" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="footer-text">3 days to deadline</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

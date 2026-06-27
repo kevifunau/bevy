@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yoga-reset:start (managed by normalize_source.py — single source: ai-uitoolkit-creator-skill/templates/yoga-base.css) -->
+<style data-yoga-reset>
+/* yoga-base.css — Yoga(UIToolkit) vs CSS Web 默认值修正（单一事实源）。
+ *
+ * 这是让"浏览器预览"等价于 Unity UIDocument 的地基。源 HTML 通过内联
+ * <style data-yoga-reset> 引入它，使其在裸浏览器里就按 Yoga 规则排版;
+ * 编译器(main.py)预览注入同一份内容。两侧都用 data-yoga-reset 标记,
+ * html_parser 会把带该标记的 <style>/<link> 排除出 lint 与 USS 翻译,
+ * 所以这段 reset 永远不会污染产物 USS,也不会触发 structure_lint 的
+ * 通配选择器(*)禁令。
+ *
+ * 全部用通配选择器(specificity 0),不会覆盖作者类样式。
+ * !! 修改这里即同时影响源 HTML 预览与编译器预览,改完需重编验证。 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;          /* Yoga 默认 0；Web 默认 1 会压扁固定尺寸子项 */
+  line-height: 1.2;
+}
+html, body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;            /* 画布常高于视口，用 auto + 可滚动避免裁切 */
+  min-height: 100%;
+  overflow: auto;
+}
+head, head *, style, link, meta, title, script { display: none; }
+</style>
+<!-- yoga-reset:end -->
+<style>
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background-color: #11181E;
+  position: relative;
+  flex-direction: column;
+}
+
+/* faux battlefield backdrop */
+.backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #11181E;
+}
+.bd-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 520px;
+  background-color: #16232B;
+}
+.bd-ground {
+  position: absolute;
+  top: 520px;
+  left: 0;
+  width: 1920px;
+  height: 560px;
+  background-color: #0E141A;
+}
+.bd-building-a {
+  position: absolute;
+  top: 230px;
+  left: 240px;
+  width: 280px;
+  height: 290px;
+  background-color: #1B2A33;
+}
+.bd-building-b {
+  position: absolute;
+  top: 300px;
+  left: 1380px;
+  width: 240px;
+  height: 220px;
+  background-color: #1B2A33;
+}
+
+/* top-center kill feed */
+.killfeed {
+  position: absolute;
+  top: 28px;
+  right: 36px;
+  width: 420px;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.kf-row {
+  flex-direction: row;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  margin-bottom: 8px;
+  background-color: #0A0F14;
+  border-radius: 6px;
+  border-right-width: 3px;
+  border-right-color: #FF7A2D;
+}
+.kf-killer { font-size: 16px; color: #2DE2C8; -unity-font-style: bold; }
+.kf-weapon { width: 28px; height: 18px; margin: 0 12px; }
+.kf-victim { font-size: 16px; color: #C4D2DA; }
+.kf-row-self { border-right-color: #2DE2C8; }
+
+/* top center objective */
+.objective {
+  position: absolute;
+  top: 24px;
+  left: 760px;
+  width: 400px;
+  flex-direction: column;
+  align-items: center;
+}
+.obj-timer {
+  flex-direction: row;
+  align-items: center;
+  height: 48px;
+  padding: 0 22px;
+  background-color: #0A0F14;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: #2DE2C8;
+}
+.obj-icon { width: 22px; height: 22px; margin-right: 12px; }
+.obj-time { font-size: 26px; color: #FFFFFF; -unity-font-style: bold; letter-spacing: 2px; }
+.obj-score {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+}
+.score-chip {
+  width: 70px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  border-radius: 6px;
+  font-size: 20px;
+  -unity-font-style: bold;
+}
+.score-blue { background-color: #14323A; color: #2DE2C8; }
+.score-red { background-color: #3A1A14; color: #FF7A2D; }
+.score-sep { font-size: 18px; color: #6E8794; margin: 0 12px; }
+
+/* minimap top-left */
+.minimap {
+  position: absolute;
+  top: 28px;
+  left: 36px;
+  width: 220px;
+  height: 220px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #1E2E39;
+  border-radius: 8px;
+  position: relative;
+}
+.mm-inner {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 200px;
+  height: 200px;
+  background-color: #11181E;
+  border-radius: 4px;
+}
+.mm-road-h {
+  position: absolute;
+  top: 96px;
+  left: 16px;
+  width: 168px;
+  height: 14px;
+  background-color: #1B2A33;
+}
+.mm-road-v {
+  position: absolute;
+  top: 32px;
+  left: 92px;
+  width: 14px;
+  height: 140px;
+  background-color: #1B2A33;
+}
+.mm-self {
+  position: absolute;
+  top: 96px;
+  left: 90px;
+  width: 18px;
+  height: 18px;
+}
+.mm-ally-1 { position: absolute; top: 50px; left: 130px; width: 10px; height: 10px; border-radius: 5px; background-color: #2DE2C8; }
+.mm-ally-2 { position: absolute; top: 150px; left: 60px; width: 10px; height: 10px; border-radius: 5px; background-color: #2DE2C8; }
+.mm-enemy { position: absolute; top: 70px; left: 40px; width: 10px; height: 10px; border-radius: 5px; background-color: #FF7A2D; }
+
+/* center crosshair */
+.crosshair {
+  position: absolute;
+  top: 516px;
+  left: 936px;
+  width: 48px;
+  height: 48px;
+  position: relative;
+}
+.ch-top { position: absolute; top: 0; left: 22px; width: 4px; height: 16px; background-color: #2DE2C8; }
+.ch-bottom { position: absolute; top: 32px; left: 22px; width: 4px; height: 16px; background-color: #2DE2C8; }
+.ch-left { position: absolute; top: 22px; left: 0; width: 16px; height: 4px; background-color: #2DE2C8; }
+.ch-right { position: absolute; top: 22px; left: 32px; width: 16px; height: 4px; background-color: #2DE2C8; }
+.ch-dot { position: absolute; top: 22px; left: 22px; width: 4px; height: 4px; border-radius: 2px; background-color: #FF7A2D; }
+
+/* hit marker / hp bottom-left */
+.vitals {
+  position: absolute;
+  bottom: 36px;
+  left: 36px;
+  width: 360px;
+  flex-direction: column;
+}
+.vital-line {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.vital-icon { width: 30px; height: 30px; margin-right: 14px; }
+.vital-bar-wrap { flex-direction: column; flex-grow: 1; }
+.vital-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.vital-label { font-size: 13px; color: #6E8794; letter-spacing: 2px; }
+.vital-val { font-size: 18px; color: #FFFFFF; -unity-font-style: bold; }
+.bar {
+  flex-direction: row;
+  width: 100%;
+  height: 14px;
+  background-color: #0A0F14;
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: #1E2E39;
+}
+.bar-fill { height: 12px; border-radius: 4px; }
+.fill-hp { width: 82%; background-color: #2DE2C8; }
+.fill-armor { width: 60%; background-color: #5AB7FF; }
+
+/* ammo bottom-right */
+.ammo {
+  position: absolute;
+  bottom: 36px;
+  right: 300px;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.ammo-count {
+  flex-direction: row;
+  align-items: flex-end;
+}
+.ammo-mag { font-size: 64px; color: #FFFFFF; -unity-font-style: bold; }
+.ammo-sep { font-size: 36px; color: #6E8794; margin: 0 8px 10px 8px; }
+.ammo-reserve { font-size: 36px; color: #8AA0AC; -unity-font-style: bold; margin-bottom: 8px; }
+.ammo-weapon {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 6px;
+}
+.ammo-gun-icon { width: 64px; height: 26px; margin-right: 12px; }
+.ammo-name { font-size: 18px; color: #2DE2C8; letter-spacing: 2px; -unity-font-style: bold; }
+.ammo-reload {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+}
+.reload-key {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  background-color: #1B2A33;
+  border-width: 1px;
+  border-color: #2A3C48;
+  align-items: center;
+  justify-content: center;
+  -unity-text-align: middle-center;
+  font-size: 13px;
+  color: #C4D2DA;
+  margin-right: 8px;
+}
+.reload-txt { font-size: 14px; color: #6E8794; letter-spacing: 1px; }
+
+/* left move stick */
+.movestick {
+  position: absolute;
+  bottom: 150px;
+  left: 130px;
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #1E2E39;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.stick-knob {
+  width: 90px;
+  height: 90px;
+  border-radius: 45px;
+  background-color: #14222C;
+  border-width: 2px;
+  border-color: #2DE2C8;
+  align-items: center;
+  justify-content: center;
+}
+.stick-arrows { width: 60px; height: 60px; }
+
+/* right action buttons */
+.actions {
+  position: absolute;
+  bottom: 90px;
+  right: 120px;
+  width: 380px;
+  height: 380px;
+  position: relative;
+}
+.act-fire {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 150px;
+  height: 150px;
+  border-radius: 75px;
+  background-color: #3A1A14;
+  border-width: 3px;
+  border-color: #FF7A2D;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.act-fire-icon { width: 56px; height: 56px; }
+.act-fire-label { font-size: 14px; color: #FF7A2D; -unity-font-style: bold; letter-spacing: 2px; margin-top: 4px; }
+.act-aim {
+  position: absolute;
+  bottom: 200px;
+  right: 70px;
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #2DE2C8;
+  align-items: center;
+  justify-content: center;
+}
+.act-jump {
+  position: absolute;
+  bottom: 60px;
+  right: 220px;
+  width: 86px;
+  height: 86px;
+  border-radius: 43px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #2A3C48;
+  align-items: center;
+  justify-content: center;
+}
+.act-reload {
+  position: absolute;
+  bottom: 200px;
+  right: 210px;
+  width: 86px;
+  height: 86px;
+  border-radius: 43px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #2A3C48;
+  align-items: center;
+  justify-content: center;
+}
+.act-grenade {
+  position: absolute;
+  bottom: 290px;
+  right: 130px;
+  width: 78px;
+  height: 78px;
+  border-radius: 39px;
+  background-color: #0A0F14;
+  border-width: 2px;
+  border-color: #2A3C48;
+  align-items: center;
+  justify-content: center;
+}
+.act-icon-lg { width: 48px; height: 48px; }
+.act-icon-md { width: 40px; height: 40px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="backdrop">
+      <div class="bd-sky"></div>
+      <div class="bd-ground"></div>
+      <div class="bd-building-a"></div>
+      <div class="bd-building-b"></div>
+    </div>
+
+    <div class="minimap">
+      <div class="mm-inner"></div>
+      <div class="mm-road-h"></div>
+      <div class="mm-road-v"></div>
+      <div class="mm-self">
+        <svg id="icon-mm-self" width="18" height="18" viewBox="0 0 18 18">
+          <path d="M9 1l7 15-7-4-7 4z" fill="#2DE2C8"/>
+        </svg>
+      </div>
+      <div class="mm-ally-1"></div>
+      <div class="mm-ally-2"></div>
+      <div class="mm-enemy"></div>
+    </div>
+
+    <div class="objective">
+      <div class="obj-timer">
+        <svg id="icon-obj-bomb" class="obj-icon" width="22" height="22" viewBox="0 0 22 22">
+          <circle cx="10" cy="13" r="7" fill="none" stroke="#2DE2C8" stroke-width="2"/>
+          <path d="M14 8l3-3M17 5v3h-3" stroke="#FF7A2D" stroke-width="2" fill="none"/>
+        </svg>
+        <span class="obj-time">01:24</span>
+      </div>
+      <div class="obj-score">
+        <div class="score-chip score-blue">7</div>
+        <span class="score-sep">VS</span>
+        <div class="score-chip score-red">5</div>
+      </div>
+    </div>
+
+    <div class="killfeed">
+      <div class="kf-row">
+        <span class="kf-killer">GHOST</span>
+        <svg id="icon-kf-gun-1" class="kf-weapon" width="28" height="18" viewBox="0 0 28 18">
+          <path d="M2 8h16l4-3h4v4h-3l-1 4H12l-1 3H6l-1-3H2z" fill="#FF7A2D"/>
+        </svg>
+        <span class="kf-victim">BANDIT_X</span>
+      </div>
+      <div class="kf-row kf-row-self">
+        <span class="kf-killer">REAPER_07</span>
+        <svg id="icon-kf-gun-2" class="kf-weapon" width="28" height="18" viewBox="0 0 28 18">
+          <path d="M2 8h16l4-3h4v4h-3l-1 4H12l-1 3H6l-1-3H2z" fill="#2DE2C8"/>
+        </svg>
+        <span class="kf-victim">NOVA_9</span>
+      </div>
+      <div class="kf-row">
+        <span class="kf-killer">VIPER</span>
+        <svg id="icon-kf-knife" class="kf-weapon" width="28" height="18" viewBox="0 0 28 18">
+          <path d="M3 12l16-7 3 1-14 9z" fill="#FF7A2D"/>
+        </svg>
+        <span class="kf-victim">SLAYER</span>
+      </div>
+    </div>
+
+    <div class="crosshair">
+      <div class="ch-top"></div>
+      <div class="ch-bottom"></div>
+      <div class="ch-left"></div>
+      <div class="ch-right"></div>
+      <div class="ch-dot"></div>
+    </div>
+
+    <div class="vitals">
+      <div class="vital-line">
+        <svg id="icon-vital-hp" class="vital-icon" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M15 26C7 20 3 15 3 10a6 6 0 0112-2 6 6 0 0112 2c0 5-4 10-12 16z" fill="#2DE2C8"/>
+        </svg>
+        <div class="vital-bar-wrap">
+          <div class="vital-top">
+            <span class="vital-label">HEALTH</span>
+            <span class="vital-val">82 / 100</span>
+          </div>
+          <div class="bar"><div class="bar-fill fill-hp"></div></div>
+        </div>
+      </div>
+      <div class="vital-line">
+        <svg id="icon-vital-armor" class="vital-icon" width="30" height="30" viewBox="0 0 30 30">
+          <path d="M15 3l11 4v7c0 7-5 11-11 13C9 25 4 21 4 14V7z" fill="#5AB7FF"/>
+        </svg>
+        <div class="vital-bar-wrap">
+          <div class="vital-top">
+            <span class="vital-label">ARMOR</span>
+            <span class="vital-val">60 / 100</span>
+          </div>
+          <div class="bar"><div class="bar-fill fill-armor"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ammo">
+      <div class="ammo-count">
+        <span class="ammo-mag">27</span>
+        <span class="ammo-sep">/</span>
+        <span class="ammo-reserve">120</span>
+      </div>
+      <div class="ammo-weapon">
+        <svg id="icon-ammo-gun" class="ammo-gun-icon" width="64" height="26" viewBox="0 0 64 26">
+          <path d="M4 12h40l8-4h8v6h-6l-2 6H28l-2 5h-7l-2-5H4z" fill="#2DE2C8"/>
+        </svg>
+        <span class="ammo-name">KR-7 PHANTOM</span>
+      </div>
+      <div class="ammo-reload">
+        <div class="reload-key">R</div>
+        <span class="reload-txt">RELOAD</span>
+      </div>
+    </div>
+
+    <div class="movestick">
+      <div class="stick-knob">
+        <svg id="icon-stick-move" class="stick-arrows" width="60" height="60" viewBox="0 0 60 60">
+          <path d="M30 8l8 10H22z" fill="#2DE2C8"/>
+          <path d="M30 52l8-10H22z" fill="#2DE2C8"/>
+          <path d="M8 30l10-8v16z" fill="#2DE2C8"/>
+          <path d="M52 30l-10-8v16z" fill="#2DE2C8"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="act-grenade">
+        <svg id="icon-act-grenade" class="act-icon-md" width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="24" r="11" fill="none" stroke="#C4D2DA" stroke-width="2.5"/>
+          <path d="M24 13l5-4M27 9l4 4-4 2" stroke="#FF7A2D" stroke-width="2.5" fill="none"/>
+        </svg>
+      </div>
+      <div class="act-reload">
+        <svg id="icon-act-reload" class="act-icon-md" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M32 20a12 12 0 11-4-9" fill="none" stroke="#C4D2DA" stroke-width="2.5"/>
+          <path d="M30 5v8h-8" stroke="#C4D2DA" stroke-width="2.5" fill="none"/>
+        </svg>
+      </div>
+      <div class="act-aim">
+        <svg id="icon-act-aim" class="act-icon-md" width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="13" fill="none" stroke="#2DE2C8" stroke-width="2.5"/>
+          <path d="M20 3v8M20 29v8M3 20h8M29 20h8" stroke="#2DE2C8" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div class="act-jump">
+        <svg id="icon-act-jump" class="act-icon-md" width="40" height="40" viewBox="0 0 40 40">
+          <path d="M20 6l9 11h-6v11h-6V17h-6z" fill="#C4D2DA"/>
+        </svg>
+      </div>
+      <div class="act-fire">
+        <svg id="icon-act-fire" class="act-icon-lg" width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="20" fill="none" stroke="#FF7A2D" stroke-width="3"/>
+          <circle cx="28" cy="28" r="6" fill="#FF7A2D"/>
+          <path d="M28 4v10M28 42v10M4 28h10M42 28h10" stroke="#FF7A2D" stroke-width="3"/>
+        </svg>
+        <span class="act-fire-label">FIRE</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
