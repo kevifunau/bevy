@@ -243,6 +243,6 @@ fn find_parent_id(root: &BuiNode, node_id: &str) -> Option<String> {
 fn timestamp() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
+        .unwrap_or(std::time::Duration::ZERO)
         .as_millis() as u64
 }

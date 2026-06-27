@@ -56,6 +56,14 @@ name = "bui_editor"
 path = "src/bin/bui_editor/main.rs"
 required-features = ["editor"]
 
+[[bin]]
+name = "compile_opendesign_html"
+path = "src/bin/compile_opendesign_html.rs"
+
+[[bin]]
+name = "validate_bui"
+path = "src/bin/validate_bui.rs"
+
 [lints]
 workspace = true
 
@@ -67,18 +75,6 @@ serde_json = "1"
 [[example]]
 name = "editor_test"
 path = "examples/editor_test.rs"
-
-[[example]]
-name = "compile_opendesign_html"
-path = "examples/compile_opendesign_html.rs"
-
-[[example]]
-name = "validate_bui_json"
-path = "examples/validate_bui_json.rs"
-
-[[example]]
-name = "validate_bui_ir_json"
-path = "examples/validate_bui_ir_json.rs"
 
 [[example]]
 name = "opus48_Dev_action_arena_heroes"

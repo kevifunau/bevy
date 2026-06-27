@@ -161,11 +161,12 @@ impl EditorState {
 
         // "Save changes?" modal dialog
         if self.pending_action.is_some() {
-            let action_name = match self.pending_action.as_ref().unwrap() {
-                PendingAction::New => "create a new project",
-                PendingAction::Open => "open another file",
-                PendingAction::CompileHtml => "compile another HTML",
-                PendingAction::Quit => "quit",
+            let action_name = match self.pending_action {
+                Some(PendingAction::New) => "create a new project",
+                Some(PendingAction::Open) => "open another file",
+                Some(PendingAction::CompileHtml) => "compile another HTML",
+                Some(PendingAction::Quit) => "quit",
+                None => unreachable!(),
             };
             egui::Window::new("Save changes?")
                 .collapsible(false)
@@ -180,12 +181,14 @@ impl EditorState {
                     ui.horizontal(|ui| {
                         if ui.button("Save").clicked() {
                             self.do_save(world);
-                            let action = self.pending_action.take().unwrap();
-                            self.execute_pending(action, world);
+                            if let Some(action) = self.pending_action.take() {
+                                self.execute_pending(action, world);
+                            }
                         }
                         if ui.button("Don't Save").clicked() {
-                            let action = self.pending_action.take().unwrap();
-                            self.execute_pending(action, world);
+                            if let Some(action) = self.pending_action.take() {
+                                self.execute_pending(action, world);
+                            }
                         }
                         if ui.button("Cancel").clicked() {
                             self.pending_action = None;

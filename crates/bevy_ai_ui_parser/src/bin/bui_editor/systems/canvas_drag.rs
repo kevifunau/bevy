@@ -127,7 +127,10 @@ pub fn handle_canvas_drag(
         let dx = delta.x / scale;
         let dy = delta.y / scale;
 
-        let node_id = drag_state.dragged_node_id.as_ref().unwrap().clone();
+        let Some(node_id) = drag_state.dragged_node_id.as_ref() else {
+            return;
+        };
+        let node_id = node_id.clone();
         let doc = &mut doc_resource.0;
 
         if let Some(node) = find_node_by_id_mut(&mut doc.root, &node_id) {

@@ -61,8 +61,9 @@ pub use core::{
     opendesign_html_file_to_bui_json, opendesign_html_file_to_bui_json_with_manifest,
     opendesign_html_to_bui_json_str, opendesign_html_to_bui_json_str_with_manifest,
     validate_bui_json_file, validate_bui_json_str, AiUiPlugin, BuiActionAppExt, BuiActionRegistry,
-    BuiActionTrigger, BuiActionTriggered, BuiBindingValue, BuiDisabled, BuiId, BuiLogicTags,
-    BuiRootEntity, BuiStateSet, BuiStateStore, BuiTextInput, BuiToggle, BuiVisualState,
+    BuiActionTrigger, BuiActionTriggered, BuiBindingUpdate, BuiBindingValue, BuiDisabled,
+    BuiId, BuiLogicTags, BuiRootEntity, BuiStateSet, BuiStateStore, BuiTextInput, BuiToggle,
+    BuiVisualState,
 };
 pub use core::model::{
     BuiActionBinding, BuiBinding, BuiBoxShadowConfig, BuiContent, BuiDocument, BuiImageConfig,

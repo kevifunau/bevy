@@ -297,7 +297,7 @@ fn delete_node(world: &mut World, node_id: &str, parent_id: &str, selected_id: &
 fn timestamp() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
+        .unwrap_or(std::time::Duration::ZERO)
         .as_millis() as u64
 }
 

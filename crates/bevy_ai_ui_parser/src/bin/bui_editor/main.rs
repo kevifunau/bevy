@@ -44,7 +44,9 @@ fn main() {
     let ir_path = if ir_path.is_absolute() {
         ir_path
     } else {
-        std::env::current_dir().unwrap().join(&ir_path)
+        std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from("."))
+            .join(&ir_path)
     };
 
     if !ir_path.exists() {

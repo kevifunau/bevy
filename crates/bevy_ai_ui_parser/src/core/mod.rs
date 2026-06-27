@@ -20,7 +20,8 @@ pub use api::{
 pub use interaction::action_registry::{BuiActionAppExt, BuiActionRegistry};
 pub use interaction::components::{BuiDisabled, BuiTextInput, BuiToggle, BuiVisualState};
 pub use interaction::types::{
-    BuiActionTrigger, BuiActionTriggered, BuiBindingValue, BuiStateSet, BuiStateStore,
+    BuiActionTrigger, BuiActionTriggered, BuiBindingUpdate, BuiBindingValue, BuiStateSet,
+    BuiStateStore,
 };
 pub use runtime::components::{BuiId, BuiLogicTags, BuiRootEntity};
 pub use runtime::plugin::AiUiPlugin;
