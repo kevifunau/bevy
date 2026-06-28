@@ -98,6 +98,7 @@ fn main() {
         format!("{PREFABS_DIR}/server_select.ir.json"),
     )
     .register_bui_panel("server_list", format!("{PREFABS_DIR}/server_list.ir.json"))
+    .set_bui_panel_base_dir(WEBGAMEUI_DIR)
     .insert_resource(LoginData::default())
     .insert_resource(ClearColor(Color::srgb_u8(26, 26, 46)))
     .add_systems(Startup, setup_camera)
@@ -326,13 +327,14 @@ fn selected_server_label(world: &World, server_id: i32) -> Option<String> {
     })
 }
 
-/// Show a node by its Bui id.
+/// Show a node by its Bui id (set Display to Flex + Visibility to Inherited).
 fn show_node(world: &mut World, node_id: &str) {
     use bevy_ai_ui_parser::BuiId;
-    let mut query = world.query::<(&BuiId, &mut Visibility)>();
-    for (id, mut vis) in query.iter_mut(world) {
+    let mut query = world.query::<(&BuiId, &mut Visibility, &mut bevy::ui::Node)>();
+    for (id, mut vis, mut node) in query.iter_mut(world) {
         if id.0 == node_id {
             *vis = Visibility::Inherited;
+            node.display = bevy::ui::Display::Flex;
         }
     }
 }

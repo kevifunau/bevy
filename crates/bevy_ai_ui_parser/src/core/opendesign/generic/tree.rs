@@ -6,7 +6,7 @@ use crate::core::{
         BuiScrollViewSemantics, BuiSliderSemantics, BuiTextConfig,
     },
     opendesign::{
-        build::apply_opendesign_styles,
+        build::{apply_opendesign_styles, apply_opendesign_styles_for_text},
         stylesheet::OpenDesignStylesheet,
         svg::{
             extract_svg_markup, is_svg_tag, svg_asset_key, svg_image_node, svg_render_scale,
@@ -60,7 +60,15 @@ pub(crate) fn generic_append_children(
                     let (render_w, render_h) = svg_render_scale(child);
                     let svg_markup = extract_svg_markup(child);
                     let png_path = format!("assets/png/{key}.png");
-                    let image_node = svg_image_node(parent, child, index, &png_path);
+                    let mut image_node = svg_image_node(parent, child, index, &png_path);
+                    // Apply CSS (margin/positioning/etc.) declared on the <svg>
+                    // element so SVG icons keep their spacing relative to siblings.
+                    apply_opendesign_styles(stylesheet, &mut image_node, child);
+                    // `apply_opendesign_styles` may attach box-shadow / filter
+                    // drop-shadow layer children to the node; image nodes cannot
+                    // have children, so drop any layers that were spawned. The
+                    // primary `box_shadow` visual (if any) stays on the node.
+                    image_node.children.clear();
                     svg_assets.push(SvgAssetEntry {
                         key,
                         svg_markup,
@@ -120,7 +128,7 @@ pub(crate) fn generic_append_children(
                 });
             }
             apply_inherited_text_styles(stylesheet, &mut text_child, dom_node);
-            apply_opendesign_styles(stylesheet, &mut text_child, dom_node);
+            apply_opendesign_styles_for_text(stylesheet, &mut text_child, dom_node);
             if let Some(text_config) = &mut text_child.content.text {
                 normalize_cjk_linebreak(text_config);
                 if parent.kind == "button" && text_config.line_height.is_none() {

@@ -46,7 +46,15 @@
   }
   .btn:active { transform: scale(0.96); }
 
-  .tip-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; visibility: hidden; z-index: 100; }
+  .tip-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    z-index: 100;
+  }
   .tip-panel {
     width: 340px; padding: 30px 25px 20px;
     display: flex; flex-direction: column; align-items: center; row-gap: 16px;
@@ -92,7 +100,7 @@
   <div class="tip-overlay" id="tip_panel">
     <div class="tip-panel">
       <div class="tip-title">提示</div>
-      <div class="tip-info" id="txtInfo"></div>
+      <span class="tip-info" id="txtInfo" data-binding="tip.info">提示内容</span>
       <button class="btn" id="btnTipSure" data-action="tip.close" style="width:100px;height:38px;font-size:15px;">确定</button>
     </div>
   </div>

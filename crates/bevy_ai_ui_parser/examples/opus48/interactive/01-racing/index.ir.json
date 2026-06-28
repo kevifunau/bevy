@@ -258,8 +258,21 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
+                            "display": "flex",
+                            "box_sizing": "border-box",
                             "width": "30px",
-                            "height": "30px"
+                            "height": "30px",
+                            "min_width": "0",
+                            "min_height": "0",
+                            "margin": "0",
+                            "padding": "0",
+                            "flex_direction": "column",
+                            "flex_shrink": "0"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_width": "0"
                           }
                         },
                         "content": {
@@ -732,8 +745,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "26px",
-                                "height": "26px"
+                                "height": "26px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -917,8 +943,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "20px",
-                                "height": "20px"
+                                "height": "20px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -1090,8 +1129,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "26px",
-                                "height": "26px"
+                                "height": "26px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -1275,8 +1327,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "20px",
-                                "height": "20px"
+                                "height": "20px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -1448,8 +1513,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "26px",
-                                "height": "26px"
+                                "height": "26px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -1868,8 +1946,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "74px",
-                                "height": "74px"
+                                "height": "74px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -2812,8 +2903,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "34px",
-                                        "height": "34px"
+                                        "height": "34px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -3410,8 +3514,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "34px",
-                                        "height": "34px"
+                                        "height": "34px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -3917,8 +4034,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "34px",
-                                        "height": "34px"
+                                        "height": "34px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -4345,8 +4475,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "34px",
-                                        "height": "34px"
+                                        "height": "34px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -5398,8 +5541,21 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
                                 "width": "640px",
-                                "height": "220px"
+                                "height": "220px",
+                                "min_width": "0",
+                                "min_height": "0",
+                                "margin": "0",
+                                "padding": "0",
+                                "flex_direction": "column",
+                                "flex_shrink": "0"
+                              }
+                            },
+                            "style": {
+                              "visuals": {
+                                "border_width": "0"
                               }
                             },
                             "content": {
@@ -6932,8 +7088,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "64px",
-                                    "height": "64px"
+                                    "height": "64px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -7162,8 +7331,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "40px",
-                                        "height": "40px"
+                                        "height": "40px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -7593,8 +7775,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "40px",
-                                        "height": "40px"
+                                        "height": "40px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {

@@ -554,9 +554,8 @@
             ],
             "layout": {
               "styles": {
-                "display": "flex",
+                "display": "none",
                 "box_sizing": "border-box",
-                "visibility": "hidden",
                 "left": "0",
                 "right": "0",
                 "top": "0",
@@ -635,11 +634,35 @@
                     ],
                     "layout": {
                       "styles": {
+                        "display": "flex",
                         "box_sizing": "border-box",
                         "margin": "0",
-                        "padding": "0"
+                        "padding": "0",
+                        "justify_content": "center"
                       }
-                    }
+                    },
+                    "children": [
+                      {
+                        "id": "txtinfo_text_1",
+                        "kind": "text",
+                        "bindings": [
+                          {
+                            "target": "text.content",
+                            "source": "tip.info"
+                          }
+                        ],
+                        "content": {
+                          "text": {
+                            "content": "提示内容",
+                            "font_size": 15.0,
+                            "font_color": "#ddd",
+                            "font_path": "Songti.ttc",
+                            "text_align": "center",
+                            "linebreak": "word_or_character"
+                          }
+                        }
+                      }
+                    ]
                   },
                   {
                     "id": "btntipsure",

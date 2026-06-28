@@ -68,6 +68,19 @@ fn hero_game_ui_html_compiles_to_bui_document() {
 fn hero_game_ui_html_and_ir_entry_paths_produce_identical_bui_documents() {
     let from_html =
         opendesign_html_to_bui_document(HERO_GAME_UI_HTML).expect("HTML should compile");
+
+    // Regenerate fixture when UPDATE_FIXTURES=1
+    if std::env::var("UPDATE_FIXTURES").is_ok() {
+        let json = serde_json::to_string_pretty(&from_html).unwrap();
+        let fixture_path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/src/tests/fixtures/hero-game-ui.ir.json"
+        );
+        std::fs::write(fixture_path, &json).unwrap();
+        eprintln!("Updated fixture: {fixture_path}");
+        return;
+    }
+
     let from_ir = parse_bui_document(HERO_GAME_UI_IR).expect("3.0-ir JSON should parse");
 
     let html_value = serde_json::to_value(&from_html).expect("HTML document should serialize");

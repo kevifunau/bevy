@@ -25,18 +25,21 @@ pub(crate) fn css_font_family_to_path(value: &str) -> String {
         || lower.contains("ui-monospace")
     {
         "Menlo.ttc".to_string()
-    } else if lower.contains("palatino")
-        || lower.contains("iowan")
-        || lower.contains("georgia")
-        || lower.contains("serif")
-    {
-        "Palatino.ttc".to_string()
     } else if lower.contains("songti") {
         "Songti.ttc".to_string()
     } else if lower.contains("pingfang") {
         "PingFang.ttc".to_string()
     } else if lower.contains("stheiti") {
         "STHeiti Medium.ttc".to_string()
+    } else if lower.contains("sans-serif") {
+        // Must check sans-serif BEFORE serif, because "sans-serif" contains "serif"
+        "Hiragino Sans GB.ttc".to_string()
+    } else if lower.contains("palatino")
+        || lower.contains("iowan")
+        || lower.contains("georgia")
+        || lower.contains("serif")
+    {
+        "Palatino.ttc".to_string()
     } else {
         "Hiragino Sans GB.ttc".to_string()
     }

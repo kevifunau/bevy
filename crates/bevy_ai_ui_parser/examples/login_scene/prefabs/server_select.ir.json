@@ -171,7 +171,7 @@
                 "content": {
                   "image": {
                     "texture_path": "Asset/choose_server_title.png",
-                    "image_mode": "stretch",
+                    "image_mode": "auto",
                     "background_size": "auto 100%",
                     "background_position": "center",
                     "background_repeat": "no-repeat"
@@ -297,7 +297,7 @@
                             ],
                             "layout": {
                               "styles": {
-                                "display": "flex",
+                                "display": "none",
                                 "box_sizing": "border-box",
                                 "height": "40px",
                                 "margin": "0",
@@ -349,7 +349,7 @@
                                         "content": "{{label}}",
                                         "font_size": 14.0,
                                         "font_color": "#ccc",
-                                        "font_path": "Palatino.ttc"
+                                        "font_path": "Hiragino Sans GB.ttc"
                                       }
                                     }
                                   }
@@ -396,12 +396,11 @@
                         ],
                         "layout": {
                           "styles": {
-                            "display": "flex",
+                            "display": "grid",
                             "box_sizing": "border-box",
                             "overflow": "scroll_y",
                             "margin": "0",
                             "padding": "0",
-                            "flex_direction": "column",
                             "flex_grow": "1",
                             "flex_shrink": "1",
                             "flex_basis": "0%",
@@ -409,6 +408,7 @@
                             "column_gap": "9px",
                             "justify_content": "start",
                             "align_content": "start",
+                            "grid_template_columns": "px(295)",
                             "grid_auto_rows": "px(78)"
                           }
                         },
@@ -437,7 +437,7 @@
                             ],
                             "layout": {
                               "styles": {
-                                "display": "flex",
+                                "display": "none",
                                 "box_sizing": "border-box",
                                 "margin": "0",
                                 "padding": "0 15px",
@@ -493,7 +493,7 @@
                                         "content": "{{label}}",
                                         "font_size": 15.0,
                                         "font_color": "#ddd",
-                                        "font_path": "Palatino.ttc"
+                                        "font_path": "Hiragino Sans GB.ttc"
                                       }
                                     }
                                   }
@@ -638,7 +638,7 @@
                                 "content": "上次登录：",
                                 "font_size": 14.0,
                                 "font_color": "#ccc",
-                                "font_path": "Songti.ttc",
+                                "font_path": "Hiragino Sans GB.ttc",
                                 "linebreak": "word_or_character"
                               }
                             }
@@ -665,7 +665,7 @@
                                     "content": "无",
                                     "font_size": 14.0,
                                     "font_color": "#ffd700",
-                                    "font_path": "Songti.ttc",
+                                    "font_path": "Hiragino Sans GB.ttc",
                                     "linebreak": "word_or_character"
                                   }
                                 }
@@ -715,7 +715,7 @@
                             "content": "服务器列表",
                             "font_size": 13.0,
                             "font_color": "#FFFFFF80",
-                            "font_path": "Songti.ttc",
+                            "font_path": "Hiragino Sans GB.ttc",
                             "linebreak": "word_or_character"
                           }
                         }

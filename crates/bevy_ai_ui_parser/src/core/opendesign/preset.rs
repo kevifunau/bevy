@@ -28,11 +28,14 @@ pub(crate) enum OpenDesignPreset {
 pub(crate) fn apply_opendesign_preset(node: &mut BuiNode, preset: OpenDesignPreset) {
     match preset {
         OpenDesignPreset::OverlayRoot => {
-            node.layout.styles.width = Some("100%".to_string());
-            node.layout.styles.height = Some("100%".to_string());
-            node.layout.styles.justify_content = Some("center".to_string());
-            node.layout.styles.align_items = Some("center".to_string());
-            node.style.visuals.background_color = Some("#3B281862".to_string());
+            node.layout
+                .styles
+                .width
+                .get_or_insert_with(|| "100%".to_string());
+            node.layout
+                .styles
+                .height
+                .get_or_insert_with(|| "100%".to_string());
         }
         OpenDesignPreset::ViewportRoot => {
             node.layout.styles.width = Some("100%".to_string());

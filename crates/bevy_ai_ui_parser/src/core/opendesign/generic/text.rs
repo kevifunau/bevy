@@ -40,6 +40,31 @@ pub(crate) fn apply_inherited_text_styles(
         return;
     }
 
+    let mut ancestors = dom_node
+        .ancestors()
+        .filter(|node| node.is_element())
+        .collect::<Vec<_>>();
+    ancestors.reverse();
+
+    // Pass 1: apply universal-selector (`*`, specificity 0) declarations from
+    // every ancestor as low-priority defaults. These must run before class/tag
+    // rules so a closer `* { line-height: 1.2 }` cannot override a parent's
+    // `.line { line-height: 64px }` that should inherit down the chain.
+    for ancestor in &ancestors {
+        let custom_properties = stylesheet.custom_properties_for_node(*ancestor);
+        let (universal, _specific) =
+            stylesheet.matching_declarations_split_by_universality(*ancestor);
+        for (name, value) in universal {
+            if !is_inheritable_text_property(name) {
+                continue;
+            }
+            let value = stylesheet.resolve_value_with_variables(value, &custom_properties);
+            apply_opendesign_declaration(bui_node, name, &value);
+        }
+    }
+
+    // Pass 2: apply specific (class/tag/id, specificity > 0) declarations and
+    // inline styles, top-down. These override the universal defaults above.
     for tag in ["html", "body"] {
         for (name, value) in stylesheet.tag_declarations(tag) {
             if !is_inheritable_text_property(name) {
@@ -50,15 +75,11 @@ pub(crate) fn apply_inherited_text_styles(
         }
     }
 
-    let mut ancestors = dom_node
-        .ancestors()
-        .filter(|node| node.is_element())
-        .collect::<Vec<_>>();
-    ancestors.reverse();
-
     for ancestor in ancestors {
         let custom_properties = stylesheet.custom_properties_for_node(ancestor);
-        for (name, value) in stylesheet.matching_declarations(ancestor) {
+        let (_universal, specific) =
+            stylesheet.matching_declarations_split_by_universality(ancestor);
+        for (name, value) in specific {
             if !is_inheritable_text_property(name) {
                 continue;
             }

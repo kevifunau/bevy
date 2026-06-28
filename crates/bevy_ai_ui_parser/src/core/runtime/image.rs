@@ -136,20 +136,29 @@ fn compute_background_rect(
 }
 
 fn background_image_mode_override(image_config: &BuiImageConfig) -> Option<&'static str> {
-    let size = image_config.background_size.as_deref()?.trim();
-    if size.eq_ignore_ascii_case("contain") || size.eq_ignore_ascii_case("auto") {
+    let size = image_config
+        .background_size
+        .as_deref()?
+        .trim()
+        .to_ascii_lowercase();
+    if size == "contain" || size == "auto" {
         Some("auto")
-    } else if size.eq_ignore_ascii_case("cover") || background_size_is_full_stretch(size) {
+    } else if size == "cover" || background_size_is_full_stretch(&size) {
         Some("stretch")
+    } else if size.contains("auto") {
+        // Mixed values like "auto 100%" or "100% auto" — preserve aspect ratio
+        Some("auto")
     } else {
         None
     }
 }
 
 fn background_size_preserves_full_source(size: &str) -> bool {
-    size.eq_ignore_ascii_case("contain")
-        || size.eq_ignore_ascii_case("auto")
-        || background_size_is_full_stretch(size)
+    let lower = size.to_ascii_lowercase();
+    lower == "contain"
+        || lower == "auto"
+        || lower.contains("auto")
+        || background_size_is_full_stretch(&lower)
 }
 
 fn background_size_is_full_stretch(size: &str) -> bool {

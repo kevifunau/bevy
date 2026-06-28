@@ -216,3 +216,45 @@ main.rs 切换 → BuiPanelSwitch::show() → 插件加载新 IR JSON
 2. **IR JSON = prefab**——插件负责加载/卸载，游戏代码不碰
 3. **main.rs = Scripts/**——只有业务逻辑，没有 UI 加载代码
 4. **浏览器 JS = 原型**——验证交互设计，编译时丢弃，Bevy 用 ECS handler 替代
+
+## HTML 交互声明优先级
+
+HTML 作者（或 AI）写交互时，必须按以下优先级：
+
+```
+1. 能用 DSL 声明的 → 用 data-binding / data-action / data-bui-actions
+   → 编译进 IR JSON，Bevy 自动执行，不需要写 Rust 代码
+
+2. DSL 处理不了的 → 用 JS（仅浏览器预览）
+   → 编译时丢弃，Bevy 里需要手动写 Rust ECS handler 替代
+```
+
+### DSL 能处理的交互（编译后自动工作）
+
+| 交互类型 | DSL 写法 | 举例 |
+|---------|---------|------|
+| 显示/隐藏 | `set-visible` in DSL | `{ "op": "set-visible", "target": "tip_panel", "value": "hidden" }` |
+| 改文字 | `data-binding` + `BuiStateSet` | `<span data-binding="tip.info">默认文字</span>` |
+| 切换选中 | `data-binding` (Bool) | `<input type="checkbox" data-binding="login.rememberPw">` |
+| 延时执行 | `delay` in DSL | `{ "op": "delay", "ms": 900 }` |
+| 设置图片 | `set-image` in DSL | `{ "op": "set-image", "target": "icon", "value": "Asset/new.png" }` |
+
+### DSL 处理不了的交互（需要 Rust handler）
+
+| 交互类型 | 为什么 DSL 不行 | Rust 怎么做 |
+|---------|---------------|------------|
+| 页面跳转 | 需要知道目标面板名 | `BuiPanelSwitch::show("register")` |
+| 输入校验 | 需要条件判断 | `if username.len() <= 6 { ... }` |
+| 数据读写 | 需要文件/网络 IO | `std::fs::read_to_string("ServerInfo.json")` |
+| 联动逻辑 | 需要跨节点条件 | 取消记住密码 → `BuiStateSet(Bool(false))` 推送 autoLogin |
+| 计算逻辑 | 需要数学运算 | 服务器分组、区间计算 |
+
+### 关键规则
+
+- **文字内容必须用 `data-binding`**，不能只靠 JS `element.textContent = ...`
+  - 错误：`<div id="tip"></div>` + JS `tip.textContent = msg`
+  - 正确：`<span data-binding="tip.info">默认文字</span>` + `BuiStateSet(Text(msg))`
+- **可点击区域必须挂 `data-action`**，不能靠浏览器原生行为（如 `<label>` 包裹）
+  - 错误：`<label><input type="checkbox" data-action-change="..."></label>`（点 label 不触发）
+  - 正确：把 `data-action-change` 放在用户实际点击的元素上
+- **JS 只用于浏览器预览**，编译时会被丢弃，不能依赖 JS 实现核心交互

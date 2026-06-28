@@ -135,6 +135,13 @@ impl OpenDesignSelector {
         self.weight
     }
 
+    /// Returns true for a pure universal selector (`*`, including `* *`
+    /// descendant chains) — specificity 0. These act as low-priority defaults
+    /// that must not override class/tag rules inherited from ancestor nodes.
+    pub(super) fn is_universal(&self) -> bool {
+        self.weight == 0
+    }
+
     pub(super) fn is_single_tag_selector(&self, tag: &str) -> bool {
         self.parts.len() == 1 && self.parts[0].compound.is_tag_only(tag)
     }

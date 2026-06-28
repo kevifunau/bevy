@@ -1,4 +1,7 @@
-use super::color::{css_color_mix_with_transparency, css_named_color, is_hex_color, oklch_to_hex};
+use super::color::{
+    css_color_mix_with_transparency, css_embedded_rgb_function_to_hex, css_named_color,
+    is_hex_color, oklch_to_hex,
+};
 
 pub(crate) fn css_background_fallback_color(value: &str) -> Option<String> {
     let layers = split_css_layers(value);
@@ -53,6 +56,9 @@ pub(crate) fn css_simple_color(value: &str) -> Option<String> {
         return Some(color);
     }
     if let Some(color) = css_embedded_oklch_color(value) {
+        return Some(color);
+    }
+    if let Some(color) = css_embedded_rgb_function_to_hex(value) {
         return Some(color);
     }
     if value == "transparent" {

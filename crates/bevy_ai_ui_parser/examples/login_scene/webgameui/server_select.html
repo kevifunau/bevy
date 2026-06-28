@@ -150,7 +150,7 @@
              data-bui-json-src="Asset/ServerInfo.json"
              data-bui-json-mode="regions"
              data-bui-page-size="5">
-          <div class="left-item" id="server_region_{{index}}" data-action="server.selectRegion">
+          <div class="left-item" id="server_region_{{index}}" data-action="server.selectRegion" style="display: none">
             <span class="left-item-text">{{label}}</span>
           </div>
         </div>
@@ -162,7 +162,7 @@
              data-bui-json-mode="page"
              data-bui-page-size="5"
              data-bui-page-source="server.region">
-          <div class="right-item" id="server_item_{{id}}" data-action="server.selectServer">
+          <div class="right-item" id="server_item_{{id}}" data-action="server.selectServer" style="display: none">
             <span class="right-item-name">{{label}}</span>
             <div class="right-item-state state-{{state}}"></div>
             <div class="right-item-new {{newClass}}"></div>

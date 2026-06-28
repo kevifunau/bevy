@@ -687,6 +687,7 @@ pub fn spawn_bui_ir(
     texture_atlases: &mut Assets<TextureAtlasLayout>,
     state_store: &mut BuiStateStore,
     ir_path: impl AsRef<Path>,
+    base_dir: Option<&Path>,
 ) -> Result<(Entity, std::collections::HashMap<String, Entity>), String> {
     let path = ir_path.as_ref();
     let raw = fs::read_to_string(path)
@@ -701,7 +702,7 @@ pub fn spawn_bui_ir(
     );
 
     seed_state_model(&document, state_store);
-    let json_lists = load_json_list_store(&document, path.parent());
+    let json_lists = load_json_list_store(&document, base_dir);
     seed_json_list_state(&json_lists, state_store);
 
     let (root, id_map) = spawn_bui_tree(commands, asset_server, texture_atlases, &document)?;
@@ -730,16 +731,24 @@ impl BuiPanelSwitch {
     }
 }
 
-/// Resource mapping panel names to IR JSON file paths.
-/// Register panels via `app.register_bui_panel("register", "path/to/register.ir.json")`.
+/// Resource mapping panel names to IR JSON file paths and asset base directories.
 #[derive(Resource, Default)]
-pub struct BuiPanelPaths(pub std::collections::HashMap<String, String>);
+pub struct BuiPanelPaths {
+    /// Panel name → IR JSON file path
+    pub panels: std::collections::HashMap<String, String>,
+    /// Base directory for resolving data-bui-json-src paths (e.g. the webgameui/ directory)
+    pub base_dir: Option<PathBuf>,
+}
 
 /// Extension trait for registering BUI panels on a Bevy app.
 pub trait BuiPanelAppExt {
     /// Register a panel name → IR JSON path mapping.
     /// After registering, game code can call `BuiPanelSwitch::show("name")` to switch to it.
     fn register_bui_panel(&mut self, name: &str, ir_path: impl AsRef<Path>) -> &mut Self;
+
+    /// Set the base directory for resolving `data-bui-json-src` paths in panels.
+    /// This should be the directory containing the `Asset/` folder (e.g. the webgameui/ directory).
+    fn set_bui_panel_base_dir(&mut self, base_dir: impl AsRef<Path>) -> &mut Self;
 }
 
 impl BuiPanelAppExt for App {
@@ -747,10 +756,18 @@ impl BuiPanelAppExt for App {
         let mut paths = self
             .world_mut()
             .get_resource_or_insert_with::<BuiPanelPaths>(Default::default);
-        paths.0.insert(
+        paths.panels.insert(
             name.to_string(),
             ir_path.as_ref().to_string_lossy().to_string(),
         );
+        self
+    }
+
+    fn set_bui_panel_base_dir(&mut self, base_dir: impl AsRef<Path>) -> &mut Self {
+        let mut paths = self
+            .world_mut()
+            .get_resource_or_insert_with::<BuiPanelPaths>(Default::default);
+        paths.base_dir = Some(base_dir.as_ref().to_path_buf());
         self
     }
 }
@@ -770,7 +787,7 @@ fn process_panel_switch(
         return;
     };
 
-    let Some(ir_path) = panel_paths.0.get(&panel_name) else {
+    let Some(ir_path) = panel_paths.panels.get(&panel_name) else {
         error!(
             "Panel '{}' not registered. Use app.register_bui_panel() first.",
             panel_name
@@ -784,13 +801,14 @@ fn process_panel_switch(
         info!("Despawned previous panel");
     }
 
-    // Load and spawn new panel
+    // Load and spawn new panel, using base_dir for JSON list sources
     match spawn_bui_ir(
         &mut commands,
         &asset_server,
         &mut texture_atlases,
         &mut state_store,
         ir_path,
+        panel_paths.base_dir.as_deref(),
     ) {
         Ok((root, _id_map)) => {
             info!("Switched to panel: {}", panel_name);

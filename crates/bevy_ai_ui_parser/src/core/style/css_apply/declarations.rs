@@ -13,7 +13,7 @@ use crate::core::{
         css_parser::{
             apply_css_transform, css_font_size, css_letter_spacing, css_line_height, css_text_align,
         },
-        css_sizing::css_first_size,
+        css_sizing::css_all_sizes,
         css_values::{
             adjust_font_path_for_content, append_hex_alpha, apply_css_font_shorthand,
             apply_css_white_space, css_aspect_ratio, css_background_base_color,
@@ -255,8 +255,9 @@ pub(crate) fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, v
         }
         "grid-area" => apply_grid_area(bui_node, &value),
         "border-radius" => {
-            if let Some(radius) = css_first_size(&value) {
-                bui_node.style.visuals.border_radius = Some(radius);
+            let radii = css_all_sizes(&value);
+            if !radii.is_empty() {
+                bui_node.style.visuals.border_radius = Some(radii.join(" "));
             }
         }
         "border-width" => set_css_rect(&mut bui_node.style.visuals.border_width, &value),
@@ -453,6 +454,10 @@ pub(crate) fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, v
                             .offset_y
                             .as_deref()
                             .and_then(css_filter_shadow_length),
+                        blur_radius: drop_shadow
+                            .blur_radius
+                            .as_deref()
+                            .and_then(css_filter_shadow_length),
                         color: drop_shadow.color.clone(),
                     });
                 }
@@ -506,6 +511,9 @@ fn apply_background_size_image_mode(image_config: &mut BuiImageConfig, value: &s
         image_config.image_mode = Some("auto".to_string());
     } else if matches!(value.as_str(), "cover" | "100% 100%") {
         image_config.image_mode = Some("stretch".to_string());
+    } else if value.starts_with("auto ") || value.ends_with(" auto") || value.contains(" auto ") {
+        // Mixed values like "auto 100%" or "100% auto" — preserve aspect ratio
+        image_config.image_mode = Some("auto".to_string());
     }
 }
 

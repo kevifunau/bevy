@@ -54,6 +54,18 @@ pub(crate) fn css_first_size(value: &str) -> Option<String> {
         .find_map(|part| css_length_to_bui_val(&part))
 }
 
+/// Parses every whitespace-separated size token (e.g. `220px 220px 40px 40px`)
+/// into normalized BUI values, preserving 1-4 value CSS `border-radius` syntax.
+pub(crate) fn css_all_sizes(value: &str) -> Vec<String> {
+    if let Some(size) = css_eval_length_function(value) {
+        return vec![size];
+    }
+    css_size_tokens(value)
+        .into_iter()
+        .filter_map(|part| css_length_to_bui_val(&part))
+        .collect()
+}
+
 pub(crate) fn css_size_to_px(value: &str) -> Option<f32> {
     let viewport = current_opendesign_viewport();
     let value = value.trim();

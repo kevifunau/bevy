@@ -37,15 +37,28 @@ pub(crate) fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
     let stage_div_start = find_element_with_class(html, "div", "stage");
     let page_div_start = find_element_with_class(html, "div", "page");
 
-    let start = overlay_start
-        .or(main_start)
-        .or(bevy_ui_root_div_start)
-        .or(bevy_ui_root_main_start)
-        .or(stage_main_start)
-        .or(stage_section_start)
-        .or(stage_div_start)
-        .or(page_div_start)
-        .ok_or_else(|| "OpenDesign HTML does not contain a recognized root container ('<div class=\"overlay', '<main class=\"game-stage', '<main class=\"stage', '<section class=\"stage', '<div class=\"stage', '<div class=\"page', or class 'bevy-ui-root').".to_string())?;
+    // When `.overlay` is nested inside a `.page` wrapper, `.page` is the true
+    // root container — `.overlay` is only one of several sibling visual layers
+    // (`.kv`, `.star-*`, etc.) that must be preserved. Prefer `.page` as the
+    // fragment start so those siblings are not sliced off.
+    let page_wraps_overlay = match (page_div_start, overlay_start) {
+        (Some(page), Some(overlay)) if page < overlay => true,
+        _ => false,
+    };
+
+    let start = if page_wraps_overlay {
+        page_div_start
+    } else {
+        overlay_start
+            .or(main_start)
+            .or(bevy_ui_root_div_start)
+            .or(bevy_ui_root_main_start)
+            .or(stage_main_start)
+            .or(stage_section_start)
+            .or(stage_div_start)
+            .or(page_div_start)
+    }
+    .ok_or_else(|| "OpenDesign HTML does not contain a recognized root container ('<div class=\"overlay', '<main class=\"game-stage', '<main class=\"stage', '<section class=\"stage', '<div class=\"stage', '<div class=\"page', or class 'bevy-ui-root').".to_string())?;
 
     let visually_hidden_end = html[start..]
         .find("<p class=\"visually-hidden\"")
@@ -278,7 +291,19 @@ fn find_opendesign_root_nodes<'a, 'input>(
         .descendants()
         .find(|node| has_class(*node, "overlay"));
 
-    let root = overlay
+    // When an `.overlay` is nested inside a `.page`, its `.page` parent is the
+    // true root container — `.overlay` is only one of several sibling visual
+    // layers (e.g. `.kv`, `.star-*`) that must be preserved. Picking `.overlay`
+    // directly would drop those siblings.
+    let page_parent_of_overlay = overlay.and_then(|overlay| {
+        overlay
+            .ancestors()
+            .filter(|node| node.is_element())
+            .find(|node| has_class(*node, "page"))
+    });
+
+    let root = page_parent_of_overlay
+        .or_else(|| overlay)
         .or_else(|| {
             parsed
                 .descendants()

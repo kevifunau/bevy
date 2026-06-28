@@ -344,8 +344,19 @@ fn css_grid_track_token_to_bui(value: &str) -> Option<String> {
     {
         let args = split_css_function_args(content);
         if args.len() == 2 {
-            let repetition = args[0].trim().parse::<u16>().ok()?;
-            return css_grid_track_token_to_bui_repeat(repetition, args[1].trim());
+            let repetition_arg = args[0].trim();
+            // Support numeric repetition (e.g. repeat(3, 100px)) and auto-fill/auto-fit
+            if let Ok(repetition) = repetition_arg.parse::<u16>() {
+                return css_grid_track_token_to_bui_repeat(repetition, args[1].trim());
+            }
+            // For auto-fill/auto-fit, we can't know the count at compile time.
+            // Parse the track size and emit it as a single track — Bevy's grid
+            // engine will handle auto-fill at runtime if it supports it.
+            if repetition_arg.eq_ignore_ascii_case("auto-fill")
+                || repetition_arg.eq_ignore_ascii_case("auto-fit")
+            {
+                return css_grid_track_token_to_bui(args[1].trim());
+            }
         }
         return None;
     }

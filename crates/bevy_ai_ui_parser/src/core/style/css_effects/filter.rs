@@ -96,6 +96,7 @@ pub(crate) fn apply_filter_blur_fallback(bui_node: &mut BuiNode, blur_radius: f3
             text_config.text_shadow = Some(BuiTextShadowConfig {
                 offset_x: Some(0.0),
                 offset_y: Some(0.0),
+                blur_radius: None,
                 color: Some(
                     append_hex_alpha(&text_config.font_color, 55.0)
                         .unwrap_or_else(|| text_config.font_color.clone()),

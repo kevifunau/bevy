@@ -360,10 +360,7 @@ fn login_scene_index_html_preserves_panel_visuals_and_hidden_tip() {
         login_panel.style.visuals.border_color.as_deref(),
         Some("#FFD7004D")
     );
-    assert_eq!(
-        tip_panel.layout.styles.visibility.as_deref(),
-        Some("hidden")
-    );
+    assert_eq!(tip_panel.layout.styles.display.as_deref(), Some("none"));
 }
 
 #[test]

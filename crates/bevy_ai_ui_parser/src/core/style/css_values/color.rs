@@ -54,7 +54,7 @@ pub(crate) fn css_color(value: &str) -> Option<String> {
     css_named_color(value).map(ToString::to_string)
 }
 
-fn css_embedded_rgb_function_to_hex(value: &str) -> Option<String> {
+pub(crate) fn css_embedded_rgb_function_to_hex(value: &str) -> Option<String> {
     let value = value.trim();
     let lower = value.to_ascii_lowercase();
     let start = lower.find("rgba(").or_else(|| lower.find("rgb("))?;

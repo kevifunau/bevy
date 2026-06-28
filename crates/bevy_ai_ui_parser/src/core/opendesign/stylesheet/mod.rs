@@ -90,6 +90,37 @@ impl OpenDesignStylesheet {
             .collect()
     }
 
+    /// Splits the declarations matching `dom_node` into `(universal, specific)`
+    /// groups. Universal (`*`, specificity 0) declarations act as low-priority
+    /// defaults; specific (class/tag/id, specificity > 0) declarations override
+    /// them. Within each group, declarations are ordered by specificity then
+    /// source order, matching `matching_declarations`.
+    pub(crate) fn matching_declarations_split_by_universality(
+        &self,
+        dom_node: roxmltree::Node<'_, '_>,
+    ) -> (Vec<&(String, String)>, Vec<&(String, String)>) {
+        let mut rules = self
+            .rules
+            .iter()
+            .filter(|rule| {
+                rule.selector.state_name().is_none()
+                    && rule.selector.pseudo_element_name().is_none()
+                    && rule.selector.matches(dom_node)
+            })
+            .collect::<Vec<_>>();
+        rules.sort_by_key(|rule| (rule.selector.weight(), rule.order));
+        let mut universal = Vec::new();
+        let mut specific = Vec::new();
+        for rule in rules {
+            if rule.selector.is_universal() {
+                universal.extend(rule.declarations.iter());
+            } else {
+                specific.extend(rule.declarations.iter());
+            }
+        }
+        (universal, specific)
+    }
+
     pub(crate) fn matching_pseudo_declarations(
         &self,
         dom_node: roxmltree::Node<'_, '_>,

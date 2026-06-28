@@ -1161,8 +1161,10 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
-                            "width": "64px",
-                            "height": "64px"
+                            "box_sizing": "border-box",
+                            "width": "62%",
+                            "height": "62%",
+                            "position_type": "relative"
                           }
                         },
                         "content": {
@@ -1201,6 +1203,7 @@
                             "text_shadow": {
                               "offset_x": 0.0,
                               "offset_y": 4.0,
+                              "blur_radius": 0.0,
                               "color": "#824F4F"
                             },
                             "linebreak": "word_or_character"
@@ -1286,6 +1289,7 @@
                                     "text_shadow": {
                                       "offset_x": 0.0,
                                       "offset_y": 3.0,
+                                      "blur_radius": 0.0,
                                       "color": "#1D1014B8"
                                     },
                                     "linebreak": "no_wrap",
@@ -1317,6 +1321,7 @@
                                     "text_shadow": {
                                       "offset_x": 0.0,
                                       "offset_y": 3.0,
+                                      "blur_radius": 0.0,
                                       "color": "#1D1014B8"
                                     },
                                     "linebreak": "no_wrap",
@@ -1384,8 +1389,9 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
-                                        "width": "32px",
-                                        "height": "32px"
+                                        "box_sizing": "border-box",
+                                        "width": "30px",
+                                        "height": "30px"
                                       }
                                     },
                                     "content": {
@@ -1848,6 +1854,7 @@
                                                 "text_shadow": {
                                                   "offset_x": 0.0,
                                                   "offset_y": 2.0,
+                                                  "blur_radius": 0.0,
                                                   "color": "#14070AC2"
                                                 },
                                                 "linebreak": "no_wrap",
@@ -1869,6 +1876,7 @@
                                             "text_shadow": {
                                               "offset_x": 0.0,
                                               "offset_y": 2.0,
+                                              "blur_radius": 0.0,
                                               "color": "#14070AC2"
                                             },
                                             "linebreak": "no_wrap",
@@ -1922,8 +1930,9 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
-                                        "width": "32px",
-                                        "height": "32px"
+                                        "box_sizing": "border-box",
+                                        "width": "30px",
+                                        "height": "30px"
                                       }
                                     },
                                     "content": {
@@ -2386,6 +2395,7 @@
                                                 "text_shadow": {
                                                   "offset_x": 0.0,
                                                   "offset_y": 2.0,
+                                                  "blur_radius": 0.0,
                                                   "color": "#14070AC2"
                                                 },
                                                 "linebreak": "no_wrap",
@@ -2407,6 +2417,7 @@
                                             "text_shadow": {
                                               "offset_x": 0.0,
                                               "offset_y": 2.0,
+                                              "blur_radius": 0.0,
                                               "color": "#14070AC2"
                                             },
                                             "linebreak": "no_wrap",
@@ -2685,6 +2696,7 @@
                         "text_shadow": {
                           "offset_x": 0.0,
                           "offset_y": 4.0,
+                          "blur_radius": 0.0,
                           "color": "#34283094"
                         }
                       }
@@ -2714,8 +2726,10 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
-                        "width": "32px",
-                        "height": "32px"
+                        "box_sizing": "border-box",
+                        "width": "52.08px",
+                        "height": "52.08px",
+                        "position_type": "relative"
                       }
                     },
                     "content": {
@@ -2730,8 +2744,10 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
-                        "width": "32px",
-                        "height": "32px"
+                        "box_sizing": "border-box",
+                        "width": "52.08px",
+                        "height": "52.08px",
+                        "position_type": "relative"
                       }
                     },
                     "content": {
@@ -2746,8 +2762,10 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
-                        "width": "32px",
-                        "height": "32px"
+                        "box_sizing": "border-box",
+                        "width": "52.08px",
+                        "height": "52.08px",
+                        "position_type": "relative"
                       }
                     },
                     "content": {
@@ -2762,8 +2780,10 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
-                        "width": "32px",
-                        "height": "32px"
+                        "box_sizing": "border-box",
+                        "width": "52.08px",
+                        "height": "52.08px",
+                        "position_type": "relative"
                       }
                     },
                     "content": {
@@ -2778,8 +2798,10 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
-                        "width": "32px",
-                        "height": "32px"
+                        "box_sizing": "border-box",
+                        "width": "52.08px",
+                        "height": "52.08px",
+                        "position_type": "relative"
                       }
                     },
                     "content": {
@@ -3042,8 +3064,9 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
-                            "width": "36px",
-                            "height": "36px"
+                            "box_sizing": "border-box",
+                            "width": "58%",
+                            "height": "58%"
                           }
                         },
                         "content": {
@@ -3315,8 +3338,9 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
-                            "width": "36px",
-                            "height": "36px"
+                            "box_sizing": "border-box",
+                            "width": "58%",
+                            "height": "58%"
                           }
                         },
                         "content": {
@@ -3588,8 +3612,9 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
-                            "width": "36px",
-                            "height": "36px"
+                            "box_sizing": "border-box",
+                            "width": "58%",
+                            "height": "58%"
                           }
                         },
                         "content": {
@@ -4315,12 +4340,13 @@
                             "content": "武装",
                             "font_size": 43.68,
                             "font_color": "#4D3033",
-                            "font_path": "Songti.ttc",
+                            "font_path": "Hiragino Sans GB.ttc",
                             "font_weight": 850,
                             "line_height": "1",
                             "text_shadow": {
                               "offset_x": 0.0,
                               "offset_y": 1.0,
+                              "blur_radius": 0.0,
                               "color": "#C4FFFF3D"
                             },
                             "linebreak": "word_or_character"
@@ -4634,8 +4660,10 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
-                                "width": "40px",
-                                "height": "40px"
+                                "box_sizing": "border-box",
+                                "width": "62%",
+                                "height": "62%",
+                                "position_type": "relative"
                               }
                             },
                             "content": {
@@ -4921,8 +4949,10 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
-                                "width": "40px",
-                                "height": "40px"
+                                "box_sizing": "border-box",
+                                "width": "62%",
+                                "height": "62%",
+                                "position_type": "relative"
                               }
                             },
                             "content": {
@@ -5186,8 +5216,10 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
-                                "width": "40px",
-                                "height": "40px"
+                                "box_sizing": "border-box",
+                                "width": "62%",
+                                "height": "62%",
+                                "position_type": "relative"
                               }
                             },
                             "content": {
@@ -5451,8 +5483,10 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
-                                "width": "40px",
-                                "height": "40px"
+                                "box_sizing": "border-box",
+                                "width": "62%",
+                                "height": "62%",
+                                "position_type": "relative"
                               }
                             },
                             "content": {
@@ -5716,8 +5750,10 @@
                             "kind": "image",
                             "layout": {
                               "styles": {
-                                "width": "40px",
-                                "height": "40px"
+                                "box_sizing": "border-box",
+                                "width": "62%",
+                                "height": "62%",
+                                "position_type": "relative"
                               }
                             },
                             "content": {
@@ -5790,12 +5826,13 @@
                             "content": "基础信息",
                             "font_size": 43.68,
                             "font_color": "#4D3033",
-                            "font_path": "Songti.ttc",
+                            "font_path": "Hiragino Sans GB.ttc",
                             "font_weight": 850,
                             "line_height": "1",
                             "text_shadow": {
                               "offset_x": 0.0,
                               "offset_y": 1.0,
+                              "blur_radius": 0.0,
                               "color": "#C4FFFF3D"
                             },
                             "linebreak": "word_or_character"
@@ -6045,7 +6082,7 @@
                                 "content": "基础",
                                 "font_size": 16.0,
                                 "font_color": "#2D1A1D",
-                                "font_path": "Songti.ttc",
+                                "font_path": "Hiragino Sans GB.ttc",
                                 "font_weight": 850,
                                 "line_height": "1",
                                 "linebreak": "word_or_character"
@@ -6112,7 +6149,7 @@
                                 "content": "战斗",
                                 "font_size": 16.0,
                                 "font_color": "#4B383F",
-                                "font_path": "Songti.ttc",
+                                "font_path": "Hiragino Sans GB.ttc",
                                 "font_weight": 850,
                                 "line_height": "1",
                                 "linebreak": "word_or_character"
@@ -6179,7 +6216,7 @@
                                 "content": "行军",
                                 "font_size": 16.0,
                                 "font_color": "#4B383F",
-                                "font_path": "Songti.ttc",
+                                "font_path": "Hiragino Sans GB.ttc",
                                 "font_weight": 850,
                                 "line_height": "1",
                                 "linebreak": "word_or_character"
@@ -6292,7 +6329,7 @@
                             "content": "查看词条",
                             "font_size": 16.0,
                             "font_color": "#CCF6FF",
-                            "font_path": "Songti.ttc",
+                            "font_path": "Hiragino Sans GB.ttc",
                             "font_weight": 900,
                             "line_height": "1",
                             "linebreak": "word_or_character"
@@ -6546,7 +6583,7 @@
                             "content": "升级",
                             "font_size": 16.0,
                             "font_color": "#2B1719",
-                            "font_path": "Songti.ttc",
+                            "font_path": "Hiragino Sans GB.ttc",
                             "font_weight": 900,
                             "line_height": "1",
                             "linebreak": "word_or_character"
@@ -6761,7 +6798,7 @@
                     "content": "属性 / 武装",
                     "font_size": 16.0,
                     "font_color": "#2E1D20",
-                    "font_path": "Songti.ttc",
+                    "font_path": "Hiragino Sans GB.ttc",
                     "font_weight": 900,
                     "line_height": "1",
                     "linebreak": "word_or_character"
@@ -7011,7 +7048,7 @@
                         "content": "远程武装。当前选中后提高武力与先手压制，适合在回合开始时削弱敌方前排。",
                         "font_size": 16.0,
                         "font_color": "#40343E",
-                        "font_path": "Songti.ttc",
+                        "font_path": "Hiragino Sans GB.ttc",
                         "font_weight": 700,
                         "line_height": "1.55",
                         "linebreak": "word_or_character"

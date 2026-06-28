@@ -216,5 +216,31 @@ pub(crate) fn parse_tab_group(value: &str) -> Result<TabGroup, String> {
 }
 
 pub(crate) fn parse_border_radius(value: &str) -> Result<BorderRadius, String> {
-    Ok(BorderRadius::all(parse_val(value)?))
+    let parts: Vec<&str> = value.split_whitespace().collect();
+    match parts.as_slice() {
+        [single] => Ok(BorderRadius::all(parse_val(single)?)),
+        [tl_br, tr_bl] => {
+            let top_left_bottom_right = parse_val(tl_br)?;
+            let top_right_bottom_left = parse_val(tr_bl)?;
+            Ok(BorderRadius::new(
+                top_left_bottom_right,
+                top_right_bottom_left,
+                top_left_bottom_right,
+                top_right_bottom_left,
+            ))
+        }
+        [tl, tr_bl, br] => Ok(BorderRadius::new(
+            parse_val(tl)?,
+            parse_val(tr_bl)?,
+            parse_val(br)?,
+            parse_val(tr_bl)?,
+        )),
+        [tl, tr, br, bl] => Ok(BorderRadius::new(
+            parse_val(tl)?,
+            parse_val(tr)?,
+            parse_val(br)?,
+            parse_val(bl)?,
+        )),
+        _ => Err(format!("Invalid border-radius '{value}'.")),
+    }
 }

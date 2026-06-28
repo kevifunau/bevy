@@ -10,6 +10,7 @@ pub(crate) fn css_text_shadow(value: &str) -> Option<BuiTextShadowConfig> {
     let layer = split_css_layers(value).into_iter().next()?;
     let mut offset_x = None;
     let mut offset_y = None;
+    let mut blur_radius = None;
     let mut color = css_color(&layer);
 
     for token in css_size_tokens(&layer) {
@@ -25,16 +26,19 @@ pub(crate) fn css_text_shadow(value: &str) -> Option<BuiTextShadowConfig> {
                 offset_x = Some(number);
             } else if offset_y.is_none() {
                 offset_y = Some(number);
-                break;
+            } else if blur_radius.is_none() {
+                blur_radius = Some(number);
             }
         }
     }
 
-    (offset_x.is_some() || offset_y.is_some() || color.is_some()).then_some(BuiTextShadowConfig {
-        offset_x,
-        offset_y,
-        color,
-    })
+    (offset_x.is_some() || offset_y.is_some() || blur_radius.is_some() || color.is_some())
+        .then_some(BuiTextShadowConfig {
+            offset_x,
+            offset_y,
+            blur_radius,
+            color,
+        })
 }
 
 fn css_text_shadow_length(token: &str) -> Option<f32> {

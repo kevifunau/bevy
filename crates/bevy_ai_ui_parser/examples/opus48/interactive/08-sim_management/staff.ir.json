@@ -207,8 +207,21 @@
                     "kind": "image",
                     "layout": {
                       "styles": {
+                        "display": "flex",
+                        "box_sizing": "border-box",
                         "width": "32px",
-                        "height": "32px"
+                        "height": "32px",
+                        "min_width": "0",
+                        "min_height": "0",
+                        "margin": "0",
+                        "padding": "0",
+                        "flex_direction": "column",
+                        "flex_shrink": "0"
+                      }
+                    },
+                    "style": {
+                      "visuals": {
+                        "border_width": "0"
                       }
                     },
                     "content": {
@@ -607,8 +620,21 @@
                         "kind": "image",
                         "layout": {
                           "styles": {
+                            "display": "flex",
+                            "box_sizing": "border-box",
                             "width": "28px",
-                            "height": "28px"
+                            "height": "28px",
+                            "min_width": "0",
+                            "min_height": "0",
+                            "margin": "0",
+                            "padding": "0",
+                            "flex_direction": "column",
+                            "flex_shrink": "0"
+                          }
+                        },
+                        "style": {
+                          "visuals": {
+                            "border_width": "0"
                           }
                         },
                         "content": {
@@ -1352,8 +1378,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "46px",
-                                        "height": "46px"
+                                        "height": "46px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -1719,8 +1758,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -1735,8 +1787,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -1751,8 +1816,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -3185,8 +3263,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -3448,8 +3539,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -3816,8 +3920,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "46px",
-                                        "height": "46px"
+                                        "height": "46px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -4183,8 +4300,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -4199,8 +4329,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -5633,8 +5776,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -5896,8 +6052,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -6340,8 +6509,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "46px",
-                                        "height": "46px"
+                                        "height": "46px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -6707,8 +6889,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -6723,8 +6918,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -8157,8 +8365,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -8420,8 +8641,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -8788,8 +9022,21 @@
                                     "kind": "image",
                                     "layout": {
                                       "styles": {
+                                        "display": "flex",
+                                        "box_sizing": "border-box",
                                         "width": "46px",
-                                        "height": "46px"
+                                        "height": "46px",
+                                        "min_width": "0",
+                                        "min_height": "0",
+                                        "margin": "0",
+                                        "padding": "0",
+                                        "flex_direction": "column",
+                                        "flex_shrink": "0"
+                                      }
+                                    },
+                                    "style": {
+                                      "visuals": {
+                                        "border_width": "0"
                                       }
                                     },
                                     "content": {
@@ -9155,8 +9402,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -9171,8 +9431,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -9187,8 +9460,21 @@
                                             "kind": "image",
                                             "layout": {
                                               "styles": {
+                                                "display": "flex",
+                                                "box_sizing": "border-box",
                                                 "width": "18px",
-                                                "height": "18px"
+                                                "height": "18px",
+                                                "min_width": "0",
+                                                "min_height": "0",
+                                                "margin": "0",
+                                                "padding": "0",
+                                                "flex_direction": "column",
+                                                "flex_shrink": "0"
+                                              }
+                                            },
+                                            "style": {
+                                              "visuals": {
+                                                "border_width": "0"
                                               }
                                             },
                                             "content": {
@@ -10621,8 +10907,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -10884,8 +11183,21 @@
                                         "kind": "image",
                                         "layout": {
                                           "styles": {
+                                            "display": "flex",
+                                            "box_sizing": "border-box",
                                             "width": "22px",
-                                            "height": "22px"
+                                            "height": "22px",
+                                            "min_width": "0",
+                                            "min_height": "0",
+                                            "margin": "0",
+                                            "padding": "0",
+                                            "flex_direction": "column",
+                                            "flex_shrink": "0"
+                                          }
+                                        },
+                                        "style": {
+                                          "visuals": {
+                                            "border_width": "0"
                                           }
                                         },
                                         "content": {
@@ -11445,8 +11757,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "30px",
-                                    "height": "30px"
+                                    "height": "30px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -12042,8 +12367,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "30px",
-                                    "height": "30px"
+                                    "height": "30px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -12639,8 +12977,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "30px",
-                                    "height": "30px"
+                                    "height": "30px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -13236,8 +13587,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "30px",
-                                    "height": "30px"
+                                    "height": "30px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -13907,8 +14271,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "36px",
-                                    "height": "36px"
+                                    "height": "36px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
@@ -14258,8 +14635,21 @@
                                 "kind": "image",
                                 "layout": {
                                   "styles": {
+                                    "display": "flex",
+                                    "box_sizing": "border-box",
                                     "width": "26px",
-                                    "height": "26px"
+                                    "height": "26px",
+                                    "min_width": "0",
+                                    "min_height": "0",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_direction": "column",
+                                    "flex_shrink": "0"
+                                  }
+                                },
+                                "style": {
+                                  "visuals": {
+                                    "border_width": "0"
                                   }
                                 },
                                 "content": {
