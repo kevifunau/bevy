@@ -21,12 +21,14 @@ pub enum EditorTab {
 pub fn create_dock_state() -> DockState<EditorTab> {
     let mut state = DockState::new(vec![EditorTab::Canvas]);
     let tree = state.main_surface_mut();
-    let [canvas, inspector] =
-        tree.split_right(NodeIndex::root(), 0.75, vec![EditorTab::Inspector]);
+    let [canvas, inspector] = tree.split_right(NodeIndex::root(), 0.75, vec![EditorTab::Inspector]);
     let [canvas, left] = tree.split_left(canvas, 0.2, vec![EditorTab::Hierarchy]);
     let [hierarchy, library] = tree.split_below(left, 0.5, vec![EditorTab::Library]);
-    let [_canvas, bottom] =
-        tree.split_below(canvas, 0.8, vec![EditorTab::StyleEditor, EditorTab::Console]);
+    let [_canvas, bottom] = tree.split_below(
+        canvas,
+        0.8,
+        vec![EditorTab::StyleEditor, EditorTab::Console],
+    );
     let _ = (inspector, hierarchy, library, bottom);
     state
 }
@@ -267,7 +269,8 @@ impl EditorState {
                 Ok(content) => {
                     match serde_json::from_str::<bevy_ai_ui_parser::BuiDocument>(&content) {
                         Ok(doc) => {
-                            let mut doc_resource = world.resource_mut::<bevy_ai_ui_parser::BuiDocumentResource>();
+                            let mut doc_resource =
+                                world.resource_mut::<bevy_ai_ui_parser::BuiDocumentResource>();
                             doc_resource.0 = doc;
                             self.ir_path = path;
                             self.dirty = false;
@@ -294,7 +297,8 @@ impl EditorState {
                     match serde_json::from_str::<bevy_ai_ui_parser::BuiDocument>(&json_str) {
                         Ok(doc) => {
                             let ir_path = html_path.with_extension("ir.json");
-                            let mut doc_resource = world.resource_mut::<bevy_ai_ui_parser::BuiDocumentResource>();
+                            let mut doc_resource =
+                                world.resource_mut::<bevy_ai_ui_parser::BuiDocumentResource>();
                             doc_resource.0 = doc;
                             self.ir_path = ir_path;
                             self.dirty = false;
@@ -336,9 +340,7 @@ impl egui_dock::TabViewer for TabViewer<'_> {
                 *self.viewport_rect = ui.clip_rect();
                 let zoom = *self.canvas_zoom;
                 let pan = *self.canvas_pan;
-                if let Some((new_zoom, new_pan)) =
-                    panels::canvas_panel(ui, self.world, zoom, pan)
-                {
+                if let Some((new_zoom, new_pan)) = panels::canvas_panel(ui, self.world, zoom, pan) {
                     *self.canvas_zoom = new_zoom;
                     *self.canvas_pan = new_pan;
                 }
@@ -354,7 +356,12 @@ impl egui_dock::TabViewer for TabViewer<'_> {
                 );
             }
             EditorTab::Library => {
-                panels::library_panel(ui, self.world, self.dragging_library_item, self.drag_hover_node_id);
+                panels::library_panel(
+                    ui,
+                    self.world,
+                    self.dragging_library_item,
+                    self.drag_hover_node_id,
+                );
             }
             EditorTab::Inspector => {
                 panels::inspector_panel(ui, self.world, &self.selected_node_id.clone());
@@ -397,8 +404,12 @@ pub fn set_camera_viewport(
     let max_h = window_size.y.saturating_sub(physical_position.y);
 
     let physical_size = bevy::math::UVec2::new(
-        ((viewport_rect.width() * scale_factor) as u32).min(max_w).max(1),
-        ((viewport_rect.height() * scale_factor) as u32).min(max_h).max(1),
+        ((viewport_rect.width() * scale_factor) as u32)
+            .min(max_w)
+            .max(1),
+        ((viewport_rect.height() * scale_factor) as u32)
+            .min(max_h)
+            .max(1),
     );
 
     cam.viewport = Some(Viewport {

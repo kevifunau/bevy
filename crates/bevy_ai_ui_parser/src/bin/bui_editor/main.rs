@@ -26,19 +26,17 @@ use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use bevy_ai_ui_parser::AiUiPlugin;
-use bevy_egui::{egui, EguiPlugin, EguiGlobalSettings, PrimaryEguiContext};
+use bevy_egui::{egui, EguiGlobalSettings, EguiPlugin, PrimaryEguiContext};
 use bevy_inspector_egui::DefaultInspectorConfigPlugin;
 
 use app_state::EditorState;
 
 fn main() {
-    let ir_path = std::env::args()
-        .nth(1)
-        .unwrap_or_else(|| {
-            eprintln!("Usage: cargo run --example bui_editor -- <path/to/file.ir.json>");
-            eprintln!("  No argument provided, using default.");
-            "examples/opus48/Dev/action_arena/index.ir.json".to_string()
-        });
+    let ir_path = std::env::args().nth(1).unwrap_or_else(|| {
+        eprintln!("Usage: cargo run --example bui_editor -- <path/to/file.ir.json>");
+        eprintln!("  No argument provided, using default.");
+        "examples/opus48/Dev/action_arena/index.ir.json".to_string()
+    });
 
     let ir_path = std::path::PathBuf::from(&ir_path);
     let ir_path = if ir_path.is_absolute() {

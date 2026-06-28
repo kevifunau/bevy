@@ -45,3 +45,41 @@ fn checked_in_ir_fixture_loads_through_runtime_parser() {
         Some(("press", "close_shop_overlay"))
     );
 }
+
+#[test]
+fn opendesign_json_list_declarations_compile_to_ir_semantics() {
+    let html = r#"
+    <main class="game-stage">
+      <div id="right_content"
+           data-bui-list="server.servers"
+           data-bui-json-src="Asset/ServerInfo.json"
+           data-bui-json-mode="page"
+           data-bui-page-size="5"
+           data-bui-page-source="server.region">
+        <button id="server_item_{{id}}" data-action="server.selectServer">
+          <span>{{id}}区  {{name}}</span>
+        </button>
+      </div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let list = find_bui_node(&document.root, "right_content");
+
+    assert_eq!(
+        list.semantics.list_binding_source.as_deref(),
+        Some("server.servers")
+    );
+    assert_eq!(
+        list.semantics.list_json_source.as_deref(),
+        Some("Asset/ServerInfo.json")
+    );
+    assert_eq!(list.semantics.list_json_mode.as_deref(), Some("page"));
+    assert_eq!(list.semantics.list_page_size, Some(5));
+    assert_eq!(
+        list.semantics.list_page_source.as_deref(),
+        Some("server.region")
+    );
+    assert_eq!(list.children.len(), 1);
+    assert_eq!(list.children[0].id, "server_item_{{id}}");
+}

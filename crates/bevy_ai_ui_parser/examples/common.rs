@@ -244,11 +244,7 @@ struct AutoScreenshotState {
 
 fn button_feedback_system(
     buttons: Query<
-        (
-            &Interaction,
-            Option<&BuiId>,
-            Option<&BuiLogicTags>,
-        ),
+        (&Interaction, Option<&BuiId>, Option<&BuiLogicTags>),
         (Changed<Interaction>, With<Button>),
     >,
 ) {

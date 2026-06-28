@@ -14,8 +14,8 @@ use bevy::asset::io::AssetSourceBuilder;
 use bevy::asset::{AssetPlugin, UnapprovedPathMode};
 use bevy::prelude::*;
 use bevy_ai_ui_parser::{
-    BuiActionAppExt, BuiActionTriggered, BuiPanelAppExt, BuiPanelSwitch, BuiStateSet,
-    BuiStateStore, BuiBindingValue,
+    BuiActionAppExt, BuiActionTriggered, BuiBindingValue, BuiPanelAppExt, BuiPanelSwitch,
+    BuiStateSet, BuiStateStore,
 };
 use bevy_camera::visibility::Visibility;
 
@@ -23,10 +23,7 @@ const WEBGAMEUI_DIR: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/examples/login_scene/webgameui"
 );
-const PREFABS_DIR: &str = concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/examples/login_scene/prefabs"
-);
+const PREFABS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/login_scene/prefabs");
 
 /// Persisted login data (equivalent to Unity's LoginData / LoginMgr).
 #[derive(Resource)]
@@ -90,11 +87,16 @@ fn main() {
             }),
     )
     // Plugin loads the initial panel (index = login) + registers all interaction systems
-    .add_plugins(bevy_ai_ui_parser::AiUiPlugin::from_path(format!("{PREFABS_DIR}/index.ir.json")))
+    .add_plugins(bevy_ai_ui_parser::AiUiPlugin::from_path(format!(
+        "{PREFABS_DIR}/index.ir.json"
+    )))
     // Register all panels (plugin handles loading/unloading)
     .register_bui_panel("login", format!("{PREFABS_DIR}/index.ir.json"))
     .register_bui_panel("register", format!("{PREFABS_DIR}/register.ir.json"))
-    .register_bui_panel("server_select", format!("{PREFABS_DIR}/server_select.ir.json"))
+    .register_bui_panel(
+        "server_select",
+        format!("{PREFABS_DIR}/server_select.ir.json"),
+    )
     .register_bui_panel("server_list", format!("{PREFABS_DIR}/server_list.ir.json"))
     .insert_resource(LoginData::default())
     .insert_resource(ClearColor(Color::srgb_u8(26, 26, 46)))
@@ -107,6 +109,8 @@ fn main() {
     .add_bui_action_handler("register.sure", handle_register_sure)
     .add_bui_action_handler("register.cancel", handle_register_cancel)
     .add_bui_action_handler("server.change", handle_server_change)
+    .add_bui_action_handler("server.selectRegion", handle_server_select_region)
+    .add_bui_action_handler("server.selectServer", handle_server_select_server)
     .add_bui_action_handler("server.start", handle_server_start)
     .add_bui_action_handler("server.back", handle_server_back)
     .run();
@@ -122,15 +126,39 @@ fn setup_camera(mut commands: Commands) {
 fn handle_login_sure(world: &mut World, _event: &BuiActionTriggered) {
     let (username, password, remember, auto) = {
         let store = &world.resource::<BuiStateStore>().0;
-        let get_text = |k: &str| store.get(k).and_then(|v| match v { BuiBindingValue::Text(t) => Some(t.clone()), _ => None }).unwrap_or_default();
-        let get_bool = |k: &str| store.get(k).and_then(|v| match v { BuiBindingValue::Bool(b) => Some(*b), _ => None }).unwrap_or(false);
-        (get_text("login.username"), get_text("login.password"), get_bool("login.rememberPw"), get_bool("login.autoLogin"))
+        let get_text = |k: &str| {
+            store
+                .get(k)
+                .and_then(|v| match v {
+                    BuiBindingValue::Text(t) => Some(t.clone()),
+                    _ => None,
+                })
+                .unwrap_or_default()
+        };
+        let get_bool = |k: &str| {
+            store
+                .get(k)
+                .and_then(|v| match v {
+                    BuiBindingValue::Bool(b) => Some(*b),
+                    _ => None,
+                })
+                .unwrap_or(false)
+        };
+        (
+            get_text("login.username"),
+            get_text("login.password"),
+            get_bool("login.rememberPw"),
+            get_bool("login.autoLogin"),
+        )
     };
 
     if username.len() <= 6 || password.len() <= 6 {
         info!("Login failed: too short");
         let mut w = world.resource_mut::<Messages<BuiStateSet>>();
-        w.write(BuiStateSet { key: "tip.info".into(), value: BuiBindingValue::Text("账号和密码都必须大于6位".into()) });
+        w.write(BuiStateSet {
+            key: "tip.info".into(),
+            value: BuiBindingValue::Text("账号和密码都必须大于6位".into()),
+        });
         show_node(world, "tip_panel");
         return;
     }
@@ -142,7 +170,7 @@ fn handle_login_sure(world: &mut World, _event: &BuiActionTriggered) {
     data.remember_pw = remember;
     data.auto_login = auto;
 
-    // Switch to server_select panel (plugin handles load/unload)
+    // Switch to server_select panel (plugin handles load/unload and JSON list data).
     world.resource_mut::<BuiPanelSwitch>().show("server_select");
 }
 
@@ -153,21 +181,41 @@ fn handle_login_register(world: &mut World, _event: &BuiActionTriggered) {
 
 /// Handle "login.toggleRemember" — when remember unchecked, uncheck auto login.
 fn handle_toggle_remember(world: &mut World, _event: &BuiActionTriggered) {
-    let remember = world.resource::<BuiStateStore>().0.get("login.rememberPw")
-        .and_then(|v| match v { BuiBindingValue::Bool(b) => Some(*b), _ => None }).unwrap_or(false);
+    let remember = world
+        .resource::<BuiStateStore>()
+        .0
+        .get("login.rememberPw")
+        .and_then(|v| match v {
+            BuiBindingValue::Bool(b) => Some(*b),
+            _ => None,
+        })
+        .unwrap_or(false);
     if !remember {
         let mut w = world.resource_mut::<Messages<BuiStateSet>>();
-        w.write(BuiStateSet { key: "login.autoLogin".into(), value: BuiBindingValue::Bool(false) });
+        w.write(BuiStateSet {
+            key: "login.autoLogin".into(),
+            value: BuiBindingValue::Bool(false),
+        });
     }
 }
 
 /// Handle "login.toggleAuto" — when auto checked, check remember.
 fn handle_toggle_auto(world: &mut World, _event: &BuiActionTriggered) {
-    let auto = world.resource::<BuiStateStore>().0.get("login.autoLogin")
-        .and_then(|v| match v { BuiBindingValue::Bool(b) => Some(*b), _ => None }).unwrap_or(false);
+    let auto = world
+        .resource::<BuiStateStore>()
+        .0
+        .get("login.autoLogin")
+        .and_then(|v| match v {
+            BuiBindingValue::Bool(b) => Some(*b),
+            _ => None,
+        })
+        .unwrap_or(false);
     if auto {
         let mut w = world.resource_mut::<Messages<BuiStateSet>>();
-        w.write(BuiStateSet { key: "login.rememberPw".into(), value: BuiBindingValue::Bool(true) });
+        w.write(BuiStateSet {
+            key: "login.rememberPw".into(),
+            value: BuiBindingValue::Bool(true),
+        });
     }
 }
 
@@ -175,14 +223,25 @@ fn handle_toggle_auto(world: &mut World, _event: &BuiActionTriggered) {
 fn handle_register_sure(world: &mut World, _event: &BuiActionTriggered) {
     let (username, password) = {
         let store = &world.resource::<BuiStateStore>().0;
-        let get_text = |k: &str| store.get(k).and_then(|v| match v { BuiBindingValue::Text(t) => Some(t.clone()), _ => None }).unwrap_or_default();
+        let get_text = |k: &str| {
+            store
+                .get(k)
+                .and_then(|v| match v {
+                    BuiBindingValue::Text(t) => Some(t.clone()),
+                    _ => None,
+                })
+                .unwrap_or_default()
+        };
         (get_text("register.username"), get_text("register.password"))
     };
 
     if username.len() <= 6 || password.len() <= 6 {
         info!("Register failed: too short");
         let mut w = world.resource_mut::<Messages<BuiStateSet>>();
-        w.write(BuiStateSet { key: "tip.info".into(), value: BuiBindingValue::Text("账号和密码都必须大于6位".into()) });
+        w.write(BuiStateSet {
+            key: "tip.info".into(),
+            value: BuiBindingValue::Text("账号和密码都必须大于6位".into()),
+        });
         show_node(world, "tip_panel");
         return;
     }
@@ -202,6 +261,32 @@ fn handle_server_change(world: &mut World, _event: &BuiActionTriggered) {
     world.resource_mut::<BuiPanelSwitch>().show("server_select");
 }
 
+/// Handle "server.selectRegion" — update the right-side server list.
+fn handle_server_select_region(world: &mut World, event: &BuiActionTriggered) {
+    let Some(region) = parse_region_from_id(&event.id) else {
+        return;
+    };
+    let mut w = world.resource_mut::<Messages<BuiStateSet>>();
+    w.write(BuiStateSet {
+        key: "server.region".into(),
+        value: BuiBindingValue::Number(region as f32),
+    });
+}
+
+/// Handle "server.selectServer" — remember selection and show the final server panel.
+fn handle_server_select_server(world: &mut World, event: &BuiActionTriggered) {
+    let Some(server_id) = parse_server_from_id(&event.id) else {
+        return;
+    };
+    let server_name =
+        selected_server_label(world, server_id).unwrap_or_else(|| format!("{server_id}区"));
+
+    let mut data = world.resource_mut::<LoginData>();
+    data.front_server_id = server_id;
+    data.front_server_name = server_name;
+    world.resource_mut::<BuiPanelSwitch>().show("server_list");
+}
+
 /// Handle "server.start" — enter game (exit for demo).
 fn handle_server_start(world: &mut World, _event: &BuiActionTriggered) {
     let data = world.resource::<LoginData>();
@@ -217,6 +302,29 @@ fn handle_server_back(world: &mut World, _event: &BuiActionTriggered) {
 }
 
 // ===== Helper =====
+
+fn parse_region_from_id(id: &str) -> Option<usize> {
+    id.strip_prefix("server_region_")?.parse().ok()
+}
+
+fn parse_server_from_id(id: &str) -> Option<i32> {
+    id.strip_prefix("server_item_")?.parse().ok()
+}
+
+fn selected_server_label(world: &World, server_id: i32) -> Option<String> {
+    let store = &world.resource::<BuiStateStore>().0;
+    let Some(BuiBindingValue::ObjectList(servers)) = store.get("server.servers") else {
+        return None;
+    };
+    servers.iter().find_map(|server| {
+        let id = server.get("id")?.parse::<i32>().ok()?;
+        if id == server_id {
+            server.get("label").cloned()
+        } else {
+            None
+        }
+    })
+}
 
 /// Show a node by its Bui id.
 fn show_node(world: &mut World, node_id: &str) {

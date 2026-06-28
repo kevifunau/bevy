@@ -274,10 +274,90 @@
                           }
                         },
                         "semantics": {
+                          "list_binding_source": "server.regions",
+                          "list_json_source": "Asset/ServerInfo.json",
+                          "list_json_mode": "regions",
+                          "list_page_size": 5,
                           "scroll_view": {
                             "axis": "y"
                           }
-                        }
+                        },
+                        "children": [
+                          {
+                            "id": "server_region_{{index}}",
+                            "kind": "node",
+                            "markers": [
+                              "class:left-item"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "server.selectRegion"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
+                                "height": "40px",
+                                "margin": "0",
+                                "padding": "0",
+                                "justify_content": "center",
+                                "align_items": "center"
+                              }
+                            },
+                            "content": {
+                              "image": {
+                                "texture_path": "Asset/server_select_bg.png",
+                                "image_mode": "stretch",
+                                "background_size": "100% 100%",
+                                "background_repeat": "no-repeat"
+                              }
+                            },
+                            "state_visuals": {
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              },
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.96 0.96"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "left_item_text",
+                                "kind": "node",
+                                "markers": [
+                                  "class:left-item-text"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "box_sizing": "border-box",
+                                    "margin": "0",
+                                    "padding": "0"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "left_item_text_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "{{label}}",
+                                        "font_size": 14.0,
+                                        "font_color": "#ccc",
+                                        "font_path": "Palatino.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
                       }
                     ]
                   },
@@ -333,10 +413,141 @@
                           }
                         },
                         "semantics": {
+                          "list_binding_source": "server.servers",
+                          "list_json_source": "Asset/ServerInfo.json",
+                          "list_json_mode": "page",
+                          "list_page_size": 5,
+                          "list_page_source": "server.region",
                           "scroll_view": {
                             "axis": "y"
                           }
-                        }
+                        },
+                        "children": [
+                          {
+                            "id": "server_item_{{id}}",
+                            "kind": "node",
+                            "markers": [
+                              "class:right-item"
+                            ],
+                            "actions": [
+                              {
+                                "event": "press",
+                                "emit": "server.selectServer"
+                              }
+                            ],
+                            "layout": {
+                              "styles": {
+                                "display": "flex",
+                                "box_sizing": "border-box",
+                                "margin": "0",
+                                "padding": "0 15px",
+                                "flex_direction": "row",
+                                "column_gap": "8px",
+                                "align_items": "center",
+                                "position_type": "relative"
+                              }
+                            },
+                            "content": {
+                              "image": {
+                                "texture_path": "Asset/server_list_bg.png",
+                                "image_mode": "stretch",
+                                "background_size": "100% 100%",
+                                "background_repeat": "no-repeat"
+                              }
+                            },
+                            "state_visuals": {
+                              "normal": {
+                                "styles": {
+                                  "ui_scale": "1 1"
+                                }
+                              },
+                              "pressed": {
+                                "styles": {
+                                  "ui_scale": "0.96 0.96"
+                                }
+                              }
+                            },
+                            "children": [
+                              {
+                                "id": "right_item_name",
+                                "kind": "node",
+                                "markers": [
+                                  "class:right-item-name"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "box_sizing": "border-box",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "flex_grow": "1",
+                                    "flex_shrink": "1",
+                                    "flex_basis": "0%"
+                                  }
+                                },
+                                "children": [
+                                  {
+                                    "id": "right_item_name_text_1",
+                                    "kind": "text",
+                                    "content": {
+                                      "text": {
+                                        "content": "{{label}}",
+                                        "font_size": 15.0,
+                                        "font_color": "#ddd",
+                                        "font_path": "Palatino.ttc"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "right_item_state",
+                                "kind": "node",
+                                "markers": [
+                                  "class:right-item-state",
+                                  "class:state-{{state}}"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "box_sizing": "border-box",
+                                    "width": "30px",
+                                    "height": "18px",
+                                    "margin": "0",
+                                    "padding": "0"
+                                  }
+                                }
+                              },
+                              {
+                                "id": "right_item_new",
+                                "kind": "node",
+                                "markers": [
+                                  "class:right-item-new",
+                                  "class:{{newClass}}"
+                                ],
+                                "layout": {
+                                  "styles": {
+                                    "display": "none",
+                                    "box_sizing": "border-box",
+                                    "width": "24px",
+                                    "height": "14px",
+                                    "right": "-2px",
+                                    "top": "-2px",
+                                    "margin": "0",
+                                    "padding": "0",
+                                    "position_type": "absolute"
+                                  }
+                                },
+                                "content": {
+                                  "image": {
+                                    "texture_path": "Asset/new_tag.png",
+                                    "image_mode": "auto",
+                                    "background_size": "contain",
+                                    "background_repeat": "no-repeat"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
                       }
                     ]
                   }
@@ -503,7 +714,7 @@
                           "text": {
                             "content": "服务器列表",
                             "font_size": 13.0,
-                            "font_color": "#fff",
+                            "font_color": "#FFFFFF80",
                             "font_path": "Songti.ttc",
                             "linebreak": "word_or_character"
                           }

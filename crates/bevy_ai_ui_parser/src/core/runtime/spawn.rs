@@ -12,7 +12,7 @@ use crate::core::{
     interaction::components::{BuiFocusOrder, BuiScrollView, BuiTextInputProxy, BuiToggle},
     model::{BuiDocument, BuiNode, BuiNodeType},
     runtime::{
-        image::{background_image_layout, build_image_node},
+        image::{apply_ui_opacity_to_image_node, background_image_layout, build_image_node},
         node_spawn::{
             build_node, insert_identity_components, insert_style_components,
             insert_visual_components, stage_fit_from_node,
@@ -124,6 +124,12 @@ fn spawn_bui_node_inner(
         BuiNodeType::Toggle => {
             let mut entity_commands = commands.entity(entity);
             entity_commands.insert((Button, Checkable, BuiToggle, base_node));
+            insert_optional_background_image(
+                &mut entity_commands,
+                asset_server,
+                texture_atlases,
+                node,
+            )?;
             if node.markers.iter().any(|tag| tag == "State_Checked") {
                 entity_commands.insert(Checked);
             }
@@ -166,7 +172,8 @@ fn spawn_bui_node_inner(
                 .image
                 .as_ref()
                 .ok_or_else(|| format!("Image node '{}' is missing image_config.", node.id))?;
-            let image_node = build_image_node(asset_server, texture_atlases, image_config)?;
+            let mut image_node = build_image_node(asset_server, texture_atlases, image_config)?;
+            apply_ui_opacity_to_image_node(&mut image_node, node.layout.styles.ui_opacity);
             let mut entity_commands = commands.entity(entity);
             entity_commands.insert((base_node, image_node, FocusPolicy::Pass));
             if let Some(layout) = background_image_layout(image_config) {
@@ -269,11 +276,9 @@ fn insert_optional_background_image(
         return Ok(());
     };
 
-    entity_commands.insert(build_image_node(
-        asset_server,
-        texture_atlases,
-        image_config,
-    )?);
+    let mut image_node = build_image_node(asset_server, texture_atlases, image_config)?;
+    apply_ui_opacity_to_image_node(&mut image_node, node.layout.styles.ui_opacity);
+    entity_commands.insert(image_node);
     if let Some(layout) = background_image_layout(image_config) {
         entity_commands.insert(layout);
     }

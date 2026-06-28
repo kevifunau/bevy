@@ -16,9 +16,7 @@ pub(crate) fn svg_asset_key(
     svg_node: roxmltree::Node<'_, '_>,
     index: usize,
 ) -> String {
-    let svg_id = svg_node
-        .attribute("id")
-        .filter(|id| !id.trim().is_empty());
+    let svg_id = svg_node.attribute("id").filter(|id| !id.trim().is_empty());
     match svg_id {
         Some(id) => format!("{}__{}", parent.id, id),
         None => format!("{}__svg_{}", parent.id, index),
@@ -46,10 +44,7 @@ pub(crate) fn svg_render_scale(svg_node: roxmltree::Node<'_, '_>) -> (u32, u32) 
     ((w * 2.0).round() as u32, (h * 2.0).round() as u32)
 }
 
-fn parse_dimension_attribute(
-    svg_node: roxmltree::Node<'_, '_>,
-    attr: &str,
-) -> Option<f32> {
+fn parse_dimension_attribute(svg_node: roxmltree::Node<'_, '_>, attr: &str) -> Option<f32> {
     svg_node
         .attribute(attr)
         .and_then(|v| {
@@ -111,5 +106,7 @@ fn escape_xml_value(value: &str) -> String {
 }
 
 fn escape_xml_text(text: &str) -> String {
-    text.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
+    text.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
 }

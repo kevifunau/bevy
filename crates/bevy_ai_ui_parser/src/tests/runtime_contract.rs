@@ -3,12 +3,20 @@ use crate::core::model::{bui_node, BuiStyles, BuiVisuals};
 use crate::core::opendesign::html::opendesign_html_to_bui_document;
 use crate::core::runtime::{
     components::{BuiStageFit, BuiStageFitMode},
+    image::apply_ui_opacity_to_image_node,
     node_spawn::build_node,
+    spawn::spawn_bui_tree,
     stage_fit::stage_fit_scale,
 };
 use crate::core::style::css_parser::apply_css_transform;
+use bevy_app::{App, TaskPoolPlugin};
+use bevy_asset::Handle;
+use bevy_asset::{AssetApp, AssetPlugin, Assets};
+use bevy_color::{Alpha, Color};
+use bevy_ecs::world::CommandQueue;
+use bevy_image::{Image, TextureAtlasLayout};
 use bevy_math::Vec2;
-use bevy_ui::{BoxSizing, OverflowAxis};
+use bevy_ui::{widget::ImageNode, BoxSizing, OverflowAxis};
 
 #[test]
 fn opendesign_hover_filter_compiles_to_hovered_state_colors() {
@@ -395,4 +403,89 @@ fn css_opacity_on_node_without_background_stores_ui_opacity() {
     let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
     let ghost = find_bui_node(&document.root, "ghost");
     assert_eq!(ghost.layout.styles.ui_opacity, Some(0.5));
+}
+
+#[test]
+fn runtime_image_node_applies_css_ui_opacity_to_image_tint() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 320px;
+            height: 180px;
+          }
+          .backdrop {
+            width: 320px;
+            height: 180px;
+          }
+          .backdrop img {
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+          }
+        </style>
+        <main class="game-stage">
+          <div class="backdrop">
+            <img src="Asset/BK.png" />
+          </div>
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let image_node = find_bui_node(&document.root, "img");
+    assert_eq!(image_node.layout.styles.ui_opacity, Some(0.5));
+
+    let mut image = ImageNode::new(Handle::default());
+    image.color = Color::srgba(1.0, 1.0, 1.0, 0.8);
+    apply_ui_opacity_to_image_node(&mut image, image_node.layout.styles.ui_opacity);
+
+    assert_eq!(image.color.alpha(), 0.4);
+}
+
+#[test]
+fn runtime_toggle_node_inserts_configured_image_node() {
+    let html = r#"
+        <style>
+          .game-stage {
+            width: 320px;
+            height: 180px;
+          }
+          input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background-image: url("Asset/checkbox_bg.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+        </style>
+        <main class="game-stage">
+          <input type="checkbox" />
+        </main>
+        "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let mut app = App::new();
+    app.add_plugins((TaskPoolPlugin::default(), AssetPlugin::default()));
+    app.init_asset::<Image>();
+    let asset_server = app.world().resource::<bevy_asset::AssetServer>().clone();
+    let mut texture_atlases = Assets::<TextureAtlasLayout>::default();
+    let mut command_queue = CommandQueue::default();
+    let mut commands = bevy_ecs::system::Commands::new(&mut command_queue, app.world());
+
+    let (_root, id_map) = spawn_bui_tree(
+        &mut commands,
+        &asset_server,
+        &mut texture_atlases,
+        &document,
+    )
+    .expect("document should spawn");
+    command_queue.apply(app.world_mut());
+
+    let toggle_entity = id_map
+        .get("input")
+        .expect("checkbox should compile to a toggle entity");
+    assert!(
+        app.world().entity(*toggle_entity).contains::<ImageNode>(),
+        "toggle entity should render its configured checkbox image"
+    );
 }

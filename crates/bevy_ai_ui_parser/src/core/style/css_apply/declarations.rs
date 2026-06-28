@@ -63,6 +63,11 @@ pub(crate) fn apply_opendesign_declaration(bui_node: &mut BuiNode, name: &str, v
                 bui_node.layout.styles.box_sizing = Some(value);
             }
         }
+        "visibility" => {
+            if matches!(value.as_str(), "visible" | "hidden" | "inherited") {
+                bui_node.layout.styles.visibility = Some(value);
+            }
+        }
         "position" => {
             if matches!(value.as_str(), "absolute" | "relative") {
                 bui_node.layout.styles.position_type = Some(value);

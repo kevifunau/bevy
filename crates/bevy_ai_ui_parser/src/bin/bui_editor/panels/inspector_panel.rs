@@ -5,11 +5,7 @@ use bevy_egui::egui;
 use super::find_node_by_id;
 use crate::undo::commands::*;
 
-pub fn inspector_panel(
-    ui: &mut egui::Ui,
-    world: &mut World,
-    selected_node_id: &Option<String>,
-) {
+pub fn inspector_panel(ui: &mut egui::Ui, world: &mut World, selected_node_id: &Option<String>) {
     ui.heading("Inspector");
 
     let Some(doc) = world.get_resource::<BuiDocumentResource>() else {
@@ -64,8 +60,20 @@ pub fn inspector_panel(
 
     let mut text_changed = false;
 
-    render_layout_editor(ui, &mut node.layout.styles, id_seed, &mut commands_to_push, &node_id_for_cmds);
-    render_visuals_editor(ui, &mut node.style.visuals, id_seed, &mut commands_to_push, &node_id_for_cmds);
+    render_layout_editor(
+        ui,
+        &mut node.layout.styles,
+        id_seed,
+        &mut commands_to_push,
+        &node_id_for_cmds,
+    );
+    render_visuals_editor(
+        ui,
+        &mut node.style.visuals,
+        id_seed,
+        &mut commands_to_push,
+        &node_id_for_cmds,
+    );
 
     if let Some(text) = &mut node.content.text {
         ui.add_space(8.0);
@@ -122,7 +130,13 @@ fn render_layout_editor(
                 track_edit(ui, "max_width", &mut styles.max_width, commands, node_id);
                 track_edit(ui, "max_height", &mut styles.max_height, commands, node_id);
                 track_edit(ui, "box_sizing", &mut styles.box_sizing, commands, node_id);
-                track_edit(ui, "aspect_ratio", &mut styles.aspect_ratio, commands, node_id);
+                track_edit(
+                    ui,
+                    "aspect_ratio",
+                    &mut styles.aspect_ratio,
+                    commands,
+                    node_id,
+                );
             });
     });
 
@@ -136,7 +150,13 @@ fn render_layout_editor(
                 track_edit(ui, "right", &mut styles.right, commands, node_id);
                 track_edit(ui, "bottom", &mut styles.bottom, commands, node_id);
                 track_edit(ui, "z_index", &mut styles.z_index, commands, node_id);
-                track_edit(ui, "global_z_index", &mut styles.global_z_index, commands, node_id);
+                track_edit(
+                    ui,
+                    "global_z_index",
+                    &mut styles.global_z_index,
+                    commands,
+                    node_id,
+                );
             });
     });
 
@@ -145,13 +165,37 @@ fn render_layout_editor(
             .num_columns(2)
             .striped(true)
             .show(ui, |ui| {
-                track_edit(ui, "flex_direction", &mut styles.flex_direction, commands, node_id);
+                track_edit(
+                    ui,
+                    "flex_direction",
+                    &mut styles.flex_direction,
+                    commands,
+                    node_id,
+                );
                 track_edit(ui, "flex_wrap", &mut styles.flex_wrap, commands, node_id);
                 track_edit(ui, "flex_grow", &mut styles.flex_grow, commands, node_id);
-                track_edit(ui, "flex_shrink", &mut styles.flex_shrink, commands, node_id);
+                track_edit(
+                    ui,
+                    "flex_shrink",
+                    &mut styles.flex_shrink,
+                    commands,
+                    node_id,
+                );
                 track_edit(ui, "flex_basis", &mut styles.flex_basis, commands, node_id);
-                track_edit(ui, "justify_content", &mut styles.justify_content, commands, node_id);
-                track_edit(ui, "align_items", &mut styles.align_items, commands, node_id);
+                track_edit(
+                    ui,
+                    "justify_content",
+                    &mut styles.justify_content,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "align_items",
+                    &mut styles.align_items,
+                    commands,
+                    node_id,
+                );
                 track_edit(ui, "align_self", &mut styles.align_self, commands, node_id);
                 track_edit(ui, "row_gap", &mut styles.row_gap, commands, node_id);
                 track_edit(ui, "column_gap", &mut styles.column_gap, commands, node_id);
@@ -163,11 +207,41 @@ fn render_layout_editor(
             .num_columns(2)
             .striped(true)
             .show(ui, |ui| {
-                track_edit(ui, "grid_template_columns", &mut styles.grid_template_columns, commands, node_id);
-                track_edit(ui, "grid_template_rows", &mut styles.grid_template_rows, commands, node_id);
-                track_edit(ui, "grid_auto_columns", &mut styles.grid_auto_columns, commands, node_id);
-                track_edit(ui, "grid_auto_rows", &mut styles.grid_auto_rows, commands, node_id);
-                track_edit(ui, "grid_column", &mut styles.grid_column, commands, node_id);
+                track_edit(
+                    ui,
+                    "grid_template_columns",
+                    &mut styles.grid_template_columns,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "grid_template_rows",
+                    &mut styles.grid_template_rows,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "grid_auto_columns",
+                    &mut styles.grid_auto_columns,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "grid_auto_rows",
+                    &mut styles.grid_auto_rows,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "grid_column",
+                    &mut styles.grid_column,
+                    commands,
+                    node_id,
+                );
                 track_edit(ui, "grid_row", &mut styles.grid_row, commands, node_id);
             });
     });
@@ -179,14 +253,56 @@ fn render_layout_editor(
             .show(ui, |ui| {
                 track_edit(ui, "margin", &mut styles.margin, commands, node_id);
                 track_edit(ui, "margin_top", &mut styles.margin_top, commands, node_id);
-                track_edit(ui, "margin_bottom", &mut styles.margin_bottom, commands, node_id);
-                track_edit(ui, "margin_left", &mut styles.margin_left, commands, node_id);
-                track_edit(ui, "margin_right", &mut styles.margin_right, commands, node_id);
+                track_edit(
+                    ui,
+                    "margin_bottom",
+                    &mut styles.margin_bottom,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "margin_left",
+                    &mut styles.margin_left,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "margin_right",
+                    &mut styles.margin_right,
+                    commands,
+                    node_id,
+                );
                 track_edit(ui, "padding", &mut styles.padding, commands, node_id);
-                track_edit(ui, "padding_top", &mut styles.padding_top, commands, node_id);
-                track_edit(ui, "padding_bottom", &mut styles.padding_bottom, commands, node_id);
-                track_edit(ui, "padding_left", &mut styles.padding_left, commands, node_id);
-                track_edit(ui, "padding_right", &mut styles.padding_right, commands, node_id);
+                track_edit(
+                    ui,
+                    "padding_top",
+                    &mut styles.padding_top,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "padding_bottom",
+                    &mut styles.padding_bottom,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "padding_left",
+                    &mut styles.padding_left,
+                    commands,
+                    node_id,
+                );
+                track_edit(
+                    ui,
+                    "padding_right",
+                    &mut styles.padding_right,
+                    commands,
+                    node_id,
+                );
             });
     });
 
@@ -215,10 +331,34 @@ fn render_visuals_editor(
         .num_columns(2)
         .striped(true)
         .show(ui, |ui| {
-            track_edit(ui, "background_color", &mut visuals.background_color, commands, node_id);
-            track_edit(ui, "border_color", &mut visuals.border_color, commands, node_id);
-            track_edit(ui, "border_width", &mut visuals.border_width, commands, node_id);
-            track_edit(ui, "border_radius", &mut visuals.border_radius, commands, node_id);
+            track_edit(
+                ui,
+                "background_color",
+                &mut visuals.background_color,
+                commands,
+                node_id,
+            );
+            track_edit(
+                ui,
+                "border_color",
+                &mut visuals.border_color,
+                commands,
+                node_id,
+            );
+            track_edit(
+                ui,
+                "border_width",
+                &mut visuals.border_width,
+                commands,
+                node_id,
+            );
+            track_edit(
+                ui,
+                "border_radius",
+                &mut visuals.border_radius,
+                commands,
+                node_id,
+            );
         });
 }
 

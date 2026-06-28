@@ -360,6 +360,7 @@ pub(crate) fn generic_element_node(
     }
     apply_opendesign_styles(stylesheet, &mut node, dom_node);
     apply_slider_semantics(&mut node, dom_node);
+    apply_list_semantics(&mut node, dom_node);
     apply_scroll_view_semantics(&mut node, dom_node);
     apply_dropdown_semantics(&mut node, dom_node);
     apply_attribute_state_aliases(&mut node, dom_node);
@@ -434,6 +435,45 @@ fn apply_slider_semantics(node: &mut BuiNode, dom_node: roxmltree::Node<'_, '_>)
         step,
         orientation,
     });
+}
+
+fn apply_list_semantics(node: &mut BuiNode, dom_node: roxmltree::Node<'_, '_>) {
+    let list_source = dom_node
+        .attribute("data-bui-list")
+        .or_else(|| dom_node.attribute("data-list-binding"))
+        .filter(|value| !value.trim().is_empty());
+    let json_source = dom_node
+        .attribute("data-bui-json-src")
+        .or_else(|| dom_node.attribute("data-json-src"))
+        .filter(|value| !value.trim().is_empty());
+
+    if let Some(source) = list_source {
+        node.semantics.list_binding_source = Some(source.to_string());
+    }
+    if let Some(source) = json_source {
+        node.semantics.list_json_source = Some(source.to_string());
+    }
+    if let Some(mode) = dom_node
+        .attribute("data-bui-json-mode")
+        .or_else(|| dom_node.attribute("data-json-mode"))
+        .filter(|value| !value.trim().is_empty())
+    {
+        node.semantics.list_json_mode = Some(mode.to_string());
+    }
+    if let Some(page_size) = dom_node
+        .attribute("data-bui-page-size")
+        .or_else(|| dom_node.attribute("data-page-size"))
+        .and_then(|value| value.parse::<usize>().ok())
+    {
+        node.semantics.list_page_size = Some(page_size);
+    }
+    if let Some(source) = dom_node
+        .attribute("data-bui-page-source")
+        .or_else(|| dom_node.attribute("data-page-source"))
+        .filter(|value| !value.trim().is_empty())
+    {
+        node.semantics.list_page_source = Some(source.to_string());
+    }
 }
 
 fn apply_scroll_view_semantics(node: &mut BuiNode, dom_node: roxmltree::Node<'_, '_>) {

@@ -126,6 +126,8 @@
             },
             "style": {
               "visuals": {
+                "background_color": "#141423D9",
+                "border_color": "#FFD7004D",
                 "border_width": "2px",
                 "border_radius": "12px"
               }
@@ -638,7 +640,8 @@
                             "line_height": "1",
                             "text_shadow": {
                               "offset_x": 0.0,
-                              "offset_y": 1.0
+                              "offset_y": 1.0,
+                              "color": "#000000CC"
                             },
                             "linebreak": "word_or_character"
                           }
@@ -703,7 +706,8 @@
                             "line_height": "1",
                             "text_shadow": {
                               "offset_x": 0.0,
-                              "offset_y": 1.0
+                              "offset_y": 1.0,
+                              "color": "#000000CC"
                             },
                             "linebreak": "word_or_character"
                           }
@@ -725,6 +729,7 @@
               "styles": {
                 "display": "flex",
                 "box_sizing": "border-box",
+                "visibility": "hidden",
                 "left": "0",
                 "right": "0",
                 "top": "0",
@@ -758,6 +763,8 @@
                 },
                 "style": {
                   "visuals": {
+                    "background_color": "#141423E6",
+                    "border_color": "#FFD7004D",
                     "border_width": "2px",
                     "border_radius": "10px"
                   }

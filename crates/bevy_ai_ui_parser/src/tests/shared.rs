@@ -23,20 +23,14 @@ pub(super) fn css_simple_linear_gradient_overlay(
     ))
 }
 
-pub(super) const VILLAGE_SHOP_HTML: &str =
-    include_str!("fixtures/village-shop-overlay.html");
-pub(super) const VILLAGE_SHOP_IR: &str =
-    include_str!("fixtures/village-shop-overlay.ir.json");
-pub(super) const QUEST_NOTICE_HTML: &str =
-    include_str!("fixtures/quest-notice-overlay.html");
+pub(super) const VILLAGE_SHOP_HTML: &str = include_str!("fixtures/village-shop-overlay.html");
+pub(super) const VILLAGE_SHOP_IR: &str = include_str!("fixtures/village-shop-overlay.ir.json");
+pub(super) const QUEST_NOTICE_HTML: &str = include_str!("fixtures/quest-notice-overlay.html");
 pub(super) const HERO_GAME_UI_HTML: &str = include_str!("fixtures/hero-game-ui.html");
 pub(super) const HERO_GAME_UI_IR: &str = include_str!("fixtures/hero-game-ui.ir.json");
-pub(super) const BEVY_UI_EXAMPLE_HTML: &str =
-    include_str!("fixtures/bevy-ui-example.html");
-pub(super) const BEVY_UI_ASSET_FLOW_HTML: &str =
-    include_str!("fixtures/bevy-ui-asset-flow.html");
-pub(super) const BEVY_UI_ASSET_FLOW_MANIFEST: &str =
-    include_str!("fixtures/bevy-ui.assets.json");
+pub(super) const BEVY_UI_EXAMPLE_HTML: &str = include_str!("fixtures/bevy-ui-example.html");
+pub(super) const BEVY_UI_ASSET_FLOW_HTML: &str = include_str!("fixtures/bevy-ui-asset-flow.html");
+pub(super) const BEVY_UI_ASSET_FLOW_MANIFEST: &str = include_str!("fixtures/bevy-ui.assets.json");
 pub(super) const BEVY_UI_TEXT_BASELINE_HTML: &str =
     include_str!("fixtures/bevy-ui-text-baseline.html");
 pub(super) const BEVY_UI_CAR_HTML: &str = include_str!("fixtures/bevy-ui-car.html");

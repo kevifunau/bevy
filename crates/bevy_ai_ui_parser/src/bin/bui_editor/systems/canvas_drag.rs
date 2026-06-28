@@ -1,6 +1,6 @@
 use bevy::input::mouse::MouseMotion;
-use bevy::prelude::*;
 use bevy::picking::pointer::PointerInteraction;
+use bevy::prelude::*;
 use bevy::ui::ui_transform::UiGlobalTransform;
 use bevy::ui::ComputedNode;
 use bevy_ai_ui_parser::{BuiDocumentResource, BuiId, BuiNode};
@@ -158,11 +158,7 @@ pub fn handle_canvas_drag(
 }
 
 fn parse_px(s: &str) -> Option<f32> {
-    s.trim()
-        .trim_end_matches("px")
-        .trim()
-        .parse::<f32>()
-        .ok()
+    s.trim().trim_end_matches("px").trim().parse::<f32>().ok()
 }
 
 fn find_node_by_id<'a>(root: &'a BuiNode, id: &str) -> Option<&'a BuiNode> {

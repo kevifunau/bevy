@@ -1,16 +1,26 @@
 pub(crate) fn sanitize_id(value: &str) -> String {
-    value
-        .chars()
-        .map(|character| {
-            if character.is_ascii_alphanumeric() {
-                character.to_ascii_lowercase()
-            } else {
-                '_'
+    let mut output = String::new();
+    let mut chars = value.chars().peekable();
+
+    while let Some(character) = chars.next() {
+        if character == '{' && chars.peek() == Some(&'{') {
+            chars.next();
+            output.push_str("{{");
+            while let Some(token_character) = chars.next() {
+                output.push(token_character);
+                if token_character == '}' && chars.peek() == Some(&'}') {
+                    output.push(chars.next().expect("peeked closing brace should exist"));
+                    break;
+                }
             }
-        })
-        .collect::<String>()
-        .trim_matches('_')
-        .to_string()
+        } else if character.is_ascii_alphanumeric() {
+            output.push(character.to_ascii_lowercase());
+        } else {
+            output.push('_');
+        }
+    }
+
+    output.trim_matches('_').to_string()
 }
 
 pub(crate) fn pascal_case(value: &str) -> String {

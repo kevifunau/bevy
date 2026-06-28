@@ -4,19 +4,17 @@ use bevy_egui::egui;
 
 use super::find_node_by_id;
 
-pub fn style_editor_panel(
-    ui: &mut egui::Ui,
-    _world: &World,
-    _selected_node_id: &Option<String>,
-) {
+pub fn style_editor_panel(ui: &mut egui::Ui, _world: &World, _selected_node_id: &Option<String>) {
     ui.heading("Style Editor");
     ui.label("CSS field quick-edit");
     ui.add_space(4.0);
 
-    ui.label("\
+    ui.label(
+        "\
         This panel mirrors the Inspector's layout/visuals sections. \
         In Phase 3 it will gain undo/redo, color pickers, and \
-        drag-to-adjust numeric fields.");
+        drag-to-adjust numeric fields.",
+    );
     ui.add_space(8.0);
 
     ui.collapsing("CSS Quick Reference", |ui| {

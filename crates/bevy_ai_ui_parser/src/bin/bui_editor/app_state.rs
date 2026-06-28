@@ -86,8 +86,8 @@ pub struct EditorState {
 
 impl EditorState {
     pub fn save(&self, doc: &BuiDocument) -> Result<(), String> {
-        let json = serde_json::to_string_pretty(doc)
-            .map_err(|e| format!("Serialize error: {e}"))?;
+        let json =
+            serde_json::to_string_pretty(doc).map_err(|e| format!("Serialize error: {e}"))?;
 
         std::fs::write(&self.ir_path, json).map_err(|e| format!("Write error: {e}"))?;
 

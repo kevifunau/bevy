@@ -1,4 +1,5 @@
 use bevy_asset::{AssetServer, Assets};
+use bevy_color::Alpha;
 use bevy_ecs::prelude::*;
 use bevy_image::{TextureAtlas, TextureAtlasLayout};
 use bevy_math::{Rect, UVec2, Vec2};
@@ -47,6 +48,14 @@ pub(crate) fn build_image_node(
     image_node.flip_x = image_config.flip_x;
     image_node.flip_y = image_config.flip_y;
     Ok(image_node)
+}
+
+pub(crate) fn apply_ui_opacity_to_image_node(image_node: &mut ImageNode, opacity: Option<f32>) {
+    let Some(opacity) = opacity else {
+        return;
+    };
+    let alpha = image_node.color.alpha() * opacity.clamp(0.0, 1.0);
+    image_node.color.set_alpha(alpha);
 }
 
 pub(crate) fn background_image_layout(

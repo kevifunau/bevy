@@ -1,6 +1,5 @@
 use bevy_ai_ui_parser::{
-    BuiNode, BuiStyles, BuiVisuals, BuiTextConfig, BuiImageConfig,
-    BuiSliderSemantics,
+    BuiImageConfig, BuiNode, BuiSliderSemantics, BuiStyles, BuiTextConfig, BuiVisuals,
 };
 
 use crate::app_state::LibraryItem;

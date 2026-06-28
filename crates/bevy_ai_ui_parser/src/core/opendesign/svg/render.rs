@@ -1,6 +1,4 @@
-use crate::core::{
-    model::{bui_node, BuiImageConfig, BuiNode},
-};
+use crate::core::model::{bui_node, BuiImageConfig, BuiNode};
 
 use super::extract::svg_viewbox_size;
 

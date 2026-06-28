@@ -90,6 +90,7 @@
   .right-item.selected { border: 2px solid #ffd700; border-radius: 4px; }
   .right-item-name { font-size: 15px; color: #ddd; flex: 1; }
   .right-item-state { width: 30px; height: 18px; background-repeat: no-repeat; background-size: contain; }
+  .right-item-state.state-0 { display: none; }
   .right-item-state.state-1 { background-image: url("Asset/status_smooth.png"); }
   .right-item-state.state-2 { background-image: url("Asset/status_busy.png"); }
   .right-item-state.state-3 { background-image: url("Asset/status_hot.png"); }
@@ -144,10 +145,29 @@
 
     <div class="server-content">
       <div class="sv-left" id="svLeft">
-        <div class="sv-left-content" id="left_content"></div>
+        <div class="sv-left-content" id="left_content"
+             data-bui-list="server.regions"
+             data-bui-json-src="Asset/ServerInfo.json"
+             data-bui-json-mode="regions"
+             data-bui-page-size="5">
+          <div class="left-item" id="server_region_{{index}}" data-action="server.selectRegion">
+            <span class="left-item-text">{{label}}</span>
+          </div>
+        </div>
       </div>
       <div class="sv-right" id="svRight">
-        <div class="sv-right-content" id="right_content"></div>
+        <div class="sv-right-content" id="right_content"
+             data-bui-list="server.servers"
+             data-bui-json-src="Asset/ServerInfo.json"
+             data-bui-json-mode="page"
+             data-bui-page-size="5"
+             data-bui-page-source="server.region">
+          <div class="right-item" id="server_item_{{id}}" data-action="server.selectServer">
+            <span class="right-item-name">{{label}}</span>
+            <div class="right-item-state state-{{state}}"></div>
+            <div class="right-item-new {{newClass}}"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -178,88 +198,70 @@
       var txtRange = document.getElementById('txtRange');
       var lastLoginState = document.getElementById('lastLoginState');
 
-      var serverData = [
-        {"id":1,"name":"天下无双","state":0,"isNew":false},
-        {"id":2,"name":"无双霸业","state":1,"isNew":false},
-        {"id":3,"name":"天下无敌","state":2,"isNew":false},
-        {"id":4,"name":"哈哈哈哈","state":3,"isNew":false},
-        {"id":5,"name":"黑恶阿斯","state":4,"isNew":false},
-        {"id":6,"name":"上的重新","state":0,"isNew":false},
-        {"id":7,"name":"的地方人","state":1,"isNew":false},
-        {"id":8,"name":"而提供给","state":2,"isNew":false},
-        {"id":9,"name":"天下无双1","state":3,"isNew":false},
-        {"id":10,"name":"天下无双2","state":4,"isNew":false},
-        {"id":11,"name":"天下无双3","state":0,"isNew":false},
-        {"id":12,"name":"天下无双4","state":1,"isNew":false},
-        {"id":13,"name":"天下无双5","state":2,"isNew":false},
-        {"id":14,"name":"天下无双6","state":3,"isNew":false},
-        {"id":15,"name":"天下无双7","state":4,"isNew":false},
-        {"id":16,"name":"天下无双8","state":0,"isNew":false},
-        {"id":17,"name":"天下无双9","state":1,"isNew":false},
-        {"id":18,"name":"天下无双10","state":2,"isNew":false},
-        {"id":19,"name":"天下无双11","state":3,"isNew":false},
-        {"id":20,"name":"天下无双12","state":4,"isNew":false},
-        {"id":21,"name":"天下无双13","state":0,"isNew":false},
-        {"id":22,"name":"天下无双14","state":1,"isNew":false},
-        {"id":23,"name":"天下无双15","state":2,"isNew":false},
-        {"id":24,"name":"天下无双16","state":3,"isNew":false},
-        {"id":25,"name":"天下无双17","state":4,"isNew":true},
-        {"id":26,"name":"天下无双18","state":4,"isNew":true}
-      ];
+      fetch('Asset/ServerInfo.json')
+        .then(function(res) { return res.json(); })
+        .then(function(serverData) {
+          init(serverData);
+        })
+        .catch(function(err) {
+          console.error('Failed to load ServerInfo.json:', err);
+        });
 
-      var numGroups = Math.floor(serverData.length / 5) + 1;
-      for (var i = 0; i < numGroups; i++) {
-        var begin = i * 5 + 1;
-        var end = Math.min(5 * (i + 1), serverData.length);
-        if (begin > serverData.length) break;
-        var item = document.createElement('div');
-        item.className = 'left-item' + (i === 0 ? ' active' : '');
-        item.innerHTML = '<span class="left-item-text">' + begin + ' - ' + end + '区</span>';
-        (function(b, e, el) {
-          el.addEventListener('click', function() {
-            var prev = leftContent.querySelector('.left-item.active');
-            if (prev) prev.classList.remove('active');
-            el.classList.add('active');
-            updatePanel(b, e);
-          });
-        })(begin, end, item);
-        leftContent.appendChild(item);
-      }
-
-      function updatePanel(beginIndex, endIndex) {
-        txtRange.textContent = '服务器 ' + beginIndex + '-' + endIndex;
-        rightContent.innerHTML = '';
-        for (var i = beginIndex; i <= endIndex; i++) {
-          var info = serverData[i - 1];
+      function init(serverData) {
+        var numGroups = Math.floor(serverData.length / 5) + 1;
+        for (var i = 0; i < numGroups; i++) {
+          var begin = i * 5 + 1;
+          var end = Math.min(5 * (i + 1), serverData.length);
+          if (begin > serverData.length) break;
           var item = document.createElement('div');
-          item.className = 'right-item';
-          var html = '<span class="right-item-name">' + info.id + '区  ' + info.name + '</span>';
-          if (info.state > 0) html += '<div class="right-item-state state-' + info.state + '"></div>';
-          if (info.isNew) html += '<div class="right-item-new show"></div>';
-          item.innerHTML = html;
-          (function(serverInfo, el) {
+          item.className = 'left-item' + (i === 0 ? ' active' : '');
+          item.innerHTML = '<span class="left-item-text">' + begin + ' - ' + end + '区</span>';
+          (function(b, e, el) {
             el.addEventListener('click', function() {
-              var prev = rightContent.querySelector('.right-item.selected');
-              if (prev) prev.classList.remove('selected');
-              el.classList.add('selected');
-              var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
-              loginData.frontServerID = serverInfo.id;
-              loginData.frontServerName = serverInfo.id + '区 ' + serverInfo.name;
-              localStorage.setItem('loginData', JSON.stringify(loginData));
-              window.location.href = 'server_list.html';
+              var prev = leftContent.querySelector('.left-item.active');
+              if (prev) prev.classList.remove('active');
+              el.classList.add('active');
+              updatePanel(b, e);
             });
-          })(info, item);
-          rightContent.appendChild(item);
+          })(begin, end, item);
+          leftContent.appendChild(item);
         }
-      }
 
-      var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
-      if (loginData.frontServerID && loginData.frontServerID > 0) {
-        var info = serverData[loginData.frontServerID - 1];
-        txtFront.textContent = info.id + '区  ' + info.name;
-        if (info.state > 0) lastLoginState.className = 'last-login-state state-' + info.state;
+        function updatePanel(beginIndex, endIndex) {
+          txtRange.textContent = '服务器 ' + beginIndex + '-' + endIndex;
+          rightContent.innerHTML = '';
+          for (var i = beginIndex; i <= endIndex; i++) {
+            var info = serverData[i - 1];
+            var item = document.createElement('div');
+            item.className = 'right-item';
+            var html = '<span class="right-item-name">' + info.id + '区  ' + info.name + '</span>';
+            if (info.state > 0) html += '<div class="right-item-state state-' + info.state + '"></div>';
+            if (info.isNew) html += '<div class="right-item-new show"></div>';
+            item.innerHTML = html;
+            (function(serverInfo, el) {
+              el.addEventListener('click', function() {
+                var prev = rightContent.querySelector('.right-item.selected');
+                if (prev) prev.classList.remove('selected');
+                el.classList.add('selected');
+                var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+                loginData.frontServerID = serverInfo.id;
+                loginData.frontServerName = serverInfo.id + '区 ' + serverInfo.name;
+                localStorage.setItem('loginData', JSON.stringify(loginData));
+                window.location.href = 'server_list.html';
+              });
+            })(info, item);
+            rightContent.appendChild(item);
+          }
+        }
+
+        var loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+        if (loginData.frontServerID && loginData.frontServerID > 0) {
+          var info = serverData[loginData.frontServerID - 1];
+          txtFront.textContent = info.id + '区  ' + info.name;
+          if (info.state > 0) lastLoginState.className = 'last-login-state state-' + info.state;
+        }
+        updatePanel(1, Math.min(5, serverData.length));
       }
-      updatePanel(1, Math.min(5, serverData.length));
     })();
   </script>
 </div>

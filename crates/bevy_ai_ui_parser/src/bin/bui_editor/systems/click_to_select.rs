@@ -1,7 +1,7 @@
 use bevy::input::mouse::MouseButtonInput;
 use bevy::input::ButtonState;
-use bevy::prelude::*;
 use bevy::picking::pointer::{PointerAction, PointerInput, PointerInteraction};
+use bevy::prelude::*;
 use bevy::ui::ui_transform::UiGlobalTransform;
 use bevy::ui::ComputedNode;
 
@@ -16,7 +16,10 @@ pub fn handle_canvas_click(
     bui_nodes: Query<(Entity, &BuiId, &ComputedNode, &UiGlobalTransform)>,
 ) {
     for event in click_events.read() {
-        if !matches!(event.action, PointerAction::Press(bevy::picking::pointer::PointerButton::Primary)) {
+        if !matches!(
+            event.action,
+            PointerAction::Press(bevy::picking::pointer::PointerButton::Primary)
+        ) {
             continue;
         }
 

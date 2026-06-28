@@ -34,7 +34,13 @@ pub(crate) fn opendesign_html_to_generic_bui_document(
             OpenDesignPreset::OverlayRoot
         },
     );
-    generic_append_children(&mut source_root, overlay, stylesheet, &mut id_counts, svg_assets);
+    generic_append_children(
+        &mut source_root,
+        overlay,
+        stylesheet,
+        &mut id_counts,
+        svg_assets,
+    );
 
     let mut root = if is_stage_root {
         responsive_stage_document_root(stylesheet, overlay, source_root)

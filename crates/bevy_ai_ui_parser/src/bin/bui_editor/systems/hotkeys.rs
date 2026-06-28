@@ -38,8 +38,12 @@ pub fn handle_hotkeys(
         let Some(parent_id) = parent_id else { return };
 
         let (index, deleted_node) = {
-            let Some(parent) = find_node_by_id(&doc.root, &parent_id) else { return };
-            let Some(idx) = parent.children.iter().position(|c| c.id == node_id) else { return };
+            let Some(parent) = find_node_by_id(&doc.root, &parent_id) else {
+                return;
+            };
+            let Some(idx) = parent.children.iter().position(|c| c.id == node_id) else {
+                return;
+            };
             (idx, parent.children[idx].clone())
         };
 
@@ -167,8 +171,12 @@ fn handle_ctrl_hotkeys(
     }
 
     if keys.just_pressed(KeyCode::KeyV) {
-        let Some(node_id) = editor_state.selected_node_id.clone() else { return };
-        let Some(src_node) = clipboard.node.clone() else { return };
+        let Some(node_id) = editor_state.selected_node_id.clone() else {
+            return;
+        };
+        let Some(src_node) = clipboard.node.clone() else {
+            return;
+        };
 
         let parent_id = {
             let doc = &doc_resource.0;

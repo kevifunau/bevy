@@ -13,7 +13,11 @@ pub(crate) fn rasterize_svg_to_png(
     let mut pixmap = tiny_skia::Pixmap::new(width, height)
         .ok_or_else(|| format!("Failed to create pixmap ({width}x{height})"))?;
 
-    resvg::render(&tree, tiny_skia::Transform::identity(), &mut pixmap.as_mut());
+    resvg::render(
+        &tree,
+        tiny_skia::Transform::identity(),
+        &mut pixmap.as_mut(),
+    );
 
     pixmap
         .encode_png()
@@ -41,11 +45,8 @@ pub(crate) fn rasterize_svg_assets(
     base_dir: &Path,
 ) -> Result<(), String> {
     for entry in assets {
-        let png_bytes = rasterize_svg_to_png(
-            &entry.svg_markup,
-            entry.render_width,
-            entry.render_height,
-        )?;
+        let png_bytes =
+            rasterize_svg_to_png(&entry.svg_markup, entry.render_width, entry.render_height)?;
         write_svg_png_asset(base_dir, &entry.key, &png_bytes)?;
     }
     Ok(())

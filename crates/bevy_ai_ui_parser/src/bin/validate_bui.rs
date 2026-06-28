@@ -9,7 +9,9 @@ use bevy_ai_ui_parser::validate_bui_json_file;
 
 fn main() -> ExitCode {
     let Some(path) = env::args().nth(1) else {
-        eprintln!("Usage: cargo run -p bevy_ai_ui_parser --example validate_bui -- <path-to-bui-json>");
+        eprintln!(
+            "Usage: cargo run -p bevy_ai_ui_parser --example validate_bui -- <path-to-bui-json>"
+        );
         return ExitCode::FAILURE;
     };
 

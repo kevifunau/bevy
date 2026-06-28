@@ -273,6 +273,100 @@ fn opendesign_chinese_text_defaults_to_word_or_character_wrapping() {
 }
 
 #[test]
+fn opendesign_visibility_hidden_maps_to_ir_visibility() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 640px;
+        height: 360px;
+      }
+      .tip-overlay {
+        visibility: hidden;
+      }
+    </style>
+    <main class="game-stage">
+      <div class="tip-overlay" id="tip_panel"></div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let tip_panel = find_bui_node(&document.root, "tip_panel");
+
+    assert_eq!(
+        tip_panel.layout.styles.visibility.as_deref(),
+        Some("hidden")
+    );
+}
+
+#[test]
+fn opendesign_rgb_and_rgba_colors_compile_to_hex_colors() {
+    let html = r#"
+    <style>
+      .game-stage {
+        width: 640px;
+        height: 360px;
+      }
+      .panel {
+        background: rgba(20, 20, 35, 0.85);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+      }
+      .label {
+        color: rgb(255, 215, 0);
+      }
+    </style>
+    <main class="game-stage">
+      <div class="panel">
+        <span class="label">提示</span>
+      </div>
+    </main>
+    "#;
+
+    let document = opendesign_html_to_bui_document(html).expect("HTML should compile");
+    let panel = find_bui_node(&document.root, "panel");
+    let label_text = find_bui_node(&document.root, "label_text_1");
+
+    assert_eq!(
+        panel.style.visuals.background_color.as_deref(),
+        Some("#141423D9")
+    );
+    assert_eq!(
+        panel.style.visuals.border_color.as_deref(),
+        Some("#FFD7004D")
+    );
+    assert_eq!(
+        label_text
+            .content
+            .text
+            .as_ref()
+            .expect("label should have text")
+            .font_color,
+        "#FFD700"
+    );
+}
+
+#[test]
+fn login_scene_index_html_preserves_panel_visuals_and_hidden_tip() {
+    let html = include_str!("../../examples/login_scene/webgameui/index.html");
+
+    let document = opendesign_html_to_bui_document(html).expect("login scene HTML should compile");
+    let login_panel = find_bui_node(&document.root, "login_panel");
+    let tip_panel = find_bui_node(&document.root, "tip_panel");
+
+    assert_eq!(
+        login_panel.style.visuals.background_color.as_deref(),
+        Some("#141423D9")
+    );
+    assert_eq!(
+        login_panel.style.visuals.border_color.as_deref(),
+        Some("#FFD7004D")
+    );
+    assert_eq!(
+        tip_panel.layout.styles.visibility.as_deref(),
+        Some("hidden")
+    );
+}
+
+#[test]
 fn opendesign_implicit_grid_falls_back_to_vertical_flex() {
     let html = r#"
     <style>

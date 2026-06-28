@@ -14,6 +14,9 @@ pub(crate) fn css_color(value: &str) -> Option<String> {
     if let Some(color) = css_background_fallback_color(value) {
         return Some(color);
     }
+    if let Some(color) = css_embedded_rgb_function_to_hex(value) {
+        return Some(color);
+    }
     if let Some(color) = css_color_mix_with_transparency(value) {
         return Some(color);
     }
@@ -49,6 +52,104 @@ pub(crate) fn css_color(value: &str) -> Option<String> {
         }
     }
     css_named_color(value).map(ToString::to_string)
+}
+
+fn css_embedded_rgb_function_to_hex(value: &str) -> Option<String> {
+    let value = value.trim();
+    let lower = value.to_ascii_lowercase();
+    let start = lower.find("rgba(").or_else(|| lower.find("rgb("))?;
+    let slice = &value[start..];
+    let mut depth = 0usize;
+    let mut end_index = None;
+    for (index, character) in slice.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    end_index = Some(index);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    let end = end_index?;
+    css_rgb_function_to_hex(&slice[..=end])
+}
+
+fn css_rgb_function_to_hex(value: &str) -> Option<String> {
+    let value = value.trim();
+    let lower = value.to_ascii_lowercase();
+    let (prefix, has_alpha) = if lower.starts_with("rgba(") {
+        ("rgba(", true)
+    } else if lower.starts_with("rgb(") {
+        ("rgb(", false)
+    } else {
+        return None;
+    };
+    if !value.ends_with(')') {
+        return None;
+    }
+
+    let inner = value[prefix.len()..value.len() - 1].trim();
+    let mut alpha = if has_alpha { None } else { Some(1.0) };
+    let channels: Vec<&str> = if inner.contains(',') {
+        inner.split(',').map(str::trim).collect()
+    } else if let Some((rgb, alpha_part)) = inner.split_once('/') {
+        alpha = Some(css_alpha_channel(alpha_part.trim())?);
+        rgb.split_whitespace().collect()
+    } else {
+        inner.split_whitespace().collect()
+    };
+
+    let expected_channels = if has_alpha && inner.contains(',') {
+        4
+    } else {
+        3
+    };
+    if channels.len() != expected_channels {
+        return None;
+    }
+
+    let r = css_rgb_channel(channels[0])?;
+    let g = css_rgb_channel(channels[1])?;
+    let b = css_rgb_channel(channels[2])?;
+    if has_alpha && inner.contains(',') {
+        alpha = Some(css_alpha_channel(channels[3])?);
+    }
+
+    css_rgba_to_hex(r, g, b, alpha.unwrap_or(1.0))
+}
+
+fn css_rgb_channel(value: &str) -> Option<f32> {
+    let value = value.trim();
+    if let Some(percent) = value.strip_suffix('%') {
+        return percent
+            .trim()
+            .parse::<f32>()
+            .ok()
+            .map(|percent| (percent / 100.0).clamp(0.0, 1.0));
+    }
+
+    value
+        .parse::<f32>()
+        .ok()
+        .map(|channel| (channel / 255.0).clamp(0.0, 1.0))
+}
+
+fn css_alpha_channel(value: &str) -> Option<f32> {
+    let value = value.trim();
+    if let Some(percent) = value.strip_suffix('%') {
+        return percent
+            .trim()
+            .parse::<f32>()
+            .ok()
+            .map(|percent| (percent / 100.0).clamp(0.0, 1.0));
+    }
+
+    value.parse::<f32>().ok().map(|alpha| alpha.clamp(0.0, 1.0))
 }
 
 pub(crate) fn css_function_tokens(value: &str) -> Vec<&str> {

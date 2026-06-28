@@ -4,9 +4,9 @@ use bevy::prelude::*;
 use bevy_ai_ui_parser::{BuiDocumentResource, BuiNode};
 use bevy_egui::egui;
 
-use bevy_ai_ui_parser::BuiNode as DocNode;
 use crate::app_state::LibraryItem;
 use crate::undo::commands::{AddNode, DeleteNode};
+use bevy_ai_ui_parser::BuiNode as DocNode;
 
 pub fn hierarchy_panel(
     ui: &mut egui::Ui,
@@ -99,7 +99,10 @@ fn render_node_tree(
         (
             node.id.clone(),
             node.kind.clone(),
-            node.children.iter().map(|c| c.id.clone()).collect::<Vec<_>>(),
+            node.children
+                .iter()
+                .map(|c| c.id.clone())
+                .collect::<Vec<_>>(),
         )
     };
 
@@ -107,7 +110,11 @@ fn render_node_tree(
     let collapsed = collapsed_nodes.contains(&id);
 
     let indicator = if has_children {
-        if collapsed { "\u{25B8} " } else { "\u{25BE} " }
+        if collapsed {
+            "\u{25B8} "
+        } else {
+            "\u{25BE} "
+        }
     } else {
         "  "
     };
@@ -119,7 +126,9 @@ fn render_node_tree(
     // Drop target highlight
     let is_drop_target = is_dragging && {
         let hover_pos = response.hover_pos();
-        hover_pos.map(|p| response.rect.contains(p)).unwrap_or(false)
+        hover_pos
+            .map(|p| response.rect.contains(p))
+            .unwrap_or(false)
     };
 
     if is_drop_target {
@@ -129,7 +138,10 @@ fn render_node_tree(
     } else if is_dragging && drag_hover_node_id.as_deref() == Some(&id) {
         // Clear if no longer hovering
         let hover_pos = response.hover_pos();
-        if !hover_pos.map(|p| response.rect.contains(p)).unwrap_or(false) {
+        if !hover_pos
+            .map(|p| response.rect.contains(p))
+            .unwrap_or(false)
+        {
             *drag_hover_node_id = None;
         }
     }
@@ -163,7 +175,10 @@ fn render_node_tree(
             ui.close();
         }
         if has_children {
-            if ui.button(if collapsed { "Expand" } else { "Collapse" }).clicked() {
+            if ui
+                .button(if collapsed { "Expand" } else { "Collapse" })
+                .clicked()
+            {
                 if collapsed {
                     collapsed_nodes.remove(&id);
                 } else {
@@ -268,11 +283,20 @@ fn add_child_node(world: &mut World, parent_id: &str, selected_id: &mut Option<S
     *selected_id = Some(new_id);
 }
 
-fn delete_node(world: &mut World, node_id: &str, parent_id: &str, selected_id: &mut Option<String>) {
+fn delete_node(
+    world: &mut World,
+    node_id: &str,
+    parent_id: &str,
+    selected_id: &mut Option<String>,
+) {
     let (index, deleted_node) = {
         let doc = world.resource::<BuiDocumentResource>();
-        let Some(parent) = find_node_by_id(&doc.0.root, parent_id) else { return };
-        let Some(idx) = parent.children.iter().position(|c| c.id == node_id) else { return };
+        let Some(parent) = find_node_by_id(&doc.0.root, parent_id) else {
+            return;
+        };
+        let Some(idx) = parent.children.iter().position(|c| c.id == node_id) else {
+            return;
+        };
         (idx, parent.children[idx].clone())
     };
 
@@ -302,17 +326,25 @@ fn timestamp() -> u64 {
 }
 
 fn find_node_by_id<'a>(root: &'a DocNode, id: &str) -> Option<&'a DocNode> {
-    if root.id == id { return Some(root) }
+    if root.id == id {
+        return Some(root);
+    }
     for child in &root.children {
-        if let Some(found) = find_node_by_id(child, id) { return Some(found) }
+        if let Some(found) = find_node_by_id(child, id) {
+            return Some(found);
+        }
     }
     None
 }
 
 fn find_node_by_id_mut<'a>(root: &'a mut DocNode, id: &str) -> Option<&'a mut DocNode> {
-    if root.id == id { return Some(root) }
+    if root.id == id {
+        return Some(root);
+    }
     for child in &mut root.children {
-        if let Some(found) = find_node_by_id_mut(child, id) { return Some(found) }
+        if let Some(found) = find_node_by_id_mut(child, id) {
+            return Some(found);
+        }
     }
     None
 }

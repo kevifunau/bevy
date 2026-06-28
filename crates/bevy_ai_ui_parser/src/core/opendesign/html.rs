@@ -62,8 +62,7 @@ pub(crate) fn extract_opendesign_fragment(html: &str) -> Result<&str, String> {
         None
     };
     let closing_bevy_root_end = if bevy_ui_root_div_start == Some(start) {
-        find_matching_div_close(&html[start..])
-            .map(|offset| start + offset)
+        find_matching_div_close(&html[start..]).map(|offset| start + offset)
     } else if bevy_ui_root_main_start == Some(start) {
         html[start..]
             .find("</main>")
@@ -327,12 +326,18 @@ pub(crate) fn opendesign_html_to_bui_document_with_manifest(
         } else {
             match village::compile_village_shop_overlay_document(&stylesheet, root_nodes.root) {
                 Ok(root) => finalize_document(root)?,
-                Err(_) => opendesign_html_to_generic_bui_document(&stylesheet, root_nodes.root, &mut svg_assets)?,
+                Err(_) => opendesign_html_to_generic_bui_document(
+                    &stylesheet,
+                    root_nodes.root,
+                    &mut svg_assets,
+                )?,
             }
         };
         document.interaction_model = parse_interaction_model(html)?;
 
-        if !svg_assets.is_empty() && let Some(dir) = base_dir {
+        if !svg_assets.is_empty()
+            && let Some(dir) = base_dir
+        {
             rasterize_svg_assets(&svg_assets, dir)?;
         }
 

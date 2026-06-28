@@ -1,4 +1,7 @@
-use std::{fs, path::{Path, PathBuf}};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 use bevy_app::{App, Plugin, PostUpdate, Startup, Update};
 use bevy_asset::{AssetServer, Assets};
@@ -19,7 +22,10 @@ use crate::core::{
         keyboard::{
             focused_control_confirm_system, keyboard_focus_navigation_system, pointer_focus_system,
         },
-        list::sync_bui_list_groups_system,
+        list::{
+            json_array_to_object_list, seed_json_list_state, sync_bui_list_groups_system,
+            sync_json_list_state_system, BuiJsonListData, BuiJsonListStore,
+        },
         progress::sync_bui_progress_groups_system,
         schedule::{configure_bui_system_sets, BuiSystems},
         scroll::{
@@ -149,6 +155,7 @@ impl Plugin for AiUiPlugin {
             .init_resource::<BuiTextInputFocusState>()
             .init_resource::<BuiPanelSwitch>()
             .init_resource::<BuiPanelPaths>()
+            .init_resource::<BuiJsonListStore>()
             .add_message::<BuiActionTriggered>()
             .add_message::<BuiBindingUpdate>()
             .add_message::<BuiStateSet>()
@@ -193,6 +200,7 @@ impl Plugin for AiUiPlugin {
                     dispatch_bui_tab_selection_system,
                     dispatch_bui_dropdown_selection_system,
                     apply_bui_state_updates_system,
+                    sync_json_list_state_system,
                 )
                     .chain()
                     .in_set(BuiSystems::DataUpdate),
@@ -310,9 +318,16 @@ fn derive_source_paths(source: &BuiSource) -> BuiSourcePaths {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
+    use std::{fs, path::PathBuf};
 
-    use super::{derive_source_paths, source_supports_editor, BuiSource};
+    use super::{
+        derive_source_paths, load_json_list_store, seed_json_list_state, source_supports_editor,
+        BuiSource,
+    };
+    use crate::core::{
+        interaction::types::{BuiBindingValue, BuiStateStore},
+        model::{bui_node, BuiDocument, BuiResources, BuiSemantics, BuiStateModel},
+    };
 
     #[test]
     fn html_editor_sources_write_to_sibling_ir_json() {
@@ -353,6 +368,98 @@ mod tests {
             "<div></div>".to_string(),
         )));
     }
+
+    #[test]
+    fn json_list_sources_seed_regions_and_current_page_state() {
+        let temp_dir =
+            std::env::temp_dir().join(format!("bui-json-list-test-{}", std::process::id()));
+        let asset_dir = temp_dir.join("Asset");
+        fs::create_dir_all(&asset_dir).expect("asset dir should be created");
+        fs::write(
+            asset_dir.join("ServerInfo.json"),
+            r#"[
+                {"id":1,"name":"一服","state":0,"isNew":false},
+                {"id":2,"name":"二服","state":1,"isNew":false},
+                {"id":3,"name":"三服","state":2,"isNew":false},
+                {"id":4,"name":"四服","state":3,"isNew":false},
+                {"id":5,"name":"五服","state":4,"isNew":false},
+                {"id":6,"name":"六服","state":0,"isNew":true}
+            ]"#,
+        )
+        .expect("json fixture should be written");
+
+        let mut root = bui_node("root", "node");
+        let mut regions = bui_node("regions", "node");
+        regions.semantics = BuiSemantics {
+            list_binding_source: Some("server.regions".to_string()),
+            list_json_source: Some("Asset/ServerInfo.json".to_string()),
+            list_json_mode: Some("regions".to_string()),
+            list_page_size: Some(5),
+            ..Default::default()
+        };
+        regions
+            .children
+            .push(bui_node("region_{{index}}", "button"));
+
+        let mut servers = bui_node("servers", "node");
+        servers.semantics = BuiSemantics {
+            list_binding_source: Some("server.servers".to_string()),
+            list_json_source: Some("Asset/ServerInfo.json".to_string()),
+            list_json_mode: Some("page".to_string()),
+            list_page_size: Some(5),
+            list_page_source: Some("server.region".to_string()),
+            ..Default::default()
+        };
+        servers.children.push(bui_node("server_{{id}}", "button"));
+        root.children = vec![regions, servers];
+
+        let document = BuiDocument {
+            version: "3.0-ir".to_string(),
+            scene_name: "JsonListTest".to_string(),
+            imports: Vec::new(),
+            state_model: BuiStateModel::default(),
+            interaction_model: Default::default(),
+            resources: BuiResources::default(),
+            root,
+        };
+
+        let json_lists = load_json_list_store(&document, Some(&temp_dir));
+        let mut state_store = BuiStateStore::default();
+        seed_json_list_state(&json_lists, &mut state_store);
+
+        let Some(BuiBindingValue::ObjectList(regions)) = state_store.0.get("server.regions") else {
+            panic!("regions list should be seeded");
+        };
+        assert_eq!(regions.len(), 2);
+        assert_eq!(regions[0].get("label").map(String::as_str), Some("1 - 5区"));
+        assert_eq!(regions[1].get("label").map(String::as_str), Some("6 - 6区"));
+
+        let Some(BuiBindingValue::ObjectList(first_page)) = state_store.0.get("server.servers")
+        else {
+            panic!("server page should be seeded");
+        };
+        assert_eq!(first_page.len(), 5);
+        assert_eq!(
+            first_page[0].get("label").map(String::as_str),
+            Some("1区  一服")
+        );
+
+        state_store
+            .0
+            .insert("server.region".to_string(), BuiBindingValue::Number(1.0));
+        seed_json_list_state(&json_lists, &mut state_store);
+        let Some(BuiBindingValue::ObjectList(second_page)) = state_store.0.get("server.servers")
+        else {
+            panic!("server page should be recalculated");
+        };
+        assert_eq!(second_page.len(), 1);
+        assert_eq!(
+            second_page[0].get("label").map(String::as_str),
+            Some("6区  六服")
+        );
+
+        let _ = fs::remove_dir_all(temp_dir);
+    }
 }
 
 #[derive(Resource, Clone)]
@@ -378,7 +485,10 @@ pub(crate) fn spawn_bui_scene(
         Ok(document) => {
             info!("Spawning BUI scene '{}'.", document.scene_name);
 
+            let base_dir = source_base_dir(&source.0);
             seed_state_model(&document, &mut state_store);
+            let json_lists = load_json_list_store(&document, base_dir.as_deref());
+            seed_json_list_state(&json_lists, &mut state_store);
 
             match spawn_bui_tree(
                 &mut commands,
@@ -389,6 +499,7 @@ pub(crate) fn spawn_bui_scene(
                 Ok((root, id_map)) => {
                     commands.insert_resource(BuiRootEntity(root));
                     commands.insert_resource(BuiDocumentResource(document));
+                    commands.insert_resource(json_lists);
                     *id_map_res = BuiIdMap(id_map);
                 }
                 Err(error) => {
@@ -410,6 +521,95 @@ fn seed_state_model(document: &BuiDocument, state_store: &mut BuiStateStore) {
             .0
             .insert(key.clone(), BuiBindingValue::Text(value.clone()));
     }
+}
+
+fn source_base_dir(source: &BuiSource) -> Option<PathBuf> {
+    match source {
+        BuiSource::Path(path) | BuiSource::HtmlPath(path) => path.parent().map(Path::to_path_buf),
+        BuiSource::Inline(_) | BuiSource::HtmlInline(_) => None,
+    }
+}
+
+fn load_json_list_store(document: &BuiDocument, base_dir: Option<&Path>) -> BuiJsonListStore {
+    let mut store = BuiJsonListStore::default();
+    collect_json_lists(&document.root, base_dir, &mut store);
+    store
+}
+
+fn collect_json_lists(
+    node: &crate::core::model::BuiNode,
+    base_dir: Option<&Path>,
+    store: &mut BuiJsonListStore,
+) {
+    if let (Some(binding_source), Some(json_source)) = (
+        &node.semantics.list_binding_source,
+        &node.semantics.list_json_source,
+    ) {
+        match load_json_list_source(json_source, base_dir) {
+            Ok(items) => {
+                store.lists.insert(
+                    binding_source.clone(),
+                    BuiJsonListData {
+                        items,
+                        mode: node
+                            .semantics
+                            .list_json_mode
+                            .clone()
+                            .unwrap_or_else(|| "all".to_string()),
+                        page_size: node.semantics.list_page_size,
+                        page_source: node.semantics.list_page_source.clone(),
+                    },
+                );
+            }
+            Err(error) => {
+                error!(
+                    "Failed to load JSON list source '{}' for '{}': {}",
+                    json_source, binding_source, error
+                );
+            }
+        }
+    }
+
+    for child in &node.children {
+        collect_json_lists(child, base_dir, store);
+    }
+}
+
+fn load_json_list_source(
+    source: &str,
+    base_dir: Option<&Path>,
+) -> Result<Vec<std::collections::HashMap<String, String>>, String> {
+    let path = resolve_json_source_path(source, base_dir);
+    let raw = fs::read_to_string(&path)
+        .map_err(|error| format!("Failed to read '{}': {error}", path.display()))?;
+    let value: serde_json::Value = serde_json::from_str(&raw)
+        .map_err(|error| format!("Failed to parse '{}': {error}", path.display()))?;
+    json_array_to_object_list(&value)
+}
+
+fn resolve_json_source_path(source: &str, base_dir: Option<&Path>) -> PathBuf {
+    let source_path = PathBuf::from(source);
+    if source_path.is_absolute() {
+        return source_path;
+    }
+
+    if let Some(base_dir) = base_dir {
+        let direct = base_dir.join(source);
+        if direct.exists() {
+            return direct;
+        }
+
+        for ancestor in base_dir.ancestors() {
+            let webgameui = ancestor.join("webgameui").join(source);
+            if webgameui.exists() {
+                return webgameui;
+            }
+        }
+
+        return direct;
+    }
+
+    source_path
 }
 
 pub(crate) fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, String> {
@@ -439,8 +639,11 @@ pub(crate) fn load_bui_document(source: &BuiSource) -> Result<BuiDocument, Strin
                 .as_deref()
                 .map(load_manifest_file)
                 .transpose()?;
-            let document =
-                opendesign_html_to_bui_document_with_manifest(&raw, manifest.as_ref(), path.parent())?;
+            let document = opendesign_html_to_bui_document_with_manifest(
+                &raw,
+                manifest.as_ref(),
+                path.parent(),
+            )?;
             let ir_path = path.with_extension("ir.json");
             let ir_json = serde_json::to_string_pretty(&document)
                 .map_err(|error| format!("Failed to serialize IR JSON: {error}"))?;
@@ -491,15 +694,22 @@ pub fn spawn_bui_ir(
     let document = parse_bui_document(&raw)?;
     validate_bui_document(&document)?;
 
-    info!("Spawning BUI scene '{}' from {}.", document.scene_name, path.display());
+    info!(
+        "Spawning BUI scene '{}' from {}.",
+        document.scene_name,
+        path.display()
+    );
 
     seed_state_model(&document, state_store);
+    let json_lists = load_json_list_store(&document, path.parent());
+    seed_json_list_state(&json_lists, state_store);
 
     let (root, id_map) = spawn_bui_tree(commands, asset_server, texture_atlases, &document)?;
 
     commands.insert_resource(BuiRootEntity(root));
     commands.insert_resource(BuiDocumentResource(document));
     commands.insert_resource(BuiIdMap(id_map.clone()));
+    commands.insert_resource(json_lists);
 
     Ok((root, id_map))
 }
@@ -537,7 +747,10 @@ impl BuiPanelAppExt for App {
         let mut paths = self
             .world_mut()
             .get_resource_or_insert_with::<BuiPanelPaths>(Default::default);
-        paths.0.insert(name.to_string(), ir_path.as_ref().to_string_lossy().to_string());
+        paths.0.insert(
+            name.to_string(),
+            ir_path.as_ref().to_string_lossy().to_string(),
+        );
         self
     }
 }
@@ -558,7 +771,10 @@ fn process_panel_switch(
     };
 
     let Some(ir_path) = panel_paths.0.get(&panel_name) else {
-        error!("Panel '{}' not registered. Use app.register_bui_panel() first.", panel_name);
+        error!(
+            "Panel '{}' not registered. Use app.register_bui_panel() first.",
+            panel_name
+        );
         return;
     };
 
@@ -569,7 +785,13 @@ fn process_panel_switch(
     }
 
     // Load and spawn new panel
-    match spawn_bui_ir(&mut commands, &asset_server, &mut texture_atlases, &mut state_store, ir_path) {
+    match spawn_bui_ir(
+        &mut commands,
+        &asset_server,
+        &mut texture_atlases,
+        &mut state_store,
+        ir_path,
+    ) {
         Ok((root, _id_map)) => {
             info!("Switched to panel: {}", panel_name);
             let _ = root;

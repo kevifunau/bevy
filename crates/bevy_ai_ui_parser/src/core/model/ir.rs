@@ -241,6 +241,14 @@ pub struct BuiSemantics {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub list_binding_source: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub list_json_source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub list_json_mode: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub list_page_size: Option<usize>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub list_page_source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub slider: Option<BuiSliderSemantics>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scroll_view: Option<BuiScrollViewSemantics>,
@@ -264,6 +272,10 @@ impl BuiSemantics {
             && self.progress_binding_source.is_none()
             && !self.progress_fill
             && self.list_binding_source.is_none()
+            && self.list_json_source.is_none()
+            && self.list_json_mode.is_none()
+            && self.list_page_size.is_none()
+            && self.list_page_source.is_none()
             && self.slider.is_none()
             && self.scroll_view.is_none()
             && self.dropdown_group_name.is_none()
